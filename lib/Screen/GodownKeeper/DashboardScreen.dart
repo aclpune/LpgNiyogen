@@ -1,10 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../Database/GodownKeeperDB/UpdateRefillSaleDB.dart';
 import '../User/splashscreen/page/splash_screen.dart';
 import '../Utils/CustomeDrawer.dart';
+import '../Utils/app_url.dart';
 import '../Utils/shared_preference.dart';
-
+import 'DeliveryBoyModel/StockSubmitToManagerListModel.dart';
+import 'package:http/http.dart' as http;
 // class DashboardScreen extends StatelessWidget {
 //   @override
 //   Widget build(BuildContext context) {
@@ -175,15 +181,414 @@ import '../Utils/shared_preference.dart';
 //     );
 //   }
 // }
-class DashboardScreen extends StatelessWidget {
+
+
+
+
+// class DashboardScreen extends StatelessWidget {
+//   static const screenName = '/godownDashboard';
+//
+//   // GlobalKey for ScaffoldState
+//   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+//   UpdateRefillSale? updateRefillSale;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//
+//     Map<String, Map<String, int>> cylinderData = {
+//       '14.2 kg': {
+//         'Filled': 30,
+//         'Empty': 10,
+//       },
+//       '19 kg': {
+//         'Filled': 50,
+//         'Empty': 20,
+//       },
+//       '5 kg': {
+//         'Filled': 20,
+//         'Empty': 5,
+//       },
+//     };
+//     Map<String, Map<String, int>> cylinderData1 = {
+//       'Invoice': {
+//         'Filled': 30,
+//         'Empty': 10,
+//       },
+//       'EMR': {
+//         'Filled': 50,
+//         'Empty': 20,
+//       },
+//       'TV': {
+//         'Filled': 20,
+//         'Empty': 5,
+//       },
+//       'Refill': {
+//         'Filled': 20,
+//         'Empty': 5,
+//       },
+//       'CRD': {
+//         'Filled': 20,
+//         'Empty': 5,
+//       },
+//       'NC': {
+//         'Filled': 20,
+//         'Empty': 5,
+//       },
+//       'DBC': {
+//         'Filled': 20,
+//         'Empty': 5,
+//       },
+//       'RC': {
+//         'Filled': 20,
+//         'Empty': 5,
+//       },
+//     };
+//
+//     return Scaffold(
+//       key: _scaffoldKey,
+//       drawer: CustomeDrawer(),// Assign the scaffold key
+//       appBar: PreferredSize(
+//         preferredSize: Size.fromHeight(120),  // Custom height for the AppBar
+//         child: Container(
+//           color: Colors.blueAccent,  // Custom background color
+//           padding: EdgeInsets.only(top: 40, left: 16, right: 16), // Padding for top & sides
+//           child: Row(
+//             mainAxisAlignment: MainAxisAlignment.start,
+//             children: [
+//               IconButton(
+//                 icon: Icon(Icons.menu, color: Colors.white),  // Menu icon for Drawer
+//                 onPressed: () {
+//                   // Toggle the drawer open or closed
+//                   if (_scaffoldKey.currentState!.isDrawerOpen) {
+//                     _scaffoldKey.currentState!.closeDrawer();
+//                   } else {
+//                     _scaffoldKey.currentState!.openDrawer();
+//                   }
+//                 },
+//               ),
+//               SizedBox(width: 20),
+//               Text(
+//                 'Cylinder Godown',  // Godown Name
+//                 style: TextStyle(
+//                   color: Colors.white,
+//                   fontSize: 16,
+//                   fontWeight: FontWeight.bold,
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//
+//       // Drawer to provide navigation options
+//       // drawer: Drawer(
+//       //   child: ListView(
+//       //     padding: EdgeInsets.zero,
+//       //     children: [
+//       //       // Drawer Header
+//       //       DrawerHeader(
+//       //         decoration: BoxDecoration(
+//       //           color: Colors.blueAccent,
+//       //         ),
+//       //         child: Text(
+//       //           'Cylinder Godown',
+//       //           style: TextStyle(
+//       //             color: Colors.white,
+//       //             fontSize: 24,
+//       //             fontWeight: FontWeight.bold,
+//       //           ),
+//       //         ),
+//       //       ),
+//       //       // Drawer items (navigate to different screens)
+//       //       ListTile(
+//       //         leading: Icon(Icons.home),
+//       //         title: Text('Home'),
+//       //         onTap: () {
+//       //           Navigator.pop(context); // Close the drawer
+//       //         },
+//       //       ),
+//       //       ListTile(
+//       //         leading: Icon(Icons.settings),
+//       //         title: Text('Item Receipt'),
+//       //         onTap: () {
+//       //           Navigator.pushReplacementNamed(context, '/itemWiseReceipt'); // Close the drawer
+//       //         },
+//       //       ),
+//       //       ListTile(
+//       //         leading: Icon(Icons.exit_to_app),
+//       //         title: Text('Stock Return'),
+//       //         onTap: () {
+//       //           Navigator.pushReplacementNamed(context, '/stockReturnFromDelBoy');
+//       //         },
+//       //       ),
+//       //       ListTile(
+//       //         leading: Icon(Icons.exit_to_app),
+//       //         title: Text('Edit Item'),
+//       //         onTap: () {
+//       //           Navigator.pushReplacementNamed(context, '/editItemReceiptPage');
+//       //         },
+//       //       ),
+//       //       ListTile(
+//       //         leading: Icon(Icons.exit_to_app),
+//       //         title: Text('Item Return'),
+//       //         onTap: () {
+//       //           Navigator.pushReplacementNamed(context, '/itemReturnScreen');
+//       //         },
+//       //       ),
+//       //       ListTile(
+//       //         leading: Icon(Icons.exit_to_app),
+//       //         title: Text('Logout'),
+//       //         onTap: () {
+//       //           logoutUser(context);
+//       //         },
+//       //       ),
+//       //     ],
+//       //   ),
+//       // ),
+//
+//       body: SingleChildScrollView(  // Ensures the content is scrollable
+//         child:
+//         Padding(
+//           padding: const EdgeInsets.only(left: 5.0,right: 5.0,bottom: 5.0,top: 20.0),
+//           child:
+//           Column(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               Padding(
+//                 padding: const EdgeInsets.all(16.0),
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     // Title for Cylinder Categories Table
+//                     Text(
+//                         'Cylinder size wise count',
+//                         style:TextStyle(fontSize: 16,color: Colors.black54)
+//                     ),
+//                     SizedBox(height: 10),
+//                     // Table with Borders (including vertical lines)
+//                     Table(
+//                       border: TableBorder.all(
+//                         color: Colors.grey, // Border color for both vertical and horizontal lines
+//                         width: 1, // Border thickness
+//                         borderRadius: BorderRadius.circular(8), // Optional: Rounded corners
+//                       ),
+//                       children: [
+//                         // Table Header
+//                         TableRow(
+//                           decoration: BoxDecoration(color: Colors.blue.shade100),
+//                           children: [
+//                             _buildTableCell('Cylinder', isHeader: true),
+//                             _buildTableCell('Empty', isHeader: true),
+//                             _buildTableCell('Filled', isHeader: true),
+//                           ],
+//                         ),
+//                         // Table Data Rows
+//                         ...cylinderData.entries.map((entry) {
+//                           String category = entry.key;
+//                           int emptyCount = entry.value['Empty'] ?? 0;
+//                           int filledCount = entry.value['Filled'] ?? 0;
+//
+//                           return TableRow(
+//                             children: [
+//                               _buildTableCell(category),
+//                               _buildTableCell('$emptyCount'),
+//                               _buildTableCell('$filledCount'),
+//                             ],
+//                           );
+//                         }).toList(),
+//                       ],
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//               Padding(
+//                 padding: const EdgeInsets.all(16.0),
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     // Title for Cylinder Categories Table
+//                     Text(
+//                         'Categories wise count',
+//                         style:TextStyle(fontSize: 16,color: Colors.black54)
+//                     ),
+//                     SizedBox(height: 10),
+//                     // Table with Borders (including vertical lines)
+//                     Table(
+//                       border: TableBorder.all(
+//                         color: Colors.grey, // Border color for both vertical and horizontal lines
+//                         width: 1, // Border thickness
+//                         borderRadius: BorderRadius.circular(8), // Optional: Rounded corners
+//                       ),
+//                       children: [
+//                         // Table Header
+//                         TableRow(
+//                           decoration: BoxDecoration(color: Colors.blue.shade100),
+//                           children: [
+//                             _buildTableCell('Category', isHeader: true),
+//                             _buildTableCell('Empty', isHeader: true),
+//                             _buildTableCell('Filled', isHeader: true),
+//                           ],
+//                         ),
+//                         // Table Data Rows
+//                         ...cylinderData1.entries.map((entry) {
+//                           String category = entry.key;
+//                           int emptyCount = entry.value['Empty'] ?? 0;
+//                           int filledCount = entry.value['Filled'] ?? 0;
+//
+//                           return TableRow(
+//                             children: [
+//                               _buildTableCell(category),
+//                               _buildTableCell('$emptyCount'),
+//                               _buildTableCell('$filledCount'),
+//                             ],
+//                           );
+//                         }).toList(),
+//                       ],
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+//   Future<void> logoutUser(BuildContext context) async {
+//     ///Save data before logout logic
+//     EasyLoading.show(status: 'Loading...');
+//
+//     try {
+//       SharedPref().removeUser();
+//
+//       // try {
+//       //   if (Platform.isAndroid) {
+//       //     await FirebaseMessaging.instance
+//       //         .deleteToken()
+//       //         .whenComplete(() => debugPrint("Android FCM Token Deleted"));
+//       //   } else if (Platform.isIOS) {
+//       //     await FirebaseMessaging.instance
+//       //         .deleteToken()
+//       //         .whenComplete(() => debugPrint("iOS FCM Token Deleted"));
+//       //   }
+//       // } on PlatformException {
+//       //   debugPrint('###PlatformExc');
+//       // }
+//
+//       EasyLoading.dismiss();
+//
+//       Navigator.pushNamedAndRemoveUntil(
+//           context, SplashScreen.screenName, (r) => false);
+//
+//       debugPrint("Logout Successful");
+//     } catch (error) {
+//       EasyLoading.dismiss();
+//       debugPrint("LogoutPrefEcx: $error");
+//     }
+//   }
+//
+//   Future<void> insertDelBoyStockList() async {
+//     try {
+//       SharedPreferences prefs = await SharedPreferences.getInstance();
+//       String? distributorId = prefs.getString('DistributorId');
+//       String? bearerToken = prefs.getString('token');
+//
+//       if (bearerToken == null) {
+//         throw Exception('Bearer token is missing');
+//       }
+//
+//       final response = await http.get(
+//         Uri.parse('${AppUrl.UpdateDailyRefillSaleList}/$distributorId/0'),
+//         headers: {
+//           'Authorization': 'Bearer $bearerToken',
+//         },
+//       );
+//
+//       debugPrint("Response body: ${response.body}");
+//
+//       if (response.statusCode == 200) {
+//         var data = json.decode(response.body);
+//
+//         // Parse the JSON response into a list of StockSubmitToManagerListModel
+//         List<StockSubmitToManagerListModel> result =
+//         List<StockSubmitToManagerListModel>.from(data
+//             .map((item) => StockSubmitToManagerListModel.fromJson(item)));
+//         updateRefillSale?.insertDataToDatabase(result,"Pending","Edit");
+//         // setState(() {
+//         //   // stockSubmitData = result;
+//         //   updateRefillSale?.insertDataToDatabase(result,"Pending","Edit");
+//         //   // stockDataFuture = updateRefillSale!.getDataFromDatabase();// This stores the sale records
+//         // });
+//         // stockDataFuture = updateRefillSale!.getDataFromDatabase();
+//         // debugPrint("stockDataFuture: $stockDataFuture");
+//       } else {
+//         debugPrint("Failed to fetch data from API: ${response.statusCode}");
+//       }
+//     } catch (e) {
+//       debugPrint("Error during API call: $e");
+//     }
+//   }
+// }
+class DashboardScreen extends StatefulWidget {
   static const screenName = '/godownDashboard';
 
-  // GlobalKey for ScaffoldState
+  @override
+  _DashboardScreenState createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  UpdateRefillSale? updateRefillSale;
+
+  @override
+  void initState() {
+    super.initState();
+    updateRefillSale = UpdateRefillSale();
+    // Call the insert method when the screen is loaded
+    insertDelBoyStockList();
+  }
+
+  Future<void> insertDelBoyStockList() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? distributorId = prefs.getString('DistributorId');
+      String? bearerToken = prefs.getString('token');
+
+      if (bearerToken == null) {
+        throw Exception('Bearer token is missing');
+      }
+
+      final response = await http.get(
+        Uri.parse('${AppUrl.UpdateDailyRefillSaleList}/$distributorId/0'),
+        headers: {
+          'Authorization': 'Bearer $bearerToken',
+        },
+      );
+
+      debugPrint("Response body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        var data = json.decode(response.body);
+
+        // Parse the JSON response into a list of StockSubmitToManagerListModel
+        List<StockSubmitToManagerListModel> result =
+        List<StockSubmitToManagerListModel>.from(data
+            .map((item) => StockSubmitToManagerListModel.fromJson(item)));
+        // You can also update the state here if you need to trigger UI changes
+        setState(() {
+          updateRefillSale?.insertDataToDatabase(result, "Pending", "Edit");
+          //Update the UI with the result data if necessary
+        });
+      } else {
+        debugPrint("Failed to fetch data from API: ${response.statusCode}");
+      }
+    } catch (e) {
+      debugPrint("Error during API call: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-
     Map<String, Map<String, int>> cylinderData = {
       '14.2 kg': {
         'Filled': 30,
@@ -235,17 +640,17 @@ class DashboardScreen extends StatelessWidget {
 
     return Scaffold(
       key: _scaffoldKey,
-      drawer: CustomeDrawer(),// Assign the scaffold key
+      drawer: CustomeDrawer(), // Assign the scaffold key
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(120),  // Custom height for the AppBar
+        preferredSize: Size.fromHeight(120), // Custom height for the AppBar
         child: Container(
-          color: Colors.blueAccent,  // Custom background color
+          color: Colors.blueAccent, // Custom background color
           padding: EdgeInsets.only(top: 40, left: 16, right: 16), // Padding for top & sides
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               IconButton(
-                icon: Icon(Icons.menu, color: Colors.white),  // Menu icon for Drawer
+                icon: Icon(Icons.menu, color: Colors.white), // Menu icon for Drawer
                 onPressed: () {
                   // Toggle the drawer open or closed
                   if (_scaffoldKey.currentState!.isDrawerOpen) {
@@ -257,7 +662,7 @@ class DashboardScreen extends StatelessWidget {
               ),
               SizedBox(width: 20),
               Text(
-                'Cylinder Godown',  // Godown Name
+                'Cylinder Godown', // Godown Name
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
@@ -268,79 +673,10 @@ class DashboardScreen extends StatelessWidget {
           ),
         ),
       ),
-
-      // Drawer to provide navigation options
-      // drawer: Drawer(
-      //   child: ListView(
-      //     padding: EdgeInsets.zero,
-      //     children: [
-      //       // Drawer Header
-      //       DrawerHeader(
-      //         decoration: BoxDecoration(
-      //           color: Colors.blueAccent,
-      //         ),
-      //         child: Text(
-      //           'Cylinder Godown',
-      //           style: TextStyle(
-      //             color: Colors.white,
-      //             fontSize: 24,
-      //             fontWeight: FontWeight.bold,
-      //           ),
-      //         ),
-      //       ),
-      //       // Drawer items (navigate to different screens)
-      //       ListTile(
-      //         leading: Icon(Icons.home),
-      //         title: Text('Home'),
-      //         onTap: () {
-      //           Navigator.pop(context); // Close the drawer
-      //         },
-      //       ),
-      //       ListTile(
-      //         leading: Icon(Icons.settings),
-      //         title: Text('Item Receipt'),
-      //         onTap: () {
-      //           Navigator.pushReplacementNamed(context, '/itemWiseReceipt'); // Close the drawer
-      //         },
-      //       ),
-      //       ListTile(
-      //         leading: Icon(Icons.exit_to_app),
-      //         title: Text('Stock Return'),
-      //         onTap: () {
-      //           Navigator.pushReplacementNamed(context, '/stockReturnFromDelBoy');
-      //         },
-      //       ),
-      //       ListTile(
-      //         leading: Icon(Icons.exit_to_app),
-      //         title: Text('Edit Item'),
-      //         onTap: () {
-      //           Navigator.pushReplacementNamed(context, '/editItemReceiptPage');
-      //         },
-      //       ),
-      //       ListTile(
-      //         leading: Icon(Icons.exit_to_app),
-      //         title: Text('Item Return'),
-      //         onTap: () {
-      //           Navigator.pushReplacementNamed(context, '/itemReturnScreen');
-      //         },
-      //       ),
-      //       ListTile(
-      //         leading: Icon(Icons.exit_to_app),
-      //         title: Text('Logout'),
-      //         onTap: () {
-      //           logoutUser(context);
-      //         },
-      //       ),
-      //     ],
-      //   ),
-      // ),
-
-      body: SingleChildScrollView(  // Ensures the content is scrollable
-        child:
-        Padding(
-          padding: const EdgeInsets.only(left: 5.0,right: 5.0,bottom: 5.0,top: 20.0),
-          child:
-          Column(
+      body: SingleChildScrollView( // Ensures the content is scrollable
+        child: Padding(
+          padding: const EdgeInsets.only(left: 5.0, right: 5.0, bottom: 5.0, top: 20.0),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
@@ -350,8 +686,8 @@ class DashboardScreen extends StatelessWidget {
                   children: [
                     // Title for Cylinder Categories Table
                     Text(
-                        'Cylinder size wise count',
-                        style:TextStyle(fontSize: 16,color: Colors.black54)
+                      'Cylinder size wise count',
+                      style: TextStyle(fontSize: 16, color: Colors.black54),
                     ),
                     SizedBox(height: 10),
                     // Table with Borders (including vertical lines)
@@ -397,8 +733,8 @@ class DashboardScreen extends StatelessWidget {
                   children: [
                     // Title for Cylinder Categories Table
                     Text(
-                        'Categories wise count',
-                        style:TextStyle(fontSize: 16,color: Colors.black54)
+                      'Categories wise count',
+                      style: TextStyle(fontSize: 16, color: Colors.black54),
                     ),
                     SizedBox(height: 10),
                     // Table with Borders (including vertical lines)
@@ -443,52 +779,22 @@ class DashboardScreen extends StatelessWidget {
       ),
     );
   }
-  Future<void> logoutUser(BuildContext context) async {
-    ///Save data before logout logic
-    EasyLoading.show(status: 'Loading...');
 
-    try {
-      SharedPref().removeUser();
-
-      // try {
-      //   if (Platform.isAndroid) {
-      //     await FirebaseMessaging.instance
-      //         .deleteToken()
-      //         .whenComplete(() => debugPrint("Android FCM Token Deleted"));
-      //   } else if (Platform.isIOS) {
-      //     await FirebaseMessaging.instance
-      //         .deleteToken()
-      //         .whenComplete(() => debugPrint("iOS FCM Token Deleted"));
-      //   }
-      // } on PlatformException {
-      //   debugPrint('###PlatformExc');
-      // }
-
-      EasyLoading.dismiss();
-
-      Navigator.pushNamedAndRemoveUntil(
-          context, SplashScreen.screenName, (r) => false);
-
-      debugPrint("Logout Successful");
-    } catch (error) {
-      EasyLoading.dismiss();
-      debugPrint("LogoutPrefEcx: $error");
-    }
+  // Example of how to build table cells
+  Widget _buildTableCell(String text, {bool isHeader = false}) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontWeight: isHeader ? FontWeight.bold : FontWeight.normal,
+          fontSize: 14,
+        ),
+      ),
+    );
   }
 }
-// Helper method to build table cells with styling
-Widget _buildTableCell(String text, {bool isHeader = false}) {
-  return Padding(
-    padding: const EdgeInsets.all(8.0),
-    child: Text(
-      text,
-      style: TextStyle(
-        fontWeight: isHeader ? FontWeight.normal : FontWeight.normal,
-        fontSize: 12,
-        color: isHeader ? Colors.black : Colors.black87,
-      ),
-    ),
-  );
-}
+
+
 
 

@@ -71,7 +71,10 @@ class _ItemReturnScreenState extends State<ItemReturnScreen> {
         appBar: CustomAppBar(
           title: 'Item Return', // Title or hint text for the text field
         ),
-        body: ListView.builder(
+        body: isLoading?
+        Center(child: CircularProgressIndicator()):
+        receiptList.isNotEmpty?
+        ListView.builder(
           physics: const BouncingScrollPhysics(),
           shrinkWrap: true,
           itemCount: receiptList.length,
@@ -92,27 +95,36 @@ class _ItemReturnScreenState extends State<ItemReturnScreen> {
             //   ),
             // );
           },
-        ),
+        ):
+            Container(
+              child: Text("No data found..!",style: TextStyle(fontSize: 16),),
+            )
       ),
     );
   }
   Future<void> fetchItemReceipts() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? distributorId = prefs.getString('refNo');
+    String? distributorId = prefs.getString('DistributorId');
     String? godownId = prefs.getString('godownId');
-    String? addedBy = prefs.getString('userId');
+    String? addedBy = prefs.getString('StaffId');
     String? godownKeeperId = prefs.getString('godownKeeperId');
     String? token = prefs.getString('token'); // This is your bearer token
 
     try {
       final response = await http.get(
+        // Uri.parse('${AppUrl.GetItemReceiptList}/$distributorId/$godownId/1'),
         Uri.parse('${AppUrl.GetItemReceiptList}/$distributorId/$godownId/$godownKeeperId'),
         headers: {
           'Authorization': 'Bearer $token',  // Add the Bearer token here
           // Any other headers you need can go here
         },
       );
-
+      // Print the URL and the headers (including the Bearer token)
+      print("Request URL: ${response.request}");
+      print("Request Headers: {'Authorization': 'Bearer $token'}");
+      // Print the raw response for debugging
+      print("API Response Status Code: ${response.statusCode}");
+      print("API Response Body: ${response.body}");
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         setState(() {

@@ -35,29 +35,8 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
   String? _selectedItem;
   List<CylItemListModel> _items = [];
   Map<int, String?> _selectedItems = {};
-  String? userName,
-  userId,
-  refreshToken,
-  displayName,
-  roleId,
-  activeStatus,
-  password,
-  encryptedPassword,
-  roleName,
-  mobileNo,
-  customerId,
-  customerCode,
-  customerName,
-  refNo,
-  lastUpdatedDate,
-  customerAddress,
-  gSTNO,
-  email,
-  source,
-  godownId,
-  godownKeeperId,
-      distributorId;
-
+  String? mobileNo;
+  bool isValid = true;
 
   @override
   void initState() {
@@ -72,8 +51,22 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
 
     // Set the formatted date as the default value in the TextField
     receiptDateController.text = formattedDate;
+    vehicleNoController.addListener(_validateVehicleNo);
     _addNewItem();
     fetchItems();
+  }
+
+  // Function to validate vehicle number using a regex
+  void _validateVehicleNo() {
+    String vehicleNo = vehicleNoController.text;
+
+    // Example of simple vehicle number regex validation (can be customized)
+    RegExp regExp = RegExp(r'^[A-Za-z]{2}\d{2}[A-Za-z]{2}\d{4}$');
+    bool valid = regExp.hasMatch(vehicleNo);
+
+    setState(() {
+      isValid = valid;
+    });
   }
 
   void _addNewItem() {
@@ -88,7 +81,7 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
   }
 
   void _removeLastItem() {
-    if (items.length>1) {
+    if (items.length > 1) {
       setState(() {
         items.removeLast();
       });
@@ -128,13 +121,17 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
   Future<void> _submitData() async {
     // Fetch shared preference values
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? distributorId = prefs.getString('refNo');
+    String? distributorId = prefs.getString('DistributorId');
     String? godownId = prefs.getString('godownId');
-    String? addedBy = prefs.getString('userId');
+    String? addedBy = prefs.getString('StaffId');
     String? godownKeeperId = prefs.getString('godownKeeperId');
     String? token = prefs.getString('token');
     // Validate InvoiceQty: Check if it is null, empty, or zero
     // Validate InvoiceQty and Selected Item: Check if they are valid
+    if (vehicleNoController.text.isNotEmpty) {
+          if (isValid) {
+            print('Valid vehicle number');
+
     for (var i = 0; i < items.length; i++) {
       String? invoiceQty = items[i]['invoice']?.text ?? '';
       String? selectedItemName = _selectedItems[i];
@@ -142,7 +139,8 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
       // Check if the selected item is valid (not empty)
       if (selectedItemName == null || selectedItemName.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Please select a valid item for all entries!')),
+          SnackBar(
+              content: Text('Please select a valid item for all entries!')),
         );
         return; // Stop the submission process
       }
@@ -160,12 +158,15 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
       String? selectedItemName = _selectedItems[items.indexOf(item)];
 
       CylItemListModel? selectedItem = _items.firstWhere(
-            (model) => model.itemName == selectedItemName,  // Comparing by itemName
-        orElse: () => CylItemListModel(itemId: 0, itemName: ''), // Default empty item
+        (model) => model.itemName == selectedItemName,
+        // Comparing by itemName
+        orElse: () =>
+            CylItemListModel(itemId: 0, itemName: ''), // Default empty item
       );
 
       return {
-        'ItemId': selectedItem.itemId ?? '', // Use the selected itemId, or empty if not selected
+        'ItemId': selectedItem.itemId ?? '',
+        // Use the selected itemId, or empty if not selected
         'FilledQty': item['receivedQty']?.text ?? '',
         'EMRQty': item['emr']?.text ?? '',
         'InvoiceQty': item['invoice']?.text ?? '',
@@ -205,11 +206,26 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
         // If the server returns a 200 OK response, print the response body.
         debugPrint('Response: ${response.body}');
         int responseValue = int.tryParse(response.body) ?? 0;
-        if(responseValue >0){
+        if (responseValue > 0) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Inserted successfully!')),
+            SnackBar(content: Text('Added successfully!')),
           );
-        }else{
+          // Clear the fields after successful submission
+          setState(() {
+            // Reset the controllers for text fields
+            vehicleNoController.clear();
+
+            // Reset the items list and selected items
+            items.forEach((item) {
+              item['receivedQty']?.clear();
+              item['emr']?.clear();
+              item['invoice']?.clear();
+            });
+
+            // Clear the selected items
+            _selectedItems.clear();
+          });
+        } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Fail to insert record!')),
           );
@@ -218,11 +234,11 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
       } else {
         refreshTokens();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Fail to insert record! ${response.statusCode}')),
+          SnackBar(
+              content: Text('Fail to insert record! ${response.statusCode}')),
         );
         // If the server does not return a 200 OK response, throw an exception.
         throw Exception('Failed to load data: ${response.statusCode}');
-
       }
     } catch (e) {
       // Handle any errors (e.g., network issues, timeouts, etc.)
@@ -232,26 +248,39 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
       );
       // You can also show an error dialog or message to the user here.
     }
+          } else {
+            print('Invalid vehicle number');
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Invalid vehicle number..!')),
+            );
+          }
+    }else{
+      print('eInvalid vehicle number');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Invalid vehicle number..!')),
+      );
+    }
   }
+
   // Fetch data from API
   Future<void> fetchItems() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? distributorId = prefs.getString('refNo');
-    String? bearerToken = prefs.getString('token'); // Assuming the token is stored here
-
+    String? distributorId = prefs.getString('DistributorId');
+    String? bearerToken =
+        prefs.getString('token'); // Assuming the token is stored here
 
     if (bearerToken == null) {
       throw Exception('Bearer token is missing');
     }
 
     final response = await http.get(
-      Uri.parse('${AppUrl.GetItemMasterList}/$distributorId/1'),
+      Uri.parse('${AppUrl.GetItemMasterList}/$distributorId/0/C'),
       headers: {
         'Authorization': 'Bearer $bearerToken', // Add Bearer token here
       },
     );
-      debugPrint("item"+'${AppUrl.GetItemMasterList}/$distributorId/1');
-    debugPrint("item"+response.body);
+    debugPrint("item" + '${AppUrl.GetItemMasterList}/$distributorId/0/C');
+    debugPrint("item" + response.body);
     if (response.statusCode == 200) {
       // Parse the response
       List<dynamic> data = json.decode(response.body);
@@ -267,6 +296,7 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
   @override
   void dispose() {
     receiptDateController.dispose();
+    vehicleNoController.removeListener(_validateVehicleNo);
     vehicleNoController.dispose();
     // Dispose controllers to avoid memory leaks
     for (var item in items) {
@@ -274,7 +304,6 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
     }
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -308,6 +337,9 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                     decoration: InputDecoration(
                       labelText: 'Vehicle No.',
                       border: OutlineInputBorder(),
+                      errorText: isValid
+                          ? null
+                          : 'Please enter a valid vehicle number.',
                     ),
                   ),
                 ),
@@ -370,7 +402,7 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                             setState(() {
                               // Store the selected value in the map based on the current index
                               _selectedItems[index] = value;
-                              debugPrint('selecyt'+_selectedItems.toString());
+                              debugPrint('selecyt' + _selectedItems.toString());
 
                               // Track selection by index
                             });
@@ -387,7 +419,8 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                                 controller: items[index]['receivedQty'],
                                 keyboardType: TextInputType.number,
                                 inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.digitsOnly, // Allow only digits
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  // Allow only digits
                                 ],
                                 decoration: InputDecoration(
                                   labelText: 'Filled',
@@ -405,7 +438,8 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                                 controller: items[index]['emr'],
                                 keyboardType: TextInputType.number,
                                 inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.digitsOnly, // Allow only digits
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  // Allow only digits
                                 ],
                                 decoration: InputDecoration(
                                   labelText: 'EMR',
@@ -423,7 +457,8 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                                 controller: items[index]['invoice'],
                                 keyboardType: TextInputType.number,
                                 inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.digitsOnly, // Allow only digits
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  // Allow only digits
                                 ],
                                 decoration: InputDecoration(
                                   // labelText: 'Invoice',
@@ -442,17 +477,33 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
             ),
             // Submit Button
             Container(
-              margin: const EdgeInsets.symmetric(horizontal: 10), // Add 10px margin on left and right
+              margin: const EdgeInsets.symmetric(horizontal: 10),
+              // Add 10px margin on left and right
               child: ElevatedButton(
-                onPressed: _submitData,
+                onPressed:_submitData,
+                //     () {
+                //   if (vehicleNoController.text.isNotEmpty) {
+                //     if (isValid) {
+                //       _submitData;
+                //       print('Valid vehicle number');
+                //     } else {
+                //       print('Invalid vehicle number');
+                //     }
+                //   }else{
+                //     print('Invalid vehicle number');
+                //   }
+                // },
                 child: const Text(
                   'Submit',
-                  style: TextStyle(color: Colors.white), // Set text color directly if needed
+                  style: TextStyle(
+                      color: Colors.white), // Set text color directly if needed
                 ),
                 style: ElevatedButton.styleFrom(
                   minimumSize: Size(double.infinity, 50),
-                  backgroundColor: Colors.blue,// Button expands to fill available width// Text color of the button
-                  shape: RoundedRectangleBorder( // Optional: Set rounded corners
+                  backgroundColor: Colors.blue,
+                  // Button expands to fill available width// Text color of the button
+                  shape: RoundedRectangleBorder(
+                    // Optional: Set rounded corners
                     borderRadius: BorderRadius.circular(50),
                   ),
                 ),
@@ -463,82 +514,41 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
       ),
     );
   }
+
 // Function to update the sum
   void _updateSum(int index) {
     // Get the values from the receivedQty and emr controllers
-    double receivedQty = double.tryParse(items[index]['receivedQty']?.text ?? '') ?? 0;
+    double receivedQty =
+        double.tryParse(items[index]['receivedQty']?.text ?? '') ?? 0;
     double emr = double.tryParse(items[index]['emr']?.text ?? '') ?? 0;
-    if(receivedQty !="" && receivedQty != null){
-      if(emr !="" && emr != null){
+    if (receivedQty != "" && receivedQty != null) {
+      if (emr != "" && emr != null) {
         double totalSum = receivedQty + emr;
         items[index]['invoice']?.text = totalSum.toInt().toString();
-      }else{
+      } else {
         double totalSum = receivedQty + 0;
         items[index]['invoice']?.text = totalSum.toInt().toString();
       }
-    }else{
-      if(emr !="" && emr != null){
+    } else {
+      if (emr != "" && emr != null) {
         double totalSum = 0 + emr;
         items[index]['invoice']?.text = totalSum.toInt().toString();
-      }else{
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Enter at least one quantity!')),
         );
       }
     }
-
   }
 
   Future<void> refreshTokens() async {
     LoginProvider auth = Provider.of<LoginProvider>(context, listen: false);
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
-      userName = preferences.getString('userName').toString();
-      userId = preferences.getString('userId').toString();
-      refreshToken = preferences.getString('refresh_token').toString();
-      displayName = preferences.getString('displayName').toString();
-      roleId = preferences.getString('roleId').toString();
-      activeStatus = preferences.getString('activeStatus').toString();
-      password = preferences.getString('password').toString();
-      encryptedPassword = preferences.getString('encryptPass').toString();
-      roleName = preferences.getString('roleName').toString();
-      mobileNo = preferences.getString('mobileNo').toString();
-      customerId = preferences.getString('customerId').toString();
-      customerCode = preferences.getString('customerCode').toString();
-      customerName = preferences.getString('customerName').toString();
-      refNo = preferences.getString('refNo').toString();
-      lastUpdatedDate = preferences.getString('lastUpdatedDate').toString();
-      customerAddress = preferences.getString('customerAddress').toString();
-      gSTNO = preferences.getString('gstno').toString();
-      email = preferences.getString('email').toString();
-      source = preferences.getString('source').toString();
-      godownId = preferences.getString('godownId').toString();
-      godownKeeperId = preferences.getString('godownKeeperId').toString();
-      distributorId = preferences.getString('distributorId').toString();
-      final Future<Map<String, dynamic>> respose = auth.refreshToken(
-          userName!,
-          userId!,
-          refreshToken!,
-           displayName,
-           roleId,
-           activeStatus,
-           password,
-           encryptedPassword,
-           roleName,
-           mobileNo,
-           customerId,
-           customerCode,
-           customerName,
-           refNo,
-           lastUpdatedDate,
-           customerAddress,
-           gSTNO,
-           email,
-           source,
-           godownId,
-           godownKeeperId,
-          distributorId,
-          context);
+      mobileNo = preferences.getString('MobileNo').toString();
+
+      final Future<Map<String, dynamic>> respose =
+          auth.refreshToken(mobileNo!, context);
 
       try {
         respose.then((response) {
@@ -556,7 +566,6 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
         }).catchError((error) {
           EasyLoading.dismiss();
           debugPrint('RefreshTokenError1: $error');
-
         });
       } on HttpException catch (error) {
         EasyLoading.dismiss();
@@ -564,12 +573,10 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
       } catch (error) {
         EasyLoading.dismiss();
         debugPrint('RefreshTokenError2: $error');
-
       }
     } catch (error) {
       EasyLoading.dismiss();
       debugPrint('RefreshTokenError3: $error');
-
     }
   }
 
@@ -583,49 +590,50 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
         String btnLabel = "Ok";
         return Platform.isIOS
             ? WillPopScope(
-          onWillPop: () async {
-            SystemNavigator.pop();
-            return true;
-          },
-          child: CupertinoAlertDialog(
-            title: Text(
-              title,
-              style: Styling.bodyTitle,
-            ),
-            content: Text(
-              message,
-              style: Styling.bodyTitle,
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: Text(
-                  btnLabel,
-                  style: Styling.blueClrText,
+                onWillPop: () async {
+                  SystemNavigator.pop();
+                  return true;
+                },
+                child: CupertinoAlertDialog(
+                  title: Text(
+                    title,
+                    style: Styling.bodyTitle,
+                  ),
+                  content: Text(
+                    message,
+                    style: Styling.bodyTitle,
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text(
+                        btnLabel,
+                        style: Styling.blueClrText,
+                      ),
+                      onPressed: () {},
+                    ),
+                  ],
                 ),
-                onPressed: () {},
-              ),
-            ],
-          ),
-        )
+              )
             : WillPopScope(
-          child: AlertDialog(
-            title: Text(title),
-            content: Text(message),
-            actions: <Widget>[
-              TextButton(
-                child: Text(btnLabel),
-                onPressed: () => logoutUser(context),
-              ),
-            ],
-          ),
-          onWillPop: () async {
-            SystemNavigator.pop();
-            return true;
-          },
-        );
+                child: AlertDialog(
+                  title: Text(title),
+                  content: Text(message),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text(btnLabel),
+                      onPressed: () => logoutUser(context),
+                    ),
+                  ],
+                ),
+                onWillPop: () async {
+                  SystemNavigator.pop();
+                  return true;
+                },
+              );
       },
     );
   }
+
   Future<void> logoutUser(BuildContext context) async {
     ///Save data before logout logic
     EasyLoading.show(status: 'Loading...');
@@ -658,4 +666,6 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
       debugPrint("LogoutPrefEcx: $error");
     }
   }
+
+
 }

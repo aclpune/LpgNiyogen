@@ -26,7 +26,7 @@ class _EditItemReceiptPageState extends State<EditItemReceiptPage> {
 
   Future<void> fetchItemReceipts() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? distributorId = prefs.getString('refNo');
+    String? distributorId = prefs.getString('DistributorId');
     String? godownId = prefs.getString('godownId');
     String? addedBy = prefs.getString('userId');
     String? godownKeeperId = prefs.getString('godownKeeperId');
@@ -34,13 +34,19 @@ class _EditItemReceiptPageState extends State<EditItemReceiptPage> {
 
     try {
       final response = await http.get(
+        // Uri.parse('${AppUrl.GetItemReceiptList}/$distributorId/$godownId/$godownKeeperId'),
         Uri.parse('${AppUrl.GetItemReceiptList}/$distributorId/$godownId/$godownKeeperId'),
         headers: {
           'Authorization': 'Bearer $token',  // Add the Bearer token here
           // Any other headers you need can go here
         },
       );
-
+      // Print the URL and the headers (including the Bearer token)
+      print("Request URL: ${response.request}");
+      print("Request Headers: {'Authorization': 'Bearer $token'}");
+      // Print the raw response for debugging
+      print("API Response Status Code: ${response.statusCode}");
+      print("API Response Body: ${response.body}");
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
         setState(() {
@@ -49,6 +55,7 @@ class _EditItemReceiptPageState extends State<EditItemReceiptPage> {
         });
       } else {
         // Handle non-200 responses
+        print("Failed Response: ${response.statusCode}");
         setState(() {
           isLoading = false;
         });
@@ -57,6 +64,7 @@ class _EditItemReceiptPageState extends State<EditItemReceiptPage> {
         );
       }
     } catch (e) {
+      print("Error occurred: $e");
       setState(() {
         isLoading = false;
       });

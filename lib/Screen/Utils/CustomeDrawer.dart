@@ -86,18 +86,25 @@ class CustomeDrawer extends StatelessWidget {
                   Navigator.pushReplacementNamed(context, '/itemReturnScreen');
                 },
               ),
-              ListTile(
+              /*ListTile(
                 leading: Icon(Icons.edit),
                 title: Text('Edit Item'),
                 onTap: () {
                   Navigator.pushReplacementNamed(context, '/editItemReceiptPage');
                 },
-              ),
+              ),*/
               ListTile(
                 leading: Icon(Icons.update_outlined),
                 title: Text('Update Sale'),
                 onTap: () {
                   Navigator.pushReplacementNamed(context, '/stockReturnFromDelBoy');
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.update_outlined),
+                title: Text('Del Update Sale'),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/stockSubmitToManager');
                 },
               ),
               ListTile(

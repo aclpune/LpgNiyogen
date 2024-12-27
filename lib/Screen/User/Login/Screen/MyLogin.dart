@@ -22,6 +22,7 @@ class MyLogin extends StatefulWidget {
 }
 
 class _MyLoginState extends State<MyLogin> {
+  final _mobileNoController = TextEditingController();
   final _distributorCodeController = TextEditingController();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -48,15 +49,9 @@ class _MyLoginState extends State<MyLogin> {
     String? storedUsername = storedUserData['username'];
     String? storedDistributorCode = storedUserData['loginId'];
 
-    // If stored username or login ID exists, pre-fill the fields
-    if (storedUsername != null) {
-      setState(() {
-        _usernameController.text = storedUsername;
-      });
-    }
     if (storedDistributorCode != null) {
       setState(() {
-        _distributorCodeController.text = storedDistributorCode;
+        _mobileNoController.text = storedDistributorCode;
       });
     }
   }
@@ -65,7 +60,8 @@ class _MyLoginState extends State<MyLogin> {
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
-              child: Container(
+              child:
+              Container(
                 margin: EdgeInsets.only(left: 40,right: 40),
                 child: Column(
                   children: [
@@ -85,64 +81,19 @@ class _MyLoginState extends State<MyLogin> {
                     ),
                     SizedBox(height: 40),
                     TextField(
-                      controller: _distributorCodeController,
+                      controller: _mobileNoController,
                       keyboardType: TextInputType.number, // Set keyboard type to numeric
                       inputFormatters: <TextInputFormatter>[
                         FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(10),// Allow only digits
+                        LengthLimitingTextInputFormatter(12),// Allow only digits
                       ],
                       decoration: InputDecoration(
-                        labelText: 'Distributor Code',
+                        labelText: 'Mobile Number',
                         labelStyle: TextStyle(fontSize: 12),
                         prefixIcon: Icon(Icons.account_circle_sharp),
                         fillColor: Colors.white,
                         filled: true,
                         contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                        border: OutlineInputBorder(
-                        ),
-                      ),
-                      style: TextStyle(
-                        fontSize: 14.0, // Adjust the text size here
-                      ),
-                    ),
-                    SizedBox(height: 20.0),
-                    TextField(
-                      controller: _usernameController,
-                      decoration: InputDecoration(
-                        labelText: 'User Name',
-                        labelStyle: TextStyle(fontSize: 12),
-                        prefixIcon: Icon(Icons.account_circle_sharp),
-                        fillColor: Colors.white,
-                        filled: true,
-                        contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                        border: OutlineInputBorder(
-                        ),
-                      ),
-                      style: TextStyle(
-                        fontSize: 14.0, // Adjust the text size here
-                      ),
-                    ),
-                    SizedBox(height: 20.0),
-                    TextFormField(
-                      controller: _passwordController,
-                      obscureText: _isHidden,
-                      decoration: InputDecoration(
-                        labelText: 'Password',
-                        labelStyle: TextStyle(fontSize: 12),
-                        fillColor: Colors.white,
-                        prefixIcon: Icon(Icons.lock),
-                        contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                        suffixIcon: IconButton(
-                          onPressed: () {
-                            setState(() {
-                              _isHidden = !_isHidden;
-                            });
-                          },
-                          icon: _isHidden
-                              ? Icon(Icons.visibility)
-                              : Icon(Icons.visibility_off),
-                        ),
-                        filled: true,
                         border: OutlineInputBorder(
                         ),
                       ),
@@ -165,12 +116,9 @@ class _MyLoginState extends State<MyLogin> {
                         ),
                         onPressed: () {
                                 final loginProvider = Provider.of<LoginProvider>(context, listen: false);
-                                final encryptedPassword = encryptPassword(_passwordController.text,context);
+                                // final encryptedPassword = encryptPassword(_passwordController.text,context);
                                 loginProvider.login(
-                                  _distributorCodeController.text,
-                                  _usernameController.text,
-                                  encryptedPassword,
-                                  _passwordController.text,
+                                  _mobileNoController.text,
                                   context,
                                 );
                         },
@@ -178,24 +126,6 @@ class _MyLoginState extends State<MyLogin> {
                           child: Text('LOG IN', style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 16)),
                         ),
                       ),
-                    ),
-
-
-                    SizedBox(height: 5.0),
-                    // Forgot password link
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/forgotPassword');
-                          },
-                          child: Text(
-                            'Forgot password?',
-                            style: TextStyle(color: Colors.blueAccent,fontSize: 14,fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ],
                     ),
                     // Loading Indicator
                     Consumer<LoginProvider>(

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:lpgsalesandinventory/Screen/Utils/app_url.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../DashboardScreen.dart';
 import '../EditItem/Model/GetItemReceiptListModel.dart';
 import 'package:http/http.dart' as http;
 
@@ -25,6 +26,7 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
   Widget build(BuildContext context) {
     var value = widget._listModel;
     return
+    value != null && value != ""?
       Card(
       child: SingleChildScrollView(  // Make the Column scrollable
         child: Column(
@@ -175,7 +177,7 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("View More"),
+                Text(isListViewVisible ? "View Less" :"View More"),
                 IconButton(
                   icon: Icon(
                     isListViewVisible ? Icons.keyboard_arrow_up_sharp : Icons.keyboard_arrow_down_sharp,
@@ -193,7 +195,12 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
         ),
 
       ),
-    );
+    ):
+        Container(
+          child:  Text("No data found"),
+        );
+
+
   }
 
 
@@ -386,8 +393,8 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
   }
   Future<void> sendItemDetailsToApi(List<Map<String, dynamic>> itemDetails, num? receiptId) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    String distributorId = preferences.getString('distributorId') ?? '';
-    String? addedBy = preferences.getString('userId');
+    String distributorId = preferences.getString('DistributorId') ?? '';
+    String? addedBy = preferences.getString('StaffId');
     String? token = preferences.getString('token');
 
     // Construct the request body
@@ -411,6 +418,11 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
     print("Request requestBody: ${requestBody}");
     if (response.statusCode == 200) {
       // Handle successful response
+      // Navigator.pushReplacementNamed(context, DashboardScreen.screenName);
+      // Navigator.pushReplacementNamed(context, '/godownDashboard');
+      Future.delayed(Duration(milliseconds: 300), () {
+        Navigator.pushReplacementNamed(context, DashboardScreen.screenName);
+      });
       print("Request successful: ${response.body}");
     } else {
       // Handle failure response

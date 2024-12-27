@@ -4,118 +4,110 @@ import 'constants.dart';
 
 class SharedPref {
   // Save user information to SharedPreferences
-  Future<bool> saveUser(UserInfo user) async {
+  Future<bool> saveUser(AuthToken user) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return await prefs.setString('displayName', user.displayName.toString()) &&
-        await prefs.setString('mobileNo', user.mobileNo.toString()) &&
-        await prefs.setString('customerId', user.customerId.toString()) &&
-        await prefs.setString('customerCode', user.customerCode.toString()) &&
-        await prefs.setString('customerName', user.customerName.toString()) &&
-        await prefs.setString('refNo', user.refNo.toString()) &&
-        await prefs.setString('userName', user.userName.toString()) &&
-        await prefs.setString('userId', user.userId.toString()) &&
+    return await prefs.setString('StaffId', user.staffId.toString()) &&
+        await prefs.setString('DistributorId', user.distributorId.toString()) &&
+        await prefs.setString('StaffName', user.staffName.toString()) &&
+        await prefs.setString('MobileNo', user.mobileNo.toString()) &&
         await prefs.setString('roleId', user.roleId.toString()) &&
-        await prefs.setString('roleName', user.roleName.toString()) &&
-        await prefs.setString('activeStatus', user.activeStatus.toString()) &&
-        await prefs.setString('lastUpdatedDate', user.lastUpdatedDate.toString()) &&
-        await prefs.setString('customerAddress', user.customerAddress.toString()) &&
-        await prefs.setString('gstno', user.gstno.toString()) &&
-        await prefs.setString('email', user.email.toString()) &&
-        await prefs.setString('source', user.source.toString()) &&
         await prefs.setString('godownId', user.godownId.toString()) &&
-        await prefs.setString('godownKeeperId', user.godownKeeperId.toString()) &&
-        await prefs.setString('distributorId', user.distributorId.toString());
+        await prefs.setString(
+            'godownKeeperId', user.godownKeeperId.toString()) &&
+        await prefs.setString('OTP', user.otp.toString()) &&
+        await prefs.setString(
+            'DistributorCode', user.distributorCode.toString()) &&
+        await prefs.setString('StaffStatus', user.staffStatus.toString()) &&
+        await prefs.setString('Status', user.status.toString()) &&
+        await prefs.setString('token', user.token.toString()) &&
+        await prefs.setString('expiration', user.expiration.toString()) &&
+        await prefs.setString('refresh_token', user.refreshToken.toString());
   }
 
   // Get user information from SharedPreferences
-  Future<UserInfo> getUser() async {
+  Future<AuthToken> getUser() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     // Read values from SharedPreferences with null checks and default values
-    String displayName = prefs.getString("displayName") ?? '';
-    String mobileNo = prefs.getString("mobileNo") ?? '';
-    String customerId = prefs.getString("customerId") ?? '';
-    String customerCode = prefs.getString("customerCode") ?? '';
-    String customerName = prefs.getString("customerName") ?? '';
-    String refNo = prefs.getString("refNo") ?? '';
-    String userName = prefs.getString("userName") ?? '';
-    int userId = int.tryParse(prefs.getString("userId") ?? '0') ?? 0; // Ensure it's an int
-    int roleId = int.tryParse(prefs.getString("roleId") ?? '0') ?? 0; // Ensure it's an int
-    String roleName = prefs.getString("roleName") ?? '';
-    String activeStatus = prefs.getString("activeStatus") ?? '';
-    String lastUpdatedDate = prefs.getString("lastUpdatedDate") ?? '';
-    String customerAddress = prefs.getString("customerAddress") ?? '';
-    String gstno = prefs.getString("gstno") ?? '';
-    String email = prefs.getString("email") ?? '';
-    String source = prefs.getString("source") ?? '';
+    int StaffId = (prefs.getString("StaffId") ?? '') as int;
+    int DistributorId = (prefs.getString("DistributorId") ?? '') as int;
+    String StaffName = prefs.getString("StaffName") ?? '';
+    String MobileNo = prefs.getString("MobileNo") ?? '';
+    int roleId = int.tryParse(prefs.getString("roleId") ?? '0') ??
+        0; // Ensure it's an int
     int godownId = (prefs.getString("godownId") ?? '') as int;
     int godownKeeperId = (prefs.getString("godownKeeperId") ?? '') as int;
-    int distributorId = (prefs.getString("distributorId") ?? '') as int;
+    String OTP = prefs.getString("OTP") ?? '';
+    String DistributorCode = prefs.getString("DistributorCode") ?? '';
+    int StaffStatus = (prefs.getString("StaffStatus") ?? '') as int;
+    String Status = prefs.getString("Status") ?? '';
+    String Token = prefs.getString("Token") ?? '';
+    String expiration = prefs.getString("expiration") ?? '';
+    String refresh_token = prefs.getString("refresh_token") ?? '';
 
-    return UserInfo(
-      displayName: displayName,
-      mobileNo: mobileNo,
-      customerId: customerId,
-      customerCode: customerCode,
-      customerName: customerName,
-      refNo: refNo,
-      userName: userName,
-      userId: userId,
+    return AuthToken(
+      staffId: StaffId,
+      distributorId: DistributorId,
+      staffName: StaffName,
+      mobileNo: MobileNo,
       roleId: roleId,
-      roleName: roleName,
-      activeStatus: activeStatus,
-      lastUpdatedDate: lastUpdatedDate,
-      customerAddress: customerAddress,
-      gstno: gstno,
-      email: email,
-      source: source,
-      godownId:godownId,
-      godownKeeperId:godownKeeperId,
-      distributorId:distributorId,
+      godownId: godownId,
+      godownKeeperId: godownKeeperId,
+      otp: OTP,
+      distributorCode: DistributorCode,
+      staffStatus: StaffStatus,
+      status: Status,
+      token: Token,
+      expiration: expiration,
+      refreshToken: refresh_token,
     );
   }
 
   // Remove user data from SharedPreferences
   void removeUser() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove('displayName');
-    await prefs.remove('mobileNo');
-    await prefs.remove('customerId');
-    await prefs.remove('customerCode');
-    await prefs.remove('customerName');
-    await prefs.remove('refNo');
-    await prefs.remove('userId');
+    await prefs.remove('StaffId');
+    await prefs.remove('DistributorId');
+    await prefs.remove('StaffName');
+    await prefs.remove('MobileNo');
     await prefs.remove('roleId');
-    await prefs.remove('roleName');
-    await prefs.remove('activeStatus');
-    await prefs.remove('lastUpdatedDate');
-    await prefs.remove('customerAddress');
-    await prefs.remove('gstno');
-    await prefs.remove('email');
-    await prefs.remove('source');
     await prefs.remove('godownId');
     await prefs.remove('godownKeeperId');
-    await prefs.remove('distributorId');
-    await prefs.remove('encryptPass');
-    await prefs.remove('password');
+    await prefs.remove('OTP');
+    await prefs.remove('DistributorCode');
+    await prefs.remove('StaffStatus');
+    await prefs.remove('Status');
+    await prefs.remove('token');
+    await prefs.remove('expiration');
+    await prefs.remove('refresh_token');
+    await prefs.remove('userActive');
+
 
     // Clear all prefs data
     await prefs.clear();
   }
 
   // Save authentication token to SharedPreferences
-  Future<bool> setAuthToken(AuthToken authToken) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return await prefs.setString('token', authToken.token.toString()) &&
-        await prefs.setString('expiration', authToken.expiration.toString()) &&
-        await prefs.setString('refresh_token', authToken.refreshToken.toString());
-  }
+  // Future<bool> setAuthToken(AuthToken authToken) async {
+  //   final SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   return await prefs.setString('token', authToken.token.toString()) &&
+  //       await prefs.setString('expiration', authToken.expiration.toString()) &&
+  //       await prefs.setString(
+  //           'refresh_token', authToken.refreshToken.toString());
+  // }
 
   // Set Firebase Cloud Messaging (FCM) token
   void setFCMToken(String? fcmToken) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(Constants.fcmToken, fcmToken.toString());
   }
-
+   Future<Future<bool>> setUserName(String value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.setString('userActive', value);
+  }
+   Future<String> getUserName() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('userActive') ?? '';
+  }
   // Get authentication token from SharedPreferences
   Future<AuthToken> getAuthToken() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -131,8 +123,6 @@ class SharedPref {
     );
   }
 }
-
-
 
 // import 'package:shared_preferences/shared_preferences.dart';
 // import '../User/Login/model/LoginResponseModel.dart';

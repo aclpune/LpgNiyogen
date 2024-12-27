@@ -21,6 +21,8 @@ class ForgetPassword extends StatefulWidget {
 class _ForgetPasswordState extends State<ForgetPassword> {
   String? _email;
   String? _distributorCode,_userName;
+  final _distributorCodeController = TextEditingController();
+  final _usernameController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey();
   @override
   Widget build(BuildContext context) {
@@ -77,6 +79,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                       child: Column(
                         children: [
                           TextFormField(
+                            controller: _distributorCodeController,
                             // obscureText: true,
                             autofocus: false,
                             keyboardType: TextInputType.number, // Set keyboard type to numeric
@@ -84,7 +87,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                               FilteringTextInputFormatter.digitsOnly,
                               LengthLimitingTextInputFormatter(10),// Allow only digits
                             ],
-                            onSaved: (value) => _distributorCode = value,
+                            // onSaved: (value) => _distributorCode = value,
                             decoration: InputDecoration(
                               labelText: 'Distributor Code',
                               labelStyle: TextStyle(fontSize: 12),
@@ -103,7 +106,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                           ),
                           SizedBox(height: 15.0),
                           TextFormField(
-                            // obscureText: true,
+                            controller: _usernameController,
                             autofocus: false,
                             //validator: validateEmail,
                             onSaved: (value) => _userName = value,
@@ -191,15 +194,15 @@ class _ForgetPasswordState extends State<ForgetPassword> {
     Provider.of<ForgotPasswordProvider>(context, listen: false);
     final form = _formKey.currentState;
     // Check if distributorCode or userName is null
-    if (_distributorCode == null || _distributorCode!.isEmpty && _userName == null || _userName!.isEmpty) {
+    if (_distributorCodeController.text == null || _distributorCodeController.text!.isEmpty && _usernameController.text == null || _usernameController.text!.isEmpty) {
       showFlushBar(context, Constants.failed, "All filled is required.");
-      debugPrint("_distributorCode $_distributorCode _userName $_userName");
+      debugPrint("_distributorCode ${_distributorCodeController.text} _userName ${_usernameController.text}");
     }else {
       if (form!.validate()) {
         form.save();
 
         final Future<Map<String, dynamic>> respose =
-        provider.forgotPassword(_distributorCode!, _userName!);
+        provider.forgotPassword(_distributorCodeController.text!, _usernameController.text!);
         EasyLoading.show(status: 'Loading...');
 
         try {

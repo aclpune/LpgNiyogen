@@ -17,7 +17,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   String version = '';
 
-  String? roleId, isUserActive;
+  String? roleId, isUserActive,userActivet;
 
   @override
   void initState() {
@@ -76,31 +76,25 @@ class _SplashScreenState extends State<SplashScreen> {
   Future<void> navigateToDashboard() async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
-      String? userId = preferences.getString('userId');
       roleId = preferences.getString('roleId');
-      isUserActive = preferences.getString('IsActive').toString();
-      debugPrint(userId);
+      userActivet = preferences.getString('userActive');
       debugPrint(roleId);
+      debugPrint(userActivet);
 
-      //if (isUserActive == "Y") {
-      if (userId != null) {
-        //if (isUserActive == "Y") {
-        if (roleId == Constants.roleIdGodown) {
+        if (userActivet == "Y") {
+        if (roleId != null) {
           Navigator.pushReplacementNamed(context, DashboardScreen.screenName,
               arguments: "checkVersion");
         } else if (roleId == Constants.roleIdOwner) {
           if (mounted) {
-
           }
+        }else{
+          Navigator.pushReplacementNamed(context, MyLogin.screenName);
         }
       } else {
-        debugPrint("UserId- null");
+        debugPrint("Deactivated User");
         Navigator.pushReplacementNamed(context, MyLogin.screenName);
       }
-      /*} else {
-        debugPrint("Deactivated User");
-        Navigator.pushReplacementNamed(context, Login.screenName);
-      }*/
     } catch (error) {
       rethrow;
     }

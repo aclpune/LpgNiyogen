@@ -16,15 +16,13 @@ class AuthService {
     return IOClient(ioClient);
   }
 
-  Future<LoginResponseModel> login(String distributorCode,String username, String password) async {
+  Future<LoginResponseModel> login(String mobileNo) async {
     final headers = {
       'Content-Type': 'application/json',
     };
 
     final body = jsonEncode({
-      "DistCode": distributorCode, // Replace with dynamic values if needed
-      "Username": username,
-      "Password": password,
+      "MobileNo": mobileNo, // Replace with dynamic values if needed
       "GrantType": "password",
     });
 
@@ -42,7 +40,8 @@ class AuthService {
         return LoginResponseModel.fromJson(jsonDecode(response.body));
 
       } else {
-        throw Exception("Failed to login: ${response.statusCode}");
+        throw Exception("Invalid User..!");
+        // throw Exception("Failed to login: ${response.statusCode}");
       }
     } catch (e) {
       throw Exception("Error: $e");

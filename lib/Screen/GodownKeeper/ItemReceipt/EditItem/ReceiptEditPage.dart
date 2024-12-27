@@ -131,9 +131,9 @@ class ReceiptEditPage extends StatelessWidget {
   Future<void> _submitData(Map<String, dynamic> updatedReceipt, BuildContext context) async {
     // Fetch shared preference values
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? distributorId = prefs.getString('refNo');
+    String? distributorId = prefs.getString('DistributorId');
     String? godownId = prefs.getString('godownId');
-    String? addedBy = prefs.getString('userId');
+    String? addedBy = prefs.getString('StaffId');
     String? godownKeeperId = prefs.getString('godownKeeperId');
     String? token = prefs.getString('token');
 
@@ -206,5 +206,6 @@ class ReceiptEditPage extends StatelessWidget {
       // );
     }
   }
+
 
 }

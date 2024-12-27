@@ -44,7 +44,6 @@ class ForgotPasswordProvider extends ChangeNotifier {
     } catch (error) {
       debugPrint('ForgotPassExc: ' + error.toString());
     }
-
     return result;
   }
 }

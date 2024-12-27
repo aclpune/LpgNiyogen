@@ -6,12 +6,15 @@ import 'package:provider/provider.dart';
 
 import 'Screen/GodownKeeper/DashboardScreen.dart';
 import 'Screen/GodownKeeper/DelBoyStockReturn/StockReturnFromDelBoy.dart';
+import 'Screen/GodownKeeper/DelBoyStockSubmitToManager/StockSubmitToManager.dart';
 import 'Screen/GodownKeeper/ItemReceipt/AddItem/ItemReceiptScreen.dart';
 import 'Screen/GodownKeeper/ItemReceipt/EditItem/ItemEditScreen.dart';
 import 'Screen/GodownKeeper/ItemReceipt/ItemReturn/ItenRetun.dart';
+import 'Screen/User/ChangePassword.dart';
 import 'Screen/User/ForgetPassword/Screen/ForgetPassword.dart';
 import 'Screen/User/ForgetPassword/provider/forget_password_provider.dart';
 import 'Screen/User/Login/Screen/MyLogin.dart';
+import 'Screen/User/Login/Screen/VerifyOTP.dart';
 import 'Screen/User/Login/provider/LoginProvider.dart';
 import 'Screen/User/splashscreen/page/splash_screen.dart';
 
@@ -110,6 +113,9 @@ class MyApp extends StatelessWidget {
             DailyRefillSalePage.screenName: (context) => DailyRefillSalePage(),
             EditItemReceiptPage.screenName: (context) => EditItemReceiptPage(),
             ItemReturnScreen.screenName: (context) => ItemReturnScreen(),
+            ChangePassword.screenName: (context) => ChangePassword(),
+            VerifyOtp.screenName: (context) => VerifyOtp(),
+            StockSubmitToManager.screenName: (context) => StockSubmitToManager(),
           },
         ),
       );

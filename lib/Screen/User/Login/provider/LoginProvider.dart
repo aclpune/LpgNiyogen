@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import '../../../ConstantScreen/widgets.dart';
 import '../../../Utils/app_url.dart';
 import '../../../Utils/constants.dart';
 import '../model/LoginResponseModel.dart'; // Assuming this is the response model
@@ -41,109 +43,68 @@ class LoginProvider extends ChangeNotifier {
   }
 
   // Method for login functionality
-  Future<void> login(String distributorCode, String username, String encryptPassword,String password,
+  Future<void> login(String mobileNo,
       BuildContext context) async {
     // Check if any required field is empty
-    if (distributorCode.isEmpty || username.isEmpty || password.isEmpty) {
-      // Show error message if any field is empty
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please fill all the fields')),
-      );
-      return; // Exit early
-    }
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
-
-    try {
-      final authService = AuthService();
-      final response = await authService.login(distributorCode,username, encryptPassword);
-
-      _loginResponse = response;
+    bool isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+    if(isNetworkAvailable) {
+      if (mobileNo.isEmpty) {
+        // Show error message if any field is empty
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Please fill all the fields')),
+        );
+        return; // Exit early
+      }
+      _isLoading = true;
       _errorMessage = null;
-      // Save the token and user info in SharedPreferences
-      final sharedPref = SharedPref();
-      await sharedPref.setAuthToken(_loginResponse!.authToken!); // Save the auth token
-      await sharedPref.saveUser(_loginResponse!.authToken!.userInfo!);
-      Navigator.pushReplacementNamed(context, '/godownDashboard');
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      await prefs.setString("encryptPass", encryptPassword);
-      await prefs.setString("password", password);
-      await prefs.setString("distributorCode", distributorCode);
-      debugPrint("dashbpa");
-      // Show success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login Successful!')),
-      );
-    } catch (e) {
-      _errorMessage = e.toString();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_errorMessage!)),
-      );
-    } finally {
-      _isLoading = false;
       notifyListeners();
+
+      try {
+        final authService = AuthService();
+        final response = await authService.login(mobileNo);
+
+        _loginResponse = response;
+        _errorMessage = null;
+        // Save the token and user info in SharedPreferences
+        final sharedPref = SharedPref();
+        // await sharedPref.setAuthToken(_loginResponse!.authToken!); // Save the auth token
+        await sharedPref.saveUser(_loginResponse!.authToken!);
+        await sharedPref.setUserName("N");
+        Navigator.pushReplacementNamed(context, '/verifyOtp');
+        final SharedPreferences prefs = await SharedPreferences.getInstance();
+        // await prefs.setString("encryptPass", encryptPassword);
+        // await prefs.setString("password", password);
+        // await prefs.setString("distributorCode", distributorCode);
+        debugPrint("dashbpa");
+        // Show success message
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login Successful!')),
+        );
+      } catch (e) {
+        _errorMessage = e.toString();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(_errorMessage!)),
+        );
+      } finally {
+        _isLoading = false;
+        notifyListeners();
+      }
+    }else{
+      showFlushBar(context,Constants.failed,'No internet connection');
     }
   }
 
   // Method to refresh the token
   Future<Map<String, dynamic>> refreshToken(
-      String userName,
-      String userId,
-      String refreshToken,
-      String? displayName,
-      String? roleId,
-      String? activeStatus,
-      String? password,
-      String? encryptedPassword,
-      String? roleName,
-      String? mobileNo,
-      String? customerId,
-      String? customerCode,
-      String? customerName,
-      String? refNo,
-      String? lastUpdatedDate,
-      String? customerAddress,
-      String? gSTNO,
-      String? email,
-      String? source,
-      String? godownId,
-      String? godownKeeperId,
-      String? distributorId,
+      String mobileNo,
       BuildContext context,) async {
     var result;
 
     // Prepare the request data for refreshing the token
     final Map<String, dynamic> refreshTokenData = {
-    "DistCode" :userName,
-    "Password":encryptedPassword,
-    "UserName":userName,
-    "UserId":userId,
-    'RefreshToken': refreshToken,
+    "MobileNo" :mobileNo,
     "GrantType": Constants.grantTypeRefreshToken,
-    "UserInfo": {
-    "DisplayName": displayName,
-    "MobileNo": mobileNo,
-    "CustomerId": customerId,
-    "CustomerCode": customerCode,
-    "CustomerName": customerName,
-    "RefNo": refNo,
-    "UserName": userName,
-    "UserId": userId,
-    "RoleId": roleId,
-    "RoleName": roleName,
-    "ActiveStatus": activeStatus,
-    "LastUpdatedDate": lastUpdatedDate,
-    "CustomerAddress": customerAddress,
-    "GSTNO": gSTNO,
-    "Email": email,
-    "Source": source,
-    "GodownId": godownId,
-    "GodownKeeperId": godownKeeperId,
-    "DistributorId": distributorId,
-    "Password": password,
-    "EncryptPassword": encryptedPassword,
-    },
     };
 
     loggedInStatus = Status.authenticating;
@@ -166,21 +127,19 @@ class LoginProvider extends ChangeNotifier {
 
     debugPrint('RefreshTokenResponseData: $responseData');
 
-    var userInfoData = responseData['authToken']['UserInfo'];
+    // var userInfoData = responseData['authToken']['UserInfo'];
     var authTokenData = responseData['authToken'];
 
     // Parse the user and token data
-    UserInfo authUser = UserInfo.fromJson(userInfoData);
     AuthToken authToken = AuthToken.fromJson(authTokenData);
 
     // Save user and token to SharedPreferences
-    SharedPref().saveUser(authUser);
-    SharedPref().setAuthToken(authToken);
+    SharedPref().saveUser(authToken);
 
     loggedInStatus = Status.loggedIn;
     notifyListeners();
 
-    result = {'status': true, 'message': 'Successful', 'user': authUser};
+    result = {'status': true, 'message': 'Successful', 'user': authToken};
     // Optionally, navigate to another screen after successful refresh
     // Navigator.pushReplacementNamed(context, '/godownDashboard');
     // ScaffoldMessenger.of(context).showSnackBar(
