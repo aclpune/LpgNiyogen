@@ -47,16 +47,17 @@ class _MyLoginState extends State<MyLogin> {
   Future<void> _loadStoredUserData() async {
     Map<String, String?> storedUserData = await getStoredUserData();
     String? storedUsername = storedUserData['username'];
-    String? storedDistributorCode = storedUserData['loginId'];
+    String? storedMobileNo = storedUserData['MobileNo'];
 
-    if (storedDistributorCode != null) {
+    if (storedMobileNo != null) {
       setState(() {
-        _mobileNoController.text = storedDistributorCode;
+        _mobileNoController.text = storedMobileNo;
       });
     }
   }
   @override
   Widget build(BuildContext context) {
+
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
@@ -85,10 +86,25 @@ class _MyLoginState extends State<MyLogin> {
                       keyboardType: TextInputType.number, // Set keyboard type to numeric
                       inputFormatters: <TextInputFormatter>[
                         FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(12),// Allow only digits
+                        LengthLimitingTextInputFormatter(10),// Allow only digits
                       ],
                       decoration: InputDecoration(
-                        labelText: 'Mobile Number',
+                        label: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: const [
+                            Text(
+                              'Mobile Number',
+                              style: TextStyle(fontSize: 12),
+                            ),
+                            SizedBox(width: 4),
+                            // Add some space between the text and the icon
+                            Icon(
+                              Icons.star, // Use a star or any other icon
+                              color: Colors.red, // Set the icon color to red
+                              size: 10, // Adjust the size of the icon
+                            ),
+                          ],
+                        ),
                         labelStyle: TextStyle(fontSize: 12),
                         prefixIcon: Icon(Icons.account_circle_sharp),
                         fillColor: Colors.white,

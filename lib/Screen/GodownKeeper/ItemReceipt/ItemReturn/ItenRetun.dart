@@ -3,11 +3,15 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../ConstantScreen/widgets.dart';
 import '../../../Utils/CustomAppBar.dart';
 import '../../../Utils/app_url.dart';
 import 'package:http/http.dart' as http;
+import '../../../Utils/constants.dart';
+import '../../DashboardScreen.dart';
 import '../EditItem/Model/GetItemReceiptListModel.dart';
 import 'ItenReturnItemUi.dart';
 class ItemReturnScreen extends StatefulWidget {
@@ -62,11 +66,22 @@ class _ItemReturnScreenState extends State<ItemReturnScreen> {
   }
   @override
   Widget build(BuildContext context) {
+    var argLRAdd = ModalRoute.of(context)?.settings.arguments;
     return WillPopScope(
       onWillPop: () async {
-        Navigator.pop(context);
-        return false;
+        // Show a confirmation dialog
+        if (argLRAdd == "fromDrawer") {
+          Navigator.pushReplacementNamed(
+              context, DashboardScreen.screenName,
+              arguments: "onBack");
+          return false;
+        } else {
+          Navigator.pushReplacementNamed(
+              context, DashboardScreen.screenName);
+          return false;
+        } // In case `null` is returned, return `false`
       },
+
       child: Scaffold(
         appBar: CustomAppBar(
           title: 'Item Return', // Title or hint text for the text field
@@ -97,57 +112,66 @@ class _ItemReturnScreenState extends State<ItemReturnScreen> {
           },
         ):
             Container(
-              child: Text("No data found..!",style: TextStyle(fontSize: 16),),
+              child: Text("No Data Found..!",style: TextStyle(fontSize: 16),),
             )
       ),
     );
   }
   Future<void> fetchItemReceipts() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? distributorId = prefs.getString('DistributorId');
-    String? godownId = prefs.getString('godownId');
-    String? addedBy = prefs.getString('StaffId');
-    String? godownKeeperId = prefs.getString('godownKeeperId');
-    String? token = prefs.getString('token'); // This is your bearer token
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+    if(Constants.isNetworkAvailable){
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? distributorId = prefs.getString('DistributorId');
+      String? godownId = prefs.getString('godownId');
+      String? addedBy = prefs.getString('StaffId');
+      String? godownKeeperId = prefs.getString('godownKeeperId');
+      String? token = prefs.getString('token'); // This is your bearer token
 
-    try {
-      final response = await http.get(
-        // Uri.parse('${AppUrl.GetItemReceiptList}/$distributorId/$godownId/1'),
-        Uri.parse('${AppUrl.GetItemReceiptList}/$distributorId/$godownId/$godownKeeperId'),
-        headers: {
-          'Authorization': 'Bearer $token',  // Add the Bearer token here
-          // Any other headers you need can go here
-        },
-      );
-      // Print the URL and the headers (including the Bearer token)
-      print("Request URL: ${response.request}");
-      print("Request Headers: {'Authorization': 'Bearer $token'}");
-      // Print the raw response for debugging
-      print("API Response Status Code: ${response.statusCode}");
-      print("API Response Body: ${response.body}");
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        setState(() {
-          receiptList = data.map((json) => GetItemReceiptListModel.fromJson(json)).toList();
-          isLoading = false;
-        });
-      } else {
-        // Handle non-200 responses
-        setState(() {
-          isLoading = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to fetch data: ${response.statusCode}')),
+      try {
+        final response = await http.get(
+          // Uri.parse('${AppUrl.GetItemReceiptList}/$distributorId/$godownId/1'),
+          Uri.parse('${AppUrl.GetItemReceiptList}/$distributorId/$godownId/$godownKeeperId'),
+          headers: {
+            'Authorization': 'Bearer $token',  // Add the Bearer token here
+            // Any other headers you need can go here
+          },
         );
+        // Print the URL and the headers (including the Bearer token)
+        print("Request URL: ${response.request}");
+        print("Request Headers: {'Authorization': 'Bearer $token'}");
+        // Print the raw response for debugging
+        print("API Response Status Code: ${response.statusCode}");
+        print("API Response Body: ${response.body}");
+        if (response.statusCode == 200) {
+          final List<dynamic> data = json.decode(response.body);
+          setState(() {
+            receiptList = data.map((json) => GetItemReceiptListModel.fromJson(json)).toList();
+            isLoading = false;
+          });
+        } else {
+          // Handle non-200 responses
+          setState(() {
+            isLoading = false;
+          });
+          showFlushBar(context, "Fail",
+              'Unable To Load Data At This Time. Please Try Again');
+        }
+      } catch (e) {
+        setState(() {
+          isLoading = false;
+        });
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(content: Text('Error: $e')),
+        // );
+        showFlushBar(context, "Fail",
+            'Unable To Load Data At This Time. Please Try Again');
       }
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+    }else{
+      showFlushBar(context,Constants.connectionTitle,
+          Constants.connectionMessage);
     }
+
   }
 }
 

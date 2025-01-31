@@ -14,6 +14,7 @@ class ItemData {
   final String remark;
   final String svRemark;
   final String updateFlag;
+  final String itemAddedDate;
 
   ItemData({
     required this.date,
@@ -31,6 +32,7 @@ class ItemData {
     required this.remark,
     required this.svRemark,
     required this.updateFlag,
+    required this.itemAddedDate,
   });
 
   // Convert Map to ItemData (from the database)
@@ -51,6 +53,7 @@ class ItemData {
       remark: json['remark'],
       svRemark: json['svRemark'],
       updateFlag: json['updateFlag'],
+      itemAddedDate: json['itemAddedDate'],
     );
   }
 
@@ -72,6 +75,7 @@ class ItemData {
       'remark': remark,
       'svRemark': svRemark,
       'updateFlag': updateFlag,
+      'itemAddedDate': itemAddedDate,
     };
   }
 }

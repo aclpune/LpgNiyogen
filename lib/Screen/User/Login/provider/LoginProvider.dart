@@ -48,7 +48,7 @@ class LoginProvider extends ChangeNotifier {
     // Check if any required field is empty
     bool isNetworkAvailable =
     await InternetConnectionChecker().hasConnection;
-    if(isNetworkAvailable) {
+
       if (mobileNo.isEmpty) {
         // Show error message if any field is empty
         ScaffoldMessenger.of(context).showSnackBar(
@@ -61,6 +61,7 @@ class LoginProvider extends ChangeNotifier {
       notifyListeners();
 
       try {
+        if(isNetworkAvailable) {
         final authService = AuthService();
         final response = await authService.login(mobileNo);
 
@@ -78,9 +79,13 @@ class LoginProvider extends ChangeNotifier {
         // await prefs.setString("distributorCode", distributorCode);
         debugPrint("dashbpa");
         // Show success message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login Successful!')),
-        );
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(content: Text('Login Successful!')),
+        // );
+      }else{
+      showFlushBar(context,Constants.connectionTitle,
+          Constants.connectionMessage);
+    }
       } catch (e) {
         _errorMessage = e.toString();
         ScaffoldMessenger.of(context).showSnackBar(
@@ -90,9 +95,7 @@ class LoginProvider extends ChangeNotifier {
         _isLoading = false;
         notifyListeners();
       }
-    }else{
-      showFlushBar(context,Constants.failed,'No internet connection');
-    }
+
   }
 
   // Method to refresh the token
@@ -109,62 +112,69 @@ class LoginProvider extends ChangeNotifier {
 
     loggedInStatus = Status.authenticating;
     notifyListeners();
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+    if(Constants.isNetworkAvailable){
+      try {
+        // Make the API call
+        Response response = await post(
+          Uri.parse(AppUrl.login), // You might want to replace this with your actual refresh token endpoint
+          body: json.encode(refreshTokenData),
+          headers: {'Content-Type': 'application/json; charset=UTF-8'},
+        );
 
-    try {
-    // Make the API call
-    Response response = await post(
-    Uri.parse(AppUrl.login), // You might want to replace this with your actual refresh token endpoint
-    body: json.encode(refreshTokenData),
-    headers: {'Content-Type': 'application/json; charset=UTF-8'},
-    );
+        debugPrint('RefreshTokenResCode: ${response.statusCode}');
+        debugPrint('RefreshTokenParams: $refreshTokenData');
 
-    debugPrint('RefreshTokenResCode: ${response.statusCode}');
-    debugPrint('RefreshTokenParams: $refreshTokenData');
+        // Handle successful response
+        if (response.statusCode == Constants.success) {
+          final Map<String, dynamic> responseData = json.decode(response.body);
 
-    // Handle successful response
-    if (response.statusCode == Constants.success) {
-    final Map<String, dynamic> responseData = json.decode(response.body);
+          debugPrint('RefreshTokenResponseData: $responseData');
 
-    debugPrint('RefreshTokenResponseData: $responseData');
+          // var userInfoData = responseData['authToken']['UserInfo'];
+          var authTokenData = responseData['authToken'];
 
-    // var userInfoData = responseData['authToken']['UserInfo'];
-    var authTokenData = responseData['authToken'];
+          // Parse the user and token data
+          AuthToken authToken = AuthToken.fromJson(authTokenData);
 
-    // Parse the user and token data
-    AuthToken authToken = AuthToken.fromJson(authTokenData);
+          // Save user and token to SharedPreferences
+          SharedPref().saveUser(authToken);
 
-    // Save user and token to SharedPreferences
-    SharedPref().saveUser(authToken);
+          loggedInStatus = Status.loggedIn;
+          notifyListeners();
 
-    loggedInStatus = Status.loggedIn;
-    notifyListeners();
-
-    result = {'status': true, 'message': 'Successful', 'user': authToken};
-    // Optionally, navigate to another screen after successful refresh
-    // Navigator.pushReplacementNamed(context, '/godownDashboard');
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //   SnackBar(content: Text('Token Refresh Successful!')),
-    // );
-    } else if (response.statusCode == Constants.tokenExpireAuth) {
-    // Handle token expiration case
-    loggedInStatus = Status.notLoggedIn;
-    notifyListeners();
-    result = {'status': false, 'message': 'Token Expired'};
-    } else {
-    // Handle failure case
-    loggedInStatus = Status.notLoggedIn;
-    notifyListeners();
-    result = {
-    'status': false,
-    'message': json.decode(response.body)['error'],
-    };
+          result = {'status': true, 'message': 'Successful', 'user': authToken};
+          // Optionally, navigate to another screen after successful refresh
+          // Navigator.pushReplacementNamed(context, '/godownDashboard');
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //   SnackBar(content: Text('Token Refresh Successful!')),
+          // );
+        } else if (response.statusCode == Constants.tokenExpireAuth) {
+          // Handle token expiration case
+          loggedInStatus = Status.notLoggedIn;
+          notifyListeners();
+          result = {'status': false, 'message': 'Token Expired'};
+        } else {
+          // Handle failure case
+          loggedInStatus = Status.notLoggedIn;
+          notifyListeners();
+          result = {
+            'status': false,
+            'message': json.decode(response.body)['error'],
+          };
+        }
+      } catch (error) {
+        debugPrint('RefreshTokenException: $error');
+        loggedInStatus = Status.notLoggedIn;
+        notifyListeners();
+        result = {'status': false, 'message': 'An error occurred: ${error.toString()}'};
+      }
+    }else{
+      showFlushBar(context,Constants.connectionTitle,
+      Constants.connectionMessage);
     }
-    } catch (error) {
-    debugPrint('RefreshTokenException: $error');
-    loggedInStatus = Status.notLoggedIn;
-    notifyListeners();
-    result = {'status': false, 'message': 'An error occurred: ${error.toString()}'};
-    }
+
 
     return
     result;

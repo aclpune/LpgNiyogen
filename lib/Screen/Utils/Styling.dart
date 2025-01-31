@@ -170,6 +170,32 @@ class Styling {
     fontSize: 1.8 * SizeConfig.textMultiplier!, // Size = 16-- [18/8.66] = 1.0
   );
 
+  static final TextStyle blueClrTextSmall = TextStyle(
+    color: const Color(0xff1280b3),
+    fontFamily: 'OpenSans',
+    fontSize: 1.4 * SizeConfig.textMultiplier!, // Size = 16-- [18/8.66] = 1.0
+  );
+
+  static final TextStyle itemGreyTextSmall = TextStyle(
+      fontSize: 1.6 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
+      fontFamily: 'OpenSans',
+      color: const Color(0xff666666));
+
+  static final TextStyle itemBlackTestSmall = TextStyle(
+    fontSize: 1.6 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
+    fontFamily: 'OpenSans',
+    color: Colors.black,);
+
+  static final TextStyle itemGreyTextVerySmall = TextStyle(
+      fontSize: 1.4 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
+      fontFamily: 'OpenSans',
+      color: const Color(0xff666666));
+
+  static final TextStyle itemBlackTestVerySmall = TextStyle(
+    fontSize: 1.4 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
+    fontFamily: 'OpenSans',
+    color: Colors.black,);
+
   /* static final TextStyle selectedTabLight = TextStyle(
     color: Colors.black,
     fontWeight: FontWeight.bold,

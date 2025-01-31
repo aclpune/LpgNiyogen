@@ -7,9 +7,15 @@ import 'package:provider/provider.dart';
 import 'Screen/GodownKeeper/DashboardScreen.dart';
 import 'Screen/GodownKeeper/DelBoyStockReturn/StockReturnFromDelBoy.dart';
 import 'Screen/GodownKeeper/DelBoyStockSubmitToManager/StockSubmitToManager.dart';
+import 'Screen/GodownKeeper/DeliveryBoyModel/StockSubmitToManagerListModel.dart';
 import 'Screen/GodownKeeper/ItemReceipt/AddItem/ItemReceiptScreen.dart';
 import 'Screen/GodownKeeper/ItemReceipt/EditItem/ItemEditScreen.dart';
 import 'Screen/GodownKeeper/ItemReceipt/ItemReturn/ItenRetun.dart';
+import 'Screen/ManagerScreen/CashDepositToBankScreen.dart';
+import 'Screen/ManagerScreen/CashHandoverScreen.dart';
+import 'Screen/ManagerScreen/DeliveryBoyWiseListShow.dart';
+import 'Screen/ManagerScreen/ManagerUpdateSaleCashUpdation.dart';
+import 'Screen/ManagerScreen/ManagerUpdateSaleScreen.dart';
 import 'Screen/User/ChangePassword.dart';
 import 'Screen/User/ForgetPassword/Screen/ForgetPassword.dart';
 import 'Screen/User/ForgetPassword/provider/forget_password_provider.dart';
@@ -17,6 +23,7 @@ import 'Screen/User/Login/Screen/MyLogin.dart';
 import 'Screen/User/Login/Screen/VerifyOTP.dart';
 import 'Screen/User/Login/provider/LoginProvider.dart';
 import 'Screen/User/splashscreen/page/splash_screen.dart';
+import 'Screen/Utils/size_config.dart';
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -42,6 +49,9 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    return LayoutBuilder(builder: (context, constraints) {
+    return OrientationBuilder(builder: (context, orientation) {
+      SizeConfig().init(constraints, orientation);
     return
       MultiProvider(
         providers: [
@@ -108,17 +118,28 @@ class MyApp extends StatelessWidget {
             SplashScreen.screenName: (context) => SplashScreen(),
             MyLogin.screenName: (context) => MyLogin(),
             ForgetPassword.screenName: (context) => ForgetPassword(),
+
+            ///GK
             DashboardScreen.screenName: (context) => DashboardScreen(),
             ItemReceiptScreen.screenName: (context) => ItemReceiptScreen(),
-            DailyRefillSalePage.screenName: (context) => DailyRefillSalePage(),
+            DailyRefillSalePage.screenName: (context) => DailyRefillSalePage(sale:null,saleGKId: null,dMId: null,flagAdd: null),
             EditItemReceiptPage.screenName: (context) => EditItemReceiptPage(),
             ItemReturnScreen.screenName: (context) => ItemReturnScreen(),
             ChangePassword.screenName: (context) => ChangePassword(),
             VerifyOtp.screenName: (context) => VerifyOtp(),
             StockSubmitToManager.screenName: (context) => StockSubmitToManager(),
+
+            ///Manager
+            CashHandoverScreen.screenName: (context) => CashHandoverScreen(),
+            CashDepositToBankScreen.screenName: (context) => CashDepositToBankScreen(),
+            ManagerUpdateSaleScreen.screenName: (context) => ManagerUpdateSaleScreen(),
+            ManagerUpdateSaleCashUpdation.screenName: (context) => ManagerUpdateSaleCashUpdation(),
+            DeliveryBoyWiseListShow.screenName: (context) => DeliveryBoyWiseListShow(),
           },
         ),
       );
+    });
+    });
   }
 }
 

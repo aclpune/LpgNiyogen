@@ -50,6 +50,7 @@ class StockSubmitToManagerListModel {
     _itemList = itemList;
     _addedBy = addedBy;
     _action = action;
+
 }
 
   StockSubmitToManagerListModel.fromJson(dynamic json) {

@@ -9,8 +9,14 @@ class CustomeDrawer extends StatelessWidget {
   Future<String> getGodownName() async {
     // Fetch Godown name from SharedPreferences
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String godownName = prefs.getString('displayName') ?? 'Cylinder Godown'; // Default value if not set
+    String godownName = prefs.getString('StaffName') ?? 'Cylinder Godown';
     return godownName;
+  }
+  Future<String> getGodownNId() async {
+    // Fetch Godown name from SharedPreferences
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String godownId = prefs.getString('StaffId') ?? ' ';
+    return godownId;
   }
 
   @override
@@ -32,7 +38,7 @@ class CustomeDrawer extends StatelessWidget {
 
         // Use the fetched godown name
         String godownName = snapshot.data ?? 'Cylinder Godown';
-
+        String id = snapshot.data ?? 'Cylinder Godown';
         return Drawer(
           child: ListView(
             padding: EdgeInsets.zero,
@@ -45,18 +51,10 @@ class CustomeDrawer extends StatelessWidget {
                 child: Column(
                   children: [
                     Text(
-                      'Cylinder Godown', // Display the Godown name here
+                      '$godownName', // Display the Godown name here
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      '$godownName', // You can change this to another static string if necessary
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -93,25 +91,53 @@ class CustomeDrawer extends StatelessWidget {
                   Navigator.pushReplacementNamed(context, '/editItemReceiptPage');
                 },
               ),*/
-              ListTile(
-                leading: Icon(Icons.update_outlined),
-                title: Text('Update Sale'),
-                onTap: () {
-                  Navigator.pushReplacementNamed(context, '/stockReturnFromDelBoy');
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.update_outlined),
-                title: Text('Del Update Sale'),
-                onTap: () {
-                  Navigator.pushReplacementNamed(context, '/stockSubmitToManager');
-                },
-              ),
+              // ListTile(
+              //   leading: Icon(Icons.update_outlined),
+              //   title: Text('Update Sale'),
+              //   onTap: () {
+              //     Navigator.pushReplacementNamed(context, '/stockReturnFromDelBoy');
+              //   },
+              // ),
+              // ListTile(
+              //   leading: Icon(Icons.update_outlined),
+              //   title: Text('Del Update Sale'),
+              //   onTap: () {
+              //     Navigator.pushReplacementNamed(context, '/stockSubmitToManager');
+              //   },
+              // ),
               ListTile(
                 leading: Icon(Icons.logout),
                 title: Text('Logout'),
                 onTap: () {
                   logoutUser(context);
+                },
+              ),
+              // ListTile(
+              //   leading: Icon(Icons.logout),
+              //   title: Text('cashHandoverScreen'),
+              //   onTap: () {
+              //     Navigator.pushReplacementNamed(context, '/cashHandoverScreen');
+              //   },
+              // ),
+              // ListTile(
+              //   leading: Icon(Icons.logout),
+              //   title: Text('cashDepositToBankScreen'),
+              //   onTap: () {
+              //     Navigator.pushReplacementNamed(context, '/cashDepositToBankScreen');
+              //   },
+              // ),
+              ListTile(
+                leading: Icon(Icons.logout),
+                title: Text('managerUpdateSaleScreen'),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/managerUpdateSaleCashUpdation');
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.logout),
+                title: Text('deliveryBoyWiseListShow'),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/deliveryBoyWiseListShow');
                 },
               ),
             ],

@@ -2,10 +2,14 @@ import 'dart:convert';
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:lpgsalesandinventory/Screen/Utils/app_url.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../ConstantScreen/widgets.dart';
+import '../../../Utils/constants.dart';
 import '../../DashboardScreen.dart';
+import '../AddItem/ItemReceiptScreen.dart';
 import '../EditItem/Model/GetItemReceiptListModel.dart';
 import 'package:http/http.dart' as http;
 
@@ -58,14 +62,50 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                       if (itemsToShow != null && itemsToShow.isNotEmpty) {
                         showDetailsDialog(context, itemsToShow,receiptId);
                       } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('No items with isReturnSent == 0')),
-                        );
+                        showFlushBar(context, "No Items Available",
+                            'No Items For Return.');
                       }
                     },
                     child: Text("Out"),
                   ):
                       Text(""),
+
+                  // ElevatedButton(
+                  //   style: ElevatedButton.styleFrom(
+                  //     backgroundColor: Colors.blue,
+                  //     padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+                  //     foregroundColor: Colors.white,
+                  //     textStyle: const TextStyle(
+                  //       fontSize: 15,
+                  //       fontWeight: FontWeight.bold,
+                  //     ),
+                  //   ),
+                  //   onPressed: () {
+                  //     var itemsToShow = value.itemDetails?.where(
+                  //           (item) => item.filledQty != 0,
+                  //     ).toList();
+                  //     var receiptId = value.receiptId;
+                  //     var vehicleNo = value.vehicleNo.toString();
+                  //     var receiptDate = value.receiptDate.toString();
+                  //
+                  //     if (itemsToShow != null && itemsToShow.isNotEmpty) {
+                  //       // Navigate to the target screen and pass the data
+                  //       Navigator.pushNamed(
+                  //         context,
+                  //         ItemReceiptScreen.screenName,
+                  //         arguments: {
+                  //           'vehicleNo': vehicleNo,
+                  //           'receiptDate': receiptDate,
+                  //           'itemsToShow': itemsToShow,
+                  //         },
+                  //       );
+                  //     } else {
+                  //       showFlushBar(context, "No Items Available", 'No Items For Return.');
+                  //     }
+                  //   },
+                  //   child: Text("Edit"),
+                  // ),
+
                 ],
               ),
             ),
@@ -277,6 +317,7 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                         controller: returnQtyControllers[index],
                         decoration: InputDecoration(labelText: 'Return Qty'),
                         keyboardType: TextInputType.number,
+                        enabled: false,
                       ),
                       // Editable Defective Qty
                       // Editable Defective Qty
@@ -296,9 +337,15 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                             returnQtyControllers[index].text = filledQty.toString();
                           } else if (defectiveQty > 0) {
                             int? f = filledQty?.toInt();
-                            // If defective quantity is a valid number, subtract it from the filled quantity
-                            int remainingReturnQty = f! - defectiveQty;
-                            returnQtyControllers[index].text = remainingReturnQty.toString();
+                            if(defectiveQty>filledQty!){
+                              showFlushBar(context, "Invalid Quantity",
+                                  'Defective Qty Must Be Small Than Return Quantity!');
+                            }else{
+                              // If defective quantity is a valid number, subtract it from the filled quantity
+                              int remainingReturnQty = f! - defectiveQty;
+                              returnQtyControllers[index].text = remainingReturnQty.toString();
+                            }
+
                           } else {
                             // Handle invalid inputs, revert to filled quantity if input is invalid
                             returnQtyControllers[index].text = filledQty.toString();
@@ -325,7 +372,7 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
               },
-              child: Text("Close"),
+              child: Text("Close",style: TextStyle(fontWeight:FontWeight.bold,fontSize: 14),),
             ),
             // ElevatedButton(
             //   onPressed: () async {
@@ -364,7 +411,11 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                     errorMessage = "Return quantity and defective quantity cannot exceed the filled quantity for ${items[i].filledQty}.";
                     break; // Stop the loop if validation fails
                   }
-
+                    if(returnQty < defectiveQty){
+                      isValid = false;
+                      errorMessage = "Defective quantity cannot exceed the Return quantity for ${items[i].filledQty}.";
+                      break;
+                    }
                   updatedItemDetails.add({
                     "ItemId": items[i].itemId,
                     "EmptyReturnQty": returnQty,
@@ -375,7 +426,8 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                 // If validation fails, show an error message
                 if (!isValid) {
                   // Display the error message as a SnackBar
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(errorMessage)));
+                  showFlushBar(context, "Invalid Quantity",
+                      '$errorMessage');
                 } else {
                   // Send the data to the API if validation is successful
                   await sendItemDetailsToApi(updatedItemDetails, receiptId);
@@ -384,7 +436,13 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                   Navigator.of(context).pop();
                 }
               },
-              child: Text("Out"),
+              child: Text("Out",style: TextStyle(color: Colors.white,fontSize: 14,),),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue, // Button expands to fill available width// Text color of the button
+                shape: RoundedRectangleBorder( // Optional: Set rounded corners
+                  borderRadius: BorderRadius.circular(50),
+                ),
+              ),
             ),
           ],
         );
@@ -392,41 +450,48 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
     );
   }
   Future<void> sendItemDetailsToApi(List<Map<String, dynamic>> itemDetails, num? receiptId) async {
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    String distributorId = preferences.getString('DistributorId') ?? '';
-    String? addedBy = preferences.getString('StaffId');
-    String? token = preferences.getString('token');
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+    if(Constants.isNetworkAvailable){
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String distributorId = preferences.getString('DistributorId') ?? '';
+      String? addedBy = preferences.getString('StaffId');
+      String? token = preferences.getString('token');
 
-    // Construct the request body
-    final requestBody = json.encode({
-      "ReceiptId": receiptId,
-      "DistributorId": distributorId,
-      "AddedBy":addedBy,
-      "ItemDetails": itemDetails, // This now contains ItemId, ReturnQty, and DefectiveQty
-    });
-
-    // Send the HTTP POST request
-    final response = await http.post(
-      Uri.parse(AppUrl.ItemReturnAddEdit),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: requestBody,
-    );
-
-    print("Request requestBody: ${requestBody}");
-    if (response.statusCode == 200) {
-      // Handle successful response
-      // Navigator.pushReplacementNamed(context, DashboardScreen.screenName);
-      // Navigator.pushReplacementNamed(context, '/godownDashboard');
-      Future.delayed(Duration(milliseconds: 300), () {
-        Navigator.pushReplacementNamed(context, DashboardScreen.screenName);
+      // Construct the request body
+      final requestBody = json.encode({
+        "ReceiptId": receiptId,
+        "DistributorId": distributorId,
+        "AddedBy":addedBy,
+        "ItemDetails": itemDetails, // This now contains ItemId, ReturnQty, and DefectiveQty
       });
-      print("Request successful: ${response.body}");
-    } else {
-      // Handle failure response
-      print("Request failed: ${response.statusCode}");
+
+      // Send the HTTP POST request
+      final response = await http.post(
+        Uri.parse(AppUrl.ItemReturnAddEdit),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: requestBody,
+      );
+
+      print("Request requestBody: ${requestBody}");
+      if (response.statusCode == 200) {
+        // Handle successful response
+        // Navigator.pushReplacementNamed(context, DashboardScreen.screenName);
+        // Navigator.pushReplacementNamed(context, '/godownDashboard');
+        Future.delayed(Duration(milliseconds: 300), () {
+          Navigator.pushReplacementNamed(context, DashboardScreen.screenName);
+        });
+        print("Request successful: ${response.body}");
+      } else {
+        // Handle failure response
+        print("Request failed: ${response.statusCode}");
+      }
+    }else{
+      showFlushBar(context,Constants.connectionTitle,
+          Constants.connectionMessage);
     }
   }
 

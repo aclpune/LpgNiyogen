@@ -43,8 +43,7 @@ BranchAdminAH	cnf@1234*/
   static String forgetPassFailedMessage = 'Forget Password failed';
   static String responseFailedMessage = 'Something went wrong..try again';
   static String flag = 'Y';
-
-  static String appName = "Tirupati";
+  static String appName = "LPG Niyojan";
   // static String androidPlayStoreAppUrl =
   //     "https://play.google.com/store/apps/details?id=com.aipl.flutter.cnf.flutter_cnf";
   static String androidPlayStoreAppUrl =

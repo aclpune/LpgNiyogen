@@ -51,7 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
             children: [
               // Image.asset('assets/login.png'),
               Text(
-                "LPG Niyogen",
+                "LPG Niyojan",
               ),
               Text(
                 "Version: " + version.toString(),

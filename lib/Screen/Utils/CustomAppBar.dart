@@ -10,7 +10,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
+    return
+      AppBar(
       backgroundColor: Colors.blue, // You can change the color as needed
       automaticallyImplyLeading: false, // Disable default back button
       title: Padding(

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
@@ -61,6 +62,7 @@ class UpdateRefillSale{
   String colremark = "remark";
   String colsvRemark = "svRemark";
   String colupdateFlag = "updateFlag";
+  String colitemAddedDate = "itemAddedDate";
 
   ///Get list Del stock
   static const tableGetDelBoyStock = 'tableGetDelBoyStock';
@@ -89,7 +91,7 @@ class UpdateRefillSale{
   String colStockGetEmptyRetQty = "EmptyRetQty";
   String colStockGetDeffQty = "DeffQty";
   String colStockGetLessEmptyQty = "LessEmptyQty";
-  String colStockGetItemRemark = "ItemRemark";
+  String colStockGetItemRemark = "Remark";
   String colStockGetClosingFilled = "ClosingFilled";
   String colStockGetClosingEmpty = "ClosingEmpty";
   String colStockGetClosingDef = "ClosingDef";
@@ -116,7 +118,8 @@ class UpdateRefillSale{
             $collessEmpty TEXT NOT NULL ,
             $colremark TEXT NOT NULL ,
             $colsvRemark TEXT NOT NULL ,
-            $colupdateFlag TEXT NOT NULL
+            $colupdateFlag TEXT NOT NULL,
+            $colitemAddedDate TEXT NOT NULL
           )
           ''');
 
@@ -182,6 +185,38 @@ class UpdateRefillSale{
     }
   }
 
+  // Future<void> insertUpdateRefillSale(List<ItemData> updateRefillSale) async {
+  //   Database db = await initDatabase();
+  //
+  //   for (int i = 0; i < updateRefillSale.length; i++) {
+  //     try {
+  //       ItemData item = updateRefillSale[i];
+  //       Map<String, dynamic> row = item.toMap();
+  //
+  //       // Check if the item ID already exists in the database
+  //       var existingItem = await db.query(
+  //         tableUpdateRefillSale,
+  //         where: 'itemId = ?',
+  //         whereArgs: [item.itemID],  // Assuming `item.id` is the primary key or unique identifier
+  //       );
+  //
+  //       // If the item already exists, skip the insertion
+  //       if (existingItem.isEmpty) {
+  //         var result = await db.insert(
+  //           tableUpdateRefillSale,
+  //           row,
+  //           conflictAlgorithm: ConflictAlgorithm.ignore,  // Ignore conflict if item already exists
+  //         );
+  //         debugPrint("####db_insertUpdateRefillSale- $result");
+  //       } else {
+  //         debugPrint("####Item already exists, skipping insertion for item ID: ${item.itemID}");
+  //       }
+  //     } catch (e) {
+  //       debugPrint("####db_insertUpdateRefillSaleException- $e");
+  //     }
+  //   }
+  // }
+
   Future<List<ItemData>> getUpdateRefillSaleData() async {
     // Fetch data from the database
     var areaWiseEKYCDetailResult = await getUpdateRefillSaleData1();
@@ -191,6 +226,131 @@ class UpdateRefillSale{
       itemList.add(ItemData.fromJson(item));
     }
     return itemList;
+  }
+
+  Future<void> deleteRowByColID(int id) async {
+    try {
+      Database db = await initDatabase();
+
+      // Delete the row with the specified colID
+      int result = await db.delete(
+        tableUpdateRefillSale,
+        where: '$colID = ?', // Use colID to identify the specific row
+        whereArgs: [id],
+      );
+
+      if (result > 0) {
+        debugPrint("Row with colID $id deleted successfully.");
+      } else {
+        debugPrint("No row found with colID $id.");
+      }
+    } catch (e) {
+      debugPrint("Error deleting row with colID $id: $e");
+    }
+  }
+  Future<void> deleteRowByDelBoyIdAndItemId(String delBoyId, String itemId) async {
+    try {
+      Database db = await initDatabase();
+
+      // Delete the row matching both delBoyId and itemId
+      int result = await db.delete(
+        tableUpdateRefillSale,
+        where: '$coldelBoyId = ? AND $colitemID = ?', // Use AND to match both conditions
+        whereArgs: [delBoyId, itemId],
+      );
+      if (result > 0) {
+        debugPrint("Row with delBoyId $delBoyId and itemId $itemId deleted successfully.");
+      } else {
+        debugPrint("No row found with delBoyId $delBoyId and itemId $itemId.");
+      }
+    } catch (e) {
+      debugPrint("Error deleting row with delBoyId $delBoyId and itemId $itemId: $e");
+    }
+  }
+
+  // Future<void> updateRowByColID(int id, ItemData data) async {
+  //   final db = await database; // Assuming `database` is the SQLite instance
+  //
+  //   // Prepare the update query
+  //   await db?.update(
+  //     'UpdateRefillSale', // Table name
+  //     {
+  //       'date': data.date,
+  //       'deliveryBoyName': data.deliveryBoyName,
+  //       'delBoyId': data.delBoyId,
+  //       'vehicleNo': data.vehicleNo,
+  //       'itemName': data.itemName,
+  //       'itemID': data.itemID,
+  //       'filled': data.filled,
+  //       'sv': data.sv,
+  //       'tv': data.tv,
+  //       'empty': data.empty,
+  //       'defective': data.defective,
+  //       'lessEmpty': data.lessEmpty,
+  //       'remark': data.remark,
+  //       'svRemark': data.svRemark,
+  //       'updateFlag': data.updateFlag,
+  //     },
+  //     where: 'ID = ?',
+  //     whereArgs: [id], // Pass the `ID` as a parameter
+  //   );
+  // }
+  Future<bool> updateRowByColID(int id, ItemData data) async {
+    final db = await database;
+
+    // Check for existing item
+    final existingItem = await db?.query(
+      'UpdateRefillSale',
+      where: 'itemID = ? AND delBoyId = ? AND ID != ?',
+      whereArgs: [data.itemID, data.delBoyId, id],
+    );
+
+    if (existingItem != null && existingItem.isNotEmpty) {
+      // Conflict: Return false
+      return false;
+    }
+
+    // Proceed with update
+    final count = await db?.update(
+      'UpdateRefillSale',
+      {
+        'date': data.date,
+        'deliveryBoyName': data.deliveryBoyName,
+        'delBoyId': data.delBoyId,
+        'vehicleNo': data.vehicleNo,
+        'itemName': data.itemName,
+        'itemID': data.itemID,
+        'filled': data.filled,
+        'sv': data.sv,
+        'tv': data.tv,
+        'empty': data.empty,
+        'defective': data.defective,
+        'lessEmpty': data.lessEmpty,
+        'remark': data.remark,
+        'svRemark': data.svRemark,
+        'updateFlag': data.updateFlag,
+      },
+      where: 'ID = ?',
+      whereArgs: [id],
+    );
+
+    // Return true if at least one row was updated
+    return count != null && count > 0;
+  }
+
+
+  Future<bool> checkIfItemExists(String itemId, String deliveryBoyId,String date) async {
+    Database db = await initDatabase();
+
+    // Query to check if an item with the same itemID and deliveryBoyId exists
+    List<Map<String, dynamic>> result = await db.query(
+      tableUpdateRefillSale,
+      where: '$colitemID = ? AND $coldelBoyId = ? AND $colupdateFlag = ?',
+      whereArgs: [itemId, deliveryBoyId,'pending'],
+    );
+
+    // If the result is not empty, the item exists
+    return result.isNotEmpty;
   }
 
   Future<List<Map<String, Object?>>> getUpdateRefillSaleData1() async {
@@ -208,19 +368,74 @@ class UpdateRefillSale{
     );
   }
 
-  Future<void> updateRefillSaleFlagToComplete(List<int> itemIds, String deliveryBoyId,String delDate) async {
-    Database db = await initDatabase();
+  // Future<void> updateRefillSaleFlagToComplete(List<int> itemIds, String deliveryBoyId,String delDate) async {
+  //   Database db = await initDatabase();
+  //
+  //   // Loop through each itemId and update the updateFlag to 'completed' for each deliveryBoyId and ItemId combination
+  //   for (int itemId in itemIds) {
+  //     await db.update(
+  //       tableUpdateRefillSale,
+  //       {
+  //         colupdateFlag: 'completed',  // Set the update flag to 'completed'
+  //       },
+  //       where: '$colitemID = ? AND $coldelBoyId = ? AND $coldate = ?', // Use both ItemId and deliveryBoyId to uniquely identify each row
+  //       whereArgs: [itemId, deliveryBoyId,delDate],
+  //     );
+  //   }
+  // }
+  Future<void> updateRefillSaleFlagToComplete(List<int> itemIds, String deliveryBoyId, String delDate) async {
+    try {
+      Database db = await initDatabase();
 
-    // Loop through each itemId and update the updateFlag to 'completed' for each deliveryBoyId and ItemId combination
-    for (int itemId in itemIds) {
-      await db.update(
+      // Construct the placeholder string for the itemIds
+      String itemIdPlaceholders = List.filled(itemIds.length, '?').join(',');
+
+      // Prepare the arguments for the WHERE clause
+      List<Object?> whereArgs = [...itemIds, deliveryBoyId, delDate];
+
+      // Update all rows with the specified itemIds, deliveryBoyId, and date
+      int updateResult = await db.update(
         tableUpdateRefillSale,
         {
-          colupdateFlag: 'completed',  // Set the update flag to 'completed'
+          colupdateFlag: 'completed', // Set the update flag to 'completed'
         },
-        where: '$colitemID = ? AND $coldelBoyId = ? AND $coldate = ?', // Use both ItemId and deliveryBoyId to uniquely identify each row
-        whereArgs: [itemId, deliveryBoyId,delDate],
+        where: '$colitemID IN ($itemIdPlaceholders) AND $coldelBoyId = ? AND $coldate = ?',
+        whereArgs: whereArgs,
       );
+
+      debugPrint("$updateResult rows updated to 'completed'.");
+
+      // Delete the rows that were updated
+      int deleteResult = await db.delete(
+        tableUpdateRefillSale,
+        where: '$colitemID IN ($itemIdPlaceholders) AND $coldelBoyId = ? AND $coldate = ?',
+        whereArgs: whereArgs,
+      );
+
+      debugPrint("$deleteResult rows deleted after update.");
+    } catch (e) {
+      debugPrint("Error updating and deleting refill sale records: $e");
+    }
+  }
+
+  Future<void> deleteCompletedRefillSales() async {
+    try {
+      Database db = await initDatabase();
+
+      // Delete rows where updateFlag is 'completed'
+      int result = await db.delete(
+        tableUpdateRefillSale,
+        where: '$colupdateFlag = ?',
+        whereArgs: ['completed'],
+      );
+
+      if (result > 0) {
+        debugPrint("Successfully deleted $result rows with updateFlag 'completed'.");
+      } else {
+        debugPrint("No rows found with updateFlag 'completed'.");
+      }
+    } catch (e) {
+      debugPrint("Error deleting rows with updateFlag 'completed': $e");
     }
   }
 
@@ -322,7 +537,7 @@ class UpdateRefillSale{
             'EmptyRetQty': item.emptyRetQty,
             'DeffQty': item.deffQty,
             'LessEmptyQty': item.lessEmptyQty,
-            'ItemRemark': item.remark ?? '',
+            'Remark': item.remark ?? '',
             'ClosingFilled': item.closingFilled,
             'ClosingEmpty': item.closingEmpty,
             'ClosingDef': item.closingDef,
@@ -404,6 +619,121 @@ class UpdateRefillSale{
     stockList = tempMap.values.toList();
 
     return stockList;
+  }
+
+  Future<List<StockSubmitToManagerListModel>> getDeliveryMenDataForEdit(int saleGKIds, int DMIds) async {
+    Database db = await initDatabase();  // Assuming `initDatabase()` initializes the database.
+
+    // Fetch data from the database with filters for SaleGKId and DMId
+    List<Map<String, dynamic>> result = await db.query(
+      'tableGetDelBoyStock', // Table name
+      where: 'SaleGKId = ? AND DMId = ?', // WHERE clause for the query
+      whereArgs: [saleGKIds, DMIds], // Values for the WHERE clause
+    );
+
+    // Map the fetched data to a list of StockSubmitToManagerListModel
+    List<StockSubmitToManagerListModel> stockList = [];
+    Map<int, StockSubmitToManagerListModel> tempMap = {};  // Temporary map to handle data with the same SaleGKId and DistributorId
+
+    for (var row in result) {
+      int saleGKId = saleGKIds;
+      int distributorId = row['DistributorId']; // Retrieve DistributorId from the result
+      int DMId = DMIds;
+
+      if (tempMap.containsKey(saleGKId) && tempMap[saleGKId]?.distributorId == distributorId && tempMap[saleGKId]?.dMId == DMId) {
+        // If the StockSubmitToManagerListModel already exists, we just add the item
+        tempMap[saleGKId]?.itemList?.add(ItemList.fromJson(row));
+      } else {
+        // If it's a new entry, create a new StockSubmitToManagerListModel
+        StockSubmitToManagerListModel stockData = StockSubmitToManagerListModel(
+          saleGKId: row['SaleGKId'],
+          distributorId: row['DistributorId'],
+          deliveryDate: row['DeliveryDate'],
+          dMId: row['DMId'],
+          vehicleId: row['VehicleId'],
+          dailySaleStatus: row['DailySaleStatus'],
+          staffNo: row['StaffNo'],
+          staffName: row['StaffName'],
+          vehicleNo: row['VehicleNo'],
+          statusStr: row['StatusStr'],
+          addedOn: row['AddedOn'],
+          addedByNo: row['AddedByNo'],
+          addedByName: row['AddedByName'],
+          itemList: [ItemList.fromJson(row)], // Add this item to the list
+          addedBy: row['AddedBy'],
+          action: row['Action'],
+        );
+
+        // Add the new StockSubmitToManagerListModel to the map
+        tempMap[saleGKId] = stockData;
+      }
+    }
+
+    // Convert the map values to a list
+    stockList = tempMap.values.toList();
+
+    return stockList;
+  }
+
+  Future<void> updateItemInDatabase({
+    required int itemId,
+    required int saleGKId,
+    required int distributorId,
+    required String itemName,
+    required int filled,
+    required int sv,
+    required int tv,
+    required int wmpty,
+    required int defective,
+    required int lessEmpty,
+    required String remark,
+    required String svList,
+  }) async {
+    Database db = await initDatabase(); // Assuming `initDatabase()` initializes the database.
+
+    // Define the update query
+    int count = await db.update(
+      'tableGetDelBoyStock', // Table name
+      {
+        'FilledSaleQty':filled,
+        'SVQty': sv,
+        'TVQty': tv,
+        'EmptyRetQty': wmpty,
+        'DeffQty': defective,
+        'LessEmptyQty': lessEmpty,
+        'ItemName': itemName, // Update the item name// Update the item name
+        'Remark': remark, // Update the item name// Update the item name
+        'SVConsStr': svList, // Update the item name// Update the item name
+      },
+      where: 'ItemId = ? AND SaleGKId = ? AND DistributorId = ?', // WHERE clause
+      whereArgs: [itemId, saleGKId, distributorId], // Arguments for the WHERE clause
+    );
+
+    if (count > 0) {
+      print('Item updated successfully');
+    } else {
+      print('No item was updated. Please check the provided details.');
+    }
+  }
+  Future<void> deleteItemFromDatabase({
+    required int itemId,
+    required int saleGKId,
+    required int distributorId,
+  }) async {
+    Database db = await initDatabase(); // Assuming `initDatabase()` initializes the database.
+
+    // Define the delete query
+    int count = await db.delete(
+      'tableGetDelBoyStock', // Table name
+      where: 'ItemId = ? AND SaleGKId = ? AND DistributorId = ?', // WHERE clause
+      whereArgs: [itemId, saleGKId, distributorId], // Arguments for the WHERE clause
+    );
+
+    if (count > 0) {
+      print('Item deleted successfully');
+    } else {
+      print('No item was deleted. Please check the provided details.');
+    }
   }
 
   Future<void> updateFlagToComplete(String dmId, String saleGKId) async {
