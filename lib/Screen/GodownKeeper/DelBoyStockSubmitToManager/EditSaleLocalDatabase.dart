@@ -813,12 +813,12 @@ class _EditSaleLocalDatabaseState extends State<EditSaleLocalDatabase> {
     }
 
     final response = await http.get(
-      Uri.parse('${AppUrl.GetItemMasterList}/$distributorId/0/C'),
+      Uri.parse('${AppUrl.GetItemMasterList}/$distributorId/1/C'),
       headers: {
         'Authorization': 'Bearer $bearerToken', // Add Bearer token here
       },
     );
-    debugPrint("GetItemMasterList"+'${AppUrl.GetItemMasterList}/$distributorId/0/C');
+    debugPrint("GetItemMasterList"+'${AppUrl.GetItemMasterList}/$distributorId/1/C');
     debugPrint("GetItemMasterList"+response.body);
     if (response.statusCode == 200) {
       // Parse the response

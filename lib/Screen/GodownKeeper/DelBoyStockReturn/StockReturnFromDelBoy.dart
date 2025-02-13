@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../../Database/GodownKeeperDB/UpdateRefillSaleDB.dart';
 import '../../ConstantScreen/widgets.dart';
+import '../../DashboardModel/TodaysOpeningStockDataModel.dart';
 import '../../User/Login/provider/LoginProvider.dart';
 import '../../User/splashscreen/page/splash_screen.dart';
 import '../../Utils/CustomAppBar.dart';
@@ -20,6 +21,7 @@ import '../../Utils/Widget.dart';
 import '../../Utils/app_url.dart';
 import '../../Utils/constants.dart';
 import '../../Utils/shared_preference.dart';
+import '../../Utils/size_config.dart';
 import '../DashboardScreen.dart';
 import '../DeliveryBoyModel/DeliveryBoyInfoModel.dart';
 import '../DeliveryBoyModel/ItemData.dart';
@@ -27,6 +29,7 @@ import '../DeliveryBoyModel/StockSubmitToManagerListModel.dart';
 import '../DeliveryBoyModel/VehicleNumberGetModel.dart';
 import '../ImbalanceEmpty/ImabalanceEmptyListModel.dart';
 import '../ItemReceipt/CylItemList/CylItemListModel.dart';
+import '../ItemReceipt/CylItemList/GetCurrentStcOfGodownKeeperModel.dart';
 
 class DailyRefillSalePage extends StatefulWidget {
   static const screenName = '/stockReturnFromDelBoy';
@@ -87,13 +90,17 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
   List<ItemData> itemDetailDelBoy = [];
 
   List<Map<String, Object?>> _dataGetFromDBDelBoy = [];
-  String? mobileNo;
-  List<ItemImbDtls>? imabalanceEmptyListModel;
-  List<ItemImbDtls> itemImbDtlsList = []; // List to store fetched data
+  String? mobileNo;// List to store fetched data
   String? flagEditMode;
   late Future<List<StockSubmitToManagerListModel>> stockDataFuture;
   List<Map<String, Object?>> _datastockDataFuture = [];
-
+  List<TodaysOpeningStockDataModel> todaysOpeningStock = [];
+  List<GetCurrentStcOfGodownKeeperModel> getCurrentStcOfGodownKeeper = [];
+  num? filledStock = 0;
+  String? formattedDate;
+  var argValue;
+  String? delBoyNameName;
+  int? delBoyIDs;
   //
   // void _addNewItem() async {
   //   // Validate input for the empty cylinder count
@@ -149,6 +156,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
   void _addNewItem() async {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+    String formattedDateNew = DateFormat('yyyy-MM-dd').format(now) + 'T00:00:00';
     // Validate input for the empty cylinder count
     if (_emptyController.text.isEmpty) {
 
@@ -167,89 +175,191 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
         if (filledValue > svValue) {
           if (filledValue > tvValue) {
             if (filledValue > defectiveValue) {
-              if (filledValue >= emptyValue && emptyValue > 0) {
+              if (emptyValue > 0) {
                 // Check if the item already exists for the given deliveryBoyId
                 bool itemExists = await updateRefillSale!.checkIfItemExists(
                     selectedItemId.toString(),
                     selectedDelBoyId.toString(),
                     formattedDate);
+                bool itemExistInDMDatabaseToday = await updateRefillSale!.checkIfItemExistsInAPIDatabase(
+                    selectedItemId.toString(), selectedDelBoyId.toString(), formattedDateNew);
+                debugPrint(selectedItemId.toString());
+                debugPrint(selectedDelBoyId.toString());
+                debugPrint(formattedDate);
                 if (itemExists) {
-
                   showFlushBar(context, "Already Exists",
                       'The Entered Item Already Exists For The Selected Delivery Men!');
                 } else {
-                  setState(() {
-                    String remarksString =
-                        remarksList.isEmpty ? '' : remarksList.join(', ');
-                    print('Sending remarks to API: $remarksString');
+                  if(itemExistInDMDatabaseToday){
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text("Start New Trip"),
+                          content: Text("Do You Want To Start New Trip?"),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(false); // Cancel deletion
+                              },
+                              child: Text("No"),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  String remarksString =
+                                  remarksList.isEmpty ? '' : remarksList.join(', ');
+                                  print('Sending remarks to API: $remarksString');
 
-                    // Ensure that all fields have valid values
-                    String filledValue = _filledController.text.isEmpty
-                        ? ''
-                        : _filledController.text;
-                    String svValue =
-                        _svController.text.isEmpty ? '' : _svController.text;
-                    String tvValue =
-                        _tvController.text.isEmpty ? '' : _tvController.text;
-                    String emptyValue = _emptyController.text.isEmpty
-                        ? ''
-                        : _emptyController.text;
-                    String defectiveValue = _defectiveController.text.isEmpty
-                        ? ''
-                        : _defectiveController.text;
-                    String lessEmptyValue = _lessEmptyController.text.isEmpty
-                        ? ''
-                        : _lessEmptyController.text;
-                    String remarkValue = _remarkController.text.isEmpty
-                        ? ''
-                        : _remarkController.text;
+                                  // Ensure that all fields have valid values
+                                  String filledValue = _filledController.text.isEmpty
+                                      ? ''
+                                      : _filledController.text;
+                                  String svValue =
+                                  _svController.text.isEmpty ? '' : _svController.text;
+                                  String tvValue =
+                                  _tvController.text.isEmpty ? '' : _tvController.text;
+                                  String emptyValue = _emptyController.text.isEmpty
+                                      ? ''
+                                      : _emptyController.text;
+                                  String defectiveValue = _defectiveController.text.isEmpty
+                                      ? ''
+                                      : _defectiveController.text;
+                                  String lessEmptyValue = _lessEmptyController.text.isEmpty
+                                      ? ''
+                                      : _lessEmptyController.text;
+                                  String remarkValue = _remarkController.text.isEmpty
+                                      ? ''
+                                      : _remarkController.text;
 
-                    // Create an ItemData object from the input fields
-                    ItemData newItem = ItemData(
-                      date: deliveryDateController.text,
-                      deliveryBoyName: selectedDelBoyName.toString(),
-                      delBoyId: selectedDelBoyId.toString(),
-                      vehicleNo: vehicleNoController.text.isEmpty
-                          ? ''
-                          : vehicleNoController.text,
-                      // Handle empty vehicle number
-                      itemName: _selectedItem.toString(),
-                      itemID: selectedItemId.toString(),
-                      filled: filledValue,
-                      sv: svValue,
-                      tv: tvValue,
-                      empty: emptyValue,
-                      defective: defectiveValue,
-                      lessEmpty: lessEmptyValue,
-                      remark: remarkValue,
-                      svRemark: remarksString,
-                      updateFlag: 'pending',
-                      itemAddedDate: formattedDate,
+                                  // Create an ItemData object from the input fields
+                                  ItemData newItem = ItemData(
+                                    date: deliveryDateController.text,
+                                    deliveryBoyName: selectedDelBoyName.toString(),
+                                    delBoyId: selectedDelBoyId.toString(),
+                                    vehicleNo: vehicleNo.toString() ?? '',
+
+                                    // Handle empty vehicle number
+                                    itemName: _selectedItem.toString(),
+                                    itemID: selectedItemId.toString(),
+                                    filled: filledValue,
+                                    sv: svValue,
+                                    tv: tvValue,
+                                    empty: emptyValue,
+                                    defective: defectiveValue,
+                                    lessEmpty: lessEmptyValue,
+                                    remark: remarkValue,
+                                    svRemark: remarksString,
+                                    updateFlag: 'pending',
+                                    itemAddedDate: formattedDate,
+                                  );
+
+                                  // Insert the ItemData object into the database
+                                  updateRefillSale?.insertUpdateRefillSale([newItem]);
+
+                                  setState(() {
+                                    fetchData(selectedDelBoyId.toString(),
+                                        deliveryDateController.text);
+
+                                    _selectedItemModel =
+                                    null; // Clear the selected item in the dropdown
+                                    _selectedItem = '';
+                                  });
+
+                                  // Clear the input fields after adding the item
+                                  _filledController.clear();
+                                  _svController.clear();
+                                  _tvController.clear();
+                                  _emptyController.clear();
+                                  _defectiveController.clear();
+                                  _lessEmptyController.clear();
+                                  _remarkController.clear();
+                                  _svRemarkController.clear();
+                                  remarksList.clear();
+                                }
+                                );
+                                Navigator.of(context).pop(true); // Proceed with deletion
+                              },
+                              child: Text("Yes"),
+                            ),
+                          ],
+                        );
+                      },
                     );
-
-                    // Insert the ItemData object into the database
-                    updateRefillSale?.insertUpdateRefillSale([newItem]);
-
+                  }else{
                     setState(() {
-                      fetchData(selectedDelBoyId.toString(),
-                          deliveryDateController.text);
+                      String remarksString =
+                      remarksList.isEmpty ? '' : remarksList.join(', ');
+                      print('Sending remarks to API: $remarksString');
 
-                      _selectedItemModel =
-                          null; // Clear the selected item in the dropdown
-                      _selectedItem = '';
-                    });
+                      // Ensure that all fields have valid values
+                      String filledValue = _filledController.text.isEmpty
+                          ? ''
+                          : _filledController.text;
+                      String svValue =
+                      _svController.text.isEmpty ? '' : _svController.text;
+                      String tvValue =
+                      _tvController.text.isEmpty ? '' : _tvController.text;
+                      String emptyValue = _emptyController.text.isEmpty
+                          ? ''
+                          : _emptyController.text;
+                      String defectiveValue = _defectiveController.text.isEmpty
+                          ? ''
+                          : _defectiveController.text;
+                      String lessEmptyValue = _lessEmptyController.text.isEmpty
+                          ? ''
+                          : _lessEmptyController.text;
+                      String remarkValue = _remarkController.text.isEmpty
+                          ? ''
+                          : _remarkController.text;
 
-                    // Clear the input fields after adding the item
-                    _filledController.clear();
-                    _svController.clear();
-                    _tvController.clear();
-                    _emptyController.clear();
-                    _defectiveController.clear();
-                    _lessEmptyController.clear();
-                    _remarkController.clear();
-                    _svRemarkController.clear();
-                    remarksList.clear();
-                  });
+                      // Create an ItemData object from the input fields
+                      ItemData newItem = ItemData(
+                        date: deliveryDateController.text,
+                        deliveryBoyName: selectedDelBoyName.toString(),
+                        delBoyId: selectedDelBoyId.toString(),
+                        vehicleNo: vehicleNo.toString() ?? '',
+                        // Handle empty vehicle number
+                        itemName: _selectedItem.toString(),
+                        itemID: selectedItemId.toString(),
+                        filled: filledValue,
+                        sv: svValue,
+                        tv: tvValue,
+                        empty: emptyValue,
+                        defective: defectiveValue,
+                        lessEmpty: lessEmptyValue,
+                        remark: remarkValue,
+                        svRemark: remarksString,
+                        updateFlag: 'pending',
+                        itemAddedDate: formattedDate,
+                      );
+
+                      // Insert the ItemData object into the database
+                      updateRefillSale?.insertUpdateRefillSale([newItem]);
+
+                      setState(() {
+                        fetchData(selectedDelBoyId.toString(),
+                            deliveryDateController.text);
+
+                        _selectedItemModel =
+                        null; // Clear the selected item in the dropdown
+                        _selectedItem = '';
+                      });
+
+                      // Clear the input fields after adding the item
+                      _filledController.clear();
+                      _svController.clear();
+                      _tvController.clear();
+                      _emptyController.clear();
+                      _defectiveController.clear();
+                      _lessEmptyController.clear();
+                      _remarkController.clear();
+                      _svRemarkController.clear();
+                      remarksList.clear();
+                    }
+                    );
+                  }
+
                 }
               } else {
                 showFlushBar(context, "Invalid Count",
@@ -279,8 +389,8 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
   void initState() {
     super.initState();
     DateTime now = DateTime.now();
-    String formattedDate = DateFormat('yyyy-MM-dd').format(now);
-    deliveryDateController.text = formattedDate;
+    formattedDate = DateFormat('yyyy-MM-dd').format(now);
+    deliveryDateController.text = formattedDate!;
 
     updateRefillSale = UpdateRefillSale();
     fetchItems();
@@ -314,7 +424,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
               selectedDelBoyName = matchingDelBoy.staffName;
             }
           }
-          vehicleNoController.text = widget.sale?.vehicleNo ?? '';
+          vehicleNo = widget.sale?.vehicleNo ?? '';
         });
       } else {
         debugPrint("Empty");
@@ -322,6 +432,23 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
     } else {
       debugPrint("Empty flag");
     }
+    _fetchTodaysOpeningStockData();
+    fetchCurrentStock();
+    Future.delayed(Duration.zero, () {
+      setState(() {
+        argValue = ModalRoute.of(context)?.settings.arguments as Map;
+        // delBoyNameName = argValue["delBoyName"] ?? '';
+        // delBoyIDs = argValue["delBoyID"] ?? 0;
+        debugPrint("delBoyNameName :- ${delBoyNameName.toString()}");
+        selectedDelBoyName = argValue["delBoyName"] ?? '';
+        selectedDelBoyId = argValue["delBoyID"] ?? 0;
+        vehicleNo = argValue["vehicleNo"] ?? '';
+        fetchVehicleDetail(selectedDelBoyId!);
+        fetchData(selectedDelBoyId.toString(),
+            deliveryDateController.text);
+        _fetchImbalanceData(selectedDelBoyId!);
+      });
+    });
   }
 
   void _onEditItem(ItemList item, StockSubmitToManagerListModel v) {
@@ -336,7 +463,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
       _defectiveController.text = item.deffQty.toString();
       _lessEmptyController.text = item.lessEmptyQty.toString();
       _remarkController.text = item.remark.toString();
-      vehicleNoController.text = v.vehicleNo.toString();
+      vehicleNo = v.vehicleNo.toString();
       // Ensure selectedDelBoyName is not null and handles empty value gracefully
       selectedDelBoyName =
           v.staffName?.isNotEmpty == true ? v.staffName : 'Unknown';
@@ -355,6 +482,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
 
       // Save the ID of the row being edited (optional for database update)
       _editingItemId = int.parse(item.itemId.toString());
+      _fetchFilledStockForSelectedItem(selectedItemId!);
     });
   }
 
@@ -1394,17 +1522,2396 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
   // Method to create a new list from loaded data
 
   @override
+  // Widget build(BuildContext context) {
+  //   var argLRAdd = ModalRoute.of(context)?.settings.arguments;
+  //   return WillPopScope(
+  //     onWillPop: () async {
+  //       // Show a confirmation dialog
+  //       if (argLRAdd == "fromDrawer") {
+  //         Navigator.pushReplacementNamed(context, DashboardScreen.screenName,
+  //             arguments: "onBack");
+  //         return false;
+  //       } else {
+  //         Navigator.pushReplacementNamed(context, DashboardScreen.screenName);
+  //         return false;
+  //       } // In case `null` is returned, return `false`
+  //     },
+  //     child: Scaffold(
+  //       appBar: CustomAppBar(
+  //         title: 'Daily Sale', // Title or hint text for the text field
+  //       ),
+  //       body:
+  //       SingleChildScrollView(
+  //         padding: const EdgeInsets.all(10.0),
+  //         child: Column(
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             // Delivery Date
+  //             TextField(
+  //               controller: deliveryDateController,
+  //               decoration: const InputDecoration(
+  //                 labelText: 'Delivery Date',
+  //                 labelStyle: TextStyle(fontSize: 12),
+  //                 border: OutlineInputBorder(),
+  //                 contentPadding:
+  //                     EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+  //               ),
+  //               style: TextStyle(
+  //                 fontSize: 14.0, // Adjust the text size here
+  //               ),
+  //               keyboardType: TextInputType.datetime,
+  //               enabled: false,
+  //             ),
+  //             const SizedBox(height: 20),
+  //             // Select Del Boy and Vehicle No
+  //             Row(
+  //               children: [
+  //                 // Expanded(
+  //                 //   flex: 2,
+  //                 //   child:
+  //                 //   DropdownButtonFormField<DeliveryBoyInfoModel>(
+  //                 //     decoration: const InputDecoration(
+  //                 //       labelText: 'Select Delivery Men',
+  //                 //       labelStyle: TextStyle(fontSize: 12),
+  //                 //       border: OutlineInputBorder(),
+  //                 //       contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+  //                 //     ),
+  //                 //     items: _delBoyInfo.map((DeliveryBoyInfoModel item) {
+  //                 //       return DropdownMenuItem<DeliveryBoyInfoModel>(
+  //                 //         value: item,
+  //                 //         child: Text(item.staffName ?? 'Unknown',
+  //                 //           style: TextStyle(fontSize: 14.0,fontWeight: FontWeight.normal),),
+  //                 //
+  //                 //       );
+  //                 //     }).toList(),
+  //                 //     onChanged: (DeliveryBoyInfoModel? selectedItem) {
+  //                 //       if (selectedItem != null) {
+  //                 //         setState(() {
+  //                 //           selectedDelBoyName = selectedItem.staffName;
+  //                 //            selectedDelBoyId = selectedItem.staffId!.toInt();
+  //                 //           int delManId = selectedDelBoyId ?? 0;  // Use directly, since it's already an int
+  //                 //
+  //                 //           fetchVehicleDetail(selectedDelBoyId!);
+  //                 //           fetchData(selectedDelBoyId.toString(),deliveryDateController.text);
+  //                 //           _fetchImbalanceData(delManId!);
+  //                 //           print('Selected Del Boy Item: ${selectedDelBoyName}, ID: ${selectedDelBoyId}');
+  //                 //         });
+  //                 //       }
+  //                 //     },
+  //                 //   ),
+  //                 // ),
+  //
+  //                 ///work
+  //                 Expanded(
+  //                   flex: 2,
+  //                   child: DropdownButtonFormField<DeliveryBoyInfoModel>(
+  //                     decoration: const InputDecoration(
+  //                       label: Row(
+  //                         mainAxisSize: MainAxisSize.min,
+  //                         children: const [
+  //                           Text(
+  //                             'Select Delivery Men',
+  //                             style: TextStyle(fontSize: 12),
+  //                           ),
+  //                           SizedBox(width: 4),
+  //                           // Add some space between the text and the icon
+  //                           Icon(
+  //                             Icons.star, // Use a star or any other icon
+  //                             color: Colors.red, // Set the icon color to red
+  //                             size: 10, // Adjust the size of the icon
+  //                           ),
+  //                         ],
+  //                       ),
+  //                       border: const OutlineInputBorder(),
+  //                       contentPadding: const EdgeInsets.symmetric(
+  //                           vertical: 8.0, horizontal: 12.0),
+  //                     ),
+  //                     // value: selectedDelBoyId != null
+  //                     //     ? _delBoyInfo.firstWhere(
+  //                     //         (item) => item.staffId == selectedDelBoyId)
+  //                     //     : null,
+  //                     value:
+  //                         (_delBoyInfo.isNotEmpty && selectedDelBoyId != null)
+  //                             ? _delBoyInfo.firstWhere(
+  //                                 (item) => item.staffId == selectedDelBoyId,
+  //                                 orElse: () => DeliveryBoyInfoModel(
+  //                                   staffId: 0, // Default or dummy ID
+  //                                   staffName: 'Unknown', // Default name
+  //                                 ),
+  //                               )
+  //                             : null,
+  //
+  //                     // Ensure that when the selectedDelBoyId is null, the value is null, showing the default hint
+  //                     hint: Text(
+  //                       'Select Delivery Men',
+  //                       style: TextStyle(fontSize: 12),
+  //                     ),
+  //                     // Default hint when no item is selected
+  //                     items: _delBoyInfo.map((DeliveryBoyInfoModel item) {
+  //                       return DropdownMenuItem<DeliveryBoyInfoModel>(
+  //                         value: item,
+  //                         child: Text(
+  //                           item.staffName ?? 'Unknown',
+  //                           style: TextStyle(
+  //                               fontSize: 14.0, fontWeight: FontWeight.normal),
+  //                         ),
+  //                       );
+  //                     }).toList(),
+  //                     onChanged: (flagEditMode == "editMode") ? null:(DeliveryBoyInfoModel? selectedItem) {
+  //                       if (selectedItem != null) {
+  //                         setState(() {
+  //                           selectedDelBoyName = selectedItem.staffName;
+  //                           selectedDelBoyId = selectedItem.staffId!.toInt();
+  //                           int delManId = selectedDelBoyId ?? 0;
+  //                           fetchVehicleDetail(selectedDelBoyId!);
+  //                           fetchData(selectedDelBoyId.toString(),
+  //                               deliveryDateController.text);
+  //                           _fetchImbalanceData(delManId!);
+  //                           print(
+  //                               'Selected Del Boy Item: ${selectedDelBoyName}, ID: ${selectedDelBoyId}');
+  //                         });
+  //                       }
+  //                     },
+  //                   ),
+  //                 ),
+  //
+  //                 // Expanded(
+  //                 //   flex: 2,
+  //                 //   child: DropdownButtonFormField<DeliveryBoyInfoModel>(
+  //                 //     decoration: const InputDecoration(
+  //                 //       label: Row(
+  //                 //         mainAxisSize: MainAxisSize.min,
+  //                 //         children: [
+  //                 //           Text(
+  //                 //             'Select Delivery Men',
+  //                 //             style: TextStyle(fontSize: 12),
+  //                 //           ),
+  //                 //           SizedBox(width: 4),
+  //                 //           // Add some space between the text and the icon
+  //                 //           Icon(
+  //                 //             Icons.star, // Use a star or any other icon
+  //                 //             color: Colors.red, // Set the icon color to red
+  //                 //             size: 10, // Adjust the size of the icon
+  //                 //           ),
+  //                 //         ],
+  //                 //       ),
+  //                 //       border: OutlineInputBorder(),
+  //                 //       contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+  //                 //     ),
+  //                 //     // Ensure the correct delivery boy is pre-selected if in edit mode
+  //                 //     value: selectedDelBoyId != null
+  //                 //         ? _delBoyInfo.firstWhere(
+  //                 //           (item) => item.staffId == selectedDelBoyId,
+  //                 //       // Fallback in case no match is found
+  //                 //     )
+  //                 //         : null,
+  //                 //     hint: Text(
+  //                 //       'Select Delivery Men',
+  //                 //       style: TextStyle(fontSize: 12),
+  //                 //     ),
+  //                 //     items: _delBoyInfo.map((DeliveryBoyInfoModel item) {
+  //                 //       return DropdownMenuItem<DeliveryBoyInfoModel>(
+  //                 //         value: item,
+  //                 //         child: Text(
+  //                 //           item.staffName ?? 'Unknown',
+  //                 //           style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.normal),
+  //                 //         ),
+  //                 //       );
+  //                 //     }).toList(),
+  //                 //     onChanged: (DeliveryBoyInfoModel? selectedItem) {
+  //                 //       if (selectedItem != null && flagEditMode != "editMode") {
+  //                 //         setState(() {
+  //                 //           selectedDelBoyName = selectedItem.staffName;
+  //                 //           selectedDelBoyId = selectedItem.staffId!.toInt();
+  //                 //           int delManId = selectedDelBoyId ?? 0;
+  //                 //           fetchVehicleDetail(selectedDelBoyId!);
+  //                 //           fetchData(selectedDelBoyId.toString(), deliveryDateController.text);
+  //                 //           _fetchImbalanceData(delManId!);
+  //                 //           print(
+  //                 //               'Selected Del Boy Item: ${selectedDelBoyName}, ID: ${selectedDelBoyId}');
+  //                 //         });
+  //                 //       }
+  //                 //     },
+  //                 //     // Disable dropdown when in edit mode
+  //                 //     disabledHint: Text(
+  //                 //       selectedDelBoyName ?? 'Delivery Man',
+  //                 //       style: TextStyle(fontSize: 12),
+  //                 //     ),
+  //                 //     onSaved: (value) {
+  //                 //       // Optionally save the value when needed
+  //                 //     },
+  //                 //     // If in edit mode, disable interaction with the dropdown
+  //                 //
+  //                 //   ),
+  //                 // ),
+  //
+  //                 SizedBox(
+  //                   width: 20,
+  //                 ),
+  //                 Expanded(
+  //                   flex: 1,
+  //                   child: TextField(
+  //                     controller: vehicleNoController,
+  //                     decoration: const InputDecoration(
+  //                       label: Row(
+  //                         mainAxisSize: MainAxisSize.min,
+  //                         children: const [
+  //                           Text(
+  //                             'Vehicle No.',
+  //                             style: TextStyle(fontSize: 12),
+  //                           ),
+  //                           // SizedBox(width: 4), // Add some space between the text and the icon
+  //                           // Icon(
+  //                           //   Icons.star, // Use a star or any other icon
+  //                           //   color: Colors.red, // Set the icon color to red
+  //                           //   size: 10, // Adjust the size of the icon
+  //                           // ),
+  //                         ],
+  //                       ),
+  //                       border: const OutlineInputBorder(),
+  //                       contentPadding: const EdgeInsets.symmetric(
+  //                           vertical: 8.0, horizontal: 12.0),
+  //                     ),
+  //                     style: TextStyle(
+  //                       fontSize: 14.0, // Adjust the text size here
+  //                     ),
+  //                     enabled: false,
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //             const SizedBox(height: 20),
+  //             /// Add New Section Imbalance
+  //             receiptList.isNotEmpty
+  //                 ? Container(
+  //                     child: Row(
+  //                       children: [
+  //                         Expanded(
+  //                           flex: 1,
+  //                           child: Column(
+  //                             crossAxisAlignment: CrossAxisAlignment.start,
+  //                             children: [
+  //                               // Title for Cylinder Categories Table
+  //                               GestureDetector(
+  //                                 onTap: () {
+  //                                   setState(() {
+  //                                     isPhysicalStockListViewVisible =
+  //                                         !isPhysicalStockListViewVisible; // Toggle ListView visibility
+  //                                   });
+  //                                 },
+  //                                 child: Card(
+  //                                   child: Padding(
+  //                                     padding: const EdgeInsets.all(5.0),
+  //                                     child: Column(
+  //                                       children: [
+  //                                         Padding(
+  //                                           padding: const EdgeInsets.all(5.0),
+  //                                           child: Row(
+  //                                             mainAxisAlignment:
+  //                                                 MainAxisAlignment.spaceBetween,
+  //                                             children: [
+  //                                               Row(
+  //                                                 mainAxisAlignment:
+  //                                                     MainAxisAlignment.start,
+  //                                                 children: [
+  //                                                   Text(
+  //                                                     'Balance Empty : ',
+  //                                                     style: TextStyle(
+  //                                                       fontSize: 15,
+  //                                                       color: Colors.black,
+  //                                                       fontWeight:
+  //                                                           FontWeight.bold,
+  //                                                     ),
+  //                                                   ),
+  //                                                   Text(
+  //                                                     "$imbalaceSum",
+  //                                                     style: TextStyle(
+  //                                                       fontSize: 15,
+  //                                                       color: Colors.black,
+  //                                                       fontWeight:
+  //                                                           FontWeight.bold,
+  //                                                     ),
+  //                                                   ),
+  //                                                 ],
+  //                                               ),
+  //                                               Icon(
+  //                                                 isPhysicalStockListViewVisible
+  //                                                     ? Icons.arrow_drop_up
+  //                                                     : Icons.arrow_drop_down,
+  //                                                 size: 30,
+  //                                               ),
+  //                                             ],
+  //                                           ),
+  //                                         ),
+  //
+  //                                         // Visibility(
+  //                                         //   visible: isPhysicalStockListViewVisible,
+  //                                         //   child:
+  //                                         //   Container(
+  //                                         //     decoration: BoxDecoration(
+  //                                         //       // Background color of the box
+  //                                         //       borderRadius: BorderRadius.circular(8),
+  //                                         //       border: Border.all(
+  //                                         //           width:
+  //                                         //               0.5), // Optional: Add rounded corners
+  //                                         //     ),
+  //                                         //     child: Column(
+  //                                         //       crossAxisAlignment:
+  //                                         //           CrossAxisAlignment.start,
+  //                                         //       children: [
+  //                                         //         // Header Row
+  //                                         //         Container(
+  //                                         //           decoration: BoxDecoration(
+  //                                         //             // Background color of the box
+  //                                         //             borderRadius: BorderRadius.only(topLeft:Radius.circular(8),topRight: Radius.circular(8)),
+  //                                         //             color: Colors.blue.shade100,
+  //                                         //             // Optional: Add rounded corners
+  //                                         //           ),
+  //                                         //           child: Row(
+  //                                         //             mainAxisAlignment:
+  //                                         //                 MainAxisAlignment.center,
+  //                                         //             children: [
+  //                                         //               Expanded(
+  //                                         //                   child: Text('Cylinder',
+  //                                         //                       style: TextStyle(
+  //                                         //                           fontWeight: FontWeight
+  //                                         //                               .bold,),textAlign: TextAlign.center,)),
+  //                                         //               verticalDividerSmall(),
+  //                                         //               Expanded(
+  //                                         //                   child: Text('Imbalance Qty',
+  //                                         //                       style: TextStyle(
+  //                                         //                           fontWeight: FontWeight
+  //                                         //                               .bold),textAlign: TextAlign.center)),
+  //                                         //
+  //                                         //             ],
+  //                                         //           ),
+  //                                         //         ),
+  //                                         //
+  //                                         //         Container(
+  //                                         //           color: Colors.black12,
+  //                                         //           height: 1,
+  //                                         //           width: MediaQuery.of(context)
+  //                                         //               .size
+  //                                         //               .width,
+  //                                         //         ),
+  //                                         //         // Adds a divider below the header for separation
+  //                                         //         // List of Entries
+  //                                         //         ListView.builder(
+  //                                         //           shrinkWrap: true,
+  //                                         //           // To make the ListView occupy only the space it needs
+  //                                         //           physics:
+  //                                         //               NeverScrollableScrollPhysics(),
+  //                                         //           // Prevents scrolling inside the ListView
+  //                                         //           itemCount:
+  //                                         //               cylinderData.entries.length,
+  //                                         //           itemBuilder: (context, index) {
+  //                                         //             var entry = cylinderData.entries
+  //                                         //                 .elementAt(index);
+  //                                         //             String category = entry.key;
+  //                                         //             int emptyCount =
+  //                                         //                 entry.value['Empty'] ?? 0;
+  //                                         //             int filledCount = entry.value['Filled'] ?? 0;
+  //                                         //             int defectiveCount = entry.value['Defective'] ?? 0;
+  //                                         //
+  //                                         //             return Column(
+  //                                         //               children: [
+  //                                         //                 Row(
+  //                                         //                   mainAxisAlignment: MainAxisAlignment.center,
+  //                                         //                   children: [
+  //                                         //                     Expanded(
+  //                                         //                       child:Text(
+  //                                         //                           category,
+  //                                         //                           textAlign: TextAlign.center,
+  //                                         //                         ),
+  //                                         //
+  //                                         //                     ),
+  //                                         //                     verticalDividerVerySmall(),
+  //                                         //                     Expanded(
+  //                                         //                       child: GestureDetector(
+  //                                         //                         onTap: () {
+  //                                         //                           // Handle the tap on the 'emptyCount' text
+  //                                         //                           setState(() {
+  //                                         //                             // Perform any action when clicked (e.g., toggle underline state)
+  //                                         //                           });
+  //                                         //                         },
+  //                                         //                         child: Text(
+  //                                         //                           '$emptyCount',
+  //                                         //                           textAlign: TextAlign.center,
+  //                                         //                           style: TextStyle(
+  //                                         //                             decoration: TextDecoration.underline, // Add blue underline
+  //                                         //                             decorationColor: Colors.blue, // Set the underline color
+  //                                         //                           ),
+  //                                         //                         ),
+  //                                         //                       ),
+  //                                         //                     ),
+  //                                         //                   ],
+  //                                         //                 ),
+  //                                         //
+  //                                         //                 Container(
+  //                                         //                   color: Colors.black12,
+  //                                         //                   height: 1,
+  //                                         //                   width:
+  //                                         //                       MediaQuery.of(context)
+  //                                         //                           .size
+  //                                         //                           .width,
+  //                                         //                 ),
+  //                                         //               ],
+  //                                         //             );
+  //                                         //           },
+  //                                         //         ),
+  //                                         //
+  //                                         //       ],
+  //                                         //     ),
+  //                                         //   ),
+  //                                         // ),
+  //                                         Visibility(
+  //                                           visible:
+  //                                               isPhysicalStockListViewVisible &&
+  //                                                   receiptList.isNotEmpty,
+  //                                           child: Container(
+  //                                             margin: EdgeInsets.symmetric(
+  //                                                 horizontal: 5),
+  //                                             decoration: BoxDecoration(
+  //                                               borderRadius:
+  //                                                   BorderRadius.circular(12),
+  //                                               border: Border.all(),
+  //                                             ),
+  //                                             child: Column(
+  //                                               children: [
+  //                                                 // Header Row for Cylinder Categories
+  //                                                 Container(
+  //                                                   padding:
+  //                                                       const EdgeInsets.all(8),
+  //                                                   child: Row(
+  //                                                     mainAxisAlignment:
+  //                                                         MainAxisAlignment
+  //                                                             .center,
+  //                                                     children: [
+  //                                                       Expanded(
+  //                                                         child: Text(
+  //                                                           'Cylinder',
+  //                                                           style: TextStyle(
+  //                                                             fontWeight:
+  //                                                                 FontWeight.bold,
+  //                                                             color: Colors.black,
+  //                                                             fontSize: 14,
+  //                                                           ),
+  //                                                           textAlign:
+  //                                                               TextAlign.center,
+  //                                                         ),
+  //                                                       ),
+  //                                                       VerticalDivider(
+  //                                                           thickness: 1,
+  //                                                           color: Colors.grey),
+  //                                                       Expanded(
+  //                                                         child: Text(
+  //                                                           'Imbalance Qty',
+  //                                                           style: TextStyle(
+  //                                                             fontWeight:
+  //                                                                 FontWeight.bold,
+  //                                                             color: Colors.black,
+  //                                                             fontSize: 14,
+  //                                                           ),
+  //                                                           textAlign:
+  //                                                               TextAlign.center,
+  //                                                         ),
+  //                                                       ),
+  //                                                     ],
+  //                                                   ),
+  //                                                 ),
+  //
+  //                                                 // ListView for displaying cylinder categories and imbalance quantities
+  //                                                 // Container(
+  //                                                 //   height: 100,
+  //                                                 //   child: ListView.builder(
+  //                                                 //     shrinkWrap: true,
+  //                                                 //     itemCount: receiptList.length, // Use the length of the fetched list
+  //                                                 //     itemBuilder: (context, index) {
+  //                                                 //       var receipt = receiptList[index]; // Get the current receipt
+  //                                                 //       var item = receipt.itemImbDtls?.first; // Get the first item from the list (you can modify this if needed)
+  //                                                 //
+  //                                                 //       return Padding(
+  //                                                 //         padding: const EdgeInsets.all(10.0),
+  //                                                 //         child: Row(
+  //                                                 //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                                                 //           children: [
+  //                                                 //             // Cylinder Category Text (Item Name)
+  //                                                 //             Expanded(
+  //                                                 //               child: Text(
+  //                                                 //                 item?.itemName ?? "Unknown Item",  // Display Item Name
+  //                                                 //                 style: TextStyle(
+  //                                                 //                   fontWeight: FontWeight.bold,
+  //                                                 //                   fontSize: 14,
+  //                                                 //                   color: Colors.black,
+  //                                                 //                 ),
+  //                                                 //                 textAlign: TextAlign.center,
+  //                                                 //               ),
+  //                                                 //             ),
+  //                                                 //             // Divider between Texts
+  //                                                 //             VerticalDivider(thickness: 1, color: Colors.grey),
+  //                                                 //             // Imbalance Quantity with Tap Gesture
+  //                                                 //             Expanded(
+  //                                                 //               child: GestureDetector(
+  //                                                 //                 onTap: () {
+  //                                                 //                   int qty = item?.balance?.toInt() ?? 0;
+  //                                                 //                   int dmId = receipt.dMId?.toInt() ?? 0;  // Get DMId from the receipt
+  //                                                 //                   int itemId = item?.itemId?.toInt() ?? 0;  // Safely access balance and convert it to int, defaulting to 0 if null
+  //                                                 //                   _showPopup(qty,dmId,itemId); // Call the popup with the imbalance quantity
+  //                                                 //                 },
+  //                                                 //                 child: Text(
+  //                                                 //                   '${item?.imbQty}',  // Display Imbalance Quantity
+  //                                                 //                   textAlign: TextAlign.center,
+  //                                                 //                   style: TextStyle(
+  //                                                 //                     decoration: TextDecoration.underline,
+  //                                                 //                     decorationColor: Colors.blue,
+  //                                                 //                     fontWeight: FontWeight.bold,
+  //                                                 //                     color: Colors.blue.shade700,
+  //                                                 //                   ),
+  //                                                 //                 ),
+  //                                                 //               ),
+  //                                                 //             ),
+  //                                                 //           ],
+  //                                                 //         ),
+  //                                                 //       );
+  //                                                 //     },
+  //                                                 //   ),
+  //                                                 // )
+  //                                                 Container(
+  //                                                   color:
+  //                                                       const Color(0xff1280B3),
+  //                                                   height: 1,
+  //                                                   width: MediaQuery.of(context)
+  //                                                       .size
+  //                                                       .width,
+  //                                                 ),
+  //                                                 Container(
+  //                                                   child: ListView.builder(
+  //                                                     shrinkWrap: true,
+  //                                                     itemCount:
+  //                                                         receiptList.length,
+  //                                                     // Use the length of the fetched list
+  //                                                     itemBuilder:
+  //                                                         (context, index) {
+  //                                                       var receipt = receiptList[
+  //                                                           index]; // Get the current receipt
+  //
+  //                                                       return Padding(
+  //                                                         padding:
+  //                                                             const EdgeInsets
+  //                                                                 .all(10.0),
+  //                                                         child: Column(
+  //                                                           crossAxisAlignment:
+  //                                                               CrossAxisAlignment
+  //                                                                   .start,
+  //                                                           children: [
+  //                                                             // Optionally display receipt info here, e.g., receipt.title or date
+  //
+  //                                                             // For each receipt, loop through all items in itemImbDtls
+  //                                                             for (var item in receipt
+  //                                                                     .itemImbDtls ??
+  //                                                                 []) ...[
+  //                                                               Padding(
+  //                                                                 padding: const EdgeInsets
+  //                                                                     .symmetric(
+  //                                                                     vertical:
+  //                                                                         5.0),
+  //                                                                 child: Row(
+  //                                                                   mainAxisAlignment:
+  //                                                                       MainAxisAlignment
+  //                                                                           .spaceBetween,
+  //                                                                   children: [
+  //                                                                     // Cylinder Category Text (Item Name)
+  //                                                                     Expanded(
+  //                                                                       child:
+  //                                                                           Text(
+  //                                                                         item.itemName ??
+  //                                                                             "Unknown Item",
+  //                                                                         // Display Item Name
+  //                                                                         style:
+  //                                                                             TextStyle(
+  //                                                                           fontWeight:
+  //                                                                               FontWeight.bold,
+  //                                                                           fontSize:
+  //                                                                               16,
+  //                                                                           color:
+  //                                                                               Colors.black,
+  //                                                                         ),
+  //                                                                         textAlign:
+  //                                                                             TextAlign.center,
+  //                                                                       ),
+  //                                                                     ),
+  //                                                                     // Divider between Texts
+  //                                                                     VerticalDivider(
+  //                                                                         thickness:
+  //                                                                             1,
+  //                                                                         color: Colors
+  //                                                                             .grey),
+  //                                                                     // Imbalance Quantity with Tap Gesture
+  //                                                                     Expanded(
+  //                                                                       child:
+  //                                                                           GestureDetector(
+  //                                                                         onTap:
+  //                                                                             () {
+  //                                                                           int qty =
+  //                                                                               item.balance?.toInt() ?? 0;
+  //                                                                           int dmId =
+  //                                                                               receipt.dMId?.toInt() ?? 0; // Get DMId from the receipt
+  //                                                                           int itemId =
+  //                                                                               item.itemId?.toInt() ?? 0; // Safely access balance and convert it to int
+  //                                                                          int imbId = item.imbId?.toInt() ?? 0 ;
+  //                                                                           _showPopup(
+  //                                                                               qty,
+  //                                                                               dmId,
+  //                                                                               itemId,imbId); // Call the popup with the imbalance quantity
+  //                                                                         },
+  //                                                                         child:
+  //                                                                             Text(
+  //                                                                           '${item.balance}',
+  //                                                                           // Display Imbalance Quantity
+  //                                                                           textAlign:
+  //                                                                               TextAlign.center,
+  //                                                                           style: TextStyle(
+  //                                                                               decoration: TextDecoration.underline,
+  //                                                                               decorationColor: Colors.blue,
+  //                                                                               fontWeight: FontWeight.bold,
+  //                                                                               color: Colors.blue.shade700,
+  //                                                                               fontSize: 16),
+  //                                                                         ),
+  //                                                                       ),
+  //                                                                     ),
+  //                                                                   ],
+  //                                                                 ),
+  //                                                               ),
+  //                                                             ],
+  //                                                           ],
+  //                                                         ),
+  //                                                       );
+  //                                                     },
+  //                                                   ),
+  //                                                 ),
+  //                                               ],
+  //                                             ),
+  //                                           ),
+  //                                         ),
+  //                                       ],
+  //                                     ),
+  //                                   ),
+  //                                 ),
+  //                               ),
+  //                               SizedBox(height: 10),
+  //                             ],
+  //                           ),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   )
+  //                 : Container(),
+  //
+  //             // Item Details
+  //             Row(
+  //               children: [
+  //                 // SV+ Field (DropdownButton)
+  //                 Flexible(
+  //                   flex: 2,
+  //                   child:
+  //                       // DropdownButtonFormField<CylItemListModel>(
+  //                       //   decoration: const InputDecoration(
+  //                       //     labelText: 'Select Item',
+  //                       //     labelStyle: TextStyle(fontSize: 12),
+  //                       //     border: OutlineInputBorder(),
+  //                       //     contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+  //                       //   ),
+  //                       //   items: _items.map((CylItemListModel item) {
+  //                       //     return DropdownMenuItem<CylItemListModel>(
+  //                       //       value: item,
+  //                       //       child: Text(item.itemName ?? 'Unknown',
+  //                       //         style: TextStyle(fontSize: 14.0,fontWeight: FontWeight.normal),),
+  //                       //
+  //                       //     );
+  //                       //   }).toList(),
+  //                       //   onChanged: (CylItemListModel? selectedItem) {
+  //                       //     if (selectedItem != null) {
+  //                       //       setState(() {
+  //                       //         _selectedItem = selectedItem.itemName;
+  //                       //         selectedItemId = selectedItem.itemId!.toInt();
+  //                       //
+  //                       //         print('Selected Item: ${_selectedItem}, ID: ${selectedItemId}');
+  //                       //       });
+  //                       //     }
+  //                       //   },
+  //                       // ),
+  //                       DropdownButtonFormField<CylItemListModel>(
+  //                     decoration: const InputDecoration(
+  //                       label: Row(
+  //                         mainAxisSize: MainAxisSize.min,
+  //                         children: const [
+  //                           Text(
+  //                             'Select Item',
+  //                             style: TextStyle(fontSize: 12),
+  //                           ),
+  //                           SizedBox(width: 4),
+  //                           // Add some space between the text and the icon
+  //                           Icon(
+  //                             Icons.star, // Use a star or any other icon
+  //                             color: Colors.red, // Set the icon color to red
+  //                             size: 10, // Adjust the size of the icon
+  //                           ),
+  //                         ],
+  //                       ),
+  //                       border: const OutlineInputBorder(),
+  //                       contentPadding: const EdgeInsets.symmetric(
+  //                           vertical: 8.0, horizontal: 12.0),
+  //                     ),
+  //                     value: _selectedItemModel,
+  //                     // Bind the value to the selected item model
+  //                     items: _items.map((CylItemListModel item) {
+  //                       return DropdownMenuItem<CylItemListModel>(
+  //                         value: item,
+  //                         child: Text(
+  //                           item.itemName ?? 'Unknown',
+  //                           style: TextStyle(
+  //                               fontSize: 14.0, fontWeight: FontWeight.normal),
+  //                         ),
+  //                       );
+  //                     }).toList(),
+  //                     onChanged: (flagEditMode == "editMode") ? null:(CylItemListModel? selectedItem) {
+  //                       if (selectedItem != null) {
+  //                         setState(() {
+  //                           _selectedItem = selectedItem.itemName;
+  //                           selectedItemId = selectedItem.itemId!.toInt();
+  //
+  //                           // Update the selectedItemModel when the selection changes
+  //                           _selectedItemModel = selectedItem;
+  //
+  //                           print(
+  //                               'Selected Item: ${_selectedItem}, ID: ${selectedItemId}');
+  //                           _fetchFilledStockForSelectedItem(selectedItemId!);
+  //                         });
+  //                       }
+  //                     },
+  //                   ),
+  //                 ),
+  //
+  //                 const SizedBox(width: 10), // Spacing between SV+ and TV-
+  //
+  //                 // TV- Field (TextField)
+  //                 Flexible(
+  //                   flex: 1,
+  //                   child: TextField(
+  //                     controller: _filledController,
+  //                     decoration: const InputDecoration(
+  //                       label: Row(
+  //                         mainAxisSize: MainAxisSize.min,
+  //                         children: const [
+  //                           Text(
+  //                             'Total\nSale',
+  //                             style: TextStyle(fontSize: 12),
+  //                           ),
+  //                           SizedBox(width: 4),
+  //                           // Add some space between the text and the icon
+  //                           Icon(
+  //                             Icons.star, // Use a star or any other icon
+  //                             color: Colors.red, // Set the icon color to red
+  //                             size: 10, // Adjust the size of the icon
+  //                           ),
+  //                         ],
+  //                       ),
+  //                       border: const OutlineInputBorder(),
+  //                       contentPadding: const EdgeInsets.symmetric(
+  //                           vertical: 8.0, horizontal: 12.0),
+  //                     ),
+  //                     style: TextStyle(
+  //                       fontSize: 14.0, // Adjust the text size here
+  //                     ),
+  //                     keyboardType: TextInputType.number,
+  //                     // Set keyboard type to numeric
+  //                     inputFormatters: <TextInputFormatter>[
+  //                       FilteringTextInputFormatter.digitsOnly,
+  //                       LengthLimitingTextInputFormatter(3),
+  //                       // Allow only digits
+  //                     ],
+  //                     onChanged: (value) {
+  //                       setState(() {
+  //                         // Get the current value of the filled quantity
+  //                         int filledQty = int.tryParse(value) ?? 0;
+  //
+  //                         // Check if total sale is greater than filled stock
+  //                         if (filledQty > (filledStock ?? 0)) {
+  //                           ScaffoldMessenger.of(context).showSnackBar(
+  //                             SnackBar(content: Text('Total Sale Cannot Be Greater Than Filled Stock')),
+  //                           );
+  //                           _filledController.clear();
+  //                           filledQty = 0;
+  //                         }
+  //                         // Recalculate the empty quantity based on other fields
+  //                         int svQty = int.tryParse(_svController.text) ?? 0;
+  //                         int tvQty = int.tryParse(_tvController.text) ?? 0;
+  //                         int defQty =
+  //                             int.tryParse(_defectiveController.text) ?? 0;
+  //                         int lessEmptyQty =
+  //                             int.tryParse(_lessEmptyController.text) ?? 0;
+  //
+  //                         // Calculate the new empty quantity
+  //                         int emptyQty =
+  //                             filledQty - svQty + tvQty - defQty - lessEmptyQty;
+  //
+  //                         // Update the empty field
+  //                         _emptyController.text = emptyQty.toString();
+  //
+  //                       });
+  //                     },
+  //                   ),
+  //                 ),
+  //                 const SizedBox(width: 10),
+  //                 Flexible(
+  //                   flex: 1,
+  //                   child: TextField(
+  //                     controller: _lessEmptyController,
+  //                     keyboardType: TextInputType.number,
+  //                     // Set keyboard type to numeric
+  //                     inputFormatters: <TextInputFormatter>[
+  //                       FilteringTextInputFormatter.digitsOnly,
+  //                       LengthLimitingTextInputFormatter(3),
+  //                       // Allow only digits
+  //                     ],
+  //                     decoration: const InputDecoration(
+  //                       labelText: 'Less\nEmpty',
+  //                       labelStyle: TextStyle(fontSize: 12),
+  //                       border: OutlineInputBorder(),
+  //                       contentPadding: EdgeInsets.symmetric(
+  //                           vertical: 8.0, horizontal: 12.0),
+  //                     ),
+  //                     style: TextStyle(
+  //                       fontSize: 14.0, // Adjust the text size here
+  //                     ),
+  //                     onChanged: (value) {
+  //                       setState(() {
+  //                         // Recalculate empty quantity
+  //                         int lessEmpty = int.tryParse(value) ?? 0;
+  //                         int filledQty =
+  //                             int.tryParse(_filledController.text) ?? 0;
+  //                         int svQty = int.tryParse(_svController.text) ?? 0;
+  //                         int tvQty = int.tryParse(_tvController.text) ?? 0;
+  //                         int defQty =
+  //                             int.tryParse(_defectiveController.text) ?? 0;
+  //                         if (lessEmpty > filledQty) {
+  //                           showFlushBar(context, "Invalid Count",
+  //                               'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+  //                         } else {
+  //                           // Calculate the new empty quantity
+  //                           int emptyQty =
+  //                               filledQty - svQty + tvQty - defQty - lessEmpty;
+  //                           _emptyController.text = emptyQty.toString();
+  //                         }
+  //                       });
+  //                     },
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //             const SizedBox(height: 20),
+  //             Row(
+  //               children: [
+  //                 // SV+ Field and Button
+  //                 Flexible(
+  //                   flex: 2,
+  //                   child: Row(
+  //                     crossAxisAlignment: CrossAxisAlignment.center,
+  //                     // Align widgets in the center vertically
+  //                     children: [
+  //                       // TextField for SV+
+  //                       Expanded(
+  //                         child: TextField(
+  //                           controller: _svController,
+  //                           keyboardType: TextInputType.number,
+  //                           // Set keyboard type to numeric
+  //                           inputFormatters: <TextInputFormatter>[
+  //                             FilteringTextInputFormatter.digitsOnly,
+  //                             LengthLimitingTextInputFormatter(3),
+  //                             // Allow only digits
+  //                           ],
+  //                           decoration: const InputDecoration(
+  //                             labelText: 'SV-',
+  //                             labelStyle: TextStyle(fontSize: 12),
+  //                             border: OutlineInputBorder(),
+  //                             contentPadding: EdgeInsets.symmetric(
+  //                                 vertical: 8.0, horizontal: 12.0),
+  //                           ),
+  //                           style: TextStyle(
+  //                             fontSize: 14.0, // Adjust the text size here
+  //                           ),
+  //                           onChanged: (value) {
+  //                             setState(() {
+  //                               // Recalculate empty quantity
+  //                               int svQty = int.tryParse(value) ?? 0;
+  //                               int filledQty =
+  //                                   int.tryParse(_filledController.text) ?? 0;
+  //                               int tvQty =
+  //                                   int.tryParse(_tvController.text) ?? 0;
+  //                               int defQty =
+  //                                   int.tryParse(_defectiveController.text) ??
+  //                                       0;
+  //                               int lessEmptyQty =
+  //                                   int.tryParse(_lessEmptyController.text) ??
+  //                                       0;
+  //                               if (svQty > filledQty) {
+  //                                 showFlushBar(context, "Invalid Count",
+  //                                     'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+  //                               } else {
+  //                                 // Calculate the new empty quantity
+  //                                 int emptyQty = filledQty -
+  //                                     svQty +
+  //                                     tvQty -
+  //                                     defQty -
+  //                                     lessEmptyQty;
+  //                                 _emptyController.text = emptyQty.toString();
+  //                               }
+  //                             });
+  //                           },
+  //                         ),
+  //                       ),
+  //                       // IconButton for SV+
+  //                       IconButton(
+  //                         iconSize: 35,
+  //                         onPressed: () {
+  //                           int svQty = int.tryParse(_svController.text) ?? 0;
+  //                           _showPopupDialogs(
+  //                               "SV", _svRemarkController, svQty);
+  //                         },
+  //                         icon: const Icon(Icons.add_circle_outline_sharp),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //                 const SizedBox(width: 10), // Spacing between SV+ and TV-
+  //                 // TV- Field and Button
+  //                 Flexible(
+  //                   flex: 1,
+  //                   child: Row(
+  //                     crossAxisAlignment: CrossAxisAlignment.center,
+  //                     // Align widgets in the center vertically
+  //                     children: [
+  //                       // TextField for TV-
+  //                       Expanded(
+  //                         child: TextField(
+  //                           controller: _tvController,
+  //                           keyboardType: TextInputType.number,
+  //                           // Set keyboard type to numeric
+  //                           inputFormatters: <TextInputFormatter>[
+  //                             FilteringTextInputFormatter.digitsOnly,
+  //                             LengthLimitingTextInputFormatter(3),
+  //                             // Allow only digits
+  //                           ],
+  //                           decoration: const InputDecoration(
+  //                             labelText: 'TV+',
+  //                             labelStyle: TextStyle(fontSize: 12),
+  //                             border: OutlineInputBorder(),
+  //                             contentPadding: EdgeInsets.symmetric(
+  //                                 vertical: 8.0, horizontal: 12.0),
+  //                           ),
+  //                           style: TextStyle(
+  //                             fontSize: 14.0, // Adjust the text size here
+  //                           ),
+  //                           onChanged: (value) {
+  //                             setState(() {
+  //                               // Recalculate empty quantity
+  //                               int tvQty = int.tryParse(value) ?? 0;
+  //                               int filledQty =
+  //                                   int.tryParse(_filledController.text) ?? 0;
+  //                               int svQty =
+  //                                   int.tryParse(_svController.text) ?? 0;
+  //                               int defQty =
+  //                                   int.tryParse(_defectiveController.text) ??
+  //                                       0;
+  //                               int lessEmptyQty =
+  //                                   int.tryParse(_lessEmptyController.text) ??
+  //                                       0;
+  //                               // Validate TV value
+  //                               if (tvQty > filledQty) {
+  //                                 showFlushBar(context, "Invalid Count",
+  //                                     'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+  //                               } else {
+  //                                 // Calculate the new empty quantity
+  //                                 int emptyQty = filledQty -
+  //                                     svQty +
+  //                                     tvQty -
+  //                                     defQty -
+  //                                     lessEmptyQty;
+  //                                 _emptyController.text = emptyQty.toString();
+  //                               }
+  //                             });
+  //                           },
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //                 const SizedBox(width: 10),
+  //                 Flexible(
+  //                   flex: 1,
+  //                   child: Row(
+  //                     crossAxisAlignment: CrossAxisAlignment.center,
+  //                     // Align vertically to the center
+  //                     children: [
+  //                       // TextField for Def.
+  //                       Expanded(
+  //                         child: TextField(
+  //                           controller: _defectiveController,
+  //                           keyboardType: TextInputType.number,
+  //                           // Set keyboard type to numeric
+  //                           inputFormatters: <TextInputFormatter>[
+  //                             FilteringTextInputFormatter.digitsOnly,
+  //                             LengthLimitingTextInputFormatter(3),
+  //                             // Allow only digits
+  //                           ],
+  //                           decoration: const InputDecoration(
+  //                             labelText: 'Def.-',
+  //                             labelStyle: TextStyle(fontSize: 12),
+  //                             border: OutlineInputBorder(),
+  //                             contentPadding: EdgeInsets.symmetric(
+  //                                 vertical: 8.0, horizontal: 12.0),
+  //                           ),
+  //                           style: TextStyle(
+  //                             fontSize: 14.0, // Adjust the text size here
+  //                           ),
+  //                           onChanged: (value) {
+  //                             setState(() {
+  //                               // Recalculate empty quantity
+  //                               int defQty = int.tryParse(value) ?? 0;
+  //                               int filledQty =
+  //                                   int.tryParse(_filledController.text) ?? 0;
+  //                               int svQty =
+  //                                   int.tryParse(_svController.text) ?? 0;
+  //                               int tvQty =
+  //                                   int.tryParse(_tvController.text) ?? 0;
+  //                               int lessEmptyQty =
+  //                                   int.tryParse(_lessEmptyController.text) ??
+  //                                       0;
+  //                               if (defQty > filledQty) {
+  //                                 showFlushBar(context, "Invalid Count",
+  //                                     'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+  //                               } else {
+  //                                 // Calculate the new empty quantity
+  //                                 int emptyQty = filledQty -
+  //                                     svQty +
+  //                                     tvQty -
+  //                                     defQty -
+  //                                     lessEmptyQty;
+  //                                 _emptyController.text = emptyQty.toString();
+  //                               }
+  //                             });
+  //                           },
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //
+  //             const SizedBox(height: 20),
+  //             Row(
+  //               children: [
+  //                 // Empty Field and Button
+  //                 Flexible(
+  //                   flex: 1,
+  //                   child: Row(
+  //                     crossAxisAlignment: CrossAxisAlignment.center,
+  //                     // Align vertically to the center
+  //                     children: [
+  //                       // TextField for Empty
+  //                       Expanded(
+  //                         child: TextField(
+  //                           controller: _emptyController,
+  //                           keyboardType: TextInputType.number,
+  //                           // Set keyboard type to numeric
+  //                           inputFormatters: <TextInputFormatter>[
+  //                             FilteringTextInputFormatter.digitsOnly,
+  //                             LengthLimitingTextInputFormatter(3),
+  //                             // Allow only digits
+  //                           ],
+  //                           decoration: const InputDecoration(
+  //                             label: Row(
+  //                               mainAxisSize: MainAxisSize.min,
+  //                               children: const [
+  //                                 Text(
+  //                                   'Empty',
+  //                                   style: TextStyle(fontSize: 12),
+  //                                 ),
+  //                                 // SizedBox(width: 4),
+  //                                 // // Add some space between the text and the icon
+  //                                 // Icon(
+  //                                 //   Icons.star,
+  //                                 //   // Use a star or any other icon
+  //                                 //   color: Colors.red,
+  //                                 //   // Set the icon color to red
+  //                                 //   size: 10, // Adjust the size of the icon
+  //                                 // ),
+  //                               ],
+  //                             ),
+  //                             border: const OutlineInputBorder(),
+  //                             contentPadding: const EdgeInsets.symmetric(
+  //                                 vertical: 8.0, horizontal: 12.0),
+  //                           ),
+  //                           enabled: false,
+  //                           style: TextStyle(
+  //                             fontSize: 14.0, // Adjust the text size here
+  //                           ),
+  //                           onChanged: (value) {
+  //                             setState(() {
+  //                               // Get the value of Sale and Empty (make sure they are integers)
+  //                               int filledQty =
+  //                                   int.tryParse(_filledController.text) ?? 0;
+  //                               int emptyQty = int.tryParse(value) ?? 0;
+  //
+  //                               // If the empty quantity exceeds the filled (sale) quantity, show an error
+  //                               if (emptyQty > filledQty) {
+  //                                 // Show an error message
+  //                                 showFlushBar(context, "Invalid Count",
+  //                                     'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+  //                                 // Update the empty quantity to be equal to the sale quantity
+  //                                 _emptyController.text = filledQty.toString();
+  //                                 // Optionally, move the cursor to the end of the input field after setting the value
+  //                                 _emptyController.selection =
+  //                                     TextSelection.collapsed(
+  //                                         offset: _emptyController.text.length);
+  //                               }
+  //                             });
+  //                           },
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //                 const SizedBox(width: 40), // Spacing between Empty and Def.
+  //                 Flexible(
+  //                   flex: 1,
+  //                   child: TextField(
+  //                     controller: _remarkController,
+  //                     maxLength: 250,
+  //                     decoration: const InputDecoration(
+  //                       labelText: 'Remark',
+  //                       labelStyle: TextStyle(fontSize: 12),
+  //                       border: OutlineInputBorder(),
+  //                       contentPadding: EdgeInsets.symmetric(
+  //                           vertical: 8.0, horizontal: 12.0),
+  //                     ),
+  //
+  //                     style: TextStyle(
+  //                       fontSize: 14.0, // Adjust the text size here
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ],
+  //             ),
+  //
+  //             // Padding(
+  //             //         padding: const EdgeInsets.all(8.0),
+  //             //         child:
+  //             //             // ElevatedButton(
+  //             //             //     onPressed:_addNewItem,
+  //             //             // child: Text("Add New Item",style: TextStyle(color: Colors.white,fontSize: 14),),
+  //             //             //   style: ElevatedButton.styleFrom(
+  //             //             //         backgroundColor: Colors.blue, // Button expands to fill available width// Text color of the button
+  //             //             //         shape: RoundedRectangleBorder( // Optional: Set rounded corners
+  //             //             //           borderRadius: BorderRadius.circular(50),
+  //             //             //         ),
+  //             //             //       ),),
+  //             //
+  //             //             Row(
+  //             //           mainAxisAlignment: MainAxisAlignment.center,
+  //             //           children: [
+  //             //             ElevatedButton(
+  //             //               // onPressed: () async {
+  //             //               //   if (_editingItemId != null) {
+  //             //               //     // Update the existing item in the database
+  //             //               //     await updateRefillSale?.updateRowByColID(
+  //             //               //       _editingItemId!,
+  //             //               //       ItemData(
+  //             //               //         date: deliveryDateController.text,
+  //             //               //         deliveryBoyName:
+  //             //               //             selectedDelBoyName.toString(),
+  //             //               //         delBoyId: selectedDelBoyId.toString(),
+  //             //               //         vehicleNo: vehicleNoController.text,
+  //             //               //         itemName: _selectedItem.toString(),
+  //             //               //         itemID: selectedItemId.toString(),
+  //             //               //         filled: _filledController.text,
+  //             //               //         sv: _svController.text,
+  //             //               //         tv: _tvController.text,
+  //             //               //         empty: _emptyController.text,
+  //             //               //         defective: _defectiveController.text,
+  //             //               //         lessEmpty: _lessEmptyController.text,
+  //             //               //         remark: _remarkController.text,
+  //             //               //         svRemark: remarksList.join(', '),
+  //             //               //         updateFlag: 'pending',
+  //             //               //       ),
+  //             //               //     );
+  //             //               //     ScaffoldMessenger.of(context).showSnackBar(
+  //             //               //       SnackBar(
+  //             //               //           content: Text('Item updated successfully')),
+  //             //               //     );
+  //             //               //     fetchData(selectedDelBoyId.toString(),
+  //             //               //         deliveryDateController.text);
+  //             //               //     debugPrint(
+  //             //               //         "update"); // Call your existing add function
+  //             //               //     // Clear the editing state and text fields
+  //             //               //     setState(() {
+  //             //               //       _editingItemId = null;
+  //             //               //       _filledController.clear();
+  //             //               //       _svController.clear();
+  //             //               //       _tvController.clear();
+  //             //               //       _emptyController.clear();
+  //             //               //       _defectiveController.clear();
+  //             //               //       _lessEmptyController.clear();
+  //             //               //       _remarkController.clear();
+  //             //               //       remarksList.clear();
+  //             //               //       _selectedItemModel =
+  //             //               //       null; // Clear the selected item in the dropdown
+  //             //               //       _selectedItem = '';
+  //             //               //     });
+  //             //               //   } else {
+  //             //               //     _addNewItem();
+  //             //               //     debugPrint(
+  //             //               //         "Add"); // Call your existing add function
+  //             //               //   }
+  //             //               // },
+  //             //
+  //             //               onPressed: () async {
+  //             //                 int filledValue =
+  //             //                     int.tryParse(_filledController.text) ?? 0;
+  //             //                 int svValue = int.tryParse(_svController.text) ?? 0;
+  //             //                 int tvValue = int.tryParse(_tvController.text) ?? 0;
+  //             //                 int emptyValue =
+  //             //                     int.tryParse(_emptyController.text) ?? 0;
+  //             //                 int defectiveValue =
+  //             //                     int.tryParse(_defectiveController.text) ?? 0;
+  //             //                 int lessEmptyValue =
+  //             //                     int.tryParse(_lessEmptyController.text) ?? 0;
+  //             //
+  //             //                 if (_editingItemId != null) {
+  //             //                   if (filledValue > lessEmptyValue) {
+  //             //                     if (filledValue > svValue) {
+  //             //                       if (filledValue > tvValue) {
+  //             //                         if (filledValue > defectiveValue) {
+  //             //                           if (filledValue >= emptyValue && emptyValue > 0) {
+  //             //                             // Attempt to update the existing item in the database
+  //             //                             final isUpdated =
+  //             //                             await updateRefillSale?.updateRowByColID(
+  //             //                               _editingItemId!,
+  //             //                               ItemData(
+  //             //                                 date: deliveryDateController.text,
+  //             //                                 deliveryBoyName:
+  //             //                                 selectedDelBoyName.toString(),
+  //             //                                 delBoyId: selectedDelBoyId.toString(),
+  //             //                                 vehicleNo: vehicleNoController.text,
+  //             //                                 itemName: _selectedItem.toString(),
+  //             //                                 itemID: selectedItemId.toString(),
+  //             //                                 filled: _filledController.text,
+  //             //                                 sv: _svController.text,
+  //             //                                 tv: _tvController.text,
+  //             //                                 empty: _emptyController.text,
+  //             //                                 defective: _defectiveController.text,
+  //             //                                 lessEmpty: _lessEmptyController.text,
+  //             //                                 remark: _remarkController.text,
+  //             //                                 svRemark: remarksList.join(', '),
+  //             //                                 updateFlag: 'pending',
+  //             //                               ),
+  //             //                             );
+  //             //
+  //             //                             if (isUpdated == true) {
+  //             //                               // Success: Show success message and refresh data
+  //             //                               ScaffoldMessenger.of(context).showSnackBar(
+  //             //                                 SnackBar(
+  //             //                                     content:
+  //             //                                     Text('Item updated successfully')),
+  //             //                               );
+  //             //                               fetchData(selectedDelBoyId.toString(),
+  //             //                                   deliveryDateController.text);
+  //             //
+  //             //                               // Clear the editing state and text fields
+  //             //                               setState(() {
+  //             //                                 _editingItemId = null;
+  //             //                                 _filledController.clear();
+  //             //                                 _svController.clear();
+  //             //                                 _tvController.clear();
+  //             //                                 _emptyController.clear();
+  //             //                                 _defectiveController.clear();
+  //             //                                 _lessEmptyController.clear();
+  //             //                                 _remarkController.clear();
+  //             //                                 remarksList.clear();
+  //             //                                 _selectedItemModel =
+  //             //                                 null; // Clear the selected item in the dropdown
+  //             //                                 _selectedItem = '';
+  //             //                               });
+  //             //                             } else {
+  //             //                               // Failure: Show error message
+  //             //                               ScaffoldMessenger.of(context).showSnackBar(
+  //             //                                 SnackBar(
+  //             //                                     content: Text(
+  //             //                                         'Item update failed. Duplicate or invalid entry.')),
+  //             //                               );
+  //             //                             }
+  //             //                           }else{
+  //             //                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //             //                               content: Text(
+  //             //                                   "Empty cylinder counts must be less than the Sale cylinder count..!"),
+  //             //                               duration: Duration(seconds: 2),
+  //             //                             ));
+  //             //                           }
+  //             //                         }else{
+  //             //                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //             //                             content: Text(
+  //             //                                 "Defective cylinder counts must be less than the Sale cylinder count..!"),
+  //             //                             duration: Duration(seconds: 2),
+  //             //                           ));
+  //             //                         }
+  //             //                       }else{
+  //             //                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //             //                           content: Text(
+  //             //                               "TV cylinder counts must be less than the Sale cylinder count..!"),
+  //             //                           duration: Duration(seconds: 2),
+  //             //                         ));
+  //             //                       }
+  //             //                     }else{
+  //             //                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //             //                         content: Text(
+  //             //                             "SV cylinder counts must be less than the Sale cylinder count..!"),
+  //             //                         duration: Duration(seconds: 2),
+  //             //                       ));
+  //             //                     }
+  //             //                   }else{
+  //             //                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //             //                       content: Text(
+  //             //                           "Less Empty cylinder counts must be less than the Sale cylinder count..!"),
+  //             //                       duration: Duration(seconds: 2),
+  //             //                     ));
+  //             //                   }
+  //             //                 } else {
+  //             //                   // Add new item
+  //             //                   _addNewItem();
+  //             //                   debugPrint(
+  //             //                       "Add"); // Call your existing add function
+  //             //                 }
+  //             //               },
+  //             //
+  //             //               child: Padding(
+  //             //                 padding: const EdgeInsets.all(8.0),
+  //             //                 child: Text(
+  //             //                   _editingItemId != null ? 'Update' : 'Add',
+  //             //                   style:
+  //             //                       TextStyle(color: Colors.white, fontSize: 14),
+  //             //                 ),
+  //             //               ),
+  //             //               style: ElevatedButton.styleFrom(
+  //             //                 backgroundColor: Colors.blue,
+  //             //                 // Button expands to fill available width// Text color of the button
+  //             //                 shape: RoundedRectangleBorder(
+  //             //                   // Optional: Set rounded corners
+  //             //                   borderRadius: BorderRadius.circular(50),
+  //             //                 ),
+  //             //               ), // Change button label
+  //             //             ),
+  //             //           ],
+  //             //         ),
+  //             //       ),
+  //             Padding(
+  //               padding: const EdgeInsets.all(8.0),
+  //               child: Row(
+  //                 mainAxisAlignment: MainAxisAlignment.center,
+  //                 children: [
+  //                   ElevatedButton(
+  //                     onPressed: (_filledController.text.isNotEmpty &&
+  //                             selectedDelBoyName != null &&
+  //                             _selectedItem != null)
+  //                         ? () async {
+  //                             int filledValue =
+  //                                 int.tryParse(_filledController.text) ?? 0;
+  //                             int svValue =
+  //                                 int.tryParse(_svController.text) ?? 0;
+  //                             int tvValue =
+  //                                 int.tryParse(_tvController.text) ?? 0;
+  //                             int emptyValue =
+  //                                 int.tryParse(_emptyController.text) ?? 0;
+  //                             int defectiveValue =
+  //                                 int.tryParse(_defectiveController.text) ?? 0;
+  //                             int lessEmptyValue =
+  //                                 int.tryParse(_lessEmptyController.text) ?? 0;
+  //                             DateTime now = DateTime.now();
+  //                             String formattedDate =
+  //                                 DateFormat('yyyy-MM-dd').format(now);
+  //                             if (_editingItemId != null) {
+  //                               if(flagEditMode == "editMode"){
+  //                                 if (filledValue > lessEmptyValue) {
+  //                                   if (filledValue > svValue) {
+  //                                     if (filledValue > tvValue) {
+  //                                       if (filledValue > defectiveValue) {
+  //                                         if (emptyValue > 0) {
+  //                                           int currentCount = remarksList
+  //                                               .map((remark) => remark.split(',').length)
+  //                                               .fold(0, (a, b) => a + b);
+  //                                           int svQty = int.parse(_svController.text);
+  //                                           // Check if we can add more consumers
+  //                                           if (currentCount > svQty) {
+  //                                             showFlushBar(context, "No Of Consumer",
+  //                                                 'Consumer Details Count Should Not Exceed The SV Count!');
+  //                                           }else {
+  //                                             _updateItem();
+  //                                           }
+  //                                         } else {
+  //                                           showFlushBar(context, "Cylinder Count",
+  //                                               'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+  //                                         }
+  //                                       } else {
+  //                                         showFlushBar(context, "Cylinder Count",
+  //                                             'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+  //                                       }
+  //                                     } else {
+  //                                       showFlushBar(context, "Cylinder Count",
+  //                                           'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+  //                                     }
+  //                                   } else {
+  //                                     showFlushBar(context, "Cylinder Count",
+  //                                         'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+  //                                   }
+  //                                 } else {
+  //                                   showFlushBar(context, "Cylinder Count",
+  //                                       'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+  //                                 }
+  //                               }else{
+  //                                 if(_dataGetFromDBDelBoy.isNotEmpty) {
+  //                                   if(filledValue > 0) {
+  //                                     if (filledValue > lessEmptyValue) {
+  //                                       if (filledValue > svValue) {
+  //                                         if (filledValue > tvValue) {
+  //                                           if (filledValue > defectiveValue) {
+  //                                             if (emptyValue > 0) {
+  //                                               int currentCount = remarksList
+  //                                                   .map((remark) =>
+  //                                               remark
+  //                                                   .split(',')
+  //                                                   .length)
+  //                                                   .fold(0, (a, b) => a + b);
+  //                                               int svQty = int.parse(
+  //                                                   _svController.text);
+  //                                               // Check if we can add more consumers
+  //                                               if (currentCount > svQty) {
+  //                                                 showFlushBar(context, "Consumer Count Exceed",
+  //                                                     'Consumer Details Count Should Not Exceed The SV Count!');
+  //                                               } else {
+  //                                                 final isUpdated =
+  //                                                 await updateRefillSale
+  //                                                     ?.updateRowByColID(
+  //                                                   _editingItemId!,
+  //                                                   ItemData(
+  //                                                     date:
+  //                                                     deliveryDateController
+  //                                                         .text,
+  //                                                     deliveryBoyName:
+  //                                                     selectedDelBoyName
+  //                                                         .toString(),
+  //                                                     delBoyId:
+  //                                                     selectedDelBoyId
+  //                                                         .toString(),
+  //                                                     vehicleNo:
+  //                                                     vehicleNoController.text,
+  //                                                     itemName:
+  //                                                     _selectedItem.toString(),
+  //                                                     itemID:
+  //                                                     selectedItemId.toString(),
+  //                                                     filled: _filledController
+  //                                                         .text,
+  //                                                     sv: _svController.text,
+  //                                                     tv: _tvController.text,
+  //                                                     empty: _emptyController
+  //                                                         .text,
+  //                                                     defective:
+  //                                                     _defectiveController.text,
+  //                                                     lessEmpty:
+  //                                                     _lessEmptyController.text,
+  //                                                     remark: _remarkController
+  //                                                         .text,
+  //                                                     svRemark:
+  //                                                     remarksList.join(', '),
+  //                                                     updateFlag: 'pending',
+  //                                                     itemAddedDate: formattedDate,
+  //                                                   ),
+  //                                                 );
+  //
+  //                                                 if (isUpdated == true) {
+  //                                                   EasyLoading.showToast("Data Updated Successfully",
+  //                                                       duration: const Duration(milliseconds: 3000));
+  //
+  //                                                   fetchData(
+  //                                                       selectedDelBoyId
+  //                                                           .toString(),
+  //                                                       deliveryDateController
+  //                                                           .text);
+  //
+  //                                                   setState(() {
+  //                                                     _editingItemId = null;
+  //                                                     _filledController.clear();
+  //                                                     _svController.clear();
+  //                                                     _tvController.clear();
+  //                                                     _emptyController.clear();
+  //                                                     _defectiveController
+  //                                                         .clear();
+  //                                                     _lessEmptyController
+  //                                                         .clear();
+  //                                                     _remarkController.clear();
+  //                                                     remarksList.clear();
+  //                                                     _selectedItemModel = null;
+  //                                                     _selectedItem = '';
+  //                                                   });
+  //                                                 } else {
+  //                                                   showFlushBar(context, "Item Exists",
+  //                                                       'This Item Already Exists!');
+  //                                                 }
+  //                                               }
+  //                                             } else {
+  //                                               showFlushBar(context, "Cylinder Count",
+  //                                                   'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+  //                                             }
+  //                                           } else {
+  //                                             showFlushBar(context, "Cylinder Count",
+  //                                                 'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+  //                                           }
+  //                                         } else {
+  //                                           showFlushBar(context, "Cylinder Count",
+  //                                               'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+  //                                         }
+  //                                       } else {
+  //                                         showFlushBar(context, "Cylinder Count",
+  //                                             'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+  //                                       }
+  //                                     } else {
+  //                                       showFlushBar(context, "Cylinder Count",
+  //                                           'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+  //                                     }
+  //                                   }
+  //
+  //                                 }else{
+  //
+  //                                 }
+  //                               }
+  //                             } else {
+  //                               _addNewItem();
+  //                               debugPrint("Add");
+  //                             }
+  //                           }
+  //                         : null,
+  //                     // Disable the button when the condition is false
+  //                     child: Padding(
+  //                       padding: const EdgeInsets.all(8.0),
+  //                       child: flagEditMode == "editMode"?
+  //                       Text(
+  //                         _editingItemId != null ? 'Update' : 'Update',
+  //                         style: TextStyle(color: Colors.white, fontSize: 14),
+  //                       ):
+  //                       Text(
+  //                         _editingItemId != null && _dataGetFromDBDelBoy.isNotEmpty ? 'Update' : 'Add',
+  //                         style: TextStyle(color: Colors.white, fontSize: 14),
+  //                       ),
+  //                     ),
+  //                     style: ElevatedButton.styleFrom(
+  //                       backgroundColor: _filledController.text.isNotEmpty &&
+  //                               selectedDelBoyName != null &&
+  //                               (_selectedItem != null )
+  //                           ? Colors.blue
+  //                           : Colors.grey,
+  //                       // Change color based on enabled state
+  //                       shape: RoundedRectangleBorder(
+  //                         borderRadius: BorderRadius.circular(50),
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   SizedBox(
+  //                     width: 20,
+  //                   ),
+  //                   ElevatedButton(
+  //                       onPressed: () {
+  //                         flagEditMode == "editMode"?
+  //                         setState(() {
+  //                           // _editingItemId = null;
+  //                           _filledController.clear();
+  //                           _svController.clear();
+  //                           _tvController.clear();
+  //                           _emptyController.clear();
+  //                           _defectiveController.clear();
+  //                           _lessEmptyController.clear();
+  //                           _remarkController.clear();
+  //                           remarksList.clear();
+  //                           // _selectedItemModel = null;
+  //                           // _selectedItem = '';
+  //                           // selectedDelBoyName =''; // Clear the delivery boy name
+  //                           // selectedDelBoyId = null; // Clear delivery boy ID
+  //                           // _selectedItemModel = null; // Clear the selected item in the dropdown
+  //                           // selectedItemId = null; // Clear the selected item text
+  //                           // vehicleNoController.clear();
+  //                           // stockDataFuture = updateRefillSale!.getDeliveryMenDataForEdit(
+  //                           //      0,  0);
+  //                           // flagEditMode = null;
+  //                         }):
+  //                         setState(() {
+  //                           // _editingItemId = null;
+  //                           _filledController.clear();
+  //                           _svController.clear();
+  //                           _tvController.clear();
+  //                           _emptyController.clear();
+  //                           _defectiveController.clear();
+  //                           _lessEmptyController.clear();
+  //                           _remarkController.clear();
+  //                           remarksList.clear();
+  //                           // _selectedItemModel = null;
+  //                           // _selectedItem = '';
+  //                           // selectedDelBoyName = ''; // Clear the delivery boy name
+  //                           // selectedDelBoyId = null; // Clear delivery boy ID
+  //                           // _selectedItemModel = null; // Clear the selected item in the dropdown
+  //                           // selectedItemId = null; // Clear the selected item text
+  //                           // vehicleNoController.clear();
+  //                           // fetchData("0", deliveryDateController.text);
+  //                         });
+  //                       },
+  //                       child: Text("Clear"))
+  //                 ],
+  //               ),
+  //             ),
+  //
+  //             Visibility(
+  //               visible: _dataGetFromDBDelBoy.isNotEmpty || flagEditMode == "editMode",
+  //               child:
+  //             Padding(
+  //               padding: const EdgeInsets.only(top: 20.0, bottom: 15),
+  //               child: Container(
+  //                 decoration: BoxDecoration(border: Border.all(width: 1)),
+  //                 child: Column(
+  //                   children: [
+  //                     // Header Row with equal width for all columns using Expanded
+  //                     Row(
+  //                       children: [
+  //                         Expanded(
+  //                             flex: 2,
+  //                             child: Center(
+  //                                 child: Text(
+  //                               "Item",
+  //                               style: TextStyle(fontWeight: FontWeight.bold),
+  //                             ))),
+  //                         verticalDividerVerySmall(),
+  //                         Expanded(
+  //                             flex: 1,
+  //                             child: Center(
+  //                                 child: Text(
+  //                               "Sale",
+  //                               style: TextStyle(fontWeight: FontWeight.bold),
+  //                             ))),
+  //                         verticalDividerVerySmall(),
+  //                         Expanded(
+  //                             flex: 1,
+  //                             child: Center(
+  //                                 child: Text(
+  //                               "SV",
+  //                               style: TextStyle(fontWeight: FontWeight.bold),
+  //                             ))),
+  //                         verticalDividerVerySmall(),
+  //                         Expanded(
+  //                             flex: 1,
+  //                             child: Center(
+  //                                 child: Text(
+  //                               "TV",
+  //                               style: TextStyle(fontWeight: FontWeight.bold),
+  //                             ))),
+  //                         verticalDividerVerySmall(),
+  //                         Expanded(
+  //                             flex: 2,
+  //                             child: Center(
+  //                                 child: Text(
+  //                               "Empty",
+  //                               style: TextStyle(fontWeight: FontWeight.bold),
+  //                             ))),
+  //                         verticalDividerVerySmall(),
+  //                         Expanded(
+  //                             flex: 1,
+  //                             child: Center(
+  //                                 child: Text(
+  //                               "Def.",
+  //                               style: TextStyle(fontWeight: FontWeight.bold),
+  //                             ))),
+  //                         verticalDividerVerySmall(),
+  //                         Expanded(
+  //                             flex: 2,
+  //                             child: Center(
+  //                                 child: Text(
+  //                               "Less\nEmpty",
+  //                               style: TextStyle(fontWeight: FontWeight.bold),
+  //                             ))),
+  //                         verticalDividerVerySmall(),
+  //                         Expanded(
+  //                           flex: 2,
+  //                           child: Column(
+  //                             mainAxisAlignment: MainAxisAlignment.center,
+  //                             // Vertically center the content
+  //                             crossAxisAlignment: CrossAxisAlignment.center,
+  //                             // Horizontally center the content
+  //                             children: [
+  //                               Text(
+  //                                 "Action",
+  //                                 style: TextStyle(fontWeight: FontWeight.bold),
+  //                               ),
+  //                             ],
+  //                           ),
+  //                         )
+  //                       ],
+  //                     ),
+  //                     // Divider between header and data rows
+  //                     Container(
+  //                       color: const Color(0xff1280B3),
+  //                       height: 1.5,
+  //                       width: MediaQuery.of(context).size.width,
+  //                     ),
+  //
+  //                     // ListView to display the data
+  //                     flagEditMode != null || flagEditMode == "editMode"
+  //                         ? Container(
+  //                             child: FutureBuilder<
+  //                                 List<StockSubmitToManagerListModel>>(
+  //                               future: stockDataFuture,
+  //                               builder: (context, snapshot) {
+  //                                 if (snapshot.connectionState ==
+  //                                     ConnectionState.waiting) {
+  //                                   return const Center(
+  //                                       child: CircularProgressIndicator());
+  //                                 } else if (snapshot.hasError) {
+  //                                   return Center(
+  //                                       child:
+  //                                           Text("Error: ${snapshot.error}"));
+  //                                 } else if (!snapshot.hasData ||
+  //                                     snapshot.data!.isEmpty) {
+  //                                   return const Center(
+  //                                       child: Text("No Data Available."));
+  //                                 } else {
+  //                                   List<StockSubmitToManagerListModel>
+  //                                       stockList = snapshot.data!;
+  //                                   return Column(
+  //                                     children: stockList.map((stock) {
+  //                                       return Column(
+  //                                         children: [
+  //                                           ...stock.itemList!.map((item) {
+  //                                             return Container(
+  //                                               child: Row(
+  //                                                 children: [
+  //                                                   // Column 1: Item Name
+  //                                                   Expanded(
+  //                                                     flex: 2,
+  //                                                     child: Padding(
+  //                                                       padding:
+  //                                                           const EdgeInsets
+  //                                                               .only(
+  //                                                               left: 5.0),
+  //                                                       child: Text(
+  //                                                         item.itemName
+  //                                                             .toString(),
+  //                                                         style: TextStyle(
+  //                                                             fontSize: 14,
+  //                                                             color: Colors
+  //                                                                 .black54),
+  //                                                       ),
+  //                                                     ),
+  //                                                   ),
+  //                                                   verticalDividerBig(),
+  //                                                   // Column 2: Filled
+  //                                                   Expanded(
+  //                                                     flex: 1,
+  //                                                     child: Text(
+  //                                                       item.filledSaleQty
+  //                                                           .toString(),
+  //                                                       style: TextStyle(
+  //                                                           fontSize: 14,
+  //                                                           color:
+  //                                                               Colors.black54),
+  //                                                       textAlign:
+  //                                                           TextAlign.center,
+  //                                                     ),
+  //                                                   ),
+  //                                                   verticalDividerBig(),
+  //                                                   // Column 3: Empty
+  //                                                   Expanded(
+  //                                                     flex: 1,
+  //                                                     child: Text(
+  //                                                       item.sVQty.toString(),
+  //                                                       style: TextStyle(
+  //                                                           fontSize: 14,
+  //                                                           color:
+  //                                                               Colors.black54),
+  //                                                       textAlign:
+  //                                                           TextAlign.center,
+  //                                                     ),
+  //                                                   ),
+  //                                                   verticalDividerBig(),
+  //                                                   // Column 4: Defective
+  //                                                   Expanded(
+  //                                                     flex: 1,
+  //                                                     child: Text(
+  //                                                       item.tVQty.toString(),
+  //                                                       style: TextStyle(
+  //                                                           fontSize: 14,
+  //                                                           color:
+  //                                                               Colors.black54),
+  //                                                       textAlign:
+  //                                                           TextAlign.center,
+  //                                                     ),
+  //                                                   ),
+  //                                                   verticalDividerBig(),
+  //                                                   Expanded(
+  //                                                     flex: 2,
+  //                                                     child: Text(
+  //                                                       item.emptyRetQty
+  //                                                           .toString(),
+  //                                                       style: TextStyle(
+  //                                                           fontSize: 14,
+  //                                                           color:
+  //                                                               Colors.black54),
+  //                                                       textAlign:
+  //                                                           TextAlign.center,
+  //                                                     ),
+  //                                                   ),
+  //                                                   verticalDividerBig(),
+  //                                                   Expanded(
+  //                                                     flex: 1,
+  //                                                     child: Text(
+  //                                                       item.deffQty.toString(),
+  //                                                       style: TextStyle(
+  //                                                           fontSize: 14,
+  //                                                           color:
+  //                                                               Colors.black54),
+  //                                                       textAlign:
+  //                                                           TextAlign.center,
+  //                                                     ),
+  //                                                   ),
+  //                                                   verticalDividerBig(),
+  //                                                   Expanded(
+  //                                                     flex: 2,
+  //                                                     child: Text(
+  //                                                       item.lessEmptyQty
+  //                                                           .toString(),
+  //                                                       style: TextStyle(
+  //                                                           fontSize: 14,
+  //                                                           color:
+  //                                                               Colors.black54),
+  //                                                       textAlign:
+  //                                                           TextAlign.center,
+  //                                                     ),
+  //                                                   ),
+  //                                                   verticalDividerBig(),
+  //                                                   Expanded(
+  //                                                     child: IconButton(
+  //                                                       icon: Icon(Icons.edit),
+  //                                                       onPressed: () {
+  //                                                         _onEditItem(item,
+  //                                                             stock); // Populate fields with this item's data
+  //                                                       },
+  //                                                     ),
+  //                                                   ),
+  //                                                   Expanded(
+  //                                                     child: IconButton(
+  //                                                       icon:
+  //                                                           Icon(Icons.delete),
+  //                                                       onPressed: () async {
+  //                                                         // Show the alert dialog before proceeding with deletion
+  //                                                         bool? confirmDelete =
+  //                                                             await showDialog<
+  //                                                                 bool>(
+  //                                                           context: context,
+  //                                                           builder:
+  //                                                               (BuildContext
+  //                                                                   context) {
+  //                                                             return
+  //                                                               AlertDialog(
+  //                                                               title: Text(
+  //                                                                   "Confirm Deletion"),
+  //                                                               content: Text(
+  //                                                                   "Are You Sure You Want To Delete Record?"),
+  //                                                               actions: [
+  //                                                                 TextButton(
+  //                                                                   onPressed:
+  //                                                                       () {
+  //                                                                     Navigator.of(
+  //                                                                             context)
+  //                                                                         .pop(
+  //                                                                             false); // Cancel deletion
+  //                                                                   },
+  //                                                                   child: Text(
+  //                                                                       "No"),
+  //                                                                 ),
+  //                                                                 TextButton(
+  //                                                                   onPressed:
+  //                                                                       () {
+  //                                                                     Navigator.of(
+  //                                                                             context)
+  //                                                                         .pop(
+  //                                                                             true);
+  //                                                                   },
+  //                                                                   child: Text(
+  //                                                                       "Yes"),
+  //                                                                 ),
+  //                                                               ],
+  //                                                             );
+  //                                                           },
+  //                                                         );
+  //                                                         if (confirmDelete ==
+  //                                                             true) {
+  //                                                           try {
+  //                                                             // Ensure that 'item' contains the correct ID field
+  //                                                             _onDeleteItem(
+  //                                                                 int.parse(item
+  //                                                                     .itemId
+  //                                                                     .toString())); // Confirm deletion
+  //                                                             stockDataFuture = updateRefillSale!
+  //                                                                 .getDeliveryMenDataForEdit(
+  //                                                                     widget.saleGKId
+  //                                                                             ?.toInt() ??
+  //                                                                         0,
+  //                                                                     widget.dMId
+  //                                                                             ?.toInt() ??
+  //                                                                         0);
+  //                                                             EasyLoading.showToast("Data Deleted Successfully.",
+  //                                                                 duration: const Duration(milliseconds: 3000));
+  //
+  //                                                           } catch (e) {
+  //                                                             debugPrint(
+  //                                                                 "Error deleting row: $e");
+  //                                                             showFlushBar(context, "Fail",
+  //                                                                 'Fail To Deleted Record.!');
+  //                                                           }
+  //                                                         }
+  //                                                         // If the user confirms, proceed with deletion
+  //                                                         // You can proceed with your delete logic here.
+  //                                                       },
+  //                                                     ),
+  //                                                   ),
+  //                                                 ],
+  //                                               ),
+  //                                             );
+  //                                           }).toList(),
+  //                                         ],
+  //                                       );
+  //                                     }).toList(),
+  //                                   );
+  //                                 }
+  //                               },
+  //                             ),
+  //                           )
+  //                         : Container(
+  //                             child: _dataGetFromDBDelBoy.isNotEmpty
+  //                                 ? ListView.builder(
+  //                                     physics: const BouncingScrollPhysics(),
+  //                                     itemCount: _dataGetFromDBDelBoy.length,
+  //                                     shrinkWrap: true,
+  //                                     itemBuilder:
+  //                                         (BuildContext context, int index) {
+  //                                       Map<String, Object?> item =
+  //                                           _dataGetFromDBDelBoy[
+  //                                               index]; // Get the item at the current index
+  //                                       // You can access the columns in your database result like this:
+  //                                       String itemId =
+  //                                           item['itemID'].toString();
+  //                                       String itemName =
+  //                                           item['itemName'].toString();
+  //                                       String filledSaleQty =
+  //                                           item['filled'].toString();
+  //                                       String svQty = item['sv'].toString();
+  //                                       String tvQty = item['tv'].toString();
+  //                                       String emptyRetQty =
+  //                                           item['empty'].toString();
+  //                                       String deffQty =
+  //                                           item['defective'].toString();
+  //                                       String lessEmptyQty =
+  //                                           item['lessEmpty'].toString();
+  //                                       String remark =
+  //                                           item['remark']?.toString() ??
+  //                                               "No remark";
+  //                                       return Column(
+  //                                         children: [
+  //                                           Container(
+  //                                             child: Row(
+  //                                               children: [
+  //                                                 // Column 1: Item Name
+  //                                                 Expanded(
+  //                                                     flex: 2,
+  //                                                     child: Padding(
+  //                                                       padding:
+  //                                                           const EdgeInsets
+  //                                                               .only(
+  //                                                               left: 5.0),
+  //                                                       child: Text(itemName,
+  //                                                           style: TextStyle(
+  //                                                               fontSize: 14,
+  //                                                               color: Colors
+  //                                                                   .black54)),
+  //                                                     )),
+  //                                                 verticalDividerBig(),
+  //                                                 // Column 2: Filled
+  //                                                 Expanded(
+  //                                                     flex: 1,
+  //                                                     child: Text(filledSaleQty,
+  //                                                         style: TextStyle(
+  //                                                             fontSize: 14,
+  //                                                             color: Colors
+  //                                                                 .black54),
+  //                                                         textAlign: TextAlign
+  //                                                             .center)),
+  //                                                 verticalDividerBig(),
+  //                                                 // Column 3: Empty
+  //                                                 Expanded(
+  //                                                     flex: 1,
+  //                                                     child: Text(svQty,
+  //                                                         style: TextStyle(
+  //                                                             fontSize: 14,
+  //                                                             color: Colors
+  //                                                                 .black54),
+  //                                                         textAlign: TextAlign
+  //                                                             .center)),
+  //                                                 verticalDividerBig(),
+  //                                                 // Column 4: Defective
+  //                                                 Expanded(
+  //                                                     flex: 1,
+  //                                                     child: Text(tvQty,
+  //                                                         style: TextStyle(
+  //                                                             fontSize: 14,
+  //                                                             color: Colors
+  //                                                                 .black54),
+  //                                                         textAlign: TextAlign
+  //                                                             .center)),
+  //                                                 verticalDividerBig(),
+  //                                                 Expanded(
+  //                                                     flex: 2,
+  //                                                     child: Text(emptyRetQty,
+  //                                                         style: TextStyle(
+  //                                                             fontSize: 14,
+  //                                                             color: Colors
+  //                                                                 .black54),
+  //                                                         textAlign: TextAlign
+  //                                                             .center)),
+  //                                                 verticalDividerBig(),
+  //                                                 Expanded(
+  //                                                     flex: 1,
+  //                                                     child: Text(deffQty,
+  //                                                         style: TextStyle(
+  //                                                             fontSize: 14,
+  //                                                             color: Colors
+  //                                                                 .black54),
+  //                                                         textAlign: TextAlign
+  //                                                             .center)),
+  //                                                 verticalDividerBig(),
+  //                                                 Expanded(
+  //                                                     flex: 2,
+  //                                                     child: Text(lessEmptyQty,
+  //                                                         style: TextStyle(
+  //                                                             fontSize: 14,
+  //                                                             color: Colors
+  //                                                                 .black54),
+  //                                                         textAlign: TextAlign
+  //                                                             .center)),
+  //                                                 verticalDividerBig(),
+  //                                                 Expanded(
+  //                                                   child: IconButton(
+  //                                                     icon: Icon(Icons.edit),
+  //                                                     onPressed: () {
+  //                                                       _populateFieldsForEdit(
+  //                                                           item); // Populate fields with this item's data
+  //                                                     },
+  //                                                   ),
+  //                                                 ),
+  //                                                 Expanded(
+  //                                                   child: IconButton(
+  //                                                     icon: Icon(Icons.delete),
+  //                                                     onPressed: () async {
+  //                                                       // Show the alert dialog before proceeding with deletion
+  //                                                       bool? confirmDelete =
+  //                                                           await showDialog<
+  //                                                               bool>(
+  //                                                         context: context,
+  //                                                         builder: (BuildContext
+  //                                                             context) {
+  //                                                           return AlertDialog(
+  //                                                             title: Text(
+  //                                                                 "Confirm Deletion"),
+  //                                                             content: Text(
+  //                                                                 "Are You Sure You Want To Delete Record?"),
+  //                                                             actions: [
+  //                                                               TextButton(
+  //                                                                 onPressed:
+  //                                                                     () {
+  //                                                                   Navigator.of(
+  //                                                                           context)
+  //                                                                       .pop(
+  //                                                                           false); // Cancel deletion
+  //                                                                 },
+  //                                                                 child: Text(
+  //                                                                     "No"),
+  //                                                               ),
+  //                                                               TextButton(
+  //                                                                 onPressed:
+  //                                                                     () {
+  //                                                                   Navigator.of(
+  //                                                                           context)
+  //                                                                       .pop(
+  //                                                                           true); // Confirm deletion
+  //                                                                 },
+  //                                                                 child: Text(
+  //                                                                     "Yes"),
+  //                                                               ),
+  //                                                             ],
+  //                                                           );
+  //                                                         },
+  //                                                       );
+  //
+  //                                                       // If the user confirms, proceed with deletion
+  //                                                       if (confirmDelete ==
+  //                                                           true) {
+  //                                                         try {
+  //                                                           // Ensure that 'item' contains the correct ID field
+  //                                                           if (item
+  //                                                               .containsKey(
+  //                                                                   'itemID')) {
+  //                                                             String itemId =
+  //                                                                 item['itemID']
+  //                                                                     .toString();
+  //                                                             String delBoyId =
+  //                                                                 item['delBoyId']
+  //                                                                     .toString();
+  //
+  //                                                             // Call the delete method with the cast value
+  //                                                             await updateRefillSale
+  //                                                                 ?.deleteRowByDelBoyIdAndItemId(
+  //                                                                     delBoyId,
+  //                                                                     itemId);
+  //
+  //                                                             // Refresh the UI after deletion by fetching updated data
+  //                                                             fetchData(
+  //                                                               selectedDelBoyId
+  //                                                                   .toString(),
+  //                                                               deliveryDateController
+  //                                                                   .text,
+  //                                                             );
+  //
+  //                                                             // Optionally show a confirmation message (snack bar, dialog, etc.)
+  //                                                             EasyLoading.showToast("Data Deleted Successfully.",
+  //                                                                 duration: const Duration(milliseconds: 3000));
+  //                                                           } else {
+  //                                                             debugPrint(
+  //                                                                 "Item ID not found in the current item.");
+  //                                                           }
+  //                                                         } catch (e) {
+  //                                                           debugPrint(
+  //                                                               "Error deleting row: $e");
+  //                                                           showFlushBar(context, "Fail",
+  //                                                               'Fail To Deleted Record.');
+  //                                                         }
+  //                                                       }
+  //                                                     },
+  //                                                   ),
+  //                                                 ),
+  //                                               ],
+  //                                             ),
+  //                                           ),
+  //                                           // Container(
+  //                                           //   color: Colors.grey,
+  //                                           //   height: 1,
+  //                                           // ),
+  //                                         ],
+  //                                       );
+  //                                     },
+  //                                   )
+  //                                 : Container(
+  //                                     padding: EdgeInsets.all(5),
+  //                                     child: const Center(
+  //                                         child: Text("No Pending Data..!")),
+  //                                   ),
+  //                           ),
+  //                   ],
+  //                 ),
+  //               ),
+  //             ),
+  //             ),
+  //             // Closing Stock
+  //             //     Padding(
+  //             //       padding: const EdgeInsets.all(5.0),
+  //             //       child: Text("Closing Stock",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
+  //             //     ),
+  //             // Container(
+  //             //   decoration: BoxDecoration(border: Border.all(width: 1)),
+  //             //   child: Column(
+  //             //     children: [
+  //             //       // Header Row with equal width for all columns using Expanded
+  //             //       Row(
+  //             //         children: [
+  //             //           Expanded(child: Center(child: Text("Item",style: TextStyle(fontWeight: FontWeight.bold),))),
+  //             //           verticalDividerVerySmall(),
+  //             //           Expanded(child: Center(child: Text("Filled",style: TextStyle(fontWeight: FontWeight.bold),))),
+  //             //           verticalDividerVerySmall(),
+  //             //           Expanded(child: Center(child: Text("Empty",style: TextStyle(fontWeight: FontWeight.bold),))),
+  //             //           verticalDividerVerySmall(),
+  //             //           Expanded(child: Center(child: Text("Defective",style: TextStyle(fontWeight: FontWeight.bold),))),
+  //             //         ],
+  //             //       ),
+  //             //
+  //             //       // Divider between header and data rows
+  //             //       Container(
+  //             //         color: const Color(0xff1280B3),
+  //             //         height: 1.5,
+  //             //         width: MediaQuery.of(context).size.width,
+  //             //       ),
+  //             //
+  //             //       // ListView to display the data
+  //             //       Container(
+  //             //         child: closingStock.isNotEmpty
+  //             //             ?
+  //             //         ListView.builder(
+  //             //           physics: const BouncingScrollPhysics(),
+  //             //           itemCount: closingStock.length,
+  //             //           shrinkWrap: true,
+  //             //           itemBuilder: (BuildContext context, int index) {
+  //             //             var item = closingStock[index];
+  //             //             String itemName = item['itemName']!;
+  //             //             String filled = item['filled']!;
+  //             //             String empty = item['empty']!;
+  //             //             String defective = item['defective']!;
+  //             //             return Column(
+  //             //               children: [
+  //             //                 Container(
+  //             //                   child: Row(
+  //             //                     children: [
+  //             //                       // Column 1: Item Name
+  //             //                       Expanded(child:
+  //             //                       Padding(
+  //             //                         padding: const EdgeInsets.only(left: 5.0),
+  //             //                         child: Text(itemName,style: TextStyle(fontSize: 14, color: Colors.black54)),
+  //             //                       )),
+  //             //                       verticalDividerVerySmall(),
+  //             //                       // Column 2: Filled
+  //             //                       Expanded(child: Text(filled, style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center)),
+  //             //                       verticalDividerVerySmall(),
+  //             //                       // Column 3: Empty
+  //             //                       Expanded(child: Text(empty, style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center)),
+  //             //                       verticalDividerVerySmall(),
+  //             //                       // Column 4: Defective
+  //             //                       Expanded(child: Text(defective, style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center)),
+  //             //                     ],
+  //             //                   ),
+  //             //                 ),
+  //             //                 Container(
+  //             //                   color: Colors.grey,
+  //             //                   height: 1,
+  //             //                 ),
+  //             //               ],
+  //             //             );
+  //             //           },
+  //             //         )
+  //             //             : Container(
+  //             //           padding: EdgeInsets.all(5),
+  //             //           child: const Center(child: Text("No Data Available..!")),
+  //             //         ),
+  //             //       ),
+  //             //     ],
+  //             //   ),
+  //             // ),
+  //             const SizedBox(height: 20),
+  //             // Submit Button
+  //             Align(
+  //               alignment: Alignment.center,
+  //               child: Container(
+  //                 margin: const EdgeInsets.symmetric(horizontal: 10),
+  //                 // Add 10px margin on left and right
+  //                 child: ElevatedButton(
+  //                   onPressed: () {
+  //                     if (flagEditMode == "editMode") {
+  //                       ((stockDataFuture != null))
+  //                           ? sendEditedDataToApi(context)
+  //                           : null;
+  //                     } else {
+  //                       ((_dataGetFromDBDelBoy.isNotEmpty) &&
+  //                               (selectedDelBoyName != null &&
+  //                                   selectedDelBoyName!.isNotEmpty))
+  //                           ? sendDataToApi(selectedDelBoyId.toString()!,
+  //                               deliveryDateController.text)
+  //                           : null;
+  //                     }
+  //
+  //                     // if (selectedDelBoyName != null &&
+  //                     //     selectedDelBoyName!.isNotEmpty) {
+  //                     //
+  //                     // } else {
+  //                     //   ScaffoldMessenger.of(context).showSnackBar(
+  //                     //     SnackBar(
+  //                     //         content: Text(
+  //                     //             'Select delivery boy whose data want to submit..!')),
+  //                     //   );
+  //                     // }
+  //                     // } else {
+  //                     //   showAlertDialog(context);
+  //                     // }
+  //                   },
+  //                   child: Padding(
+  //                     padding: const EdgeInsets.only(left: 25.0,right: 25,top: 12,bottom: 12),
+  //                     child: const Text(
+  //                       'Submit',
+  //                       style: TextStyle(
+  //                         color: Colors.white,
+  //                         fontSize: 14,
+  //                       ), // Set text color directly if needed
+  //                     ),
+  //                   ),
+  //                   style: ElevatedButton.styleFrom(
+  //                     backgroundColor: _getButtonColor(),
+  //                     // ((flagEditMode == "editMode") && _dataGetFromDBDelBoy.isNotEmpty &&
+  //                     //         (_filledController.text == null ||
+  //                     //             _filledController.text.isEmpty) &&
+  //                     //         (_svController.text == null ||
+  //                     //             _svController.text.isEmpty) &&
+  //                     //         (_tvController.text == null ||
+  //                     //             _tvController.text.isEmpty) &&
+  //                     //         (_emptyController.text == null ||
+  //                     //             _emptyController.text.isEmpty ||
+  //                     //             _emptyController.text == "0") &&
+  //                     //         (_defectiveController.text == null ||
+  //                     //             _defectiveController.text.isEmpty) &&
+  //                     //         (_lessEmptyController.text == null ||
+  //                     //             _lessEmptyController.text.isEmpty) &&
+  //                     //         (_remarkController.text == null ||
+  //                     //             _remarkController.text.isEmpty) &&
+  //                     //         (selectedDelBoyName != null &&
+  //                     //             selectedDelBoyName!.isNotEmpty))
+  //                     //     ? Colors.blue
+  //                     //     : Colors.grey,
+  //                     // Button expands to fill available width// Text color of the button
+  //                     shape: RoundedRectangleBorder(
+  //                       // Optional: Set rounded corners
+  //                       borderRadius: BorderRadius.circular(50),
+  //                     ),
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
+
   Widget build(BuildContext context) {
     var argLRAdd = ModalRoute.of(context)?.settings.arguments;
-    return WillPopScope(
+    return
+      WillPopScope(
       onWillPop: () async {
         // Show a confirmation dialog
         if (argLRAdd == "fromDrawer") {
-          Navigator.pushReplacementNamed(context, DashboardScreen.screenName,
-              arguments: "onBack");
+          // Navigator.pushReplacementNamed(context, DashboardScreen.screenName,
+          //     arguments: "onBack");
+          Navigator.pop(context);
           return false;
         } else {
-          Navigator.pushReplacementNamed(context, DashboardScreen.screenName);
+          Navigator.pop(context);
+          // Navigator.pushReplacementNamed(context, DashboardScreen.screenName);
           return false;
         } // In case `null` is returned, return `false`
       },
@@ -1412,727 +3919,465 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
         appBar: CustomAppBar(
           title: 'Daily Sale', // Title or hint text for the text field
         ),
-        body: SingleChildScrollView(
+        body:
+        SingleChildScrollView(
           padding: const EdgeInsets.all(10.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Delivery Date
-              TextField(
-                controller: deliveryDateController,
-                decoration: const InputDecoration(
-                  labelText: 'Delivery Date',
-                  labelStyle: TextStyle(fontSize: 12),
-                  border: OutlineInputBorder(),
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                ),
-                style: TextStyle(
-                  fontSize: 14.0, // Adjust the text size here
-                ),
-                keyboardType: TextInputType.datetime,
-                enabled: false,
-              ),
-              const SizedBox(height: 20),
-              // Select Del Boy and Vehicle No
-              Row(
-                children: [
-                  // Expanded(
-                  //   flex: 2,
-                  //   child:
-                  //   DropdownButtonFormField<DeliveryBoyInfoModel>(
-                  //     decoration: const InputDecoration(
-                  //       labelText: 'Select Delivery Men',
-                  //       labelStyle: TextStyle(fontSize: 12),
-                  //       border: OutlineInputBorder(),
-                  //       contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                  //     ),
-                  //     items: _delBoyInfo.map((DeliveryBoyInfoModel item) {
-                  //       return DropdownMenuItem<DeliveryBoyInfoModel>(
-                  //         value: item,
-                  //         child: Text(item.staffName ?? 'Unknown',
-                  //           style: TextStyle(fontSize: 14.0,fontWeight: FontWeight.normal),),
-                  //
-                  //       );
-                  //     }).toList(),
-                  //     onChanged: (DeliveryBoyInfoModel? selectedItem) {
-                  //       if (selectedItem != null) {
-                  //         setState(() {
-                  //           selectedDelBoyName = selectedItem.staffName;
-                  //            selectedDelBoyId = selectedItem.staffId!.toInt();
-                  //           int delManId = selectedDelBoyId ?? 0;  // Use directly, since it's already an int
-                  //
-                  //           fetchVehicleDetail(selectedDelBoyId!);
-                  //           fetchData(selectedDelBoyId.toString(),deliveryDateController.text);
-                  //           _fetchImbalanceData(delManId!);
-                  //           print('Selected Del Boy Item: ${selectedDelBoyName}, ID: ${selectedDelBoyId}');
-                  //         });
-                  //       }
-                  //     },
-                  //   ),
-                  // ),
+              itemSubLine("Delivery Date",formattedDate!),
+              SizedBox(height: 5,),
+              itemSubLine("Delivery Men",selectedDelBoyName!),
+              SizedBox(height: 5,),
+              itemSubLine("Vehicle No.",vehicleNo!),
+              SizedBox(height: 5,),
+              Divider(),
+              /// Add New Section Imbalance
+              receiptList.isNotEmpty
+                  ?
+              Container(
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Title for Cylinder Categories Table
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                isPhysicalStockListViewVisible =
+                                !isPhysicalStockListViewVisible; // Toggle ListView visibility
+                              });
+                            },
+                            child:
+                            Card(
+                              child: Padding(
+                                padding: const EdgeInsets.all(5.0),
+                                child: Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(5.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Balance Empty : ',
+                                                style:Styling.itemGreyText,
+                                              ),
+                                              Text(
+                                                "$imbalaceSum",
+                                                style:Styling.itemBlackTest,
+                                              ),
+                                            ],
+                                          ),
+                                          Icon(
+                                            isPhysicalStockListViewVisible
+                                                ? Icons.arrow_drop_up
+                                                : Icons.arrow_drop_down,
+                                            size: 24,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
 
-                  ///work
-                  Expanded(
-                    flex: 2,
-                    child: DropdownButtonFormField<DeliveryBoyInfoModel>(
-                      decoration: const InputDecoration(
-                        label: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: const [
-                            Text(
-                              'Select Delivery Men',
-                              style: TextStyle(fontSize: 12),
-                            ),
-                            SizedBox(width: 4),
-                            // Add some space between the text and the icon
-                            Icon(
-                              Icons.star, // Use a star or any other icon
-                              color: Colors.red, // Set the icon color to red
-                              size: 10, // Adjust the size of the icon
-                            ),
-                          ],
-                        ),
-                        border: const OutlineInputBorder(),
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 12.0),
-                      ),
-                      // value: selectedDelBoyId != null
-                      //     ? _delBoyInfo.firstWhere(
-                      //         (item) => item.staffId == selectedDelBoyId)
-                      //     : null,
-                      value:
-                          (_delBoyInfo.isNotEmpty && selectedDelBoyId != null)
-                              ? _delBoyInfo.firstWhere(
-                                  (item) => item.staffId == selectedDelBoyId,
-                                  orElse: () => DeliveryBoyInfoModel(
-                                    staffId: 0, // Default or dummy ID
-                                    staffName: 'Unknown', // Default name
-                                  ),
-                                )
-                              : null,
+                                    // Visibility(
+                                    //   visible: isPhysicalStockListViewVisible,
+                                    //   child:
+                                    //   Container(
+                                    //     decoration: BoxDecoration(
+                                    //       // Background color of the box
+                                    //       borderRadius: BorderRadius.circular(8),
+                                    //       border: Border.all(
+                                    //           width:
+                                    //               0.5), // Optional: Add rounded corners
+                                    //     ),
+                                    //     child: Column(
+                                    //       crossAxisAlignment:
+                                    //           CrossAxisAlignment.start,
+                                    //       children: [
+                                    //         // Header Row
+                                    //         Container(
+                                    //           decoration: BoxDecoration(
+                                    //             // Background color of the box
+                                    //             borderRadius: BorderRadius.only(topLeft:Radius.circular(8),topRight: Radius.circular(8)),
+                                    //             color: Colors.blue.shade100,
+                                    //             // Optional: Add rounded corners
+                                    //           ),
+                                    //           child: Row(
+                                    //             mainAxisAlignment:
+                                    //                 MainAxisAlignment.center,
+                                    //             children: [
+                                    //               Expanded(
+                                    //                   child: Text('Cylinder',
+                                    //                       style: TextStyle(
+                                    //                           fontWeight: FontWeight
+                                    //                               .bold,),textAlign: TextAlign.center,)),
+                                    //               verticalDividerSmall(),
+                                    //               Expanded(
+                                    //                   child: Text('Imbalance Qty',
+                                    //                       style: TextStyle(
+                                    //                           fontWeight: FontWeight
+                                    //                               .bold),textAlign: TextAlign.center)),
+                                    //
+                                    //             ],
+                                    //           ),
+                                    //         ),
+                                    //
+                                    //         Container(
+                                    //           color: Colors.black12,
+                                    //           height: 1,
+                                    //           width: MediaQuery.of(context)
+                                    //               .size
+                                    //               .width,
+                                    //         ),
+                                    //         // Adds a divider below the header for separation
+                                    //         // List of Entries
+                                    //         ListView.builder(
+                                    //           shrinkWrap: true,
+                                    //           // To make the ListView occupy only the space it needs
+                                    //           physics:
+                                    //               NeverScrollableScrollPhysics(),
+                                    //           // Prevents scrolling inside the ListView
+                                    //           itemCount:
+                                    //               cylinderData.entries.length,
+                                    //           itemBuilder: (context, index) {
+                                    //             var entry = cylinderData.entries
+                                    //                 .elementAt(index);
+                                    //             String category = entry.key;
+                                    //             int emptyCount =
+                                    //                 entry.value['Empty'] ?? 0;
+                                    //             int filledCount = entry.value['Filled'] ?? 0;
+                                    //             int defectiveCount = entry.value['Defective'] ?? 0;
+                                    //
+                                    //             return Column(
+                                    //               children: [
+                                    //                 Row(
+                                    //                   mainAxisAlignment: MainAxisAlignment.center,
+                                    //                   children: [
+                                    //                     Expanded(
+                                    //                       child:Text(
+                                    //                           category,
+                                    //                           textAlign: TextAlign.center,
+                                    //                         ),
+                                    //
+                                    //                     ),
+                                    //                     verticalDividerVerySmall(),
+                                    //                     Expanded(
+                                    //                       child: GestureDetector(
+                                    //                         onTap: () {
+                                    //                           // Handle the tap on the 'emptyCount' text
+                                    //                           setState(() {
+                                    //                             // Perform any action when clicked (e.g., toggle underline state)
+                                    //                           });
+                                    //                         },
+                                    //                         child: Text(
+                                    //                           '$emptyCount',
+                                    //                           textAlign: TextAlign.center,
+                                    //                           style: TextStyle(
+                                    //                             decoration: TextDecoration.underline, // Add blue underline
+                                    //                             decorationColor: Colors.blue, // Set the underline color
+                                    //                           ),
+                                    //                         ),
+                                    //                       ),
+                                    //                     ),
+                                    //                   ],
+                                    //                 ),
+                                    //
+                                    //                 Container(
+                                    //                   color: Colors.black12,
+                                    //                   height: 1,
+                                    //                   width:
+                                    //                       MediaQuery.of(context)
+                                    //                           .size
+                                    //                           .width,
+                                    //                 ),
+                                    //               ],
+                                    //             );
+                                    //           },
+                                    //         ),
+                                    //
+                                    //       ],
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                    Visibility(
+                                      visible:
+                                      isPhysicalStockListViewVisible &&
+                                          receiptList.isNotEmpty,
+                                      child: Container(
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal: 5),
+                                        // decoration: BoxDecoration(
+                                        //   borderRadius:
+                                        //   BorderRadius.circular(12),
+                                        //   border: Border.all(),
+                                        // ),
+                                        child: Column(
+                                          children: [
+                                            // Header Row for Cylinder Categories
+                                            Container(
+                                              padding:
+                                              const EdgeInsets.all(8),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment
+                                                    .center,
+                                                children: [
+                                                  Expanded(
+                                                    child: Text(
+                                                      'Cylinder',
+                                                      style:Styling.itemGreyTextSmall,
+                                                      textAlign:
+                                                      TextAlign.center,
+                                                    ),
+                                                  ),
+                                                  VerticalDivider(
+                                                      thickness: 1,
+                                                      color: Colors.grey),
+                                                  Expanded(
+                                                    child: Text(
+                                                      'Imbalance Qty',
+                                                      style:Styling.itemGreyTextSmall,
+                                                      textAlign:
+                                                      TextAlign.center,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
 
-                      // Ensure that when the selectedDelBoyId is null, the value is null, showing the default hint
-                      hint: Text(
-                        'Select Delivery Men',
-                        style: TextStyle(fontSize: 12),
-                      ),
-                      // Default hint when no item is selected
-                      items: _delBoyInfo.map((DeliveryBoyInfoModel item) {
-                        return DropdownMenuItem<DeliveryBoyInfoModel>(
-                          value: item,
-                          child: Text(
-                            item.staffName ?? 'Unknown',
-                            style: TextStyle(
-                                fontSize: 14.0, fontWeight: FontWeight.normal),
+                                            // ListView for displaying cylinder categories and imbalance quantities
+                                            // Container(
+                                            //   height: 100,
+                                            //   child: ListView.builder(
+                                            //     shrinkWrap: true,
+                                            //     itemCount: receiptList.length, // Use the length of the fetched list
+                                            //     itemBuilder: (context, index) {
+                                            //       var receipt = receiptList[index]; // Get the current receipt
+                                            //       var item = receipt.itemImbDtls?.first; // Get the first item from the list (you can modify this if needed)
+                                            //
+                                            //       return Padding(
+                                            //         padding: const EdgeInsets.all(10.0),
+                                            //         child: Row(
+                                            //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            //           children: [
+                                            //             // Cylinder Category Text (Item Name)
+                                            //             Expanded(
+                                            //               child: Text(
+                                            //                 item?.itemName ?? "Unknown Item",  // Display Item Name
+                                            //                 style: TextStyle(
+                                            //                   fontWeight: FontWeight.bold,
+                                            //                   fontSize: 14,
+                                            //                   color: Colors.black,
+                                            //                 ),
+                                            //                 textAlign: TextAlign.center,
+                                            //               ),
+                                            //             ),
+                                            //             // Divider between Texts
+                                            //             VerticalDivider(thickness: 1, color: Colors.grey),
+                                            //             // Imbalance Quantity with Tap Gesture
+                                            //             Expanded(
+                                            //               child: GestureDetector(
+                                            //                 onTap: () {
+                                            //                   int qty = item?.balance?.toInt() ?? 0;
+                                            //                   int dmId = receipt.dMId?.toInt() ?? 0;  // Get DMId from the receipt
+                                            //                   int itemId = item?.itemId?.toInt() ?? 0;  // Safely access balance and convert it to int, defaulting to 0 if null
+                                            //                   _showPopup(qty,dmId,itemId); // Call the popup with the imbalance quantity
+                                            //                 },
+                                            //                 child: Text(
+                                            //                   '${item?.imbQty}',  // Display Imbalance Quantity
+                                            //                   textAlign: TextAlign.center,
+                                            //                   style: TextStyle(
+                                            //                     decoration: TextDecoration.underline,
+                                            //                     decorationColor: Colors.blue,
+                                            //                     fontWeight: FontWeight.bold,
+                                            //                     color: Colors.blue.shade700,
+                                            //                   ),
+                                            //                 ),
+                                            //               ),
+                                            //             ),
+                                            //           ],
+                                            //         ),
+                                            //       );
+                                            //     },
+                                            //   ),
+                                            // )
+                                            Container(
+                                              color:
+                                              const Color(0xff1280B3),
+                                              height: 1,
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                            ),
+                                            Container(
+                                              child: ListView.builder(
+                                                shrinkWrap: true,
+                                                itemCount:
+                                                receiptList.length,
+                                                // Use the length of the fetched list
+                                                itemBuilder:
+                                                    (context, index) {
+                                                  var receipt = receiptList[
+                                                  index]; // Get the current receipt
+
+                                                  return Padding(
+                                                    padding:
+                                                    const EdgeInsets
+                                                        .all(10.0),
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .start,
+                                                      children: [
+                                                        // Optionally display receipt info here, e.g., receipt.title or date
+                                                        Padding(
+                                                          padding: const EdgeInsets
+                                                              .symmetric(
+                                                              vertical:
+                                                              5.0),
+                                                          child: Row(
+                                                            mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                            children: [
+                                                              // Cylinder Category Text (Item Name)
+                                                              Expanded(
+                                                                child:
+                                                                Text(
+                                                                  receipt.itemName ??
+                                                                      "Unknown Item",
+                                                                  // Display Item Name
+                                                                  style:Styling.itemBlackTest,
+                                                                  textAlign:
+                                                                  TextAlign.center,
+                                                                ),
+                                                              ),
+                                                              // Divider between Texts
+                                                              VerticalDivider(
+                                                                  thickness:
+                                                                  1,
+                                                                  color: Colors
+                                                                      .grey),
+                                                              // Imbalance Quantity with Tap Gesture
+                                                              Expanded(
+                                                                child:
+                                                                GestureDetector(
+                                                                  onTap:
+                                                                      () {
+                                                                    int qty =
+                                                                        receipt.balImbQty?.toInt() ?? 0;
+                                                                    int dmId =
+                                                                        receipt.dMId?.toInt() ?? 0; // Get DMId from the receipt
+                                                                    int itemId =
+                                                                        receipt.itemId?.toInt() ?? 0; // Safely access balance and convert it to int
+                                                                    _showPopup(
+                                                                        qty,
+                                                                        dmId,
+                                                                        itemId); // Call the popup with the imbalance quantity
+                                                                  },
+                                                                  child:
+                                                                  Text(
+                                                                    '${receipt.balImbQty}',
+                                                                    // Display Imbalance Quantity
+                                                                    textAlign:
+                                                                    TextAlign.center,
+                                                                    style:Styling.blueClrTextWithUnderline,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+
+                                                      ],
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
-                        );
-                      }).toList(),
-                      onChanged: (flagEditMode == "editMode") ? null:(DeliveryBoyInfoModel? selectedItem) {
-                        if (selectedItem != null) {
-                          setState(() {
-                            selectedDelBoyName = selectedItem.staffName;
-                            selectedDelBoyId = selectedItem.staffId!.toInt();
-                            int delManId = selectedDelBoyId ?? 0;
-                            fetchVehicleDetail(selectedDelBoyId!);
-                            fetchData(selectedDelBoyId.toString(),
-                                deliveryDateController.text);
-                            _fetchImbalanceData(delManId!);
-                            print(
-                                'Selected Del Boy Item: ${selectedDelBoyName}, ID: ${selectedDelBoyId}');
-                          });
-                        }
-                      },
-                    ),
-                  ),
-
-                  // Expanded(
-                  //   flex: 2,
-                  //   child: DropdownButtonFormField<DeliveryBoyInfoModel>(
-                  //     decoration: const InputDecoration(
-                  //       label: Row(
-                  //         mainAxisSize: MainAxisSize.min,
-                  //         children: [
-                  //           Text(
-                  //             'Select Delivery Men',
-                  //             style: TextStyle(fontSize: 12),
-                  //           ),
-                  //           SizedBox(width: 4),
-                  //           // Add some space between the text and the icon
-                  //           Icon(
-                  //             Icons.star, // Use a star or any other icon
-                  //             color: Colors.red, // Set the icon color to red
-                  //             size: 10, // Adjust the size of the icon
-                  //           ),
-                  //         ],
-                  //       ),
-                  //       border: OutlineInputBorder(),
-                  //       contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                  //     ),
-                  //     // Ensure the correct delivery boy is pre-selected if in edit mode
-                  //     value: selectedDelBoyId != null
-                  //         ? _delBoyInfo.firstWhere(
-                  //           (item) => item.staffId == selectedDelBoyId,
-                  //       // Fallback in case no match is found
-                  //     )
-                  //         : null,
-                  //     hint: Text(
-                  //       'Select Delivery Men',
-                  //       style: TextStyle(fontSize: 12),
-                  //     ),
-                  //     items: _delBoyInfo.map((DeliveryBoyInfoModel item) {
-                  //       return DropdownMenuItem<DeliveryBoyInfoModel>(
-                  //         value: item,
-                  //         child: Text(
-                  //           item.staffName ?? 'Unknown',
-                  //           style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.normal),
-                  //         ),
-                  //       );
-                  //     }).toList(),
-                  //     onChanged: (DeliveryBoyInfoModel? selectedItem) {
-                  //       if (selectedItem != null && flagEditMode != "editMode") {
-                  //         setState(() {
-                  //           selectedDelBoyName = selectedItem.staffName;
-                  //           selectedDelBoyId = selectedItem.staffId!.toInt();
-                  //           int delManId = selectedDelBoyId ?? 0;
-                  //           fetchVehicleDetail(selectedDelBoyId!);
-                  //           fetchData(selectedDelBoyId.toString(), deliveryDateController.text);
-                  //           _fetchImbalanceData(delManId!);
-                  //           print(
-                  //               'Selected Del Boy Item: ${selectedDelBoyName}, ID: ${selectedDelBoyId}');
-                  //         });
-                  //       }
-                  //     },
-                  //     // Disable dropdown when in edit mode
-                  //     disabledHint: Text(
-                  //       selectedDelBoyName ?? 'Delivery Man',
-                  //       style: TextStyle(fontSize: 12),
-                  //     ),
-                  //     onSaved: (value) {
-                  //       // Optionally save the value when needed
-                  //     },
-                  //     // If in edit mode, disable interaction with the dropdown
-                  //
-                  //   ),
-                  // ),
-
-                  SizedBox(
-                    width: 20,
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: TextField(
-                      controller: vehicleNoController,
-                      decoration: const InputDecoration(
-                        label: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: const [
-                            Text(
-                              'Vehicle No.',
-                              style: TextStyle(fontSize: 12),
-                            ),
-                            // SizedBox(width: 4), // Add some space between the text and the icon
-                            // Icon(
-                            //   Icons.star, // Use a star or any other icon
-                            //   color: Colors.red, // Set the icon color to red
-                            //   size: 10, // Adjust the size of the icon
-                            // ),
-                          ],
-                        ),
-                        border: const OutlineInputBorder(),
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 12.0),
+                          SizedBox(height: 10),
+                        ],
                       ),
-                      style: TextStyle(
-                        fontSize: 14.0, // Adjust the text size here
-                      ),
-                      enabled: false,
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              // Add New Section
-              // receiptList.isNotEmpty
-              //     ? Container(
-              //         child: Row(
-              //           children: [
-              //             Expanded(
-              //               flex: 1,
-              //               child: Column(
-              //                 crossAxisAlignment: CrossAxisAlignment.start,
-              //                 children: [
-              //                   // Title for Cylinder Categories Table
-              //                   GestureDetector(
-              //                     onTap: () {
-              //                       setState(() {
-              //                         isPhysicalStockListViewVisible =
-              //                             !isPhysicalStockListViewVisible; // Toggle ListView visibility
-              //                       });
-              //                     },
-              //                     child: Card(
-              //                       child: Padding(
-              //                         padding: const EdgeInsets.all(5.0),
-              //                         child: Column(
-              //                           children: [
-              //                             Padding(
-              //                               padding: const EdgeInsets.all(5.0),
-              //                               child: Row(
-              //                                 mainAxisAlignment:
-              //                                     MainAxisAlignment.spaceBetween,
-              //                                 children: [
-              //                                   Row(
-              //                                     mainAxisAlignment:
-              //                                         MainAxisAlignment.start,
-              //                                     children: [
-              //                                       Text(
-              //                                         'Balance Empty : ',
-              //                                         style: TextStyle(
-              //                                           fontSize: 15,
-              //                                           color: Colors.black,
-              //                                           fontWeight:
-              //                                               FontWeight.bold,
-              //                                         ),
-              //                                       ),
-              //                                       Text(
-              //                                         "$imbalaceSum",
-              //                                         style: TextStyle(
-              //                                           fontSize: 15,
-              //                                           color: Colors.black,
-              //                                           fontWeight:
-              //                                               FontWeight.bold,
-              //                                         ),
-              //                                       ),
-              //                                     ],
-              //                                   ),
-              //                                   Icon(
-              //                                     isPhysicalStockListViewVisible
-              //                                         ? Icons.arrow_drop_up
-              //                                         : Icons.arrow_drop_down,
-              //                                     size: 30,
-              //                                   ),
-              //                                 ],
-              //                               ),
-              //                             ),
-              //
-              //                             // Visibility(
-              //                             //   visible: isPhysicalStockListViewVisible,
-              //                             //   child:
-              //                             //   Container(
-              //                             //     decoration: BoxDecoration(
-              //                             //       // Background color of the box
-              //                             //       borderRadius: BorderRadius.circular(8),
-              //                             //       border: Border.all(
-              //                             //           width:
-              //                             //               0.5), // Optional: Add rounded corners
-              //                             //     ),
-              //                             //     child: Column(
-              //                             //       crossAxisAlignment:
-              //                             //           CrossAxisAlignment.start,
-              //                             //       children: [
-              //                             //         // Header Row
-              //                             //         Container(
-              //                             //           decoration: BoxDecoration(
-              //                             //             // Background color of the box
-              //                             //             borderRadius: BorderRadius.only(topLeft:Radius.circular(8),topRight: Radius.circular(8)),
-              //                             //             color: Colors.blue.shade100,
-              //                             //             // Optional: Add rounded corners
-              //                             //           ),
-              //                             //           child: Row(
-              //                             //             mainAxisAlignment:
-              //                             //                 MainAxisAlignment.center,
-              //                             //             children: [
-              //                             //               Expanded(
-              //                             //                   child: Text('Cylinder',
-              //                             //                       style: TextStyle(
-              //                             //                           fontWeight: FontWeight
-              //                             //                               .bold,),textAlign: TextAlign.center,)),
-              //                             //               verticalDividerSmall(),
-              //                             //               Expanded(
-              //                             //                   child: Text('Imbalance Qty',
-              //                             //                       style: TextStyle(
-              //                             //                           fontWeight: FontWeight
-              //                             //                               .bold),textAlign: TextAlign.center)),
-              //                             //
-              //                             //             ],
-              //                             //           ),
-              //                             //         ),
-              //                             //
-              //                             //         Container(
-              //                             //           color: Colors.black12,
-              //                             //           height: 1,
-              //                             //           width: MediaQuery.of(context)
-              //                             //               .size
-              //                             //               .width,
-              //                             //         ),
-              //                             //         // Adds a divider below the header for separation
-              //                             //         // List of Entries
-              //                             //         ListView.builder(
-              //                             //           shrinkWrap: true,
-              //                             //           // To make the ListView occupy only the space it needs
-              //                             //           physics:
-              //                             //               NeverScrollableScrollPhysics(),
-              //                             //           // Prevents scrolling inside the ListView
-              //                             //           itemCount:
-              //                             //               cylinderData.entries.length,
-              //                             //           itemBuilder: (context, index) {
-              //                             //             var entry = cylinderData.entries
-              //                             //                 .elementAt(index);
-              //                             //             String category = entry.key;
-              //                             //             int emptyCount =
-              //                             //                 entry.value['Empty'] ?? 0;
-              //                             //             int filledCount = entry.value['Filled'] ?? 0;
-              //                             //             int defectiveCount = entry.value['Defective'] ?? 0;
-              //                             //
-              //                             //             return Column(
-              //                             //               children: [
-              //                             //                 Row(
-              //                             //                   mainAxisAlignment: MainAxisAlignment.center,
-              //                             //                   children: [
-              //                             //                     Expanded(
-              //                             //                       child:Text(
-              //                             //                           category,
-              //                             //                           textAlign: TextAlign.center,
-              //                             //                         ),
-              //                             //
-              //                             //                     ),
-              //                             //                     verticalDividerVerySmall(),
-              //                             //                     Expanded(
-              //                             //                       child: GestureDetector(
-              //                             //                         onTap: () {
-              //                             //                           // Handle the tap on the 'emptyCount' text
-              //                             //                           setState(() {
-              //                             //                             // Perform any action when clicked (e.g., toggle underline state)
-              //                             //                           });
-              //                             //                         },
-              //                             //                         child: Text(
-              //                             //                           '$emptyCount',
-              //                             //                           textAlign: TextAlign.center,
-              //                             //                           style: TextStyle(
-              //                             //                             decoration: TextDecoration.underline, // Add blue underline
-              //                             //                             decorationColor: Colors.blue, // Set the underline color
-              //                             //                           ),
-              //                             //                         ),
-              //                             //                       ),
-              //                             //                     ),
-              //                             //                   ],
-              //                             //                 ),
-              //                             //
-              //                             //                 Container(
-              //                             //                   color: Colors.black12,
-              //                             //                   height: 1,
-              //                             //                   width:
-              //                             //                       MediaQuery.of(context)
-              //                             //                           .size
-              //                             //                           .width,
-              //                             //                 ),
-              //                             //               ],
-              //                             //             );
-              //                             //           },
-              //                             //         ),
-              //                             //
-              //                             //       ],
-              //                             //     ),
-              //                             //   ),
-              //                             // ),
-              //                             Visibility(
-              //                               visible:
-              //                                   isPhysicalStockListViewVisible &&
-              //                                       receiptList.isNotEmpty,
-              //                               child: Container(
-              //                                 margin: EdgeInsets.symmetric(
-              //                                     horizontal: 5),
-              //                                 decoration: BoxDecoration(
-              //                                   borderRadius:
-              //                                       BorderRadius.circular(12),
-              //                                   border: Border.all(),
-              //                                 ),
-              //                                 child: Column(
-              //                                   children: [
-              //                                     // Header Row for Cylinder Categories
-              //                                     Container(
-              //                                       padding:
-              //                                           const EdgeInsets.all(8),
-              //                                       child: Row(
-              //                                         mainAxisAlignment:
-              //                                             MainAxisAlignment
-              //                                                 .center,
-              //                                         children: [
-              //                                           Expanded(
-              //                                             child: Text(
-              //                                               'Cylinder',
-              //                                               style: TextStyle(
-              //                                                 fontWeight:
-              //                                                     FontWeight.bold,
-              //                                                 color: Colors.black,
-              //                                                 fontSize: 14,
-              //                                               ),
-              //                                               textAlign:
-              //                                                   TextAlign.center,
-              //                                             ),
-              //                                           ),
-              //                                           VerticalDivider(
-              //                                               thickness: 1,
-              //                                               color: Colors.grey),
-              //                                           Expanded(
-              //                                             child: Text(
-              //                                               'Imbalance Qty',
-              //                                               style: TextStyle(
-              //                                                 fontWeight:
-              //                                                     FontWeight.bold,
-              //                                                 color: Colors.black,
-              //                                                 fontSize: 14,
-              //                                               ),
-              //                                               textAlign:
-              //                                                   TextAlign.center,
-              //                                             ),
-              //                                           ),
-              //                                         ],
-              //                                       ),
-              //                                     ),
-              //
-              //                                     // ListView for displaying cylinder categories and imbalance quantities
-              //                                     // Container(
-              //                                     //   height: 100,
-              //                                     //   child: ListView.builder(
-              //                                     //     shrinkWrap: true,
-              //                                     //     itemCount: receiptList.length, // Use the length of the fetched list
-              //                                     //     itemBuilder: (context, index) {
-              //                                     //       var receipt = receiptList[index]; // Get the current receipt
-              //                                     //       var item = receipt.itemImbDtls?.first; // Get the first item from the list (you can modify this if needed)
-              //                                     //
-              //                                     //       return Padding(
-              //                                     //         padding: const EdgeInsets.all(10.0),
-              //                                     //         child: Row(
-              //                                     //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //                                     //           children: [
-              //                                     //             // Cylinder Category Text (Item Name)
-              //                                     //             Expanded(
-              //                                     //               child: Text(
-              //                                     //                 item?.itemName ?? "Unknown Item",  // Display Item Name
-              //                                     //                 style: TextStyle(
-              //                                     //                   fontWeight: FontWeight.bold,
-              //                                     //                   fontSize: 14,
-              //                                     //                   color: Colors.black,
-              //                                     //                 ),
-              //                                     //                 textAlign: TextAlign.center,
-              //                                     //               ),
-              //                                     //             ),
-              //                                     //             // Divider between Texts
-              //                                     //             VerticalDivider(thickness: 1, color: Colors.grey),
-              //                                     //             // Imbalance Quantity with Tap Gesture
-              //                                     //             Expanded(
-              //                                     //               child: GestureDetector(
-              //                                     //                 onTap: () {
-              //                                     //                   int qty = item?.balance?.toInt() ?? 0;
-              //                                     //                   int dmId = receipt.dMId?.toInt() ?? 0;  // Get DMId from the receipt
-              //                                     //                   int itemId = item?.itemId?.toInt() ?? 0;  // Safely access balance and convert it to int, defaulting to 0 if null
-              //                                     //                   _showPopup(qty,dmId,itemId); // Call the popup with the imbalance quantity
-              //                                     //                 },
-              //                                     //                 child: Text(
-              //                                     //                   '${item?.imbQty}',  // Display Imbalance Quantity
-              //                                     //                   textAlign: TextAlign.center,
-              //                                     //                   style: TextStyle(
-              //                                     //                     decoration: TextDecoration.underline,
-              //                                     //                     decorationColor: Colors.blue,
-              //                                     //                     fontWeight: FontWeight.bold,
-              //                                     //                     color: Colors.blue.shade700,
-              //                                     //                   ),
-              //                                     //                 ),
-              //                                     //               ),
-              //                                     //             ),
-              //                                     //           ],
-              //                                     //         ),
-              //                                     //       );
-              //                                     //     },
-              //                                     //   ),
-              //                                     // )
-              //                                     Container(
-              //                                       color:
-              //                                           const Color(0xff1280B3),
-              //                                       height: 1,
-              //                                       width: MediaQuery.of(context)
-              //                                           .size
-              //                                           .width,
-              //                                     ),
-              //                                     Container(
-              //                                       child: ListView.builder(
-              //                                         shrinkWrap: true,
-              //                                         itemCount:
-              //                                             receiptList.length,
-              //                                         // Use the length of the fetched list
-              //                                         itemBuilder:
-              //                                             (context, index) {
-              //                                           var receipt = receiptList[
-              //                                               index]; // Get the current receipt
-              //
-              //                                           return Padding(
-              //                                             padding:
-              //                                                 const EdgeInsets
-              //                                                     .all(10.0),
-              //                                             child: Column(
-              //                                               crossAxisAlignment:
-              //                                                   CrossAxisAlignment
-              //                                                       .start,
-              //                                               children: [
-              //                                                 // Optionally display receipt info here, e.g., receipt.title or date
-              //
-              //                                                 // For each receipt, loop through all items in itemImbDtls
-              //                                                 for (var item in receipt
-              //                                                         .itemImbDtls ??
-              //                                                     []) ...[
-              //                                                   Padding(
-              //                                                     padding: const EdgeInsets
-              //                                                         .symmetric(
-              //                                                         vertical:
-              //                                                             5.0),
-              //                                                     child: Row(
-              //                                                       mainAxisAlignment:
-              //                                                           MainAxisAlignment
-              //                                                               .spaceBetween,
-              //                                                       children: [
-              //                                                         // Cylinder Category Text (Item Name)
-              //                                                         Expanded(
-              //                                                           child:
-              //                                                               Text(
-              //                                                             item.itemName ??
-              //                                                                 "Unknown Item",
-              //                                                             // Display Item Name
-              //                                                             style:
-              //                                                                 TextStyle(
-              //                                                               fontWeight:
-              //                                                                   FontWeight.bold,
-              //                                                               fontSize:
-              //                                                                   16,
-              //                                                               color:
-              //                                                                   Colors.black,
-              //                                                             ),
-              //                                                             textAlign:
-              //                                                                 TextAlign.center,
-              //                                                           ),
-              //                                                         ),
-              //                                                         // Divider between Texts
-              //                                                         VerticalDivider(
-              //                                                             thickness:
-              //                                                                 1,
-              //                                                             color: Colors
-              //                                                                 .grey),
-              //                                                         // Imbalance Quantity with Tap Gesture
-              //                                                         Expanded(
-              //                                                           child:
-              //                                                               GestureDetector(
-              //                                                             onTap:
-              //                                                                 () {
-              //                                                               int qty =
-              //                                                                   item.balance?.toInt() ?? 0;
-              //                                                               int dmId =
-              //                                                                   receipt.dMId?.toInt() ?? 0; // Get DMId from the receipt
-              //                                                               int itemId =
-              //                                                                   item.itemId?.toInt() ?? 0; // Safely access balance and convert it to int
-              //                                                               _showPopup(
-              //                                                                   qty,
-              //                                                                   dmId,
-              //                                                                   itemId); // Call the popup with the imbalance quantity
-              //                                                             },
-              //                                                             child:
-              //                                                                 Text(
-              //                                                               '${item.lessEmptyQty}',
-              //                                                               // Display Imbalance Quantity
-              //                                                               textAlign:
-              //                                                                   TextAlign.center,
-              //                                                               style: TextStyle(
-              //                                                                   decoration: TextDecoration.underline,
-              //                                                                   decorationColor: Colors.blue,
-              //                                                                   fontWeight: FontWeight.bold,
-              //                                                                   color: Colors.blue.shade700,
-              //                                                                   fontSize: 16),
-              //                                                             ),
-              //                                                           ),
-              //                                                         ),
-              //                                                       ],
-              //                                                     ),
-              //                                                   ),
-              //                                                 ],
-              //                                               ],
-              //                                             ),
-              //                                           );
-              //                                         },
-              //                                       ),
-              //                                     ),
-              //                                   ],
-              //                                 ),
-              //                               ),
-              //                             ),
-              //                           ],
-              //                         ),
-              //                       ),
-              //                     ),
-              //                   ),
-              //                   SizedBox(height: 10),
-              //                 ],
-              //               ),
-              //             ),
-              //           ],
-              //         ),
-              //       )
-              //     : Container(),
-
-              // Item Details
+                  ],
+                ),
+              )
+                  : Container(),
               Row(
                 children: [
-                  // SV+ Field (DropdownButton)
+                  Expanded(child: textWidgetBlueColorWithStar("Select Item","*")),
                   Flexible(
-                    flex: 2,
+                    flex: 1,
                     child:
-                        // DropdownButtonFormField<CylItemListModel>(
-                        //   decoration: const InputDecoration(
-                        //     labelText: 'Select Item',
-                        //     labelStyle: TextStyle(fontSize: 12),
-                        //     border: OutlineInputBorder(),
-                        //     contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                        //   ),
-                        //   items: _items.map((CylItemListModel item) {
-                        //     return DropdownMenuItem<CylItemListModel>(
-                        //       value: item,
-                        //       child: Text(item.itemName ?? 'Unknown',
-                        //         style: TextStyle(fontSize: 14.0,fontWeight: FontWeight.normal),),
-                        //
-                        //     );
-                        //   }).toList(),
-                        //   onChanged: (CylItemListModel? selectedItem) {
-                        //     if (selectedItem != null) {
-                        //       setState(() {
-                        //         _selectedItem = selectedItem.itemName;
-                        //         selectedItemId = selectedItem.itemId!.toInt();
-                        //
-                        //         print('Selected Item: ${_selectedItem}, ID: ${selectedItemId}');
-                        //       });
-                        //     }
-                        //   },
-                        // ),
-
-                        DropdownButtonFormField<CylItemListModel>(
-                      decoration: const InputDecoration(
-                        label: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: const [
-                            Text(
-                              'Select Item',
-                              style: TextStyle(fontSize: 12),
-                            ),
-                            SizedBox(width: 4),
-                            // Add some space between the text and the icon
-                            Icon(
-                              Icons.star, // Use a star or any other icon
-                              color: Colors.red, // Set the icon color to red
-                              size: 10, // Adjust the size of the icon
-                            ),
-                          ],
-                        ),
-                        border: const OutlineInputBorder(),
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 12.0),
-                      ),
+                    // DropdownButtonFormField<CylItemListModel>(
+                    //   decoration: const InputDecoration(
+                    //     labelText: 'Select Item',
+                    //     labelStyle: TextStyle(fontSize: 12),
+                    //     border: OutlineInputBorder(),
+                    //     contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                    //   ),
+                    //   items: _items.map((CylItemListModel item) {
+                    //     return DropdownMenuItem<CylItemListModel>(
+                    //       value: item,
+                    //       child: Text(item.itemName ?? 'Unknown',
+                    //         style: TextStyle(fontSize: 14.0,fontWeight: FontWeight.normal),),
+                    //
+                    //     );
+                    //   }).toList(),
+                    //   onChanged: (CylItemListModel? selectedItem) {
+                    //     if (selectedItem != null) {
+                    //       setState(() {
+                    //         _selectedItem = selectedItem.itemName;
+                    //         selectedItemId = selectedItem.itemId!.toInt();
+                    //
+                    //         print('Selected Item: ${_selectedItem}, ID: ${selectedItemId}');
+                    //       });
+                    //     }
+                    //   },
+                    // ),
+                    DropdownButtonFormField<CylItemListModel>(
+                      decoration: buildInputBorderUpdateStatus(
+                          "Select Item", context),
+                      // decoration: const InputDecoration(
+                      //   label:
+                      //   Row(
+                      //     mainAxisSize: MainAxisSize.min,
+                      //     children: const [
+                      //       Text(
+                      //         'Select Item',
+                      //         style: TextStyle(fontSize: 12),
+                      //       ),
+                      //       // SizedBox(width: 4),
+                      //       // // Add some space between the text and the icon
+                      //       // Icon(
+                      //       //   Icons.star, // Use a star or any other icon
+                      //       //   color: Colors.red, // Set the icon color to red
+                      //       //   size: 10, // Adjust the size of the icon
+                      //       // ),
+                      //     ],
+                      //   ),
+                      //   // border: const OutlineInputBorder(),
+                      //   // contentPadding: const EdgeInsets.symmetric(
+                      //   //     vertical: 8.0, horizontal: 12.0),
+                      // ),
                       value: _selectedItemModel,
                       // Bind the value to the selected item model
                       items: _items.map((CylItemListModel item) {
@@ -2156,74 +4401,68 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
 
                             print(
                                 'Selected Item: ${_selectedItem}, ID: ${selectedItemId}');
+                            _fetchFilledStockForSelectedItem(selectedItemId!);
                           });
                         }
                       },
                     ),
                   ),
+                ],
+            ),
+              Row(
+                children: [
+                  Expanded(child: textWidgetBlueColorWithStar("Total Sale","*")),
+                    Flexible(
+                      flex: 1,
+                      child: TextField(
+                        controller: _filledController,
+                        decoration: buildInputBorderUpdateStatus(
+                          "Enter Total Sale", context),
+                        style: Styling.textFormText,
+                        keyboardType: TextInputType.number,
+                        // Set keyboard type to numeric
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(3),
+                          // Allow only digits
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            // Get the current value of the filled quantity
+                            int filledQty = int.tryParse(value) ?? 0;
 
-                  const SizedBox(width: 10), // Spacing between SV+ and TV-
+                            // Check if total sale is greater than filled stock
+                            if (filledQty > (filledStock ?? 0)) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Total Sale Cannot Be Greater Than Filled Stock')),
+                              );
+                              _filledController.clear();
+                              filledQty = 0;
+                            }
+                            // Recalculate the empty quantity based on other fields
+                            int svQty = int.tryParse(_svController.text) ?? 0;
+                            int tvQty = int.tryParse(_tvController.text) ?? 0;
+                            int defQty =
+                                int.tryParse(_defectiveController.text) ?? 0;
+                            int lessEmptyQty =
+                                int.tryParse(_lessEmptyController.text) ?? 0;
 
-                  // TV- Field (TextField)
-                  Flexible(
-                    flex: 1,
-                    child: TextField(
-                      controller: _filledController,
-                      decoration: const InputDecoration(
-                        label: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: const [
-                            Text(
-                              'Total\nSale',
-                              style: TextStyle(fontSize: 12),
-                            ),
-                            SizedBox(width: 4),
-                            // Add some space between the text and the icon
-                            Icon(
-                              Icons.star, // Use a star or any other icon
-                              color: Colors.red, // Set the icon color to red
-                              size: 10, // Adjust the size of the icon
-                            ),
-                          ],
-                        ),
-                        border: const OutlineInputBorder(),
-                        contentPadding: const EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 12.0),
+                            // Calculate the new empty quantity
+                            int emptyQty =
+                                filledQty - svQty + tvQty - defQty - lessEmptyQty;
+
+                            // Update the empty field
+                            _emptyController.text = emptyQty.toString();
+
+                          });
+                        },
                       ),
-                      style: TextStyle(
-                        fontSize: 14.0, // Adjust the text size here
-                      ),
-                      keyboardType: TextInputType.number,
-                      // Set keyboard type to numeric
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(3),
-                        // Allow only digits
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          // Get the current value of the filled quantity
-                          int filledQty = int.tryParse(value) ?? 0;
-
-                          // Recalculate the empty quantity based on other fields
-                          int svQty = int.tryParse(_svController.text) ?? 0;
-                          int tvQty = int.tryParse(_tvController.text) ?? 0;
-                          int defQty =
-                              int.tryParse(_defectiveController.text) ?? 0;
-                          int lessEmptyQty =
-                              int.tryParse(_lessEmptyController.text) ?? 0;
-
-                          // Calculate the new empty quantity
-                          int emptyQty =
-                              filledQty - svQty + tvQty - defQty - lessEmptyQty;
-
-                          // Update the empty field
-                          _emptyController.text = emptyQty.toString();
-                        });
-                      },
                     ),
-                  ),
-                  const SizedBox(width: 10),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(child: textWidgetBlueColorWithoutStar("Less Empty -")),
                   Flexible(
                     flex: 1,
                     child: TextField(
@@ -2235,16 +4474,9 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                         LengthLimitingTextInputFormatter(3),
                         // Allow only digits
                       ],
-                      decoration: const InputDecoration(
-                        labelText: 'Less\nEmpty',
-                        labelStyle: TextStyle(fontSize: 12),
-                        border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 12.0),
-                      ),
-                      style: TextStyle(
-                        fontSize: 14.0, // Adjust the text size here
-                      ),
+                      decoration: buildInputBorderUpdateStatus(
+                          "Enter Less Empty-", context),
+                      style: Styling.textFormText,
                       onChanged: (value) {
                         setState(() {
                           // Recalculate empty quantity
@@ -2270,12 +4502,11 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
               Row(
                 children: [
-                  // SV+ Field and Button
+                  Expanded(child: textWidgetBlueColorWithoutStar("SV -")),
                   Flexible(
-                    flex: 2,
+                    flex: 1,
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       // Align widgets in the center vertically
@@ -2291,16 +4522,9 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                               LengthLimitingTextInputFormatter(3),
                               // Allow only digits
                             ],
-                            decoration: const InputDecoration(
-                              labelText: 'SV-',
-                              labelStyle: TextStyle(fontSize: 12),
-                              border: OutlineInputBorder(),
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 8.0, horizontal: 12.0),
-                            ),
-                            style: TextStyle(
-                              fontSize: 14.0, // Adjust the text size here
-                            ),
+                            decoration: buildInputBorderUpdateStatus(
+                                "Enter SV-", context),
+                            style: Styling.textFormText,
                             onChanged: (value) {
                               setState(() {
                                 // Recalculate empty quantity
@@ -2344,8 +4568,11 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 10), // Spacing between SV+ and TV-
-                  // TV- Field and Button
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(child: textWidgetBlueColorWithoutStar("TV +")),
                   Flexible(
                     flex: 1,
                     child: Row(
@@ -2363,16 +4590,9 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                               LengthLimitingTextInputFormatter(3),
                               // Allow only digits
                             ],
-                            decoration: const InputDecoration(
-                              labelText: 'TV+',
-                              labelStyle: TextStyle(fontSize: 12),
-                              border: OutlineInputBorder(),
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 8.0, horizontal: 12.0),
-                            ),
-                            style: TextStyle(
-                              fontSize: 14.0, // Adjust the text size here
-                            ),
+                            decoration: buildInputBorderUpdateStatus(
+                                "Enter TV+", context),
+                            style: Styling.textFormText,
                             onChanged: (value) {
                               setState(() {
                                 // Recalculate empty quantity
@@ -2407,7 +4627,11 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 10),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(child: textWidgetBlueColorWithoutStar("Defective -")),
                   Flexible(
                     flex: 1,
                     child: Row(
@@ -2425,16 +4649,9 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                               LengthLimitingTextInputFormatter(3),
                               // Allow only digits
                             ],
-                            decoration: const InputDecoration(
-                              labelText: 'Def.-',
-                              labelStyle: TextStyle(fontSize: 12),
-                              border: OutlineInputBorder(),
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 8.0, horizontal: 12.0),
-                            ),
-                            style: TextStyle(
-                              fontSize: 14.0, // Adjust the text size here
-                            ),
+                            decoration: buildInputBorderUpdateStatus(
+                                "Enter Defective-", context),
+                            style: Styling.textFormText,
                             onChanged: (value) {
                               setState(() {
                                 // Recalculate empty quantity
@@ -2469,11 +4686,9 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                   ),
                 ],
               ),
-
-              const SizedBox(height: 20),
               Row(
                 children: [
-                  // Empty Field and Button
+                  Expanded(child: Text("Empty",style: Styling.blueClrText,)),
                   Flexible(
                     flex: 1,
                     child: Row(
@@ -2491,33 +4706,10 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                               LengthLimitingTextInputFormatter(3),
                               // Allow only digits
                             ],
-                            decoration: const InputDecoration(
-                              label: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: const [
-                                  Text(
-                                    'Empty',
-                                    style: TextStyle(fontSize: 12),
-                                  ),
-                                  SizedBox(width: 4),
-                                  // Add some space between the text and the icon
-                                  Icon(
-                                    Icons.star,
-                                    // Use a star or any other icon
-                                    color: Colors.red,
-                                    // Set the icon color to red
-                                    size: 10, // Adjust the size of the icon
-                                  ),
-                                ],
-                              ),
-                              border: const OutlineInputBorder(),
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 8.0, horizontal: 12.0),
-                            ),
+                            decoration: buildInputBorderUpdateStatus(
+                                "Empty", context),
+                            style: Styling.textFormText,
                             enabled: false,
-                            style: TextStyle(
-                              fontSize: 14.0, // Adjust the text size here
-                            ),
                             onChanged: (value) {
                               setState(() {
                                 // Get the value of Sale and Empty (make sure they are integers)
@@ -2544,237 +4736,1404 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                       ],
                     ),
                   ),
-                  const SizedBox(width: 40), // Spacing between Empty and Def.
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(child: Text("Remark",style: Styling.blueClrText)),
                   Flexible(
                     flex: 1,
                     child: TextField(
                       controller: _remarkController,
                       maxLength: 250,
-                      decoration: const InputDecoration(
-                        labelText: 'Remark',
-                        labelStyle: TextStyle(fontSize: 12),
-                        border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 12.0),
-                      ),
-
-                      style: TextStyle(
-                        fontSize: 14.0, // Adjust the text size here
-                      ),
+                      decoration: buildInputBorderUpdateStatus(
+                          "Enter Remark", context),
+                      style: Styling.textFormText,
                     ),
                   ),
                 ],
               ),
-
-              // Padding(
-              //         padding: const EdgeInsets.all(8.0),
-              //         child:
-              //             // ElevatedButton(
-              //             //     onPressed:_addNewItem,
-              //             // child: Text("Add New Item",style: TextStyle(color: Colors.white,fontSize: 14),),
-              //             //   style: ElevatedButton.styleFrom(
-              //             //         backgroundColor: Colors.blue, // Button expands to fill available width// Text color of the button
-              //             //         shape: RoundedRectangleBorder( // Optional: Set rounded corners
-              //             //           borderRadius: BorderRadius.circular(50),
-              //             //         ),
-              //             //       ),),
+              ///old
+              // // Row(
+              // //   children: [
+              // //
+              // //     Expanded(
+              // //       child: TextField(
+              // //         controller: deliveryDateController,
+              // //         decoration: const InputDecoration(
+              // //           labelText: 'Delivery Date',
+              // //           labelStyle: TextStyle(fontSize: 12),
+              // //           border: OutlineInputBorder(),
+              // //           contentPadding:
+              // //           EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+              // //         ),
+              // //         style: TextStyle(
+              // //           fontSize: 14.0, // Adjust the text size here
+              // //         ),
+              // //         keyboardType: TextInputType.datetime,
+              // //         enabled: false,
+              // //       ),
+              // //     ),
+              // //
+              // //   ],
+              // // ),
+              // // const SizedBox(height: 20),
+              // // // Select Del Boy and Vehicle No
+              // Row(
+              //   children: [
+              //     // Expanded(
+              //     //   flex: 2,
+              //     //   child:
+              //     //   DropdownButtonFormField<DeliveryBoyInfoModel>(
+              //     //     decoration: const InputDecoration(
+              //     //       labelText: 'Select Delivery Men',
+              //     //       labelStyle: TextStyle(fontSize: 12),
+              //     //       border: OutlineInputBorder(),
+              //     //       contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+              //     //     ),
+              //     //     items: _delBoyInfo.map((DeliveryBoyInfoModel item) {
+              //     //       return DropdownMenuItem<DeliveryBoyInfoModel>(
+              //     //         value: item,
+              //     //         child: Text(item.staffName ?? 'Unknown',
+              //     //           style: TextStyle(fontSize: 14.0,fontWeight: FontWeight.normal),),
+              //     //
+              //     //       );
+              //     //     }).toList(),
+              //     //     onChanged: (DeliveryBoyInfoModel? selectedItem) {
+              //     //       if (selectedItem != null) {
+              //     //         setState(() {
+              //     //           selectedDelBoyName = selectedItem.staffName;
+              //     //            selectedDelBoyId = selectedItem.staffId!.toInt();
+              //     //           int delManId = selectedDelBoyId ?? 0;  // Use directly, since it's already an int
+              //     //
+              //     //           fetchVehicleDetail(selectedDelBoyId!);
+              //     //           fetchData(selectedDelBoyId.toString(),deliveryDateController.text);
+              //     //           _fetchImbalanceData(delManId!);
+              //     //           print('Selected Del Boy Item: ${selectedDelBoyName}, ID: ${selectedDelBoyId}');
+              //     //         });
+              //     //       }
+              //     //     },
+              //     //   ),
+              //     // ),
               //
-              //             Row(
-              //           mainAxisAlignment: MainAxisAlignment.center,
-              //           children: [
-              //             ElevatedButton(
-              //               // onPressed: () async {
-              //               //   if (_editingItemId != null) {
-              //               //     // Update the existing item in the database
-              //               //     await updateRefillSale?.updateRowByColID(
-              //               //       _editingItemId!,
-              //               //       ItemData(
-              //               //         date: deliveryDateController.text,
-              //               //         deliveryBoyName:
-              //               //             selectedDelBoyName.toString(),
-              //               //         delBoyId: selectedDelBoyId.toString(),
-              //               //         vehicleNo: vehicleNoController.text,
-              //               //         itemName: _selectedItem.toString(),
-              //               //         itemID: selectedItemId.toString(),
-              //               //         filled: _filledController.text,
-              //               //         sv: _svController.text,
-              //               //         tv: _tvController.text,
-              //               //         empty: _emptyController.text,
-              //               //         defective: _defectiveController.text,
-              //               //         lessEmpty: _lessEmptyController.text,
-              //               //         remark: _remarkController.text,
-              //               //         svRemark: remarksList.join(', '),
-              //               //         updateFlag: 'pending',
-              //               //       ),
-              //               //     );
-              //               //     ScaffoldMessenger.of(context).showSnackBar(
-              //               //       SnackBar(
-              //               //           content: Text('Item updated successfully')),
-              //               //     );
-              //               //     fetchData(selectedDelBoyId.toString(),
-              //               //         deliveryDateController.text);
-              //               //     debugPrint(
-              //               //         "update"); // Call your existing add function
-              //               //     // Clear the editing state and text fields
-              //               //     setState(() {
-              //               //       _editingItemId = null;
-              //               //       _filledController.clear();
-              //               //       _svController.clear();
-              //               //       _tvController.clear();
-              //               //       _emptyController.clear();
-              //               //       _defectiveController.clear();
-              //               //       _lessEmptyController.clear();
-              //               //       _remarkController.clear();
-              //               //       remarksList.clear();
-              //               //       _selectedItemModel =
-              //               //       null; // Clear the selected item in the dropdown
-              //               //       _selectedItem = '';
-              //               //     });
-              //               //   } else {
-              //               //     _addNewItem();
-              //               //     debugPrint(
-              //               //         "Add"); // Call your existing add function
-              //               //   }
-              //               // },
-              //
-              //               onPressed: () async {
-              //                 int filledValue =
-              //                     int.tryParse(_filledController.text) ?? 0;
-              //                 int svValue = int.tryParse(_svController.text) ?? 0;
-              //                 int tvValue = int.tryParse(_tvController.text) ?? 0;
-              //                 int emptyValue =
-              //                     int.tryParse(_emptyController.text) ?? 0;
-              //                 int defectiveValue =
-              //                     int.tryParse(_defectiveController.text) ?? 0;
-              //                 int lessEmptyValue =
-              //                     int.tryParse(_lessEmptyController.text) ?? 0;
-              //
-              //                 if (_editingItemId != null) {
-              //                   if (filledValue > lessEmptyValue) {
-              //                     if (filledValue > svValue) {
-              //                       if (filledValue > tvValue) {
-              //                         if (filledValue > defectiveValue) {
-              //                           if (filledValue >= emptyValue && emptyValue > 0) {
-              //                             // Attempt to update the existing item in the database
-              //                             final isUpdated =
-              //                             await updateRefillSale?.updateRowByColID(
-              //                               _editingItemId!,
-              //                               ItemData(
-              //                                 date: deliveryDateController.text,
-              //                                 deliveryBoyName:
-              //                                 selectedDelBoyName.toString(),
-              //                                 delBoyId: selectedDelBoyId.toString(),
-              //                                 vehicleNo: vehicleNoController.text,
-              //                                 itemName: _selectedItem.toString(),
-              //                                 itemID: selectedItemId.toString(),
-              //                                 filled: _filledController.text,
-              //                                 sv: _svController.text,
-              //                                 tv: _tvController.text,
-              //                                 empty: _emptyController.text,
-              //                                 defective: _defectiveController.text,
-              //                                 lessEmpty: _lessEmptyController.text,
-              //                                 remark: _remarkController.text,
-              //                                 svRemark: remarksList.join(', '),
-              //                                 updateFlag: 'pending',
-              //                               ),
-              //                             );
-              //
-              //                             if (isUpdated == true) {
-              //                               // Success: Show success message and refresh data
-              //                               ScaffoldMessenger.of(context).showSnackBar(
-              //                                 SnackBar(
-              //                                     content:
-              //                                     Text('Item updated successfully')),
-              //                               );
-              //                               fetchData(selectedDelBoyId.toString(),
-              //                                   deliveryDateController.text);
-              //
-              //                               // Clear the editing state and text fields
-              //                               setState(() {
-              //                                 _editingItemId = null;
-              //                                 _filledController.clear();
-              //                                 _svController.clear();
-              //                                 _tvController.clear();
-              //                                 _emptyController.clear();
-              //                                 _defectiveController.clear();
-              //                                 _lessEmptyController.clear();
-              //                                 _remarkController.clear();
-              //                                 remarksList.clear();
-              //                                 _selectedItemModel =
-              //                                 null; // Clear the selected item in the dropdown
-              //                                 _selectedItem = '';
-              //                               });
-              //                             } else {
-              //                               // Failure: Show error message
-              //                               ScaffoldMessenger.of(context).showSnackBar(
-              //                                 SnackBar(
-              //                                     content: Text(
-              //                                         'Item update failed. Duplicate or invalid entry.')),
-              //                               );
-              //                             }
-              //                           }else{
-              //                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              //                               content: Text(
-              //                                   "Empty cylinder counts must be less than the Sale cylinder count..!"),
-              //                               duration: Duration(seconds: 2),
-              //                             ));
-              //                           }
-              //                         }else{
-              //                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              //                             content: Text(
-              //                                 "Defective cylinder counts must be less than the Sale cylinder count..!"),
-              //                             duration: Duration(seconds: 2),
-              //                           ));
-              //                         }
-              //                       }else{
-              //                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              //                           content: Text(
-              //                               "TV cylinder counts must be less than the Sale cylinder count..!"),
-              //                           duration: Duration(seconds: 2),
-              //                         ));
-              //                       }
-              //                     }else{
-              //                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              //                         content: Text(
-              //                             "SV cylinder counts must be less than the Sale cylinder count..!"),
-              //                         duration: Duration(seconds: 2),
-              //                       ));
-              //                     }
-              //                   }else{
-              //                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-              //                       content: Text(
-              //                           "Less Empty cylinder counts must be less than the Sale cylinder count..!"),
-              //                       duration: Duration(seconds: 2),
-              //                     ));
-              //                   }
-              //                 } else {
-              //                   // Add new item
-              //                   _addNewItem();
-              //                   debugPrint(
-              //                       "Add"); // Call your existing add function
-              //                 }
-              //               },
-              //
-              //               child: Padding(
-              //                 padding: const EdgeInsets.all(8.0),
-              //                 child: Text(
-              //                   _editingItemId != null ? 'Update' : 'Add',
-              //                   style:
-              //                       TextStyle(color: Colors.white, fontSize: 14),
-              //                 ),
+              //     ///work
+              //     Expanded(
+              //       flex: 2,
+              //       child: DropdownButtonFormField<DeliveryBoyInfoModel>(
+              //         decoration: const InputDecoration(
+              //           label: Row(
+              //             mainAxisSize: MainAxisSize.min,
+              //             children: const [
+              //               Text(
+              //                 'Select Delivery Men',
+              //                 style: TextStyle(fontSize: 12),
               //               ),
-              //               style: ElevatedButton.styleFrom(
-              //                 backgroundColor: Colors.blue,
-              //                 // Button expands to fill available width// Text color of the button
-              //                 shape: RoundedRectangleBorder(
-              //                   // Optional: Set rounded corners
-              //                   borderRadius: BorderRadius.circular(50),
-              //                 ),
-              //               ), // Change button label
-              //             ),
-              //           ],
+              //               SizedBox(width: 4),
+              //               // Add some space between the text and the icon
+              //               Icon(
+              //                 Icons.star, // Use a star or any other icon
+              //                 color: Colors.red, // Set the icon color to red
+              //                 size: 10, // Adjust the size of the icon
+              //               ),
+              //             ],
+              //           ),
+              //           border: const OutlineInputBorder(),
+              //           contentPadding: const EdgeInsets.symmetric(
+              //               vertical: 8.0, horizontal: 12.0),
               //         ),
+              //         // value: selectedDelBoyId != null
+              //         //     ? _delBoyInfo.firstWhere(
+              //         //         (item) => item.staffId == selectedDelBoyId)
+              //         //     : null,
+              //         value:
+              //         (_delBoyInfo.isNotEmpty && selectedDelBoyId != null)
+              //             ? _delBoyInfo.firstWhere(
+              //               (item) => item.staffId == selectedDelBoyId,
+              //           orElse: () => DeliveryBoyInfoModel(
+              //             staffId: 0, // Default or dummy ID
+              //             staffName: 'Unknown', // Default name
+              //           ),
+              //         )
+              //             : null,
+              //
+              //         // Ensure that when the selectedDelBoyId is null, the value is null, showing the default hint
+              //         hint: Text(
+              //           'Select Delivery Men',
+              //           style: TextStyle(fontSize: 12),
+              //         ),
+              //         // Default hint when no item is selected
+              //         items: _delBoyInfo.map((DeliveryBoyInfoModel item) {
+              //           return DropdownMenuItem<DeliveryBoyInfoModel>(
+              //             value: item,
+              //             child: Text(
+              //               item.staffName ?? 'Unknown',
+              //               style: TextStyle(
+              //                   fontSize: 14.0, fontWeight: FontWeight.normal),
+              //             ),
+              //           );
+              //         }).toList(),
+              //         onChanged: (flagEditMode == "editMode") ? null:(DeliveryBoyInfoModel? selectedItem) {
+              //           if (selectedItem != null) {
+              //             setState(() {
+              //               selectedDelBoyName = selectedItem.staffName;
+              //               selectedDelBoyId = selectedItem.staffId!.toInt();
+              //               int delManId = selectedDelBoyId ?? 0;
+              //               fetchVehicleDetail(selectedDelBoyId!);
+              //               fetchData(selectedDelBoyId.toString(),
+              //                   deliveryDateController.text);
+              //               _fetchImbalanceData(delManId!);
+              //               print(
+              //                   'Selected Del Boy Item: ${selectedDelBoyName}, ID: ${selectedDelBoyId}');
+              //             });
+              //           }
+              //         },
               //       ),
+              //     ),
+              //
+              //     // Expanded(
+              //     //   flex: 2,
+              //     //   child: DropdownButtonFormField<DeliveryBoyInfoModel>(
+              //     //     decoration: const InputDecoration(
+              //     //       label: Row(
+              //     //         mainAxisSize: MainAxisSize.min,
+              //     //         children: [
+              //     //           Text(
+              //     //             'Select Delivery Men',
+              //     //             style: TextStyle(fontSize: 12),
+              //     //           ),
+              //     //           SizedBox(width: 4),
+              //     //           // Add some space between the text and the icon
+              //     //           Icon(
+              //     //             Icons.star, // Use a star or any other icon
+              //     //             color: Colors.red, // Set the icon color to red
+              //     //             size: 10, // Adjust the size of the icon
+              //     //           ),
+              //     //         ],
+              //     //       ),
+              //     //       border: OutlineInputBorder(),
+              //     //       contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+              //     //     ),
+              //     //     // Ensure the correct delivery boy is pre-selected if in edit mode
+              //     //     value: selectedDelBoyId != null
+              //     //         ? _delBoyInfo.firstWhere(
+              //     //           (item) => item.staffId == selectedDelBoyId,
+              //     //       // Fallback in case no match is found
+              //     //     )
+              //     //         : null,
+              //     //     hint: Text(
+              //     //       'Select Delivery Men',
+              //     //       style: TextStyle(fontSize: 12),
+              //     //     ),
+              //     //     items: _delBoyInfo.map((DeliveryBoyInfoModel item) {
+              //     //       return DropdownMenuItem<DeliveryBoyInfoModel>(
+              //     //         value: item,
+              //     //         child: Text(
+              //     //           item.staffName ?? 'Unknown',
+              //     //           style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.normal),
+              //     //         ),
+              //     //       );
+              //     //     }).toList(),
+              //     //     onChanged: (DeliveryBoyInfoModel? selectedItem) {
+              //     //       if (selectedItem != null && flagEditMode != "editMode") {
+              //     //         setState(() {
+              //     //           selectedDelBoyName = selectedItem.staffName;
+              //     //           selectedDelBoyId = selectedItem.staffId!.toInt();
+              //     //           int delManId = selectedDelBoyId ?? 0;
+              //     //           fetchVehicleDetail(selectedDelBoyId!);
+              //     //           fetchData(selectedDelBoyId.toString(), deliveryDateController.text);
+              //     //           _fetchImbalanceData(delManId!);
+              //     //           print(
+              //     //               'Selected Del Boy Item: ${selectedDelBoyName}, ID: ${selectedDelBoyId}');
+              //     //         });
+              //     //       }
+              //     //     },
+              //     //     // Disable dropdown when in edit mode
+              //     //     disabledHint: Text(
+              //     //       selectedDelBoyName ?? 'Delivery Man',
+              //     //       style: TextStyle(fontSize: 12),
+              //     //     ),
+              //     //     onSaved: (value) {
+              //     //       // Optionally save the value when needed
+              //     //     },
+              //     //     // If in edit mode, disable interaction with the dropdown
+              //     //
+              //     //   ),
+              //     // ),
+              //
+              //     SizedBox(
+              //       width: 20,
+              //     ),
+              //     Expanded(
+              //       flex: 1,
+              //       child: TextField(
+              //         controller: vehicleNoController,
+              //         decoration: const InputDecoration(
+              //           label: Row(
+              //             mainAxisSize: MainAxisSize.min,
+              //             children: const [
+              //               Text(
+              //                 'Vehicle No.',
+              //                 style: TextStyle(fontSize: 12),
+              //               ),
+              //               // SizedBox(width: 4), // Add some space between the text and the icon
+              //               // Icon(
+              //               //   Icons.star, // Use a star or any other icon
+              //               //   color: Colors.red, // Set the icon color to red
+              //               //   size: 10, // Adjust the size of the icon
+              //               // ),
+              //             ],
+              //           ),
+              //           border: const OutlineInputBorder(),
+              //           contentPadding: const EdgeInsets.symmetric(
+              //               vertical: 8.0, horizontal: 12.0),
+              //         ),
+              //         style: TextStyle(
+              //           fontSize: 14.0, // Adjust the text size here
+              //         ),
+              //         enabled: false,
+              //       ),
+              //     ),
+              //   ],
+              // ),
+              // // const SizedBox(height: 20),
+              // // /// Add New Section Imbalance
+              // // receiptList.isNotEmpty
+              // //     ?
+              // // Container(
+              // //   child: Row(
+              // //     children: [
+              // //       Expanded(
+              // //         flex: 1,
+              // //         child: Column(
+              // //           crossAxisAlignment: CrossAxisAlignment.start,
+              // //           children: [
+              // //             // Title for Cylinder Categories Table
+              // //             GestureDetector(
+              // //               onTap: () {
+              // //                 setState(() {
+              // //                   isPhysicalStockListViewVisible =
+              // //                   !isPhysicalStockListViewVisible; // Toggle ListView visibility
+              // //                 });
+              // //               },
+              // //               child:
+              // //               Card(
+              // //                 child: Padding(
+              // //                   padding: const EdgeInsets.all(5.0),
+              // //                   child: Column(
+              // //                     children: [
+              // //                       Padding(
+              // //                         padding: const EdgeInsets.all(5.0),
+              // //                         child: Row(
+              // //                           mainAxisAlignment:
+              // //                           MainAxisAlignment.spaceBetween,
+              // //                           children: [
+              // //                             Row(
+              // //                               mainAxisAlignment:
+              // //                               MainAxisAlignment.start,
+              // //                               children: [
+              // //                                 Text(
+              // //                                   'Balance Empty : ',
+              // //                                   style: TextStyle(
+              // //                                     fontSize: 15,
+              // //                                     color: Colors.black,
+              // //                                     fontWeight:
+              // //                                     FontWeight.bold,
+              // //                                   ),
+              // //                                 ),
+              // //                                 Text(
+              // //                                   "$imbalaceSum",
+              // //                                   style: TextStyle(
+              // //                                     fontSize: 15,
+              // //                                     color: Colors.black,
+              // //                                     fontWeight:
+              // //                                     FontWeight.bold,
+              // //                                   ),
+              // //                                 ),
+              // //                               ],
+              // //                             ),
+              // //                             Icon(
+              // //                               isPhysicalStockListViewVisible
+              // //                                   ? Icons.arrow_drop_up
+              // //                                   : Icons.arrow_drop_down,
+              // //                               size: 30,
+              // //                             ),
+              // //                           ],
+              // //                         ),
+              // //                       ),
+              // //
+              // //                       // Visibility(
+              // //                       //   visible: isPhysicalStockListViewVisible,
+              // //                       //   child:
+              // //                       //   Container(
+              // //                       //     decoration: BoxDecoration(
+              // //                       //       // Background color of the box
+              // //                       //       borderRadius: BorderRadius.circular(8),
+              // //                       //       border: Border.all(
+              // //                       //           width:
+              // //                       //               0.5), // Optional: Add rounded corners
+              // //                       //     ),
+              // //                       //     child: Column(
+              // //                       //       crossAxisAlignment:
+              // //                       //           CrossAxisAlignment.start,
+              // //                       //       children: [
+              // //                       //         // Header Row
+              // //                       //         Container(
+              // //                       //           decoration: BoxDecoration(
+              // //                       //             // Background color of the box
+              // //                       //             borderRadius: BorderRadius.only(topLeft:Radius.circular(8),topRight: Radius.circular(8)),
+              // //                       //             color: Colors.blue.shade100,
+              // //                       //             // Optional: Add rounded corners
+              // //                       //           ),
+              // //                       //           child: Row(
+              // //                       //             mainAxisAlignment:
+              // //                       //                 MainAxisAlignment.center,
+              // //                       //             children: [
+              // //                       //               Expanded(
+              // //                       //                   child: Text('Cylinder',
+              // //                       //                       style: TextStyle(
+              // //                       //                           fontWeight: FontWeight
+              // //                       //                               .bold,),textAlign: TextAlign.center,)),
+              // //                       //               verticalDividerSmall(),
+              // //                       //               Expanded(
+              // //                       //                   child: Text('Imbalance Qty',
+              // //                       //                       style: TextStyle(
+              // //                       //                           fontWeight: FontWeight
+              // //                       //                               .bold),textAlign: TextAlign.center)),
+              // //                       //
+              // //                       //             ],
+              // //                       //           ),
+              // //                       //         ),
+              // //                       //
+              // //                       //         Container(
+              // //                       //           color: Colors.black12,
+              // //                       //           height: 1,
+              // //                       //           width: MediaQuery.of(context)
+              // //                       //               .size
+              // //                       //               .width,
+              // //                       //         ),
+              // //                       //         // Adds a divider below the header for separation
+              // //                       //         // List of Entries
+              // //                       //         ListView.builder(
+              // //                       //           shrinkWrap: true,
+              // //                       //           // To make the ListView occupy only the space it needs
+              // //                       //           physics:
+              // //                       //               NeverScrollableScrollPhysics(),
+              // //                       //           // Prevents scrolling inside the ListView
+              // //                       //           itemCount:
+              // //                       //               cylinderData.entries.length,
+              // //                       //           itemBuilder: (context, index) {
+              // //                       //             var entry = cylinderData.entries
+              // //                       //                 .elementAt(index);
+              // //                       //             String category = entry.key;
+              // //                       //             int emptyCount =
+              // //                       //                 entry.value['Empty'] ?? 0;
+              // //                       //             int filledCount = entry.value['Filled'] ?? 0;
+              // //                       //             int defectiveCount = entry.value['Defective'] ?? 0;
+              // //                       //
+              // //                       //             return Column(
+              // //                       //               children: [
+              // //                       //                 Row(
+              // //                       //                   mainAxisAlignment: MainAxisAlignment.center,
+              // //                       //                   children: [
+              // //                       //                     Expanded(
+              // //                       //                       child:Text(
+              // //                       //                           category,
+              // //                       //                           textAlign: TextAlign.center,
+              // //                       //                         ),
+              // //                       //
+              // //                       //                     ),
+              // //                       //                     verticalDividerVerySmall(),
+              // //                       //                     Expanded(
+              // //                       //                       child: GestureDetector(
+              // //                       //                         onTap: () {
+              // //                       //                           // Handle the tap on the 'emptyCount' text
+              // //                       //                           setState(() {
+              // //                       //                             // Perform any action when clicked (e.g., toggle underline state)
+              // //                       //                           });
+              // //                       //                         },
+              // //                       //                         child: Text(
+              // //                       //                           '$emptyCount',
+              // //                       //                           textAlign: TextAlign.center,
+              // //                       //                           style: TextStyle(
+              // //                       //                             decoration: TextDecoration.underline, // Add blue underline
+              // //                       //                             decorationColor: Colors.blue, // Set the underline color
+              // //                       //                           ),
+              // //                       //                         ),
+              // //                       //                       ),
+              // //                       //                     ),
+              // //                       //                   ],
+              // //                       //                 ),
+              // //                       //
+              // //                       //                 Container(
+              // //                       //                   color: Colors.black12,
+              // //                       //                   height: 1,
+              // //                       //                   width:
+              // //                       //                       MediaQuery.of(context)
+              // //                       //                           .size
+              // //                       //                           .width,
+              // //                       //                 ),
+              // //                       //               ],
+              // //                       //             );
+              // //                       //           },
+              // //                       //         ),
+              // //                       //
+              // //                       //       ],
+              // //                       //     ),
+              // //                       //   ),
+              // //                       // ),
+              // //                       Visibility(
+              // //                         visible:
+              // //                         isPhysicalStockListViewVisible &&
+              // //                             receiptList.isNotEmpty,
+              // //                         child: Container(
+              // //                           margin: EdgeInsets.symmetric(
+              // //                               horizontal: 5),
+              // //                           decoration: BoxDecoration(
+              // //                             borderRadius:
+              // //                             BorderRadius.circular(12),
+              // //                             border: Border.all(),
+              // //                           ),
+              // //                           child: Column(
+              // //                             children: [
+              // //                               // Header Row for Cylinder Categories
+              // //                               Container(
+              // //                                 padding:
+              // //                                 const EdgeInsets.all(8),
+              // //                                 child: Row(
+              // //                                   mainAxisAlignment:
+              // //                                   MainAxisAlignment
+              // //                                       .center,
+              // //                                   children: [
+              // //                                     Expanded(
+              // //                                       child: Text(
+              // //                                         'Cylinder',
+              // //                                         style: TextStyle(
+              // //                                           fontWeight:
+              // //                                           FontWeight.bold,
+              // //                                           color: Colors.black,
+              // //                                           fontSize: 14,
+              // //                                         ),
+              // //                                         textAlign:
+              // //                                         TextAlign.center,
+              // //                                       ),
+              // //                                     ),
+              // //                                     VerticalDivider(
+              // //                                         thickness: 1,
+              // //                                         color: Colors.grey),
+              // //                                     Expanded(
+              // //                                       child: Text(
+              // //                                         'Imbalance Qty',
+              // //                                         style: TextStyle(
+              // //                                           fontWeight:
+              // //                                           FontWeight.bold,
+              // //                                           color: Colors.black,
+              // //                                           fontSize: 14,
+              // //                                         ),
+              // //                                         textAlign:
+              // //                                         TextAlign.center,
+              // //                                       ),
+              // //                                     ),
+              // //                                   ],
+              // //                                 ),
+              // //                               ),
+              // //
+              // //                               // ListView for displaying cylinder categories and imbalance quantities
+              // //                               // Container(
+              // //                               //   height: 100,
+              // //                               //   child: ListView.builder(
+              // //                               //     shrinkWrap: true,
+              // //                               //     itemCount: receiptList.length, // Use the length of the fetched list
+              // //                               //     itemBuilder: (context, index) {
+              // //                               //       var receipt = receiptList[index]; // Get the current receipt
+              // //                               //       var item = receipt.itemImbDtls?.first; // Get the first item from the list (you can modify this if needed)
+              // //                               //
+              // //                               //       return Padding(
+              // //                               //         padding: const EdgeInsets.all(10.0),
+              // //                               //         child: Row(
+              // //                               //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // //                               //           children: [
+              // //                               //             // Cylinder Category Text (Item Name)
+              // //                               //             Expanded(
+              // //                               //               child: Text(
+              // //                               //                 item?.itemName ?? "Unknown Item",  // Display Item Name
+              // //                               //                 style: TextStyle(
+              // //                               //                   fontWeight: FontWeight.bold,
+              // //                               //                   fontSize: 14,
+              // //                               //                   color: Colors.black,
+              // //                               //                 ),
+              // //                               //                 textAlign: TextAlign.center,
+              // //                               //               ),
+              // //                               //             ),
+              // //                               //             // Divider between Texts
+              // //                               //             VerticalDivider(thickness: 1, color: Colors.grey),
+              // //                               //             // Imbalance Quantity with Tap Gesture
+              // //                               //             Expanded(
+              // //                               //               child: GestureDetector(
+              // //                               //                 onTap: () {
+              // //                               //                   int qty = item?.balance?.toInt() ?? 0;
+              // //                               //                   int dmId = receipt.dMId?.toInt() ?? 0;  // Get DMId from the receipt
+              // //                               //                   int itemId = item?.itemId?.toInt() ?? 0;  // Safely access balance and convert it to int, defaulting to 0 if null
+              // //                               //                   _showPopup(qty,dmId,itemId); // Call the popup with the imbalance quantity
+              // //                               //                 },
+              // //                               //                 child: Text(
+              // //                               //                   '${item?.imbQty}',  // Display Imbalance Quantity
+              // //                               //                   textAlign: TextAlign.center,
+              // //                               //                   style: TextStyle(
+              // //                               //                     decoration: TextDecoration.underline,
+              // //                               //                     decorationColor: Colors.blue,
+              // //                               //                     fontWeight: FontWeight.bold,
+              // //                               //                     color: Colors.blue.shade700,
+              // //                               //                   ),
+              // //                               //                 ),
+              // //                               //               ),
+              // //                               //             ),
+              // //                               //           ],
+              // //                               //         ),
+              // //                               //       );
+              // //                               //     },
+              // //                               //   ),
+              // //                               // )
+              // //                               Container(
+              // //                                 color:
+              // //                                 const Color(0xff1280B3),
+              // //                                 height: 1,
+              // //                                 width: MediaQuery.of(context)
+              // //                                     .size
+              // //                                     .width,
+              // //                               ),
+              // //                               Container(
+              // //                                 child: ListView.builder(
+              // //                                   shrinkWrap: true,
+              // //                                   itemCount:
+              // //                                   receiptList.length,
+              // //                                   // Use the length of the fetched list
+              // //                                   itemBuilder:
+              // //                                       (context, index) {
+              // //                                     var receipt = receiptList[
+              // //                                     index]; // Get the current receipt
+              // //
+              // //                                     return Padding(
+              // //                                       padding:
+              // //                                       const EdgeInsets
+              // //                                           .all(10.0),
+              // //                                       child: Column(
+              // //                                         crossAxisAlignment:
+              // //                                         CrossAxisAlignment
+              // //                                             .start,
+              // //                                         children: [
+              // //                                           // Optionally display receipt info here, e.g., receipt.title or date
+              // //
+              // //                                           // For each receipt, loop through all items in itemImbDtls
+              // //                                           for (var item in receipt
+              // //                                               .itemImbDtls ??
+              // //                                               []) ...[
+              // //                                             Padding(
+              // //                                               padding: const EdgeInsets
+              // //                                                   .symmetric(
+              // //                                                   vertical:
+              // //                                                   5.0),
+              // //                                               child: Row(
+              // //                                                 mainAxisAlignment:
+              // //                                                 MainAxisAlignment
+              // //                                                     .spaceBetween,
+              // //                                                 children: [
+              // //                                                   // Cylinder Category Text (Item Name)
+              // //                                                   Expanded(
+              // //                                                     child:
+              // //                                                     Text(
+              // //                                                       item.itemName ??
+              // //                                                           "Unknown Item",
+              // //                                                       // Display Item Name
+              // //                                                       style:
+              // //                                                       TextStyle(
+              // //                                                         fontWeight:
+              // //                                                         FontWeight.bold,
+              // //                                                         fontSize:
+              // //                                                         16,
+              // //                                                         color:
+              // //                                                         Colors.black,
+              // //                                                       ),
+              // //                                                       textAlign:
+              // //                                                       TextAlign.center,
+              // //                                                     ),
+              // //                                                   ),
+              // //                                                   // Divider between Texts
+              // //                                                   VerticalDivider(
+              // //                                                       thickness:
+              // //                                                       1,
+              // //                                                       color: Colors
+              // //                                                           .grey),
+              // //                                                   // Imbalance Quantity with Tap Gesture
+              // //                                                   Expanded(
+              // //                                                     child:
+              // //                                                     GestureDetector(
+              // //                                                       onTap:
+              // //                                                           () {
+              // //                                                         int qty =
+              // //                                                             item.balance?.toInt() ?? 0;
+              // //                                                         int dmId =
+              // //                                                             receipt.dMId?.toInt() ?? 0; // Get DMId from the receipt
+              // //                                                         int itemId =
+              // //                                                             item.itemId?.toInt() ?? 0; // Safely access balance and convert it to int
+              // //                                                         int imbId = item.imbId?.toInt() ?? 0 ;
+              // //                                                         _showPopup(
+              // //                                                             qty,
+              // //                                                             dmId,
+              // //                                                             itemId,imbId); // Call the popup with the imbalance quantity
+              // //                                                       },
+              // //                                                       child:
+              // //                                                       Text(
+              // //                                                         '${item.balance}',
+              // //                                                         // Display Imbalance Quantity
+              // //                                                         textAlign:
+              // //                                                         TextAlign.center,
+              // //                                                         style: TextStyle(
+              // //                                                             decoration: TextDecoration.underline,
+              // //                                                             decorationColor: Colors.blue,
+              // //                                                             fontWeight: FontWeight.bold,
+              // //                                                             color: Colors.blue.shade700,
+              // //                                                             fontSize: 16),
+              // //                                                       ),
+              // //                                                     ),
+              // //                                                   ),
+              // //                                                 ],
+              // //                                               ),
+              // //                                             ),
+              // //                                           ],
+              // //                                         ],
+              // //                                       ),
+              // //                                     );
+              // //                                   },
+              // //                                 ),
+              // //                               ),
+              // //                             ],
+              // //                           ),
+              // //                         ),
+              // //                       ),
+              // //                     ],
+              // //                   ),
+              // //                 ),
+              // //               ),
+              // //             ),
+              // //             SizedBox(height: 10),
+              // //           ],
+              // //         ),
+              // //       ),
+              // //     ],
+              // //   ),
+              // // )
+              // //     : Container(),
+              // //
+              // // // Item Details
+              // // Row(
+              // //   children: [
+              // //     // SV+ Field (DropdownButton)
+              // //     Flexible(
+              // //       flex: 2,
+              // //       child:
+              // //       // DropdownButtonFormField<CylItemListModel>(
+              // //       //   decoration: const InputDecoration(
+              // //       //     labelText: 'Select Item',
+              // //       //     labelStyle: TextStyle(fontSize: 12),
+              // //       //     border: OutlineInputBorder(),
+              // //       //     contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+              // //       //   ),
+              // //       //   items: _items.map((CylItemListModel item) {
+              // //       //     return DropdownMenuItem<CylItemListModel>(
+              // //       //       value: item,
+              // //       //       child: Text(item.itemName ?? 'Unknown',
+              // //       //         style: TextStyle(fontSize: 14.0,fontWeight: FontWeight.normal),),
+              // //       //
+              // //       //     );
+              // //       //   }).toList(),
+              // //       //   onChanged: (CylItemListModel? selectedItem) {
+              // //       //     if (selectedItem != null) {
+              // //       //       setState(() {
+              // //       //         _selectedItem = selectedItem.itemName;
+              // //       //         selectedItemId = selectedItem.itemId!.toInt();
+              // //       //
+              // //       //         print('Selected Item: ${_selectedItem}, ID: ${selectedItemId}');
+              // //       //       });
+              // //       //     }
+              // //       //   },
+              // //       // ),
+              // //       DropdownButtonFormField<CylItemListModel>(
+              // //         decoration: const InputDecoration(
+              // //           label: Row(
+              // //             mainAxisSize: MainAxisSize.min,
+              // //             children: const [
+              // //               Text(
+              // //                 'Select Item',
+              // //                 style: TextStyle(fontSize: 12),
+              // //               ),
+              // //               SizedBox(width: 4),
+              // //               // Add some space between the text and the icon
+              // //               Icon(
+              // //                 Icons.star, // Use a star or any other icon
+              // //                 color: Colors.red, // Set the icon color to red
+              // //                 size: 10, // Adjust the size of the icon
+              // //               ),
+              // //             ],
+              // //           ),
+              // //           border: const OutlineInputBorder(),
+              // //           contentPadding: const EdgeInsets.symmetric(
+              // //               vertical: 8.0, horizontal: 12.0),
+              // //         ),
+              // //         value: _selectedItemModel,
+              // //         // Bind the value to the selected item model
+              // //         items: _items.map((CylItemListModel item) {
+              // //           return DropdownMenuItem<CylItemListModel>(
+              // //             value: item,
+              // //             child: Text(
+              // //               item.itemName ?? 'Unknown',
+              // //               style: TextStyle(
+              // //                   fontSize: 14.0, fontWeight: FontWeight.normal),
+              // //             ),
+              // //           );
+              // //         }).toList(),
+              // //         onChanged: (flagEditMode == "editMode") ? null:(CylItemListModel? selectedItem) {
+              // //           if (selectedItem != null) {
+              // //             setState(() {
+              // //               _selectedItem = selectedItem.itemName;
+              // //               selectedItemId = selectedItem.itemId!.toInt();
+              // //
+              // //               // Update the selectedItemModel when the selection changes
+              // //               _selectedItemModel = selectedItem;
+              // //
+              // //               print(
+              // //                   'Selected Item: ${_selectedItem}, ID: ${selectedItemId}');
+              // //               _fetchFilledStockForSelectedItem(selectedItemId!);
+              // //             });
+              // //           }
+              // //         },
+              // //       ),
+              // //     ),
+              // //
+              // //     const SizedBox(width: 10), // Spacing between SV+ and TV-
+              // //
+              // //     // TV- Field (TextField)
+              // //     Flexible(
+              // //       flex: 1,
+              // //       child: TextField(
+              // //         controller: _filledController,
+              // //         decoration: const InputDecoration(
+              // //           label: Row(
+              // //             mainAxisSize: MainAxisSize.min,
+              // //             children: const [
+              // //               Text(
+              // //                 'Total\nSale',
+              // //                 style: TextStyle(fontSize: 12),
+              // //               ),
+              // //               SizedBox(width: 4),
+              // //               // Add some space between the text and the icon
+              // //               Icon(
+              // //                 Icons.star, // Use a star or any other icon
+              // //                 color: Colors.red, // Set the icon color to red
+              // //                 size: 10, // Adjust the size of the icon
+              // //               ),
+              // //             ],
+              // //           ),
+              // //           border: const OutlineInputBorder(),
+              // //           contentPadding: const EdgeInsets.symmetric(
+              // //               vertical: 8.0, horizontal: 12.0),
+              // //         ),
+              // //         style: TextStyle(
+              // //           fontSize: 14.0, // Adjust the text size here
+              // //         ),
+              // //         keyboardType: TextInputType.number,
+              // //         // Set keyboard type to numeric
+              // //         inputFormatters: <TextInputFormatter>[
+              // //           FilteringTextInputFormatter.digitsOnly,
+              // //           LengthLimitingTextInputFormatter(3),
+              // //           // Allow only digits
+              // //         ],
+              // //         onChanged: (value) {
+              // //           setState(() {
+              // //             // Get the current value of the filled quantity
+              // //             int filledQty = int.tryParse(value) ?? 0;
+              // //
+              // //             // Check if total sale is greater than filled stock
+              // //             if (filledQty > (filledStock ?? 0)) {
+              // //               ScaffoldMessenger.of(context).showSnackBar(
+              // //                 SnackBar(content: Text('Total Sale Cannot Be Greater Than Filled Stock')),
+              // //               );
+              // //               _filledController.clear();
+              // //               filledQty = 0;
+              // //             }
+              // //             // Recalculate the empty quantity based on other fields
+              // //             int svQty = int.tryParse(_svController.text) ?? 0;
+              // //             int tvQty = int.tryParse(_tvController.text) ?? 0;
+              // //             int defQty =
+              // //                 int.tryParse(_defectiveController.text) ?? 0;
+              // //             int lessEmptyQty =
+              // //                 int.tryParse(_lessEmptyController.text) ?? 0;
+              // //
+              // //             // Calculate the new empty quantity
+              // //             int emptyQty =
+              // //                 filledQty - svQty + tvQty - defQty - lessEmptyQty;
+              // //
+              // //             // Update the empty field
+              // //             _emptyController.text = emptyQty.toString();
+              // //
+              // //           });
+              // //         },
+              // //       ),
+              // //     ),
+              // //     const SizedBox(width: 10),
+              // //     Flexible(
+              // //       flex: 1,
+              // //       child: TextField(
+              // //         controller: _lessEmptyController,
+              // //         keyboardType: TextInputType.number,
+              // //         // Set keyboard type to numeric
+              // //         inputFormatters: <TextInputFormatter>[
+              // //           FilteringTextInputFormatter.digitsOnly,
+              // //           LengthLimitingTextInputFormatter(3),
+              // //           // Allow only digits
+              // //         ],
+              // //         decoration: const InputDecoration(
+              // //           labelText: 'Less\nEmpty',
+              // //           labelStyle: TextStyle(fontSize: 12),
+              // //           border: OutlineInputBorder(),
+              // //           contentPadding: EdgeInsets.symmetric(
+              // //               vertical: 8.0, horizontal: 12.0),
+              // //         ),
+              // //         style: TextStyle(
+              // //           fontSize: 14.0, // Adjust the text size here
+              // //         ),
+              // //         onChanged: (value) {
+              // //           setState(() {
+              // //             // Recalculate empty quantity
+              // //             int lessEmpty = int.tryParse(value) ?? 0;
+              // //             int filledQty =
+              // //                 int.tryParse(_filledController.text) ?? 0;
+              // //             int svQty = int.tryParse(_svController.text) ?? 0;
+              // //             int tvQty = int.tryParse(_tvController.text) ?? 0;
+              // //             int defQty =
+              // //                 int.tryParse(_defectiveController.text) ?? 0;
+              // //             if (lessEmpty > filledQty) {
+              // //               showFlushBar(context, "Invalid Count",
+              // //                   'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+              // //             } else {
+              // //               // Calculate the new empty quantity
+              // //               int emptyQty =
+              // //                   filledQty - svQty + tvQty - defQty - lessEmpty;
+              // //               _emptyController.text = emptyQty.toString();
+              // //             }
+              // //           });
+              // //         },
+              // //       ),
+              // //     ),
+              // //   ],
+              // // ),
+              // // const SizedBox(height: 20),
+              // // Row(
+              // //   children: [
+              // //     // SV+ Field and Button
+              // //     Flexible(
+              // //       flex: 2,
+              // //       child: Row(
+              // //         crossAxisAlignment: CrossAxisAlignment.center,
+              // //         // Align widgets in the center vertically
+              // //         children: [
+              // //           // TextField for SV+
+              // //           Expanded(
+              // //             child: TextField(
+              // //               controller: _svController,
+              // //               keyboardType: TextInputType.number,
+              // //               // Set keyboard type to numeric
+              // //               inputFormatters: <TextInputFormatter>[
+              // //                 FilteringTextInputFormatter.digitsOnly,
+              // //                 LengthLimitingTextInputFormatter(3),
+              // //                 // Allow only digits
+              // //               ],
+              // //               decoration: const InputDecoration(
+              // //                 labelText: 'SV-',
+              // //                 labelStyle: TextStyle(fontSize: 12),
+              // //                 border: OutlineInputBorder(),
+              // //                 contentPadding: EdgeInsets.symmetric(
+              // //                     vertical: 8.0, horizontal: 12.0),
+              // //               ),
+              // //               style: TextStyle(
+              // //                 fontSize: 14.0, // Adjust the text size here
+              // //               ),
+              // //               onChanged: (value) {
+              // //                 setState(() {
+              // //                   // Recalculate empty quantity
+              // //                   int svQty = int.tryParse(value) ?? 0;
+              // //                   int filledQty =
+              // //                       int.tryParse(_filledController.text) ?? 0;
+              // //                   int tvQty =
+              // //                       int.tryParse(_tvController.text) ?? 0;
+              // //                   int defQty =
+              // //                       int.tryParse(_defectiveController.text) ??
+              // //                           0;
+              // //                   int lessEmptyQty =
+              // //                       int.tryParse(_lessEmptyController.text) ??
+              // //                           0;
+              // //                   if (svQty > filledQty) {
+              // //                     showFlushBar(context, "Invalid Count",
+              // //                         'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+              // //                   } else {
+              // //                     // Calculate the new empty quantity
+              // //                     int emptyQty = filledQty -
+              // //                         svQty +
+              // //                         tvQty -
+              // //                         defQty -
+              // //                         lessEmptyQty;
+              // //                     _emptyController.text = emptyQty.toString();
+              // //                   }
+              // //                 });
+              // //               },
+              // //             ),
+              // //           ),
+              // //           // IconButton for SV+
+              // //           IconButton(
+              // //             iconSize: 35,
+              // //             onPressed: () {
+              // //               int svQty = int.tryParse(_svController.text) ?? 0;
+              // //               _showPopupDialogs(
+              // //                   "SV", _svRemarkController, svQty);
+              // //             },
+              // //             icon: const Icon(Icons.add_circle_outline_sharp),
+              // //           ),
+              // //         ],
+              // //       ),
+              // //     ),
+              // //     const SizedBox(width: 10), // Spacing between SV+ and TV-
+              // //     // TV- Field and Button
+              // //     Flexible(
+              // //       flex: 1,
+              // //       child: Row(
+              // //         crossAxisAlignment: CrossAxisAlignment.center,
+              // //         // Align widgets in the center vertically
+              // //         children: [
+              // //           // TextField for TV-
+              // //           Expanded(
+              // //             child: TextField(
+              // //               controller: _tvController,
+              // //               keyboardType: TextInputType.number,
+              // //               // Set keyboard type to numeric
+              // //               inputFormatters: <TextInputFormatter>[
+              // //                 FilteringTextInputFormatter.digitsOnly,
+              // //                 LengthLimitingTextInputFormatter(3),
+              // //                 // Allow only digits
+              // //               ],
+              // //               decoration: const InputDecoration(
+              // //                 labelText: 'TV+',
+              // //                 labelStyle: TextStyle(fontSize: 12),
+              // //                 border: OutlineInputBorder(),
+              // //                 contentPadding: EdgeInsets.symmetric(
+              // //                     vertical: 8.0, horizontal: 12.0),
+              // //               ),
+              // //               style: TextStyle(
+              // //                 fontSize: 14.0, // Adjust the text size here
+              // //               ),
+              // //               onChanged: (value) {
+              // //                 setState(() {
+              // //                   // Recalculate empty quantity
+              // //                   int tvQty = int.tryParse(value) ?? 0;
+              // //                   int filledQty =
+              // //                       int.tryParse(_filledController.text) ?? 0;
+              // //                   int svQty =
+              // //                       int.tryParse(_svController.text) ?? 0;
+              // //                   int defQty =
+              // //                       int.tryParse(_defectiveController.text) ??
+              // //                           0;
+              // //                   int lessEmptyQty =
+              // //                       int.tryParse(_lessEmptyController.text) ??
+              // //                           0;
+              // //                   // Validate TV value
+              // //                   if (tvQty > filledQty) {
+              // //                     showFlushBar(context, "Invalid Count",
+              // //                         'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+              // //                   } else {
+              // //                     // Calculate the new empty quantity
+              // //                     int emptyQty = filledQty -
+              // //                         svQty +
+              // //                         tvQty -
+              // //                         defQty -
+              // //                         lessEmptyQty;
+              // //                     _emptyController.text = emptyQty.toString();
+              // //                   }
+              // //                 });
+              // //               },
+              // //             ),
+              // //           ),
+              // //         ],
+              // //       ),
+              // //     ),
+              // //     const SizedBox(width: 10),
+              // //     Flexible(
+              // //       flex: 1,
+              // //       child: Row(
+              // //         crossAxisAlignment: CrossAxisAlignment.center,
+              // //         // Align vertically to the center
+              // //         children: [
+              // //           // TextField for Def.
+              // //           Expanded(
+              // //             child: TextField(
+              // //               controller: _defectiveController,
+              // //               keyboardType: TextInputType.number,
+              // //               // Set keyboard type to numeric
+              // //               inputFormatters: <TextInputFormatter>[
+              // //                 FilteringTextInputFormatter.digitsOnly,
+              // //                 LengthLimitingTextInputFormatter(3),
+              // //                 // Allow only digits
+              // //               ],
+              // //               decoration: const InputDecoration(
+              // //                 labelText: 'Def.-',
+              // //                 labelStyle: TextStyle(fontSize: 12),
+              // //                 border: OutlineInputBorder(),
+              // //                 contentPadding: EdgeInsets.symmetric(
+              // //                     vertical: 8.0, horizontal: 12.0),
+              // //               ),
+              // //               style: TextStyle(
+              // //                 fontSize: 14.0, // Adjust the text size here
+              // //               ),
+              // //               onChanged: (value) {
+              // //                 setState(() {
+              // //                   // Recalculate empty quantity
+              // //                   int defQty = int.tryParse(value) ?? 0;
+              // //                   int filledQty =
+              // //                       int.tryParse(_filledController.text) ?? 0;
+              // //                   int svQty =
+              // //                       int.tryParse(_svController.text) ?? 0;
+              // //                   int tvQty =
+              // //                       int.tryParse(_tvController.text) ?? 0;
+              // //                   int lessEmptyQty =
+              // //                       int.tryParse(_lessEmptyController.text) ??
+              // //                           0;
+              // //                   if (defQty > filledQty) {
+              // //                     showFlushBar(context, "Invalid Count",
+              // //                         'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+              // //                   } else {
+              // //                     // Calculate the new empty quantity
+              // //                     int emptyQty = filledQty -
+              // //                         svQty +
+              // //                         tvQty -
+              // //                         defQty -
+              // //                         lessEmptyQty;
+              // //                     _emptyController.text = emptyQty.toString();
+              // //                   }
+              // //                 });
+              // //               },
+              // //             ),
+              // //           ),
+              // //         ],
+              // //       ),
+              // //     ),
+              // //   ],
+              // // ),
+              // //
+              // // const SizedBox(height: 20),
+              // // Row(
+              // //   children: [
+              // //     // Empty Field and Button
+              // //     Flexible(
+              // //       flex: 1,
+              // //       child: Row(
+              // //         crossAxisAlignment: CrossAxisAlignment.center,
+              // //         // Align vertically to the center
+              // //         children: [
+              // //           // TextField for Empty
+              // //           Expanded(
+              // //             child: TextField(
+              // //               controller: _emptyController,
+              // //               keyboardType: TextInputType.number,
+              // //               // Set keyboard type to numeric
+              // //               inputFormatters: <TextInputFormatter>[
+              // //                 FilteringTextInputFormatter.digitsOnly,
+              // //                 LengthLimitingTextInputFormatter(3),
+              // //                 // Allow only digits
+              // //               ],
+              // //               decoration: const InputDecoration(
+              // //                 label: Row(
+              // //                   mainAxisSize: MainAxisSize.min,
+              // //                   children: const [
+              // //                     Text(
+              // //                       'Empty',
+              // //                       style: TextStyle(fontSize: 12),
+              // //                     ),
+              // //                     // SizedBox(width: 4),
+              // //                     // // Add some space between the text and the icon
+              // //                     // Icon(
+              // //                     //   Icons.star,
+              // //                     //   // Use a star or any other icon
+              // //                     //   color: Colors.red,
+              // //                     //   // Set the icon color to red
+              // //                     //   size: 10, // Adjust the size of the icon
+              // //                     // ),
+              // //                   ],
+              // //                 ),
+              // //                 border: const OutlineInputBorder(),
+              // //                 contentPadding: const EdgeInsets.symmetric(
+              // //                     vertical: 8.0, horizontal: 12.0),
+              // //               ),
+              // //               enabled: false,
+              // //               style: TextStyle(
+              // //                 fontSize: 14.0, // Adjust the text size here
+              // //               ),
+              // //               onChanged: (value) {
+              // //                 setState(() {
+              // //                   // Get the value of Sale and Empty (make sure they are integers)
+              // //                   int filledQty =
+              // //                       int.tryParse(_filledController.text) ?? 0;
+              // //                   int emptyQty = int.tryParse(value) ?? 0;
+              // //
+              // //                   // If the empty quantity exceeds the filled (sale) quantity, show an error
+              // //                   if (emptyQty > filledQty) {
+              // //                     // Show an error message
+              // //                     showFlushBar(context, "Invalid Count",
+              // //                         'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+              // //                     // Update the empty quantity to be equal to the sale quantity
+              // //                     _emptyController.text = filledQty.toString();
+              // //                     // Optionally, move the cursor to the end of the input field after setting the value
+              // //                     _emptyController.selection =
+              // //                         TextSelection.collapsed(
+              // //                             offset: _emptyController.text.length);
+              // //                   }
+              // //                 });
+              // //               },
+              // //             ),
+              // //           ),
+              // //         ],
+              // //       ),
+              // //     ),
+              // //     const SizedBox(width: 40), // Spacing between Empty and Def.
+              // //     Flexible(
+              // //       flex: 1,
+              // //       child: TextField(
+              // //         controller: _remarkController,
+              // //         maxLength: 250,
+              // //         decoration: const InputDecoration(
+              // //           labelText: 'Remark',
+              // //           labelStyle: TextStyle(fontSize: 12),
+              // //           border: OutlineInputBorder(),
+              // //           contentPadding: EdgeInsets.symmetric(
+              // //               vertical: 8.0, horizontal: 12.0),
+              // //         ),
+              // //
+              // //         style: TextStyle(
+              // //           fontSize: 14.0, // Adjust the text size here
+              // //         ),
+              // //       ),
+              // //     ),
+              // //   ],
+              // // ),
+              //
+              // // Padding(
+              // //         padding: const EdgeInsets.all(8.0),
+              // //         child:
+              // //             // ElevatedButton(
+              // //             //     onPressed:_addNewItem,
+              // //             // child: Text("Add New Item",style: TextStyle(color: Colors.white,fontSize: 14),),
+              // //             //   style: ElevatedButton.styleFrom(
+              // //             //         backgroundColor: Colors.blue, // Button expands to fill available width// Text color of the button
+              // //             //         shape: RoundedRectangleBorder( // Optional: Set rounded corners
+              // //             //           borderRadius: BorderRadius.circular(50),
+              // //             //         ),
+              // //             //       ),),
+              // //
+              // //             Row(
+              // //           mainAxisAlignment: MainAxisAlignment.center,
+              // //           children: [
+              // //             ElevatedButton(
+              // //               // onPressed: () async {
+              // //               //   if (_editingItemId != null) {
+              // //               //     // Update the existing item in the database
+              // //               //     await updateRefillSale?.updateRowByColID(
+              // //               //       _editingItemId!,
+              // //               //       ItemData(
+              // //               //         date: deliveryDateController.text,
+              // //               //         deliveryBoyName:
+              // //               //             selectedDelBoyName.toString(),
+              // //               //         delBoyId: selectedDelBoyId.toString(),
+              // //               //         vehicleNo: vehicleNoController.text,
+              // //               //         itemName: _selectedItem.toString(),
+              // //               //         itemID: selectedItemId.toString(),
+              // //               //         filled: _filledController.text,
+              // //               //         sv: _svController.text,
+              // //               //         tv: _tvController.text,
+              // //               //         empty: _emptyController.text,
+              // //               //         defective: _defectiveController.text,
+              // //               //         lessEmpty: _lessEmptyController.text,
+              // //               //         remark: _remarkController.text,
+              // //               //         svRemark: remarksList.join(', '),
+              // //               //         updateFlag: 'pending',
+              // //               //       ),
+              // //               //     );
+              // //               //     ScaffoldMessenger.of(context).showSnackBar(
+              // //               //       SnackBar(
+              // //               //           content: Text('Item updated successfully')),
+              // //               //     );
+              // //               //     fetchData(selectedDelBoyId.toString(),
+              // //               //         deliveryDateController.text);
+              // //               //     debugPrint(
+              // //               //         "update"); // Call your existing add function
+              // //               //     // Clear the editing state and text fields
+              // //               //     setState(() {
+              // //               //       _editingItemId = null;
+              // //               //       _filledController.clear();
+              // //               //       _svController.clear();
+              // //               //       _tvController.clear();
+              // //               //       _emptyController.clear();
+              // //               //       _defectiveController.clear();
+              // //               //       _lessEmptyController.clear();
+              // //               //       _remarkController.clear();
+              // //               //       remarksList.clear();
+              // //               //       _selectedItemModel =
+              // //               //       null; // Clear the selected item in the dropdown
+              // //               //       _selectedItem = '';
+              // //               //     });
+              // //               //   } else {
+              // //               //     _addNewItem();
+              // //               //     debugPrint(
+              // //               //         "Add"); // Call your existing add function
+              // //               //   }
+              // //               // },
+              // //
+              // //               onPressed: () async {
+              // //                 int filledValue =
+              // //                     int.tryParse(_filledController.text) ?? 0;
+              // //                 int svValue = int.tryParse(_svController.text) ?? 0;
+              // //                 int tvValue = int.tryParse(_tvController.text) ?? 0;
+              // //                 int emptyValue =
+              // //                     int.tryParse(_emptyController.text) ?? 0;
+              // //                 int defectiveValue =
+              // //                     int.tryParse(_defectiveController.text) ?? 0;
+              // //                 int lessEmptyValue =
+              // //                     int.tryParse(_lessEmptyController.text) ?? 0;
+              // //
+              // //                 if (_editingItemId != null) {
+              // //                   if (filledValue > lessEmptyValue) {
+              // //                     if (filledValue > svValue) {
+              // //                       if (filledValue > tvValue) {
+              // //                         if (filledValue > defectiveValue) {
+              // //                           if (filledValue >= emptyValue && emptyValue > 0) {
+              // //                             // Attempt to update the existing item in the database
+              // //                             final isUpdated =
+              // //                             await updateRefillSale?.updateRowByColID(
+              // //                               _editingItemId!,
+              // //                               ItemData(
+              // //                                 date: deliveryDateController.text,
+              // //                                 deliveryBoyName:
+              // //                                 selectedDelBoyName.toString(),
+              // //                                 delBoyId: selectedDelBoyId.toString(),
+              // //                                 vehicleNo: vehicleNoController.text,
+              // //                                 itemName: _selectedItem.toString(),
+              // //                                 itemID: selectedItemId.toString(),
+              // //                                 filled: _filledController.text,
+              // //                                 sv: _svController.text,
+              // //                                 tv: _tvController.text,
+              // //                                 empty: _emptyController.text,
+              // //                                 defective: _defectiveController.text,
+              // //                                 lessEmpty: _lessEmptyController.text,
+              // //                                 remark: _remarkController.text,
+              // //                                 svRemark: remarksList.join(', '),
+              // //                                 updateFlag: 'pending',
+              // //                               ),
+              // //                             );
+              // //
+              // //                             if (isUpdated == true) {
+              // //                               // Success: Show success message and refresh data
+              // //                               ScaffoldMessenger.of(context).showSnackBar(
+              // //                                 SnackBar(
+              // //                                     content:
+              // //                                     Text('Item updated successfully')),
+              // //                               );
+              // //                               fetchData(selectedDelBoyId.toString(),
+              // //                                   deliveryDateController.text);
+              // //
+              // //                               // Clear the editing state and text fields
+              // //                               setState(() {
+              // //                                 _editingItemId = null;
+              // //                                 _filledController.clear();
+              // //                                 _svController.clear();
+              // //                                 _tvController.clear();
+              // //                                 _emptyController.clear();
+              // //                                 _defectiveController.clear();
+              // //                                 _lessEmptyController.clear();
+              // //                                 _remarkController.clear();
+              // //                                 remarksList.clear();
+              // //                                 _selectedItemModel =
+              // //                                 null; // Clear the selected item in the dropdown
+              // //                                 _selectedItem = '';
+              // //                               });
+              // //                             } else {
+              // //                               // Failure: Show error message
+              // //                               ScaffoldMessenger.of(context).showSnackBar(
+              // //                                 SnackBar(
+              // //                                     content: Text(
+              // //                                         'Item update failed. Duplicate or invalid entry.')),
+              // //                               );
+              // //                             }
+              // //                           }else{
+              // //                             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              // //                               content: Text(
+              // //                                   "Empty cylinder counts must be less than the Sale cylinder count..!"),
+              // //                               duration: Duration(seconds: 2),
+              // //                             ));
+              // //                           }
+              // //                         }else{
+              // //                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              // //                             content: Text(
+              // //                                 "Defective cylinder counts must be less than the Sale cylinder count..!"),
+              // //                             duration: Duration(seconds: 2),
+              // //                           ));
+              // //                         }
+              // //                       }else{
+              // //                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              // //                           content: Text(
+              // //                               "TV cylinder counts must be less than the Sale cylinder count..!"),
+              // //                           duration: Duration(seconds: 2),
+              // //                         ));
+              // //                       }
+              // //                     }else{
+              // //                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              // //                         content: Text(
+              // //                             "SV cylinder counts must be less than the Sale cylinder count..!"),
+              // //                         duration: Duration(seconds: 2),
+              // //                       ));
+              // //                     }
+              // //                   }else{
+              // //                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              // //                       content: Text(
+              // //                           "Less Empty cylinder counts must be less than the Sale cylinder count..!"),
+              // //                       duration: Duration(seconds: 2),
+              // //                     ));
+              // //                   }
+              // //                 } else {
+              // //                   // Add new item
+              // //                   _addNewItem();
+              // //                   debugPrint(
+              // //                       "Add"); // Call your existing add function
+              // //                 }
+              // //               },
+              // //
+              // //               child: Padding(
+              // //                 padding: const EdgeInsets.all(8.0),
+              // //                 child: Text(
+              // //                   _editingItemId != null ? 'Update' : 'Add',
+              // //                   style:
+              // //                       TextStyle(color: Colors.white, fontSize: 14),
+              // //                 ),
+              // //               ),
+              // //               style: ElevatedButton.styleFrom(
+              // //                 backgroundColor: Colors.blue,
+              // //                 // Button expands to fill available width// Text color of the button
+              // //                 shape: RoundedRectangleBorder(
+              // //                   // Optional: Set rounded corners
+              // //                   borderRadius: BorderRadius.circular(50),
+              // //                 ),
+              // //               ), // Change button label
+              // //             ),
+              // //           ],
+              // //         ),
+              // //       ),
+
+
+              ///working
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
@@ -2782,46 +6141,230 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                   children: [
                     ElevatedButton(
                       onPressed: (_filledController.text.isNotEmpty &&
-                              selectedDelBoyName != null &&
-                              _selectedItem != null)
+                          selectedDelBoyName != null &&
+                          _selectedItem != null)
                           ? () async {
-                              int filledValue =
-                                  int.tryParse(_filledController.text) ?? 0;
-                              int svValue =
-                                  int.tryParse(_svController.text) ?? 0;
-                              int tvValue =
-                                  int.tryParse(_tvController.text) ?? 0;
-                              int emptyValue =
-                                  int.tryParse(_emptyController.text) ?? 0;
-                              int defectiveValue =
-                                  int.tryParse(_defectiveController.text) ?? 0;
-                              int lessEmptyValue =
-                                  int.tryParse(_lessEmptyController.text) ?? 0;
-                              DateTime now = DateTime.now();
-                              String formattedDate =
-                                  DateFormat('yyyy-MM-dd').format(now);
-                              if (_editingItemId != null) {
-                                if(flagEditMode == "editMode"){
-                                  if (filledValue > lessEmptyValue) {
-                                    if (filledValue > svValue) {
-                                      if (filledValue > tvValue) {
-                                        if (filledValue > defectiveValue) {
-                                          if (filledValue >= emptyValue && emptyValue > 0) {
+                        int filledValue =
+                            int.tryParse(_filledController.text) ?? 0;
+                        int svValue =
+                            int.tryParse(_svController.text) ?? 0;
+                        int tvValue =
+                            int.tryParse(_tvController.text) ?? 0;
+                        int emptyValue =
+                            int.tryParse(_emptyController.text) ?? 0;
+                        int defectiveValue =
+                            int.tryParse(_defectiveController.text) ?? 0;
+                        int lessEmptyValue =
+                            int.tryParse(_lessEmptyController.text) ?? 0;
+                        DateTime now = DateTime.now();
+                        String formattedDate =
+                        DateFormat('yyyy-MM-dd').format(now);
+                        if (_editingItemId != null) {
+                          if(flagEditMode == "editMode"){
+                            if (filledValue > lessEmptyValue) {
+                              if (filledValue > svValue) {
+                                if (filledValue > tvValue) {
+                                  if (filledValue > defectiveValue) {
+                                    if (emptyValue > 0) {
+                                      if(_svController.text.isNotEmpty){
+                                        int currentCount = remarksList
+                                            .map((remark) => remark.split(',').length)
+                                            .fold(0, (a, b) => a + b);
+                                        int svQty = int.parse(_svController.text);
+                                        // Check if we can add more consumers
+                                        if (currentCount > svQty) {
+                                          showFlushBar(context, "No Of Consumer",
+                                              'Consumer Details Count Should Not Exceed The SV Count!');
+                                        }else {
+                                          _updateItem();
+                                        }
+                                      }else{
+                                        _updateItem();
+                                      }
+
+                                    } else {
+                                      showFlushBar(context, "Cylinder Count",
+                                          'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+                                    }
+                                  } else {
+                                    showFlushBar(context, "Cylinder Count",
+                                        'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+                                  }
+                                } else {
+                                  showFlushBar(context, "Cylinder Count",
+                                      'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+                                }
+                              } else {
+                                showFlushBar(context, "Cylinder Count",
+                                    'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+                              }
+                            } else {
+                              showFlushBar(context, "Cylinder Count",
+                                  'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+                            }
+                          }else{
+                            if(_dataGetFromDBDelBoy.isNotEmpty) {
+                              if(filledValue > 0) {
+                                if (filledValue > lessEmptyValue) {
+                                  if (filledValue > svValue) {
+                                    if (filledValue > tvValue) {
+                                      if (filledValue > defectiveValue) {
+                                        if (emptyValue > 0) {
+                                          if(_svController.text.isNotEmpty){
                                             int currentCount = remarksList
-                                                .map((remark) => remark.split(',').length)
+                                                .map((remark) =>
+                                            remark
+                                                .split(',')
+                                                .length)
                                                 .fold(0, (a, b) => a + b);
-                                            int svQty = int.parse(_svController.text);
+                                            int svQty = int.parse(
+                                                _svController.text);
                                             // Check if we can add more consumers
                                             if (currentCount > svQty) {
-                                              showFlushBar(context, "No Of Consumer",
+                                              showFlushBar(context, "Consumer Count Exceed",
                                                   'Consumer Details Count Should Not Exceed The SV Count!');
-                                            }else {
-                                              _updateItem();
+                                            } else {
+
+                                              final isUpdated =
+                                              await updateRefillSale
+                                                  ?.updateRowByColID(
+                                                _editingItemId!,
+                                                ItemData(
+                                                  date:
+                                                  deliveryDateController
+                                                      .text,
+                                                  deliveryBoyName:
+                                                  selectedDelBoyName
+                                                      .toString(),
+                                                  delBoyId:
+                                                  selectedDelBoyId
+                                                      .toString(),
+                                                  vehicleNo:
+                                                  vehicleNo.toString(),
+                                                  itemName:
+                                                  _selectedItem.toString(),
+                                                  itemID:
+                                                  selectedItemId.toString(),
+                                                  filled: _filledController
+                                                      .text,
+                                                  sv: _svController.text,
+                                                  tv: _tvController.text,
+                                                  empty: _emptyController
+                                                      .text,
+                                                  defective:
+                                                  _defectiveController.text,
+                                                  lessEmpty:
+                                                  _lessEmptyController.text,
+                                                  remark: _remarkController
+                                                      .text,
+                                                  svRemark:
+                                                  remarksList.join(', '),
+                                                  updateFlag: 'pending',
+                                                  itemAddedDate: formattedDate,
+                                                ),
+                                              );
+
+                                              if (isUpdated == true) {
+                                                EasyLoading.showToast("Data Updated Successfully",
+                                                    duration: const Duration(milliseconds: 3000));
+
+                                                fetchData(
+                                                    selectedDelBoyId
+                                                        .toString(),
+                                                    deliveryDateController
+                                                        .text);
+
+                                                setState(() {
+                                                  _editingItemId = null;
+                                                  _filledController.clear();
+                                                  _svController.clear();
+                                                  _tvController.clear();
+                                                  _emptyController.clear();
+                                                  _defectiveController
+                                                      .clear();
+                                                  _lessEmptyController
+                                                      .clear();
+                                                  _remarkController.clear();
+                                                  remarksList.clear();
+                                                  _selectedItemModel = null;
+                                                  _selectedItem = '';
+                                                });
+                                              } else {
+                                                showFlushBar(context, "Item Exists",
+                                                    'This Item Already Exists!');
+                                              }
                                             }
-                                          } else {
-                                            showFlushBar(context, "Cylinder Count",
-                                                'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+                                          }else{
+                                            final isUpdated =
+                                            await updateRefillSale
+                                                ?.updateRowByColID(
+                                              _editingItemId!,
+                                              ItemData(
+                                                date:
+                                                deliveryDateController
+                                                    .text,
+                                                deliveryBoyName:
+                                                selectedDelBoyName
+                                                    .toString(),
+                                                delBoyId:
+                                                selectedDelBoyId
+                                                    .toString(),
+                                                vehicleNo:
+                                                vehicleNo.toString(),
+                                                itemName:
+                                                _selectedItem.toString(),
+                                                itemID:
+                                                selectedItemId.toString(),
+                                                filled: _filledController
+                                                    .text,
+                                                sv: _svController.text,
+                                                tv: _tvController.text,
+                                                empty: _emptyController
+                                                    .text,
+                                                defective:
+                                                _defectiveController.text,
+                                                lessEmpty:
+                                                _lessEmptyController.text,
+                                                remark: _remarkController
+                                                    .text,
+                                                svRemark:
+                                                remarksList.join(', '),
+                                                updateFlag: 'pending',
+                                                itemAddedDate: formattedDate,
+                                              ),
+                                            );
+
+                                            if (isUpdated == true) {
+                                              EasyLoading.showToast("Data Updated Successfully",
+                                                  duration: const Duration(milliseconds: 3000));
+
+                                              fetchData(
+                                                  selectedDelBoyId
+                                                      .toString(),
+                                                  deliveryDateController
+                                                      .text);
+
+                                              setState(() {
+                                                _editingItemId = null;
+                                                _filledController.clear();
+                                                _svController.clear();
+                                                _tvController.clear();
+                                                _emptyController.clear();
+                                                _defectiveController
+                                                    .clear();
+                                                _lessEmptyController
+                                                    .clear();
+                                                _remarkController.clear();
+                                                remarksList.clear();
+                                                _selectedItemModel = null;
+                                                _selectedItem = '';
+                                              });
+                                            } else {
+                                              showFlushBar(context, "Item Exists",
+                                                  'This Item Already Exists!');
+                                            }
                                           }
+
                                         } else {
                                           showFlushBar(context, "Cylinder Count",
                                               'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
@@ -2838,128 +6381,21 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                     showFlushBar(context, "Cylinder Count",
                                         'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
                                   }
-                                }else{
-                                  if(_dataGetFromDBDelBoy.isNotEmpty) {
-                                    if(filledValue > 0) {
-                                      if (filledValue > lessEmptyValue) {
-                                        if (filledValue > svValue) {
-                                          if (filledValue > tvValue) {
-                                            if (filledValue > defectiveValue) {
-                                              if (filledValue >= emptyValue &&
-                                                  emptyValue > 0) {
-                                                int currentCount = remarksList
-                                                    .map((remark) =>
-                                                remark
-                                                    .split(',')
-                                                    .length)
-                                                    .fold(0, (a, b) => a + b);
-                                                int svQty = int.parse(
-                                                    _svController.text);
-                                                // Check if we can add more consumers
-                                                if (currentCount > svQty) {
-                                                  showFlushBar(context, "Consumer Count Exceed",
-                                                      'Consumer Details Count Should Not Exceed The SV Count!');
-                                                } else {
-                                                  final isUpdated =
-                                                  await updateRefillSale
-                                                      ?.updateRowByColID(
-                                                    _editingItemId!,
-                                                    ItemData(
-                                                      date:
-                                                      deliveryDateController
-                                                          .text,
-                                                      deliveryBoyName:
-                                                      selectedDelBoyName
-                                                          .toString(),
-                                                      delBoyId:
-                                                      selectedDelBoyId
-                                                          .toString(),
-                                                      vehicleNo:
-                                                      vehicleNoController.text,
-                                                      itemName:
-                                                      _selectedItem.toString(),
-                                                      itemID:
-                                                      selectedItemId.toString(),
-                                                      filled: _filledController
-                                                          .text,
-                                                      sv: _svController.text,
-                                                      tv: _tvController.text,
-                                                      empty: _emptyController
-                                                          .text,
-                                                      defective:
-                                                      _defectiveController.text,
-                                                      lessEmpty:
-                                                      _lessEmptyController.text,
-                                                      remark: _remarkController
-                                                          .text,
-                                                      svRemark:
-                                                      remarksList.join(', '),
-                                                      updateFlag: 'pending',
-                                                      itemAddedDate: formattedDate,
-                                                    ),
-                                                  );
-
-                                                  if (isUpdated == true) {
-                                                    EasyLoading.showToast("Data Updated Successfully",
-                                                        duration: const Duration(milliseconds: 3000));
-
-                                                    fetchData(
-                                                        selectedDelBoyId
-                                                            .toString(),
-                                                        deliveryDateController
-                                                            .text);
-
-                                                    setState(() {
-                                                      _editingItemId = null;
-                                                      _filledController.clear();
-                                                      _svController.clear();
-                                                      _tvController.clear();
-                                                      _emptyController.clear();
-                                                      _defectiveController
-                                                          .clear();
-                                                      _lessEmptyController
-                                                          .clear();
-                                                      _remarkController.clear();
-                                                      remarksList.clear();
-                                                      _selectedItemModel = null;
-                                                      _selectedItem = '';
-                                                    });
-                                                  } else {
-                                                    showFlushBar(context, "Item Exists",
-                                                        'This Item Already Exists!');
-                                                  }
-                                                }
-                                              } else {
-                                                showFlushBar(context, "Cylinder Count",
-                                                    'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
-                                              }
-                                            } else {
-                                              showFlushBar(context, "Cylinder Count",
-                                                  'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
-                                            }
-                                          } else {
-                                            showFlushBar(context, "Cylinder Count",
-                                                'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
-                                          }
-                                        } else {
-                                          showFlushBar(context, "Cylinder Count",
-                                              'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
-                                        }
-                                      } else {
-                                        showFlushBar(context, "Cylinder Count",
-                                            'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
-                                      }
-                                    }
-
-                                  }else{
-
-                                  }
+                                } else {
+                                  showFlushBar(context, "Cylinder Count",
+                                      'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
                                 }
-                              } else {
-                                _addNewItem();
-                                debugPrint("Add");
                               }
+
+                            }else{
+
                             }
+                          }
+                        } else {
+                          _addNewItem();
+                          debugPrint("Add");
+                        }
+                      }
                           : null,
                       // Disable the button when the condition is false
                       child: Padding(
@@ -2976,8 +6412,8 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: _filledController.text.isNotEmpty &&
-                                selectedDelBoyName != null &&
-                                (_selectedItem != null )
+                            selectedDelBoyName != null &&
+                            (_selectedItem != null )
                             ? Colors.blue
                             : Colors.grey,
                         // Change color based on enabled state
@@ -3041,459 +6477,253 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
               Visibility(
                 visible: _dataGetFromDBDelBoy.isNotEmpty || flagEditMode == "editMode",
                 child:
-              Padding(
-                padding: const EdgeInsets.only(top: 20.0, bottom: 15),
-                child: Container(
-                  decoration: BoxDecoration(border: Border.all(width: 1)),
-                  child: Column(
-                    children: [
-                      // Header Row with equal width for all columns using Expanded
-                      Row(
-                        children: [
-                          Expanded(
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0, bottom: 15),
+                  child: Container(
+                    decoration: BoxDecoration(border: Border.all(width: 1)),
+                    child: Column(
+                      children: [
+                        // Header Row with equal width for all columns using Expanded
+                        Row(
+                          children: [
+                            Expanded(
+                                flex: 2,
+                                child: Center(
+                                    child: Text(
+                                      "Item",
+                                      style: Styling.itemBlackTestSmall,
+                                    ))),
+                            verticalDividerVerySmall(),
+                            Expanded(
+                                flex: 1,
+                                child: Center(
+                                    child: Text(
+                                      "Sale",
+                                      style: Styling.itemBlackTestSmall,
+                                    ))),
+                            verticalDividerVerySmall(),
+                            Expanded(
+                                flex: 1,
+                                child: Center(
+                                    child: Text(
+                                      "SV",
+                                      style: Styling.itemBlackTestSmall,
+                                    ))),
+                            verticalDividerVerySmall(),
+                            Expanded(
+                                flex: 1,
+                                child: Center(
+                                    child: Text(
+                                      "TV",
+                                      style: Styling.itemBlackTestSmall,
+                                    ))),
+                            verticalDividerVerySmall(),
+                            Expanded(
+                                flex: 2,
+                                child: Center(
+                                    child: Text(
+                                      "Empty",
+                                      style: Styling.itemBlackTestSmall,
+                                    ))),
+                            verticalDividerVerySmall(),
+                            Expanded(
+                                flex: 1,
+                                child: Center(
+                                    child: Text(
+                                      "Def.",
+                                      style: Styling.itemBlackTestSmall,
+                                    ))),
+                            verticalDividerVerySmall(),
+                            Expanded(
+                                flex: 2,
+                                child: Center(
+                                    child: Text(
+                                      "Less\nEmpty",
+                                      style: Styling.itemBlackTestSmall,
+                                    ))),
+                            verticalDividerVerySmall(),
+                            Expanded(
                               flex: 2,
-                              child: Center(
-                                  child: Text(
-                                "Item",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ))),
-                          verticalDividerVerySmall(),
-                          Expanded(
-                              flex: 1,
-                              child: Center(
-                                  child: Text(
-                                "Sale",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ))),
-                          verticalDividerVerySmall(),
-                          Expanded(
-                              flex: 1,
-                              child: Center(
-                                  child: Text(
-                                "SV",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ))),
-                          verticalDividerVerySmall(),
-                          Expanded(
-                              flex: 1,
-                              child: Center(
-                                  child: Text(
-                                "TV",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ))),
-                          verticalDividerVerySmall(),
-                          Expanded(
-                              flex: 2,
-                              child: Center(
-                                  child: Text(
-                                "Empty",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ))),
-                          verticalDividerVerySmall(),
-                          Expanded(
-                              flex: 1,
-                              child: Center(
-                                  child: Text(
-                                "Def.",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ))),
-                          verticalDividerVerySmall(),
-                          Expanded(
-                              flex: 2,
-                              child: Center(
-                                  child: Text(
-                                "Less\nEmpty",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ))),
-                          verticalDividerVerySmall(),
-                          Expanded(
-                            flex: 2,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              // Vertically center the content
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              // Horizontally center the content
-                              children: [
-                                Text(
-                                  "Action",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                      // Divider between header and data rows
-                      Container(
-                        color: const Color(0xff1280B3),
-                        height: 1.5,
-                        width: MediaQuery.of(context).size.width,
-                      ),
-
-                      // ListView to display the data
-                      flagEditMode != null || flagEditMode == "editMode"
-                          ? Container(
-                              child: FutureBuilder<
-                                  List<StockSubmitToManagerListModel>>(
-                                future: stockDataFuture,
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState ==
-                                      ConnectionState.waiting) {
-                                    return const Center(
-                                        child: CircularProgressIndicator());
-                                  } else if (snapshot.hasError) {
-                                    return Center(
-                                        child:
-                                            Text("Error: ${snapshot.error}"));
-                                  } else if (!snapshot.hasData ||
-                                      snapshot.data!.isEmpty) {
-                                    return const Center(
-                                        child: Text("No Data Available."));
-                                  } else {
-                                    List<StockSubmitToManagerListModel>
-                                        stockList = snapshot.data!;
-                                    return Column(
-                                      children: stockList.map((stock) {
-                                        return Column(
-                                          children: [
-                                            ...stock.itemList!.map((item) {
-                                              return Container(
-                                                child: Row(
-                                                  children: [
-                                                    // Column 1: Item Name
-                                                    Expanded(
-                                                      flex: 2,
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(
-                                                                left: 5.0),
-                                                        child: Text(
-                                                          item.itemName
-                                                              .toString(),
-                                                          style: TextStyle(
-                                                              fontSize: 14,
-                                                              color: Colors
-                                                                  .black54),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    verticalDividerBig(),
-                                                    // Column 2: Filled
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: Text(
-                                                        item.filledSaleQty
-                                                            .toString(),
-                                                        style: TextStyle(
-                                                            fontSize: 14,
-                                                            color:
-                                                                Colors.black54),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                    ),
-                                                    verticalDividerBig(),
-                                                    // Column 3: Empty
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: Text(
-                                                        item.sVQty.toString(),
-                                                        style: TextStyle(
-                                                            fontSize: 14,
-                                                            color:
-                                                                Colors.black54),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                    ),
-                                                    verticalDividerBig(),
-                                                    // Column 4: Defective
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: Text(
-                                                        item.tVQty.toString(),
-                                                        style: TextStyle(
-                                                            fontSize: 14,
-                                                            color:
-                                                                Colors.black54),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                    ),
-                                                    verticalDividerBig(),
-                                                    Expanded(
-                                                      flex: 2,
-                                                      child: Text(
-                                                        item.emptyRetQty
-                                                            .toString(),
-                                                        style: TextStyle(
-                                                            fontSize: 14,
-                                                            color:
-                                                                Colors.black54),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                    ),
-                                                    verticalDividerBig(),
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: Text(
-                                                        item.deffQty.toString(),
-                                                        style: TextStyle(
-                                                            fontSize: 14,
-                                                            color:
-                                                                Colors.black54),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                    ),
-                                                    verticalDividerBig(),
-                                                    Expanded(
-                                                      flex: 2,
-                                                      child: Text(
-                                                        item.lessEmptyQty
-                                                            .toString(),
-                                                        style: TextStyle(
-                                                            fontSize: 14,
-                                                            color:
-                                                                Colors.black54),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                    ),
-                                                    verticalDividerBig(),
-                                                    Expanded(
-                                                      child: IconButton(
-                                                        icon: Icon(Icons.edit),
-                                                        onPressed: () {
-                                                          _onEditItem(item,
-                                                              stock); // Populate fields with this item's data
-                                                        },
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      child: IconButton(
-                                                        icon:
-                                                            Icon(Icons.delete),
-                                                        onPressed: () async {
-                                                          // Show the alert dialog before proceeding with deletion
-                                                          bool? confirmDelete =
-                                                              await showDialog<
-                                                                  bool>(
-                                                            context: context,
-                                                            builder:
-                                                                (BuildContext
-                                                                    context) {
-                                                              return
-                                                                AlertDialog(
-                                                                title: Text(
-                                                                    "Confirm Deletion"),
-                                                                content: Text(
-                                                                    "Are You Sure You Want To Delete Record?"),
-                                                                actions: [
-                                                                  TextButton(
-                                                                    onPressed:
-                                                                        () {
-                                                                      Navigator.of(
-                                                                              context)
-                                                                          .pop(
-                                                                              false); // Cancel deletion
-                                                                    },
-                                                                    child: Text(
-                                                                        "No"),
-                                                                  ),
-                                                                  TextButton(
-                                                                    onPressed:
-                                                                        () {
-                                                                      Navigator.of(
-                                                                              context)
-                                                                          .pop(
-                                                                              true);
-                                                                    },
-                                                                    child: Text(
-                                                                        "Yes"),
-                                                                  ),
-                                                                ],
-                                                              );
-                                                            },
-                                                          );
-                                                          if (confirmDelete ==
-                                                              true) {
-                                                            try {
-                                                              // Ensure that 'item' contains the correct ID field
-                                                              _onDeleteItem(
-                                                                  int.parse(item
-                                                                      .itemId
-                                                                      .toString())); // Confirm deletion
-                                                              stockDataFuture = updateRefillSale!
-                                                                  .getDeliveryMenDataForEdit(
-                                                                      widget.saleGKId
-                                                                              ?.toInt() ??
-                                                                          0,
-                                                                      widget.dMId
-                                                                              ?.toInt() ??
-                                                                          0);
-                                                              EasyLoading.showToast("Data Deleted Successfully.",
-                                                                  duration: const Duration(milliseconds: 3000));
-
-                                                            } catch (e) {
-                                                              debugPrint(
-                                                                  "Error deleting row: $e");
-                                                              showFlushBar(context, "Fail",
-                                                                  'Fail To Deleted Record.!');
-                                                            }
-                                                          }
-                                                          // If the user confirms, proceed with deletion
-                                                          // You can proceed with your delete logic here.
-                                                        },
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            }).toList(),
-                                          ],
-                                        );
-                                      }).toList(),
-                                    );
-                                  }
-                                },
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                // Vertically center the content
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                // Horizontally center the content
+                                children: [
+                                  Text(
+                                    "Action",
+                                    style: Styling.itemBlackTestSmall,
+                                  ),
+                                ],
                               ),
                             )
-                          : Container(
-                              child: _dataGetFromDBDelBoy.isNotEmpty
-                                  ? ListView.builder(
-                                      physics: const BouncingScrollPhysics(),
-                                      itemCount: _dataGetFromDBDelBoy.length,
-                                      shrinkWrap: true,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        Map<String, Object?> item =
-                                            _dataGetFromDBDelBoy[
-                                                index]; // Get the item at the current index
-                                        // You can access the columns in your database result like this:
-                                        String itemId =
-                                            item['itemID'].toString();
-                                        String itemName =
-                                            item['itemName'].toString();
-                                        String filledSaleQty =
-                                            item['filled'].toString();
-                                        String svQty = item['sv'].toString();
-                                        String tvQty = item['tv'].toString();
-                                        String emptyRetQty =
-                                            item['empty'].toString();
-                                        String deffQty =
-                                            item['defective'].toString();
-                                        String lessEmptyQty =
-                                            item['lessEmpty'].toString();
-                                        String remark =
-                                            item['remark']?.toString() ??
-                                                "No remark";
-                                        return Column(
-                                          children: [
-                                            Container(
-                                              child: Row(
-                                                children: [
-                                                  // Column 1: Item Name
-                                                  Expanded(
-                                                      flex: 2,
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(
-                                                                left: 5.0),
-                                                        child: Text(itemName,
-                                                            style: TextStyle(
-                                                                fontSize: 14,
-                                                                color: Colors
-                                                                    .black54)),
-                                                      )),
-                                                  verticalDividerBig(),
-                                                  // Column 2: Filled
-                                                  Expanded(
-                                                      flex: 1,
-                                                      child: Text(filledSaleQty,
-                                                          style: TextStyle(
-                                                              fontSize: 14,
-                                                              color: Colors
-                                                                  .black54),
-                                                          textAlign: TextAlign
-                                                              .center)),
-                                                  verticalDividerBig(),
-                                                  // Column 3: Empty
-                                                  Expanded(
-                                                      flex: 1,
-                                                      child: Text(svQty,
-                                                          style: TextStyle(
-                                                              fontSize: 14,
-                                                              color: Colors
-                                                                  .black54),
-                                                          textAlign: TextAlign
-                                                              .center)),
-                                                  verticalDividerBig(),
-                                                  // Column 4: Defective
-                                                  Expanded(
-                                                      flex: 1,
-                                                      child: Text(tvQty,
-                                                          style: TextStyle(
-                                                              fontSize: 14,
-                                                              color: Colors
-                                                                  .black54),
-                                                          textAlign: TextAlign
-                                                              .center)),
-                                                  verticalDividerBig(),
-                                                  Expanded(
-                                                      flex: 2,
-                                                      child: Text(emptyRetQty,
-                                                          style: TextStyle(
-                                                              fontSize: 14,
-                                                              color: Colors
-                                                                  .black54),
-                                                          textAlign: TextAlign
-                                                              .center)),
-                                                  verticalDividerBig(),
-                                                  Expanded(
-                                                      flex: 1,
-                                                      child: Text(deffQty,
-                                                          style: TextStyle(
-                                                              fontSize: 14,
-                                                              color: Colors
-                                                                  .black54),
-                                                          textAlign: TextAlign
-                                                              .center)),
-                                                  verticalDividerBig(),
-                                                  Expanded(
-                                                      flex: 2,
-                                                      child: Text(lessEmptyQty,
-                                                          style: TextStyle(
-                                                              fontSize: 14,
-                                                              color: Colors
-                                                                  .black54),
-                                                          textAlign: TextAlign
-                                                              .center)),
-                                                  verticalDividerBig(),
-                                                  Expanded(
-                                                    child: IconButton(
-                                                      icon: Icon(Icons.edit),
-                                                      onPressed: () {
-                                                        _populateFieldsForEdit(
-                                                            item); // Populate fields with this item's data
-                                                      },
+                          ],
+                        ),
+                        // Divider between header and data rows
+                        Container(
+                          color: const Color(0xff1280B3),
+                          height: 1.5,
+                          width: MediaQuery.of(context).size.width,
+                        ),
+
+                        // ListView to display the data
+                        flagEditMode != null || flagEditMode == "editMode"
+                            ?
+                        Container(
+                          child: FutureBuilder<
+                              List<StockSubmitToManagerListModel>>(
+                            future: stockDataFuture,
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                    child: CircularProgressIndicator());
+                              } else if (snapshot.hasError) {
+                                return Center(
+                                    child:
+                                    Text("Error: ${snapshot.error}"));
+                              } else if (!snapshot.hasData ||
+                                  snapshot.data!.isEmpty) {
+                                return const Center(
+                                    child: Text("No Data Available."));
+                              } else {
+                                List<StockSubmitToManagerListModel>
+                                stockList = snapshot.data!;
+                                return Column(
+                                  children: stockList.map((stock) {
+                                    return Column(
+                                      children: [
+                                        ...stock.itemList!.map((item) {
+                                          return Container(
+                                            child: Row(
+                                              children: [
+                                                // Column 1: Item Name
+                                                Expanded(
+                                                  flex: 2,
+                                                  child: Padding(
+                                                    padding:
+                                                    const EdgeInsets
+                                                        .only(
+                                                        left: 5.0),
+                                                    child: Text(
+                                                      item.itemName
+                                                          .toString(),
+                                                      style: TextStyle(
+                                                          fontSize: 14,
+                                                          color: Colors
+                                                              .black54),
                                                     ),
                                                   ),
-                                                  Expanded(
-                                                    child: IconButton(
-                                                      icon: Icon(Icons.delete),
-                                                      onPressed: () async {
-                                                        // Show the alert dialog before proceeding with deletion
-                                                        bool? confirmDelete =
-                                                            await showDialog<
-                                                                bool>(
-                                                          context: context,
-                                                          builder: (BuildContext
-                                                              context) {
-                                                            return AlertDialog(
+                                                ),
+                                                verticalDividerBig(),
+                                                // Column 2: Filled
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Text(
+                                                    item.filledSaleQty
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        color:
+                                                        Colors.black54),
+                                                    textAlign:
+                                                    TextAlign.center,
+                                                  ),
+                                                ),
+                                                verticalDividerBig(),
+                                                // Column 3: Empty
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Text(
+                                                    item.sVQty.toString(),
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        color:
+                                                        Colors.black54),
+                                                    textAlign:
+                                                    TextAlign.center,
+                                                  ),
+                                                ),
+                                                verticalDividerBig(),
+                                                // Column 4: Defective
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Text(
+                                                    item.tVQty.toString(),
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        color:
+                                                        Colors.black54),
+                                                    textAlign:
+                                                    TextAlign.center,
+                                                  ),
+                                                ),
+                                                verticalDividerBig(),
+                                                Expanded(
+                                                  flex: 2,
+                                                  child: Text(
+                                                    item.emptyRetQty
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        color:
+                                                        Colors.black54),
+                                                    textAlign:
+                                                    TextAlign.center,
+                                                  ),
+                                                ),
+                                                verticalDividerBig(),
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Text(
+                                                    item.deffQty.toString(),
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        color:
+                                                        Colors.black54),
+                                                    textAlign:
+                                                    TextAlign.center,
+                                                  ),
+                                                ),
+                                                verticalDividerBig(),
+                                                Expanded(
+                                                  flex: 2,
+                                                  child: Text(
+                                                    item.lessEmptyQty
+                                                        .toString(),
+                                                    style: TextStyle(
+                                                        fontSize: 14,
+                                                        color:
+                                                        Colors.black54),
+                                                    textAlign:
+                                                    TextAlign.center,
+                                                  ),
+                                                ),
+                                                verticalDividerBig(),
+                                                Expanded(
+                                                  child: IconButton(
+                                                    icon: Icon(Icons.edit),
+                                                    onPressed: () {
+                                                      _onEditItem(item,
+                                                          stock); // Populate fields with this item's data
+                                                    },
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  child: IconButton(
+                                                    icon:
+                                                    Icon(Icons.delete),
+                                                    onPressed: () async {
+                                                      // Show the alert dialog before proceeding with deletion
+                                                      bool? confirmDelete =
+                                                      await showDialog<
+                                                          bool>(
+                                                        context: context,
+                                                        builder:
+                                                            (BuildContext
+                                                        context) {
+                                                          return
+                                                            AlertDialog(
                                                               title: Text(
                                                                   "Confirm Deletion"),
                                                               content: Text(
@@ -3503,9 +6733,9 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                                   onPressed:
                                                                       () {
                                                                     Navigator.of(
-                                                                            context)
+                                                                        context)
                                                                         .pop(
-                                                                            false); // Cancel deletion
+                                                                        false); // Cancel deletion
                                                                   },
                                                                   child: Text(
                                                                       "No"),
@@ -3514,85 +6744,292 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                                   onPressed:
                                                                       () {
                                                                     Navigator.of(
-                                                                            context)
+                                                                        context)
                                                                         .pop(
-                                                                            true); // Confirm deletion
+                                                                        true);
                                                                   },
                                                                   child: Text(
                                                                       "Yes"),
                                                                 ),
                                                               ],
                                                             );
-                                                          },
-                                                        );
+                                                        },
+                                                      );
+                                                      if (confirmDelete ==
+                                                          true) {
+                                                        try {
+                                                          // Ensure that 'item' contains the correct ID field
+                                                          _onDeleteItem(
+                                                              int.parse(item
+                                                                  .itemId
+                                                                  .toString())); // Confirm deletion
+                                                          stockDataFuture = updateRefillSale!
+                                                              .getDeliveryMenDataForEdit(
+                                                              widget.saleGKId
+                                                                  ?.toInt() ??
+                                                                  0,
+                                                              widget.dMId
+                                                                  ?.toInt() ??
+                                                                  0);
+                                                          EasyLoading.showToast("Data Deleted Successfully.",
+                                                              duration: const Duration(milliseconds: 3000));
 
-                                                        // If the user confirms, proceed with deletion
-                                                        if (confirmDelete ==
-                                                            true) {
-                                                          try {
-                                                            // Ensure that 'item' contains the correct ID field
-                                                            if (item
-                                                                .containsKey(
-                                                                    'itemID')) {
-                                                              String itemId =
-                                                                  item['itemID']
-                                                                      .toString();
-                                                              String delBoyId =
-                                                                  item['delBoyId']
-                                                                      .toString();
-
-                                                              // Call the delete method with the cast value
-                                                              await updateRefillSale
-                                                                  ?.deleteRowByDelBoyIdAndItemId(
-                                                                      delBoyId,
-                                                                      itemId);
-
-                                                              // Refresh the UI after deletion by fetching updated data
-                                                              fetchData(
-                                                                selectedDelBoyId
-                                                                    .toString(),
-                                                                deliveryDateController
-                                                                    .text,
-                                                              );
-
-                                                              // Optionally show a confirmation message (snack bar, dialog, etc.)
-                                                              EasyLoading.showToast("Data Deleted Successfully.",
-                                                                  duration: const Duration(milliseconds: 3000));
-                                                            } else {
-                                                              debugPrint(
-                                                                  "Item ID not found in the current item.");
-                                                            }
-                                                          } catch (e) {
-                                                            debugPrint(
-                                                                "Error deleting row: $e");
-                                                            showFlushBar(context, "Fail",
-                                                                'Fail To Deleted Record.');
-                                                          }
+                                                        } catch (e) {
+                                                          debugPrint(
+                                                              "Error deleting row: $e");
+                                                          showFlushBar(context, "Fail",
+                                                              'Fail To Deleted Record.!');
                                                         }
-                                                      },
-                                                    ),
+                                                      }
+                                                      // If the user confirms, proceed with deletion
+                                                      // You can proceed with your delete logic here.
+                                                    },
                                                   ),
-                                                ],
-                                              ),
+                                                ),
+                                              ],
                                             ),
-                                            // Container(
-                                            //   color: Colors.grey,
-                                            //   height: 1,
-                                            // ),
-                                          ],
-                                        );
-                                      },
-                                    )
-                                  : Container(
-                                      padding: EdgeInsets.all(5),
-                                      child: const Center(
-                                          child: Text("No Pending Data..!")),
+                                          );
+                                        }).toList(),
+                                      ],
+                                    );
+                                  }).toList(),
+                                );
+                              }
+                            },
+                          ),
+                        )
+                            : Container(
+                          child: _dataGetFromDBDelBoy.isNotEmpty
+                              ? ListView.builder(
+                            physics: const BouncingScrollPhysics(),
+                            itemCount: _dataGetFromDBDelBoy.length,
+                            shrinkWrap: true,
+                            itemBuilder:
+                                (BuildContext context, int index) {
+                              Map<String, Object?> item =
+                              _dataGetFromDBDelBoy[
+                              index]; // Get the item at the current index
+                              // You can access the columns in your database result like this:
+                              String itemId =
+                              item['itemID'].toString();
+                              String itemName =
+                              item['itemName'].toString();
+                              String filledSaleQty =
+                              item['filled'].toString();
+                              String svQty = item['sv'].toString();
+                              String tvQty = item['tv'].toString();
+                              String emptyRetQty =
+                              item['empty'].toString();
+                              String deffQty =
+                              item['defective'].toString();
+                              String lessEmptyQty =
+                              item['lessEmpty'].toString();
+                              String remark =
+                                  item['remark']?.toString() ??
+                                      "No remark";
+                              return Column(
+                                children: [
+                                  Container(
+                                    child: Row(
+                                      children: [
+                                        // Column 1: Item Name
+                                        Expanded(
+                                            flex: 2,
+                                            child: Padding(
+                                              padding:
+                                              const EdgeInsets
+                                                  .only(
+                                                  left: 5.0),
+                                              child: Text(itemName,
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors
+                                                          .black54)),
+                                            )),
+                                        verticalDividerBig(),
+                                        // Column 2: Filled
+                                        Expanded(
+                                            flex: 1,
+                                            child: Text(filledSaleQty,
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors
+                                                        .black54),
+                                                textAlign: TextAlign
+                                                    .center)),
+                                        verticalDividerBig(),
+                                        // Column 3: Empty
+                                        Expanded(
+                                            flex: 1,
+                                            child: Text(svQty,
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors
+                                                        .black54),
+                                                textAlign: TextAlign
+                                                    .center)),
+                                        verticalDividerBig(),
+                                        // Column 4: Defective
+                                        Expanded(
+                                            flex: 1,
+                                            child: Text(tvQty,
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors
+                                                        .black54),
+                                                textAlign: TextAlign
+                                                    .center)),
+                                        verticalDividerBig(),
+                                        Expanded(
+                                            flex: 2,
+                                            child: Text(emptyRetQty,
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors
+                                                        .black54),
+                                                textAlign: TextAlign
+                                                    .center)),
+                                        verticalDividerBig(),
+                                        Expanded(
+                                            flex: 1,
+                                            child: Text(deffQty,
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors
+                                                        .black54),
+                                                textAlign: TextAlign
+                                                    .center)),
+                                        verticalDividerBig(),
+                                        Expanded(
+                                            flex: 2,
+                                            child: Text(lessEmptyQty,
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors
+                                                        .black54),
+                                                textAlign: TextAlign
+                                                    .center)),
+                                        verticalDividerBig(),
+                                        Expanded(
+                                          child: IconButton(
+                                            icon: Icon(Icons.edit),
+                                            onPressed: () {
+                                              _populateFieldsForEdit(
+                                                  item); // Populate fields with this item's data
+                                            },
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: IconButton(
+                                            icon: Icon(Icons.delete),
+                                            onPressed: () async {
+                                              // Show the alert dialog before proceeding with deletion
+                                              bool? confirmDelete =
+                                              await showDialog<
+                                                  bool>(
+                                                context: context,
+                                                builder: (BuildContext
+                                                context) {
+                                                  return AlertDialog(
+                                                    title: Text(
+                                                        "Confirm Deletion"),
+                                                    content: Text(
+                                                        "Are You Sure You Want To Delete Record?"),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed:
+                                                            () {
+                                                          Navigator.of(
+                                                              context)
+                                                              .pop(
+                                                              false); // Cancel deletion
+                                                        },
+                                                        child: Text(
+                                                            "No"),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed:
+                                                            () {
+                                                          Navigator.of(
+                                                              context)
+                                                              .pop(
+                                                              true); // Confirm deletion
+                                                        },
+                                                        child: Text(
+                                                            "Yes"),
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+
+                                              // If the user confirms, proceed with deletion
+                                              if (confirmDelete ==
+                                                  true) {
+                                                try {
+                                                  // Ensure that 'item' contains the correct ID field
+                                                  if (item
+                                                      .containsKey(
+                                                      'itemID')) {
+                                                    String itemId =
+                                                    item['itemID']
+                                                        .toString();
+                                                    String delBoyId =
+                                                    item['delBoyId']
+                                                        .toString();
+
+                                                    // Call the delete method with the cast value
+                                                    await updateRefillSale
+                                                        ?.deleteRowByDelBoyIdAndItemId(
+                                                        delBoyId,
+                                                        itemId);
+
+                                                    // Refresh the UI after deletion by fetching updated data
+                                                    fetchData(
+                                                      selectedDelBoyId
+                                                          .toString(),
+                                                      deliveryDateController
+                                                          .text,
+                                                    );
+
+                                                    // Optionally show a confirmation message (snack bar, dialog, etc.)
+                                                    EasyLoading.showToast("Data Deleted Successfully.",
+                                                        duration: const Duration(milliseconds: 3000));
+                                                  } else {
+                                                    debugPrint(
+                                                        "Item ID not found in the current item.");
+                                                  }
+                                                } catch (e) {
+                                                  debugPrint(
+                                                      "Error deleting row: $e");
+                                                  showFlushBar(context, "Fail",
+                                                      'Fail To Deleted Record.');
+                                                }
+                                              }
+                                            },
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                            ),
-                    ],
+                                  ),
+                                  // Container(
+                                  //   color: Colors.grey,
+                                  //   height: 1,
+                                  // ),
+                                ],
+                              );
+                            },
+                          )
+                              : Container(
+                            padding: EdgeInsets.all(5),
+                            child: const Center(
+                                child: Text("No Pending Data..!")),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
               ),
               // Closing Stock
               //     Padding(
@@ -3691,10 +7128,10 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                             : null;
                       } else {
                         ((_dataGetFromDBDelBoy.isNotEmpty) &&
-                                (selectedDelBoyName != null &&
-                                    selectedDelBoyName!.isNotEmpty))
+                            (selectedDelBoyName != null &&
+                                selectedDelBoyName!.isNotEmpty))
                             ? sendDataToApi(selectedDelBoyId.toString()!,
-                                deliveryDateController.text)
+                            deliveryDateController.text)
                             : null;
                       }
 
@@ -3759,7 +7196,6 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
       ),
     );
   }
-
   // Function to determine the button color
   Color _getButtonColor() {
     if(flagEditMode == "editMode" ){
@@ -3793,13 +7229,13 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
       }
 
       final response = await http.get(
-        Uri.parse('${AppUrl.GetItemMasterList}/$distributorId/0/C'),
+        Uri.parse('${AppUrl.GetItemMasterList}/$distributorId/1/C'),
         headers: {
           'Authorization': 'Bearer $bearerToken', // Add Bearer token here
         },
       );
       debugPrint("GetItemMasterList" +
-          '${AppUrl.GetItemMasterList}/$distributorId/0/C');
+          '${AppUrl.GetItemMasterList}/$distributorId/1/C');
       debugPrint("GetItemMasterList" + response.body);
       if (response.statusCode == 200) {
         // Parse the response
@@ -3897,13 +7333,16 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
         // Assuming we want to set the vehicle number from the first vehicle in the list
         if (data.isNotEmpty) {
           setState(() {
-            vehicleNoController.text = data[0].vehicleNo ?? '';
+            // vehicleNoController.text = data[0].vehicleNo ?? '';
             vehicleNo = data[0].vehicleNo ?? '';
             vehicleId =
-                data[0].vehicleId ?? 0; // Set the vehicle number (if available)
+                data[0].vehicleId ?? 0;
+            debugPrint("vehicleId body: " + vehicleId.toString());// Set the vehicle number (if available)
           });
+
         } else {
-          vehicleNoController.text = " " ?? '';
+          // vehicleNoController.text = " " ?? '';
+          vehicleNo = " "?? '';
         }
       } else {
         // Optionally handle token refresh here or show an error
@@ -4056,6 +7495,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
             print('Data sent successfully');
             EasyLoading.showToast("Data Sent Successfully.",
                 duration: const Duration(milliseconds: 3000));
+            Navigator.pushReplacementNamed(context, '/deliveryMenListShowScreen');
             // Safely extract ItemIds (ensure they're integers)
             List<int> itemIds = apiItemList.map<int>((item) {
               // Try to safely parse the ItemId string as an integer
@@ -4080,7 +7520,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
               _selectedItemModel =
                   null; // Clear the selected item in the dropdown
               _selectedItem = ''; // Clear the selected item text
-              vehicleNoController.clear();
+              // vehicleNoController.clear();
             });
           } else {
             print('Failed to send data: ${response.statusCode}');
@@ -4270,16 +7710,8 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                       setState(() {
                         emptyCount -= inputCount; // Update the emptyCount state
                       });
-                      // Prepare the item details to send to the API
-                      List<ItemImbDtls> itemDetails = [
-                        ItemImbDtls(
-                          itemId: itemId,
-                          imbQty: inputCount,
-                          balance: 0,
-                        ),
-                      ];
                       // Call API with the request body
-                      addItemImbalanceQty(delMenId, itemDetails);
+                      addItemImbalanceQty(delMenId, itemId,inputCount);
                       Navigator.of(context).pop(); // Close the popup
                     } else {
                       showFlushBar(context, "Invalid Count",
@@ -4635,11 +8067,10 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
 
             // Loop through each receipt and each item inside itemImbDtls to sum ImbQty
             for (var receipt in receiptList) {
-              for (var item in receipt.itemImbDtls ?? []) {
                 // Add imbQty to totalImbQty, treating null as 0
                 totalImbQty +=
-                    item.lessEmptyQty ?? 0; // Corrected summing of imbQty
-              }
+                    receipt.balImbQty ?? 0; // Corrected summing of imbQty
+
             }
 
             // Log the total imbalance quantity
@@ -4672,7 +8103,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
   }
 
   Future<void> addItemImbalanceQty(
-      int dmId, List<ItemImbDtls> itemDetails) async {
+      int dmId, int itemID, int imbQty) async {
     // Construct the request payload
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? distributorId = prefs.getString('DistributorId');
@@ -4684,19 +8115,12 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
     Map<String, dynamic> requestBody = {
-      "ImbId": "0", // Default value
       "DistributorId": distributorId,
       "GodownId": godownId,
       "DMId": dmId,
+      "ItemId": itemID,
       "ImbDate": formattedDate,
-      "Action": "ADD", // Action to be added
-      "ItemDetails": itemDetails.map((item) {
-        return {
-          "ItemId": item.itemId,
-          "ImbQty": item.imbQty,
-          "BalanceQty": item.balance ?? 0 // Use balance if available
-        };
-      }).toList()
+      "ImbRecQty": imbQty
     };
 
     try {
@@ -4717,6 +8141,9 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
       if (response.statusCode == 200) {
         // Handle success
         print("Imbalance quantity added successfully!");
+        EasyLoading.showToast("Data Sent Successfully..",
+            duration: const Duration(milliseconds: 3000));
+        _fetchImbalanceData(dmId);
       } else {
         // Handle error response
         print("Failed to add imbalance quantity: ${response.statusCode}");
@@ -4835,4 +8262,149 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
           context, Constants.connectionTitle, Constants.connectionMessage);
     }
   }
+
+  Future<void> _fetchTodaysOpeningStockData() async {
+    Constants.isNetworkAvailable = await InternetConnectionChecker().hasConnection;
+    if (Constants.isNetworkAvailable) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? distributorId = prefs.getString('DistributorId');
+      String? godownId = prefs.getString('godownId');
+      String? addedBy = prefs.getString('StaffId');
+      String? godownKeeperId = prefs.getString('godownKeeperId');
+      String? token = prefs.getString('token'); // This is your bearer token
+      int dId = int.parse(distributorId!);
+      int godownIdId = int.parse(godownId!);
+
+      try {
+        final response = await http.get(
+          Uri.parse('${AppUrl.TodaysOpeningStkForGK}/$dId/$godownIdId'),
+          headers: {
+            'Authorization': 'Bearer $token',  // Add the Bearer token here
+          },
+        );
+        print("Total ImbQty TodaysOpeningStkForGK response ${response.body}");
+        print("Total ImbQty TodaysOpeningStkForGK request ${response.request}");
+        if (response.statusCode == 200) {
+          final List<dynamic> data = json.decode(response.body);
+
+          setState(() {
+            todaysOpeningStock = data.map((json) => TodaysOpeningStockDataModel.fromJson(json)).toList();
+            isLoading = false;
+
+            // Optionally, you can store this in a variable or use it in the UI
+          });
+        } else {
+          // Handle non-200 responses
+          setState(() {
+            isLoading = false;
+          });
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to fetch data.')),
+          );
+        }
+      } catch (e) {
+        setState(() {
+          isLoading = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e')),
+        );
+      }
+    } else {
+      showFlushBar(context, Constants.connectionTitle, Constants.connectionMessage);
+    }
+  }
+
+  // Assuming you already have the selected item and fetched stock data in your app
+  // This will hold the filled stock for the selected item
+
+// Add this method to compare total sale with filled stock
+  Future<void> fetchCurrentStock() async {
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+    if(Constants.isNetworkAvailable){
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? distributorId = prefs.getString('DistributorId');
+      String? godownId = prefs.getString('godownId');
+      String? addedBy = prefs.getString('StaffId');
+      String? godownKeeperId = prefs.getString('godownKeeperId');
+      String? token = prefs.getString('token'); // This is your bearer token
+
+      try {
+        final response = await http.get(
+          Uri.parse('${AppUrl.ItemCurrentStkList}/$distributorId/$godownId'),
+          headers: {
+            'Authorization': 'Bearer $token',  // Add the Bearer token here
+            // Any other headers you need can go here
+          },
+        );
+        // Print the URL and the headers (including the Bearer token)
+        print("Request URL ItemCurrentStkList: ${response.request}");
+        print("Request Headers: {'Authorization': 'Bearer $token'}");
+        // Print the raw response for debugging
+        print("API Response Status ItemCurrentStkList: ${response.statusCode}");
+        print("API Response ItemCurrentStkList: ${response.body}");
+        if (response.statusCode == 200) {
+          final List<dynamic> data = json.decode(response.body);
+          setState(() {
+            getCurrentStcOfGodownKeeper = data.map((json) => GetCurrentStcOfGodownKeeperModel.fromJson(json)).toList();
+            isLoading = false;
+          });
+        } else {
+          // Handle non-200 responses
+          setState(() {
+            isLoading = false;
+          });
+          showFlushBar(context, "Fail",
+              'Unable To Load Data At This Time. Please Try Again');
+        }
+      } catch (e) {
+        setState(() {
+          isLoading = false;
+        });
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(content: Text('Error: $e')),
+        // );
+        showFlushBar(context, "Fail",
+            'Unable To Load Data At This Time. Please Try Again');
+      }
+    }else{
+      showFlushBar(context,Constants.connectionTitle,
+          Constants.connectionMessage);
+    }
+
+  }
+
+  void _fetchFilledStockForSelectedItem(int itemId) {
+    GetCurrentStcOfGodownKeeperModel selectedItemStock = getCurrentStcOfGodownKeeper.firstWhere(
+          (item) => item.itemId == itemId,
+      orElse: () => GetCurrentStcOfGodownKeeperModel(), // Return an empty object if not found
+    );
+
+    filledStock = selectedItemStock.currentStkFilled; // Save the filled stock value
+  }
+  // void _fetchFilledStockForSelectedItem(int itemId) {
+  //   try {
+  //     // Attempt to find the item by itemId
+  //     GetCurrentStcOfGodownKeeperModel selectedItemStock = getCurrentStcOfGodownKeeper.firstWhere(
+  //           (item) => item.itemId == itemId,
+  //       orElse: () {
+  //         // Return a default empty object or null if not found
+  //         print('Item with ID $itemId not found');
+  //         return GetCurrentStcOfGodownKeeperModel(); // Default empty model
+  //       },
+  //     );
+  //
+  //     // Ensure the item exists and then fetch its filled stock
+  //     if (selectedItemStock.itemId != null) {
+  //       filledStock = selectedItemStock.currentStkFilled ?? 0;  // Use ?? to handle null values
+  //       print('Filled Stock for Item $itemId: $filledStock');
+  //     } else {
+  //       print('No matching item found for ID $itemId');
+  //     }
+  //   } catch (e) {
+  //     // Handle any errors during the operation (e.g., network, parsing, etc.)
+  //     print('Error while fetching stock: $e');
+  //   }
+  // }
 }

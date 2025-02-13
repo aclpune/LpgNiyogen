@@ -126,20 +126,28 @@ class CustomeDrawer extends StatelessWidget {
               //     Navigator.pushReplacementNamed(context, '/cashDepositToBankScreen');
               //   },
               // ),
-              ListTile(
-                leading: Icon(Icons.logout),
-                title: Text('managerUpdateSaleScreen'),
-                onTap: () {
-                  Navigator.pushReplacementNamed(context, '/managerUpdateSaleCashUpdation');
-                },
-              ),
+              // ListTile(
+              //   leading: Icon(Icons.logout),
+              //   title: Text('managerUpdateSaleScreen'),
+              //   onTap: () {
+              //     Navigator.pushReplacementNamed(context, '/managerUpdateSaleCashUpdation');
+              //   },
+              // ),
+              // ListTile(
+              //   leading: Icon(Icons.logout),
+              //   title: Text('deliveryBoyWiseListShow'),
+              //   onTap: () {
+              //     Navigator.pushReplacementNamed(context, '/deliveryBoyWiseListShow');
+              //   },
+              // ),
               ListTile(
                 leading: Icon(Icons.logout),
                 title: Text('deliveryBoyWiseListShow'),
                 onTap: () {
-                  Navigator.pushReplacementNamed(context, '/deliveryBoyWiseListShow');
+                  Navigator.pushReplacementNamed(context, '/managerDashboardScreen');
                 },
               ),
+
             ],
           ),
         );

@@ -10,6 +10,7 @@ import '../../../ConstantScreen/widgets.dart';
 import '../../../Utils/constants.dart';
 import '../../DashboardScreen.dart';
 import '../AddItem/ItemReceiptScreen.dart';
+import '../CylItemList/GetCurrentStcOfGodownKeeperModel.dart';
 import '../EditItem/Model/GetItemReceiptListModel.dart';
 import 'package:http/http.dart' as http;
 
@@ -25,14 +26,22 @@ class ItemReturnScreenListItem extends StatefulWidget {
 
 class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
   bool isListViewVisible = false; // Tracks if ListView is visible
-
+  List<GetCurrentStcOfGodownKeeperModel> getCurrentStcOfGodownKeeper = [];
+  bool isLoading = true;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchCurrentStock();
+  }
   @override
   Widget build(BuildContext context) {
     var value = widget._listModel;
     return
     value != null && value != ""?
       Card(
-      child: SingleChildScrollView(  // Make the Column scrollable
+      child:
+      SingleChildScrollView(  // Make the Column scrollable
         child: Column(
           mainAxisSize: MainAxisSize.min,  // Set min to shrink-wrap the Column
           children: [
@@ -48,64 +57,129 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                   value.returnOn =="0001-01-01T00:00:00"?
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
-                        foregroundColor: Colors.white,
-                        textStyle: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold)),
+                      backgroundColor: Colors.blue,
+                      padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+                      foregroundColor: Colors.white,
+                      textStyle: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     onPressed: () {
                       var itemsToShow = value.itemDetails?.where(
                             (item) => item.filledQty != 0,
                       ).toList();
-                      var receiptId = value.receiptId;
+
                       if (itemsToShow != null && itemsToShow.isNotEmpty) {
-                        showDetailsDialog(context, itemsToShow,receiptId);
+                        // List to store names of items where filledQty > current stock
+                        List<String> invalidItems = [];
+
+                        // Loop through items and check if filledQty is greater than stock
+                        for (var item in itemsToShow) {
+                          final stockInfo = getCurrentStcOfGodownKeeper.firstWhere(
+                                (stock) => stock.itemId == item.itemId,
+                            orElse: () => GetCurrentStcOfGodownKeeperModel(), // Default if not found
+                          );
+
+                          if (item.filledQty! > (stockInfo.currentStkEmpty ?? 0)) {
+                            invalidItems.add(item.itemName ?? "Unknown Item");
+                          }
+                        }
+
+                        if (invalidItems.isNotEmpty) {
+                          // Show AlertDialog if there are items with invalid quantity
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text("Invalid Quantity"),
+                                content: Text(
+                                  "The following items have a filled quantity greater than the available stock:\n\n" +
+                                      invalidItems.join("\n"),
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.pop(context); // Close the dialog
+                                    },
+                                    child: Text("OK"),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        } else {
+                          // Proceed with showing details dialog if no invalid qty
+                          var receiptId = value.receiptId;
+                          showDetailsDialog(context, itemsToShow, receiptId);
+                        }
                       } else {
-                        showFlushBar(context, "No Items Available",
-                            'No Items For Return.');
+                        showFlushBar(context, "No Items Available", 'No Items For Return.');
                       }
                     },
                     child: Text("Out"),
-                  ):
-                      Text(""),
+                  ) :
 
                   // ElevatedButton(
                   //   style: ElevatedButton.styleFrom(
-                  //     backgroundColor: Colors.blue,
-                  //     padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
-                  //     foregroundColor: Colors.white,
-                  //     textStyle: const TextStyle(
-                  //       fontSize: 15,
-                  //       fontWeight: FontWeight.bold,
-                  //     ),
-                  //   ),
+                  //       backgroundColor: Colors.blue,
+                  //       padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+                  //       foregroundColor: Colors.white,
+                  //       textStyle: const TextStyle(
+                  //           fontSize: 15,
+                  //           fontWeight: FontWeight.bold)),
                   //   onPressed: () {
                   //     var itemsToShow = value.itemDetails?.where(
                   //           (item) => item.filledQty != 0,
                   //     ).toList();
                   //     var receiptId = value.receiptId;
-                  //     var vehicleNo = value.vehicleNo.toString();
-                  //     var receiptDate = value.receiptDate.toString();
-                  //
                   //     if (itemsToShow != null && itemsToShow.isNotEmpty) {
-                  //       // Navigate to the target screen and pass the data
-                  //       Navigator.pushNamed(
-                  //         context,
-                  //         ItemReceiptScreen.screenName,
-                  //         arguments: {
-                  //           'vehicleNo': vehicleNo,
-                  //           'receiptDate': receiptDate,
-                  //           'itemsToShow': itemsToShow,
-                  //         },
-                  //       );
+                  //       showDetailsDialog(context, itemsToShow,receiptId);
                   //     } else {
-                  //       showFlushBar(context, "No Items Available", 'No Items For Return.');
+                  //       showFlushBar(context, "No Items Available",
+                  //           'No Items For Return.');
                   //     }
                   //   },
-                  //   child: Text("Edit"),
-                  // ),
+                  //   child: Text("Out"),
+                  // ):
+                      Text(""),
+                  value.returnOn =="0001-01-01T00:00:00"?
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+                      foregroundColor: Colors.white,
+                      textStyle: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    onPressed: () {
+                      var itemsToShow = value.itemDetails?.toList();
+                      var receiptId = value.receiptId;
+                      var vehicleNo = value.vehicleNo.toString();
+                      var receiptDate = value.receiptDate.toString();
+                      if (itemsToShow != null && itemsToShow.isNotEmpty) {
+                        // Navigate to the target screen and pass the data
+                        Navigator.pushNamed(
+                          context,
+                          ItemReceiptScreen.screenName,
+                          arguments: {
+                            'vehicleNo': vehicleNo,
+                            'receiptDate': receiptDate,
+                            'itemsToShow': itemsToShow,
+                            'modeChange' : "Edit",
+                            'receiptID' : receiptId
 
+                          },
+                        );
+                      } else {
+                        showFlushBar(context, "No Items Available", 'No Items For Return.');
+                      }
+                    },
+                    child: Text("Edit"),
+                  ):
+                  Text(""),
                 ],
               ),
             ),
@@ -114,19 +188,31 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
               fit: FlexFit.loose,  // Allow ListView to take only as much space as it needs
               child: Visibility(
                 visible: isListViewVisible,
-                child: ListView.builder(
+                child:
+                ListView.builder(
                   physics: const BouncingScrollPhysics(),
                   shrinkWrap: true,  // Shrink-wrap ListView to fit within available space
                   itemCount: value.itemDetails?.length,
                   itemBuilder: (context, index) {
                     final item = value.itemDetails![index];
+                    // Find the matching stock info from getCurrentStcOfGodownKeeper list
+                    final stockInfo = getCurrentStcOfGodownKeeper.firstWhere(
+                          (stock) => stock.itemId == item.itemId,
+                      orElse: () => GetCurrentStcOfGodownKeeperModel(), // Default value if not found
+                    );
                     return value.returnOn == "0001-01-01T00:00:00"
                         ? Container(
                       margin: EdgeInsets.all(2.0),
                       child: ListTile(
                         title: Padding(
                           padding: const EdgeInsets.all(5.0),
-                          child: Text("Item name: ${item.itemName}",style: TextStyle(fontWeight:FontWeight.bold)),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Item name: ${item.itemName}",style: TextStyle(fontWeight:FontWeight.bold)),
+                              Text("Current stock: ${stockInfo.currentStkEmpty ?? 0}",style: TextStyle(fontWeight:FontWeight.bold)),
+                            ],
+                          ),
                         ),
                         subtitle: Padding(
                           padding: const EdgeInsets.all(5.0),
@@ -181,7 +267,13 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                       child: ListTile(
                         title: Padding(
                           padding: const EdgeInsets.all(5.0),
-                          child: Text("Item name: ${item.itemName}",style: TextStyle(fontWeight:FontWeight.bold)),
+                          child:
+                          Row(
+                            children: [
+                              Text("Item name: ${item.itemName}",style: TextStyle(fontWeight:FontWeight.bold)),
+                              Text("Current stock: ${stockInfo.currentStkEmpty}",style: TextStyle(fontWeight:FontWeight.bold)),
+                            ],
+                          ),
                         ),
                         subtitle: Padding(
                           padding: const EdgeInsets.all(5.0),
@@ -212,6 +304,9 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                     );
                   },
                 ),
+
+
+
               ),
             ),
             Row(
@@ -239,10 +334,7 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
         Container(
           child:  Text("No data found"),
         );
-
-
   }
-
 
   // void showDetailsDialog(BuildContext context, List<ItemDetails> items) {
   //   showDialog(
@@ -449,6 +541,7 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
       },
     );
   }
+
   Future<void> sendItemDetailsToApi(List<Map<String, dynamic>> itemDetails, num? receiptId) async {
     Constants.isNetworkAvailable =
     await InternetConnectionChecker().hasConnection;
@@ -495,31 +588,59 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
     }
   }
 
-// Function to send data to the API
-//   Future<void> sendItemDetailsToApi(List<Map<String, dynamic>> itemDetails, num? receiptId) async {
-//     SharedPreferences preferences = await SharedPreferences.getInstance();
-//    String DistributorIds = preferences.getString('distributorId').toString();
-//     // Construct the request body
-//     final requestBody = json.encode({
-//       "ReceiptId": receiptId,
-//       "DistributorId": DistributorIds,
-//       "AddedBy": 4,
-//       "ItemDetails": itemDetails,
-//     });
-//
-//     // Send the HTTP POST request
-//     final response = await http.post(
-//       Uri.parse(AppUrl.ItemReturnAddEdit),
-//       headers: {'Content-Type': 'application/json'},
-//       body: requestBody,
-//     );
-//     print("Request requestBody: ${requestBody}");
-//     if (response.statusCode == 200) {
-//       // Handle successful response (for example, show a success message)
-//       print("Request successful: ${response.body}");
-//     } else {
-//       // Handle failure response (for example, show an error message)
-//       print("Request failed: ${response.statusCode}");
-//     }
-//   }
+  Future<void> fetchCurrentStock() async {
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+    if(Constants.isNetworkAvailable){
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? distributorId = prefs.getString('DistributorId');
+      String? godownId = prefs.getString('godownId');
+      String? addedBy = prefs.getString('StaffId');
+      String? godownKeeperId = prefs.getString('godownKeeperId');
+      String? token = prefs.getString('token'); // This is your bearer token
+
+      try {
+        final response = await http.get(
+          Uri.parse('${AppUrl.ItemCurrentStkList}/$distributorId/$godownId'),
+          headers: {
+            'Authorization': 'Bearer $token',  // Add the Bearer token here
+            // Any other headers you need can go here
+          },
+        );
+        // Print the URL and the headers (including the Bearer token)
+        print("Request URL ItemCurrentStkList: ${response.request}");
+        print("Request Headers: {'Authorization': 'Bearer $token'}");
+        // Print the raw response for debugging
+        print("API Response Status ItemCurrentStkList: ${response.statusCode}");
+        print("API Response ItemCurrentStkList: ${response.body}");
+        if (response.statusCode == 200) {
+          final List<dynamic> data = json.decode(response.body);
+          setState(() {
+            getCurrentStcOfGodownKeeper = data.map((json) => GetCurrentStcOfGodownKeeperModel.fromJson(json)).toList();
+            isLoading = false;
+          });
+        } else {
+          // Handle non-200 responses
+          setState(() {
+            isLoading = false;
+          });
+          showFlushBar(context, "Fail",
+              'Unable To Load Data At This Time. Please Try Again');
+        }
+      } catch (e) {
+        setState(() {
+          isLoading = false;
+        });
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(content: Text('Error: $e')),
+        // );
+        showFlushBar(context, "Fail",
+            'Unable To Load Data At This Time. Please Try Again');
+      }
+    }else{
+      showFlushBar(context,Constants.connectionTitle,
+          Constants.connectionMessage);
+    }
+
+  }
 }

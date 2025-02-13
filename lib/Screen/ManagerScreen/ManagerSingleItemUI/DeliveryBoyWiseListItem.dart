@@ -26,7 +26,8 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
   @override
   Widget build(BuildContext context) {
     var sale = widget.filteredSales;
-    return Card(
+    return
+      Card(
                     elevation: 5,
                     margin: EdgeInsets.all(8),
                     shape: RoundedRectangleBorder(

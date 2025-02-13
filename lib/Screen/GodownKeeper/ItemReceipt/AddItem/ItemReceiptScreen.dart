@@ -43,6 +43,8 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
   bool isValid = true;
   var argValue;
   List<ItemDetails> itemsToShow = [];
+  String? modes;
+  int? receiptIds;
 
   @override
   void initState() {
@@ -57,12 +59,31 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
 
     // Set the formatted date as the default value in the TextField
     receiptDateController.text = formattedDate;
-    vehicleNoController.addListener(_validateVehicleNo);
+    // vehicleNoController.addListener(_validateVehicleNo);
     _addNewItem();
     fetchItems();
     // argValue = ModalRoute.of(context)?.settings.arguments as Map;
     // itemsToShow = argValue["itemsToShow"] ?? [];
     // _initializeItems(itemsToShow);
+    vehicleNoController.addListener(_updateButtonState);
+    Future.delayed(Duration.zero, () {
+      setState(() {
+        argValue = ModalRoute.of(context)?.settings.arguments as Map;
+        vehicleNoController.text = argValue?["vehicleNo"] ?? '';
+        modes = argValue?["modeChange"]?? '';
+        receiptIds = argValue["receiptID"]?? 0;
+        if (argValue != null) {
+          final itemsToShow = argValue["itemsToShow"] ?? [];
+          // _initializeItems(itemsToShow);
+          if (itemsToShow.isNotEmpty) {
+            _initializeItems(itemsToShow);
+          } else {
+            // If no initial data, start with an empty list or default values
+            _initializeItems([]);
+          }
+        }
+      });
+    });
   }
 
   // Function to validate vehicle number using a regex
@@ -80,22 +101,32 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
 
   void _addNewItem() {
     setState(() {
+      int newIndex = items.length;
       items.add({
         'selectItem': TextEditingController(),
         'receivedQty': TextEditingController(),
         'emr': TextEditingController(),
         'invoice': TextEditingController(),
       });
+      _selectedItems[newIndex] = '';
     });
   }
+
   // @override
   // void didChangeDependencies() {
   //   super.didChangeDependencies();
-  //
   //   final argValue = ModalRoute.of(context)?.settings.arguments as Map?;
+  //   vehicleNoController.text = argValue?["vehicleNo"] ??'';
+  //   modes = argValue?["modeChange"];
   //   if (argValue != null) {
   //     final itemsToShow = argValue["itemsToShow"] ?? [];
-  //     _initializeItems(itemsToShow);
+  //     // _initializeItems(itemsToShow);
+  //     if (itemsToShow.isNotEmpty) {
+  //       _initializeItems(itemsToShow);
+  //     } else {
+  //       // If no initial data, start with an empty list or default values
+  //       _initializeItems([]);
+  //     }
   //   }
   // }
   // void _initializeItems(List<ItemDetails> itemsToShow) {
@@ -112,25 +143,35 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
   //     }
   //   });
   // }
-  // void _initializeItems(List<ItemDetails> itemsToShow) {
-  //   setState(() {
-  //     items.clear();  // Clear any existing data
-  //     _items; // Load available items
-  //
-  //     for (var item in itemsToShow) {
-  //       // Populate your list of items with TextEditingControllers
-  //       items.add({
-  //         'selectItem': TextEditingController(text: item.itemName ?? ''),
-  //         'receivedQty': TextEditingController(text: item.filledQty?.toString() ?? ''),
-  //         'emr': TextEditingController(text: item.eMRQty?.toString() ?? ''),
-  //         'invoice': TextEditingController(text: item.invoiceQty?.toString() ?? ''),
-  //       });
-  //
-  //       // Track the initial selected item for each index in _selectedItems
-  //       _selectedItems[items.length - 1] = item.itemName;
-  //     }
-  //   });
-  // }
+
+  void _initializeItems(List<ItemDetails> itemsToShow) {
+    setState(() {
+      items.clear(); // Clear any existing data
+      _selectedItems.clear(); // Clear previous selections if any
+
+      for (var i = 0; i < itemsToShow.length; i++) {
+        var item = itemsToShow[i];
+
+        // Add the item with controllers for each field
+        items.add({
+          'selectItem': TextEditingController(text: item.itemName ?? ''),
+          'receivedQty':
+              TextEditingController(text: item.filledQty?.toString() ?? ''),
+          'emr': TextEditingController(text: item.eMRQty?.toString() ?? ''),
+          'invoice':
+              TextEditingController(text: item.invoiceQty?.toString() ?? ''),
+        });
+
+        // Directly assign the selected item name for this index in _selectedItems map
+        _selectedItems[items.length - 1] = item.itemName ??
+            ''; // Ensure this is added correctly for each index
+      }
+
+      // Debugging step to check the number of items
+      print('Items Count: ${items.length}');
+      print('Selected Items: $_selectedItems');
+    });
+  }
 
   void _removeLastItem() {
     if (items.length > 1) {
@@ -140,190 +181,10 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
     }
   }
 
-  // Future<void> _submitData() async {
-  //   // Fetch shared preference values
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? distributorId = prefs.getString('refNo');
-  //   String? godownId = prefs.getString('godownId');
-  //   String? addedBy = prefs.getString('userId');
-  //   String? GodownKeeperId = prefs.getString('godownKeeperId');
-  //
-  //   // Build the JSON object
-  //   Map<String, dynamic> requestBody = {
-  //     'ReceiptId' :1,
-  //     'DistributorId': distributorId,
-  //     'GodownId': godownId,
-  //     'ReceiptDate': receiptDateController.text,
-  //     'VehicleNo': vehicleNoController.text,
-  //     'GodownKeeperId':GodownKeeperId,
-  //     'AddedBy': addedBy,
-  //     'Action':'ADD',
-  //     'ItemDetails': items.map((item) {
-  //       return {
-  //         'ItemId': int.tryParse(item['itemId']?.text ?? '0'),
-  //         'receivedQty': int.tryParse(item['receivedQty']?.text ?? '0'),
-  //         'emr': int.tryParse(item['emr']?.text ?? '0'),
-  //         'invoice': int.tryParse(item['invoice']?.text ?? '0'),
-  //       };
-  //     }).toList(),
-  //   };
-  //   debugPrint(requestBody.toString());
-  // }
-
-  // Future<void> _submitData() async {
-  //   // Fetch shared preference values
-  //   Constants.isNetworkAvailable =
-  //   await InternetConnectionChecker().hasConnection;
-  //   if(Constants.isNetworkAvailable){
-  //     SharedPreferences prefs = await SharedPreferences.getInstance();
-  //     String? distributorId = prefs.getString('DistributorId');
-  //     String? godownId = prefs.getString('godownId');
-  //     String? addedBy = prefs.getString('StaffId');
-  //     String? godownKeeperId = prefs.getString('godownKeeperId');
-  //     String? token = prefs.getString('token');
-  //     // Validate InvoiceQty: Check if it is null, empty, or zero
-  //     // Validate InvoiceQty and Selected Item: Check if they are valid
-  //     if (vehicleNoController.text.isNotEmpty) {
-  //       if (isValid) {
-  //         print('Valid vehicle number');
-  //
-  //         for (var i = 0; i < items.length; i++) {
-  //           String? invoiceQty = items[i]['invoice']?.text ?? '';
-  //           String? selectedItemName = _selectedItems[i];
-  //
-  //           // Check if the selected item is valid (not empty)
-  //           if (selectedItemName == null || selectedItemName.isEmpty) {
-  //             ScaffoldMessenger.of(context).showSnackBar(
-  //               SnackBar(
-  //                   content: Text('Please select a valid item for all entries!')),
-  //             );
-  //             return; // Stop the submission process
-  //           }
-  //
-  //           // Check if InvoiceQty is empty or zero
-  //           if (invoiceQty.isEmpty || double.tryParse(invoiceQty) == 0) {
-  //             ScaffoldMessenger.of(context).showSnackBar(
-  //               SnackBar(content: Text('Invoice quantity cannot be empty or zero!')),
-  //             );
-  //             return; // Stop the submission process
-  //           }
-  //         }
-  //
-  //         List<Map<String, dynamic>> itemDetails = items.map((item) {
-  //           String? selectedItemName = _selectedItems[items.indexOf(item)];
-  //
-  //           CylItemListModel? selectedItem = _items.firstWhere(
-  //                 (model) => model.itemName == selectedItemName,
-  //             // Comparing by itemName
-  //             orElse: () =>
-  //                 CylItemListModel(itemId: 0, itemName: ''), // Default empty item
-  //           );
-  //
-  //           return {
-  //             'ItemId': selectedItem.itemId ?? '',
-  //             // Use the selected itemId, or empty if not selected
-  //             'FilledQty': item['receivedQty']?.text ?? '',
-  //             'EMRQty': item['emr']?.text ?? '',
-  //             'InvoiceQty': item['invoice']?.text ?? '',
-  //           };
-  //         }).toList();
-  //         // Build the full JSON object
-  //         Map<String, dynamic> requestBody = {
-  //           'ReceiptId': 0,
-  //           'DistributorId': distributorId,
-  //           'GodownId': godownId,
-  //           'ReceiptDate': receiptDateController.text,
-  //           'VehicleNo': vehicleNoController.text,
-  //           'GodownKeeperId': godownKeeperId,
-  //           'AddedBy': addedBy,
-  //           'Action': 'ADD',
-  //           'ItemDetails': itemDetails,
-  //         };
-  //
-  //         // Convert the map to a JSON string
-  //         String jsonRequestBody = jsonEncode(requestBody);
-  //         debugPrint(jsonRequestBody);
-  //         // Define the API URL
-  //
-  //         try {
-  //           // Send POST request to the API
-  //           final response = await http.post(
-  //             Uri.parse(AppUrl.ItemReceiptAddEdit),
-  //             headers: {
-  //               'Content-Type': 'application/json',
-  //               'Authorization': 'Bearer $token',
-  //             },
-  //             body: jsonRequestBody,
-  //           );
-  //
-  //           // Check the response status
-  //           if (response.statusCode == 200) {
-  //             // If the server returns a 200 OK response, print the response body.
-  //             debugPrint('Response: ${response.body}');
-  //             int responseValue = int.tryParse(response.body) ?? 0;
-  //             if (responseValue > 0) {
-  //               ScaffoldMessenger.of(context).showSnackBar(
-  //                 SnackBar(content: Text('Added successfully!')),
-  //               );
-  //               // Clear the fields after successful submission
-  //               setState(() {
-  //                 // Reset the controllers for text fields
-  //                 vehicleNoController.clear();
-  //
-  //                 // Reset the items list and selected items
-  //                 items.forEach((item) {
-  //                   item['receivedQty']?.clear();
-  //                   item['emr']?.clear();
-  //                   item['invoice']?.clear();
-  //                 });
-  //
-  //                 // Clear the selected items
-  //                 _selectedItems.clear();
-  //               });
-  //             } else {
-  //               ScaffoldMessenger.of(context).showSnackBar(
-  //                 SnackBar(content: Text('Fail to insert record!')),
-  //               );
-  //             }
-  //             // Handle the success case (e.g., show a success message)
-  //           } else {
-  //             refreshTokens();
-  //             ScaffoldMessenger.of(context).showSnackBar(
-  //               SnackBar(
-  //                   content: Text('Fail to insert record! ${response.statusCode}')),
-  //             );
-  //             // If the server does not return a 200 OK response, throw an exception.
-  //             throw Exception('Failed to load data: ${response.statusCode}');
-  //           }
-  //         } catch (e) {
-  //           // Handle any errors (e.g., network issues, timeouts, etc.)
-  //           debugPrint('Error: $e');
-  //           ScaffoldMessenger.of(context).showSnackBar(
-  //             SnackBar(content: Text('Fail to insert record! $e')),
-  //           );
-  //           // You can also show an error dialog or message to the user here.
-  //         }
-  //       } else {
-  //         print('Invalid vehicle number');
-  //         ScaffoldMessenger.of(context).showSnackBar(
-  //           SnackBar(content: Text('Invalid vehicle number..!')),
-  //         );
-  //       }
-  //     }else{
-  //       print('eInvalid vehicle number');
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //         SnackBar(content: Text('Invalid vehicle number..!')),
-  //       );
-  //     }
-  //   }else{
-  //     showFlushBar(context,Constants.connectionTitle,
-  //         Constants.connectionMessage);
-  //   }
-  //
-  // }
   Future<void> _submitData() async {
     // Fetch shared preference values
-    Constants.isNetworkAvailable = await InternetConnectionChecker().hasConnection;
+    Constants.isNetworkAvailable =
+        await InternetConnectionChecker().hasConnection;
     if (Constants.isNetworkAvailable) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? distributorId = prefs.getString('DistributorId');
@@ -333,8 +194,8 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
       String? token = prefs.getString('token');
 
       if (vehicleNoController.text.isNotEmpty) {
-        if (isValid) {
-          print('Valid vehicle number');
+        // if (isValid) {
+        //   print('Valid vehicle number');
 
           for (var i = 0; i < items.length; i++) {
             String? invoiceQty = items[i]['invoice']?.text ?? '';
@@ -355,20 +216,28 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                   'At Least One Quantity Is Required!');
               return; // Stop the submission process
             }
-            if((filledQty.isEmpty||double.tryParse(filledQty) == 0) &&
-                (emrQty.isEmpty||double.tryParse(emrQty) == 0)){
+            if ((filledQty.isEmpty || double.tryParse(filledQty) == 0) &&
+                (emrQty.isEmpty || double.tryParse(emrQty) == 0)) {
               showFlushBar(context, "RequiredOne Quantity",
                   'At Least One Quantity Is Required!');
               return;
             }
           }
-
+          String action;
+          int? rId;
+          if (modes == "Edit") {
+            action = "EDIT";
+            rId = receiptIds;
+          } else {
+            action = "ADD";
+            rId = 0;
+          }
           // Check for duplicate items in the list
           Set<int> itemIds = {};
           for (var i = 0; i < items.length; i++) {
             String? selectedItemName = _selectedItems[i];
             CylItemListModel? selectedItem = _items.firstWhere(
-                  (model) => model.itemName == selectedItemName,
+              (model) => model.itemName == selectedItemName,
               orElse: () => CylItemListModel(itemId: 0, itemName: ''),
             );
 
@@ -376,8 +245,8 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
             if (selectedItem.itemId != null && selectedItem.itemId != 0) {
               int itemId = selectedItem.itemId!.toInt(); // Convert num to int
               if (itemIds.contains(itemId)) {
-                showFlushBar(context, "Already Exists",
-                    'This Item Already Exists');
+                showFlushBar(
+                    context, "Already Exists", 'This Item Already Exists');
                 return; // Stop the submission process
               }
               itemIds.add(itemId);
@@ -388,7 +257,7 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
             String? selectedItemName = _selectedItems[items.indexOf(item)];
 
             CylItemListModel? selectedItem = _items.firstWhere(
-                  (model) => model.itemName == selectedItemName,
+              (model) => model.itemName == selectedItemName,
               orElse: () => CylItemListModel(itemId: 0, itemName: ''),
             );
 
@@ -402,14 +271,14 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
 
           // Build the full JSON object
           Map<String, dynamic> requestBody = {
-            'ReceiptId': 0,
+            'ReceiptId': rId,
             'DistributorId': distributorId,
             'GodownId': godownId,
             'ReceiptDate': receiptDateController.text,
             'VehicleNo': vehicleNoController.text,
             'GodownKeeperId': godownKeeperId,
             'AddedBy': addedBy,
-            'Action': 'ADD',
+            'Action': action,
             'ItemDetails': itemDetails,
           };
 
@@ -425,7 +294,7 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
               },
               body: jsonRequestBody,
             );
-
+            debugPrint('jsonRequestBody: ${jsonRequestBody}');
             if (response.statusCode == 200) {
               debugPrint('Response: ${response.body}');
               int responseValue = int.tryParse(response.body) ?? 0;
@@ -443,54 +312,54 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                   _selectedItems.clear();
                 });
               } else {
-                showFlushBar(context, "Already Exists",
-                    'Record Already Exists!');
+                showFlushBar(
+                    context, "Fail", 'Fail To Insert Record!');
               }
             } else {
               refreshTokens();
-              showFlushBar(context, "Already Exists",
-                  'Record Already Exists!');
-              throw Exception('Unable To Load Data At This Time. Please Try Again');
+              showFlushBar(context, "Already Exists", 'Record Already Exists!');
+              throw Exception(
+                  'Unable To Load Data At This Time. Please Try Again');
             }
           } catch (e) {
             debugPrint('Error: $e');
-            showFlushBar(context, "Already Exists",
-                'Record Already Exists!');
+            showFlushBar(context, "Already Exists", 'Record Already Exists!');
           }
-        } else {
-          showFlushBar(context, "Invalid Vehicle Number",
-              'Please Enter a Valid Vehicle Number!');
-        }
+        // } else {
+        //   showFlushBar(context, "Invalid Vehicle Number",
+        //       'Please Enter a Valid Vehicle Number!');
+        // }
       } else {
         showFlushBar(context, "Invalid Vehicle Number",
             'Please Enter a Valid Vehicle Number!');
       }
     } else {
-      showFlushBar(context, Constants.connectionTitle, Constants.connectionMessage);
+      showFlushBar(
+          context, Constants.connectionTitle, Constants.connectionMessage);
     }
   }
 
   // Fetch data from API
   Future<void> fetchItems() async {
     Constants.isNetworkAvailable =
-    await InternetConnectionChecker().hasConnection;
-    if(Constants.isNetworkAvailable){
+        await InternetConnectionChecker().hasConnection;
+    if (Constants.isNetworkAvailable) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? distributorId = prefs.getString('DistributorId');
       String? bearerToken =
-      prefs.getString('token'); // Assuming the token is stored here
+          prefs.getString('token'); // Assuming the token is stored here
 
       if (bearerToken == null) {
         throw Exception('Bearer Token Is Missing');
       }
 
       final response = await http.get(
-        Uri.parse('${AppUrl.GetItemMasterList}/$distributorId/0/C'),
+        Uri.parse('${AppUrl.GetItemMasterList}/$distributorId/1/C'),
         headers: {
           'Authorization': 'Bearer $bearerToken', // Add Bearer token here
         },
       );
-      debugPrint("item" + '${AppUrl.GetItemMasterList}/$distributorId/0/C');
+      debugPrint("item" + '${AppUrl.GetItemMasterList}/$distributorId/1/C');
       debugPrint("item" + response.body);
       if (response.statusCode == 200) {
         // Parse the response
@@ -502,20 +371,25 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
         refreshTokens();
         throw Exception('Unable To Load Data At This Time. Please Try Again');
       }
-    }else{
-      showFlushBar(context,Constants.connectionTitle,
-          Constants.connectionMessage);
+    } else {
+      showFlushBar(
+          context, Constants.connectionTitle, Constants.connectionMessage);
     }
   }
+
 // Function to check if items are available for selection
   bool get _isAddNewItemEnabled {
     // Check if there are any available items that haven't been selected yet
     return _items.any((item) => !_selectedItems.values.contains(item.itemName));
   }
+  void _updateButtonState() {
+    setState(() {});  // Trigger a rebuild when text changes
+  }
   @override
   void dispose() {
     receiptDateController.dispose();
-    vehicleNoController.removeListener(_validateVehicleNo);
+    vehicleNoController.removeListener(_updateButtonState);
+    // vehicleNoController.removeListener(_validateVehicleNo);
     vehicleNoController.dispose();
     // Dispose controllers to avoid memory leaks
     for (var item in items) {
@@ -550,7 +424,6 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
           return false;
         } // In case `null` is returned, return `false`
       },
-
       child: Scaffold(
         appBar: CustomAppBar(
           title: 'Item Receipt', // Title or hint text for the text field
@@ -578,7 +451,7 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                   Expanded(
                     child: TextField(
                       controller: vehicleNoController,
-                      decoration:InputDecoration(
+                      decoration: InputDecoration(
                         label: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: const [
@@ -586,7 +459,9 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                               'Vehicle No.',
                               style: TextStyle(fontSize: 12),
                             ),
-                            SizedBox(width: 4), // Add some space between the text and the icon
+
+                            SizedBox(width: 4),
+                            // Add some space between the text and the icon
                             Icon(
                               Icons.star, // Use a star or any other icon
                               color: Colors.red, // Set the icon color to red
@@ -595,12 +470,15 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                           ],
                         ),
                         border: const OutlineInputBorder(),
-                        errorText: isValid
-                            ? null
-                            : 'Invalid Vehicle Number.',
-                        contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                        // errorText: isValid ? null : 'Invalid Vehicle Number.',
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
                       ),
                       textCapitalization: TextCapitalization.words,
+                      inputFormatters: <TextInputFormatter>[
+                        LengthLimitingTextInputFormatter(11),
+                        // Allow only digits
+                      ],
                       // InputDecoration(
                       //   labelText: 'Vehicle No.',
                       //   border: OutlineInputBorder(),
@@ -626,12 +504,14 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                   ElevatedButton(
                     onPressed: _isAddNewItemEnabled ? _addNewItem : null,
                     // onPressed: _addNewItem,
-                    child: Icon(Icons.add,color: Colors.white,),
-                    style: ElevatedButton.styleFrom(
-                      shape: CircleBorder(),
-                      padding: EdgeInsets.all(12),
-                      backgroundColor: Colors.blue
+                    child: Icon(
+                      Icons.add,
+                      color: Colors.white,
                     ),
+                    style: ElevatedButton.styleFrom(
+                        shape: CircleBorder(),
+                        padding: EdgeInsets.all(12),
+                        backgroundColor: Colors.blue),
                   ),
                   SizedBox(width: 8),
                   // ElevatedButton(
@@ -649,113 +529,113 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
 
               // Dynamically added sections
               Expanded(
-                child:
-                ListView.builder(
+                child: ListView.builder(
                   itemCount: items.length,
                   itemBuilder: (context, index) {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 16.0),
                       child: Column(
                         children: [
-                          // Select Item Dropdown
-                          // DropdownButtonFormField<String>(
-                          //   decoration: InputDecoration(
-                          //     labelText: 'Select Item',
-                          //     border: OutlineInputBorder(),
-                          //   ),
-                          //   items: _items.map((CylItemListModel item) {
-                          //     return DropdownMenuItem<String>(
-                          //       value: item.itemName,
-                          //       child: Text(item.itemName ?? 'Unknown'),
-                          //     );
-                          //   }).toList(),
-                          //   onChanged: (value) {
-                          //     setState(() {
-                          //       // Store the selected value in the map based on the current index
-                          //       _selectedItems[index] = value;
-                          //       debugPrint('selecyt' + _selectedItems.toString());
-                          //
-                          //       // Track selection by index
-                          //     });
-                          //     // You can use this value to update any model or perform further logic
-                          //   },
-                          //   value: _selectedItems[index],
-                          // ),
-
                           Row(
                             children: [
                               Expanded(
                                 child:
-                                // DropdownButtonFormField<String>(
-                                //   decoration: InputDecoration(
-                                //     labelText: 'Select Item',
-                                //     border: OutlineInputBorder(),
-                                //   ),
-                                //   items: _items.map((CylItemListModel item) {
-                                //     return DropdownMenuItem<String>(
-                                //       value: item.itemName,
-                                //       child: Text(item.itemName ?? 'Unknown'),
-                                //     );
-                                //   }).toList(),
-                                //   onChanged: (value) {
-                                //     setState(() {
-                                //       // Store the selected value in the map based on the current index
-                                //       _selectedItems[index] = value;
-                                //       debugPrint('Selected: ' + _selectedItems.toString());
-                                //     });
-                                //   },
-                                //   value: _selectedItems[index],
-                                // ),
 
-                                  DropdownButtonFormField<String>(
-                                    decoration:
-                                    InputDecoration(
-                                      label: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: const [
-                                          Text(
-                                            'Select Item',
-                                            style: TextStyle(fontSize: 12),
-                                          ),
-                                          SizedBox(width: 4), // Add some space between the text and the icon
-                                          Icon(
-                                            Icons.star, // Use a star or any other icon
-                                            color: Colors.red, // Set the icon color to red
-                                            size: 10, // Adjust the size of the icon
-                                          ),
-                                        ],
-                                      ),
-                                      border: const OutlineInputBorder(),
-                                      contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                                    ///working
+//                                   DropdownButtonFormField<String>(
+//                                     decoration:
+//                                     InputDecoration(
+//                                       label: Row(
+//                                         mainAxisSize: MainAxisSize.min,
+//                                         children: const [
+//                                           Text(
+//                                             'Select Item',
+//                                             style: TextStyle(fontSize: 12),
+//                                           ),
+//                                           SizedBox(width: 4), // Add some space between the text and the icon
+//                                           Icon(
+//                                             Icons.star, // Use a star or any other icon
+//                                             color: Colors.red, // Set the icon color to red
+//                                             size: 10, // Adjust the size of the icon
+//                                           ),
+//                                         ],
+//                                       ),
+//                                       border: const OutlineInputBorder(),
+//                                       contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+//                                     ),
+//                                     items: _items
+//                                         .where((item) => !_selectedItems.values.contains(item.itemName) || _selectedItems[index] == item.itemName)
+//                                         .map((CylItemListModel item) {
+//                                       return DropdownMenuItem<String>(
+//                                         value: item.itemName,
+//                                         child: Text(item.itemName ?? 'Unknown'),
+//                                       );
+//                                     }).toList(),
+//                                     onChanged: (value) {
+//                                       setState(() {
+//                                         // Update the selected value for the current dropdown
+//                                         _selectedItems[index] = value;
+//                                         // items[index]['selectItem']?.text = value ?? '';
+//                                         // debugPrint('Selected: ' + _selectedItems.toString());
+//                                         // if (_items.any((item) => item.itemName == value)) {
+//                                         //   _selectedItems[index] = value;
+//                                         //   items[index]['selectItem']?.text = value ?? '';
+//                                         // }
+//                                       });
+//                                     },
+//                                     value: _selectedItems[index],
+//                                     // value: _selectedItems[index] == null || !_items.any((item) => item.itemName == _selectedItems[index])
+//                                     //     ? null // Set null if value doesn't match any available item
+//                                     //     : _selectedItems[index],
+//                                   )
+                                    DropdownButtonFormField<String>(
+                                  decoration: InputDecoration(
+                                    label: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: const [
+                                        Text('Select Item',
+                                            style: TextStyle(fontSize: 12)),
+                                        SizedBox(width: 4),
+                                        Icon(Icons.star,
+                                            color: Colors.red, size: 10),
+                                      ],
                                     ),
-                                    items: _items
-                                        .where((item) => !_selectedItems.values.contains(item.itemName) || _selectedItems[index] == item.itemName)
-                                        .map((CylItemListModel item) {
-                                      return DropdownMenuItem<String>(
-                                        value: item.itemName,
-                                        child: Text(item.itemName ?? 'Unknown'),
-                                      );
-                                    }).toList(),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        // Update the selected value for the current dropdown
-                                        // _selectedItems[index] = value;
-                                        // items[index]['selectItem']?.text = value ?? '';
-                                        // debugPrint('Selected: ' + _selectedItems.toString());
-                                        if (_items.any((item) => item.itemName == value)) {
-                                          _selectedItems[index] = value;
-                                          items[index]['selectItem']?.text = value ?? '';
-                                        }
-                                      });
-                                    },
-                                    // value: _selectedItems[index],
-                                    value: _selectedItems[index] == null || !_items.any((item) => item.itemName == _selectedItems[index])
-                                        ? null // Set null if value doesn't match any available item
-                                        : _selectedItems[index],
+                                    border: const OutlineInputBorder(),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 8.0, horizontal: 12.0),
                                   ),
-
+                                  // Filtering out selected items so they are not shown again in the dropdown
+                                  items: _items
+                                      .where((item) =>
+                                          !_selectedItems.values
+                                              .contains(item.itemName) ||
+                                          _selectedItems[index] ==
+                                              item.itemName)
+                                      .toSet() // Removing duplicates if any
+                                      .map((CylItemListModel item) {
+                                    return DropdownMenuItem<String>(
+                                      value: item.itemName,
+                                      child: Text(item.itemName ?? 'Unknown'),
+                                    );
+                                  }).toList(),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      // Update the selected value for the current dropdown
+                                      _selectedItems[index] = value ?? '';
+                                    });
+                                  },
+                                  // value: _selectedItems[index]!.isEmpty
+                                  //     ? null
+                                  //     : _selectedItems[index],
+                                        value: _selectedItems[index]?.isEmpty ?? true
+                                            ? null // If the value is null or empty, set to null
+                                            : _selectedItems[index],
+                                ),
                               ),
-                              SizedBox(width: 20,),
+
+                              SizedBox(
+                                width: 20,
+                              ),
                               // Remove Button for this item
                               // IconButton(
                               //   icon: Icon(Icons.remove,size: 30,),
@@ -765,10 +645,10 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                               //   color: Colors.red,
                               // ),
                               ElevatedButton(
-                                onPressed: (){
+                                onPressed: () {
                                   _removeItem(index);
                                 },
-                                child: Icon(Icons.remove,color: Colors.red),
+                                child: Icon(Icons.remove, color: Colors.red),
                                 style: ElevatedButton.styleFrom(
                                   shape: CircleBorder(),
                                   padding: EdgeInsets.all(12),
@@ -790,8 +670,7 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                                     LengthLimitingTextInputFormatter(3),
                                     // Allow only digits
                                   ],
-                                  decoration:
-                                  InputDecoration(
+                                  decoration: InputDecoration(
                                     label: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: const [
@@ -799,16 +678,11 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                                           'Filled',
                                           style: TextStyle(fontSize: 12),
                                         ),
-                                        // SizedBox(width: 4), // Add some space between the text and the icon
-                                        // Icon(
-                                        //   Icons.star, // Use a star or any other icon
-                                        //   color: Colors.red, // Set the icon color to red
-                                        //   size: 10, // Adjust the size of the icon
-                                        // ),
                                       ],
                                     ),
                                     border: const OutlineInputBorder(),
-                                    contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 8.0, horizontal: 12.0),
                                   ),
                                   onChanged: (value) {
                                     // Update the sum when the value changes
@@ -826,8 +700,7 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                                     LengthLimitingTextInputFormatter(3),
                                     // Allow only digits
                                   ],
-                                  decoration:
-                                  InputDecoration(
+                                  decoration: InputDecoration(
                                     label: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: const [
@@ -835,16 +708,11 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                                           'EMR',
                                           style: TextStyle(fontSize: 12),
                                         ),
-                                        // SizedBox(width: 4), // Add some space between the text and the icon
-                                        // Icon(
-                                        //   Icons.star, // Use a star or any other icon
-                                        //   color: Colors.red, // Set the icon color to red
-                                        //   size: 10, // Adjust the size of the icon
-                                        // ),
                                       ],
                                     ),
                                     border: const OutlineInputBorder(),
-                                    contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 8.0, horizontal: 12.0),
                                   ),
                                   onChanged: (value) {
                                     // Update the sum when the value changes
@@ -862,27 +730,31 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                                     LengthLimitingTextInputFormatter(3),
                                     // Allow only digits
                                   ],
-                                  decoration:
-                                  InputDecoration(
-                                    label: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: const [
-                                        Text(
-                                          'Invoice',
-                                          style: TextStyle(fontSize: 12),
-                                        ),
-                                        SizedBox(width: 4), // Add some space between the text and the icon
-                                        Icon(
-                                          Icons.star, // Use a star or any other icon
-                                          color: Colors.red, // Set the icon color to red
-                                          size: 10, // Adjust the size of the icon
-                                        ),
-                                      ],
-                                    ),
-                                    border: const OutlineInputBorder(),
-                                    contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                                    enabled: false
-                                  ),
+                                  decoration: InputDecoration(
+                                      label: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: const [
+                                          Text(
+                                            'Invoice',
+                                            style: TextStyle(fontSize: 12),
+                                          ),
+                                          SizedBox(width: 4),
+                                          // Add some space between the text and the icon
+                                          Icon(
+                                            Icons.star,
+                                            // Use a star or any other icon
+                                            color: Colors.red,
+                                            // Set the icon color to red
+                                            size:
+                                                10, // Adjust the size of the icon
+                                          ),
+                                        ],
+                                      ),
+                                      border: const OutlineInputBorder(),
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              vertical: 8.0, horizontal: 12.0),
+                                      enabled: false),
                                 ),
                               ),
                             ],
@@ -899,38 +771,38 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                 margin: const EdgeInsets.symmetric(horizontal: 10),
                 // Add 10px margin on left and right
                 child: Center(
-                  child:
-                  ElevatedButton(
+                  child: ElevatedButton(
                     onPressed:
-                    // _submitData,
+                        // _submitData,
                         () {
                       if (vehicleNoController.text.isNotEmpty) {
-                        if (isValid) {
-
+                        // if (isValid) {
                           setState(() {
                             _submitData();
                           });
-                          print('Valid vehicle number');
-                        } else {
-                          print('Invalid vehicle number');
-                        }
-                      }else{
+                          // print('Valid vehicle number');
+                        // } else {
+                        //   print('Invalid vehicle number');
+                        // }
+                      } else {
                         print('Invalid vehicle number');
                       }
                     },
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 20.0,right: 20,top: 12,bottom: 12),
+                      padding: const EdgeInsets.only(
+                          left: 20.0, right: 20, top: 12, bottom: 12),
                       child: const Text(
                         'Submit',
                         style: TextStyle(
-                            color: Colors.white), // Set text color directly if needed
+                            color: Colors
+                                .white), // Set text color directly if needed
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor:
-                      ((vehicleNoController.text.isNotEmpty) &&(isValid))?
-                      Colors.blue:
-                      Colors.grey,
+                          vehicleNoController.text.isNotEmpty
+                              ? Colors.blue
+                              : Colors.grey,
                       // Button expands to fill available width// Text color of the button
                       shape: RoundedRectangleBorder(
                         // Optional: Set rounded corners
@@ -966,8 +838,8 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
         double totalSum = 0 + emr;
         items[index]['invoice']?.text = totalSum.toInt().toString();
       } else {
-        showFlushBar(context, "Enter Quantity",
-            'At Least One Quantity Is Required!');
+        showFlushBar(
+            context, "Enter Quantity", 'At Least One Quantity Is Required!');
       }
     }
   }
@@ -1097,6 +969,7 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
       debugPrint("LogoutPrefEcx: $error");
     }
   }
+
 // Remove item at a specific index
 //   void _removeItem(int index) {
 //     setState(() {
@@ -1129,7 +1002,8 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
       _selectedItems = Map.fromEntries(
         _selectedItems.entries.map((entry) {
           return entry.key > index
-              ? MapEntry(entry.key - 1, entry.value) // Shift keys down after the removed index
+              ? MapEntry(entry.key - 1,
+                  entry.value) // Shift keys down after the removed index
               : entry;
         }),
       );

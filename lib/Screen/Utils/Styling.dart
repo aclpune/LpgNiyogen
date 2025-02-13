@@ -62,6 +62,14 @@ class Styling {
       fontFamily: 'OpenSans',
       color: Colors.black);
 
+  static final TextStyle bodyTitleBig = TextStyle(
+      fontSize:
+      2.15 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
+
+      fontWeight: FontWeight.bold,
+      color: Colors.black);
+
+
   static final TextStyle redStar = TextStyle(
       fontSize:
       1.50 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
@@ -88,6 +96,18 @@ class Styling {
       fontFamily: 'OpenSans',
       color: Colors.black);
 
+  static final TextStyle countNumberReds = TextStyle(
+      fontSize:
+      2.07 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
+      fontFamily: 'OpenSans',
+      color: Colors.black);
+
+  static final TextStyle countNumberGreen = TextStyle(
+      fontSize:
+      2.07 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
+      fontFamily: 'OpenSans',
+      color: Colors.blueGrey);
+
   static final TextStyle countText = TextStyle(
       fontSize:
           2.07 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
@@ -109,6 +129,15 @@ class Styling {
   static final TextStyle textFormText = TextStyle(
     color: Colors.black,
     fontFamily: 'OpenSans',
+    fontSize: 1.8 * SizeConfig.textMultiplier!, // Size = 16-- [14/8.66] = 1.8
+  );
+
+  static final TextStyle textFormTextWithUnderline = TextStyle(
+    color: Colors.black,
+    fontFamily: 'OpenSans',
+    decoration:
+    TextDecoration.underline,
+    decorationColor: Colors.blue,
     fontSize: 1.8 * SizeConfig.textMultiplier!, // Size = 16-- [14/8.66] = 1.8
   );
 
@@ -135,6 +164,11 @@ class Styling {
           1.8 * SizeConfig.textMultiplier!, // Size = 16-- [18/8.66] = 2.07
       fontFamily: 'OpenSans');
 
+  static final TextStyle hintTextSmall = TextStyle(
+      fontSize:
+      1.4 * SizeConfig.textMultiplier!, // Size = 16-- [18/8.66] = 2.07
+      fontFamily: 'OpenSans');
+
   static final TextStyle itemGreyText = TextStyle(
       fontSize: 1.8 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
       fontFamily: 'OpenSans',
@@ -152,6 +186,7 @@ class Styling {
     fontSize: 1.8 * SizeConfig.textMultiplier!,
   );
 
+
   static final TextStyle itemGreenText = TextStyle(
     fontFamily: 'OpenSans',
     color: Colors.green,
@@ -167,6 +202,15 @@ class Styling {
   static final TextStyle blueClrText = TextStyle(
     color: const Color(0xff1280b3),
     fontFamily: 'OpenSans',
+    fontSize: 1.8 * SizeConfig.textMultiplier!, // Size = 16-- [18/8.66] = 1.0
+  );
+
+  static final TextStyle blueClrTextWithUnderline = TextStyle(
+    color: const Color(0xff1280b3),
+    fontFamily: 'OpenSans',
+    decoration:
+    TextDecoration.underline,
+    decorationColor: Colors.blue,
     fontSize: 1.8 * SizeConfig.textMultiplier!, // Size = 16-- [18/8.66] = 1.0
   );
 

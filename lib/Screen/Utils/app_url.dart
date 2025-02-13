@@ -3,7 +3,6 @@ class AppUrl {
   // static const String baseUrl = 'https://20.193.149.194/lpgniyojanapi'; // UAT Client
   // static const String baseUrl = 'https://20.193.149.194/lpgniyojanuatapi'; // UAT New Development
 
-
   ///Log in
   // static const String login = '$baseUrl/Login/LoginUser';
   static const String login = '$baseUrl/Login/GetLoginDetails';
@@ -23,6 +22,11 @@ class AppUrl {
   static const String ItemImbalanceQtyAddEdit = '$baseUrl/GodownKeeper/ItemImbalanceQtyAddEdit';
   static const String TodaysOpeningStkForGK = '$baseUrl/GodownKeeper/TodaysOpeningStkForGK';
   static const String ImbalanceAsOfDateStkForGK = '$baseUrl/GodownKeeper/ImbalanceAsOfDateStkForGK';
+  static const String ItemCurrentStkList = '$baseUrl/GodownKeeper/ItemCurrentStkList';
+  static const String GetDeliveryBoyListForMob = '$baseUrl/GodownKeeper/GetDeliveryBoyListForMob';
+  static const String GetGodownMasterList = '$baseUrl/Masters/GetGodownMasterList';
+  static const String SaveGodownStockTransferDtls = '$baseUrl/GodownKeeper/SaveGodownStockTransferDtls';
+  static const String GetStockTransferDtls = '$baseUrl/GodownKeeper/GetStockTransferDtls';
 
   ///maager
   static const String GetDailySaleSummaryListDMWiseForMob = '$baseUrl/DailyStockCash/GetDailySaleSummaryListDMWiseForMob';
@@ -35,5 +39,7 @@ class AppUrl {
   static const String ExpenseDetailsAddEdit = '$baseUrl/DailyStockCash/ExpenseDetailsAddEdit';
   static const String GetExpenseDetailsListByStaffId = '$baseUrl/DailyStockCash/GetExpenseDetailsListByStaffId';
   static const String GetCashDenominationItemList = '$baseUrl/Masters/GetCashDenominationItemList';
+  static const String GetMobDashboardSummaryForMgr = '$baseUrl/Dashboard/GetMobDashboardSummaryForMgr';
+  static const String InventoryCurrentStockDtlsForMobDash = '$baseUrl/Dashboard/InventoryCurrentStockDtlsForMobDash';
 
 }

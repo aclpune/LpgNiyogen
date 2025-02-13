@@ -18,6 +18,14 @@ Widget verticalDividerVerySmall() {
     color: Colors.black, // Color of the line
   );
 }
+Widget verticalDividerSmallest() {
+  return  Container(
+    width: 1.0, // Width of the vertical line
+    height: 20.0, // Height of the vertical line
+    color: Colors.black, // Color of the line
+  );
+}
+
 Widget verticalDividerBig() {
   return  Container(
     width: 1.0, // Width of the vertical line
@@ -81,4 +89,160 @@ Widget textWidgetBlueColorWithStar(String title,String star) {
     ),
 
   );
+}
+Widget textWidgetBlueColorWithoutStar(String title) {
+  return Container(
+    margin: const EdgeInsets.only(left: 4),
+    child: Row(
+      children: [
+        Text(title, style: Styling.blueClrText,),
+      ],
+    ),
+
+  );
+}
+
+Widget itemSubLine(String greyText, String blackText) {
+  return Container(
+    padding: EdgeInsets.only(
+        left: 2.4 * SizeConfig.widthMultiplier!,
+        right: 2.4 * SizeConfig.widthMultiplier!),
+    child: Row(
+      children: <Widget>[
+        Flexible(
+          flex: 2,
+          fit: FlexFit.tight,
+          child: Text(
+            greyText,
+            style: Styling.itemGreyText,
+          ),
+        ),
+        Text(
+          " :  ",
+          style: Styling.itemGreyText,
+        ),
+        Flexible(
+          flex: 3,
+          fit: FlexFit.tight,
+          child: Text(
+            blackText,
+            style: Styling.itemBlackTest,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget itemSubLineLeftBig(String greyText, String blackText) {
+  return Container(
+    padding: EdgeInsets.only(
+        left: 2.8 * SizeConfig.widthMultiplier!,
+        right: 2.4 * SizeConfig.widthMultiplier!),
+    child: Row(
+      children: <Widget>[
+        Flexible(
+          flex: 3,
+          fit: FlexFit.tight,
+          child: Text(
+            greyText,
+            style: Styling.itemGreyText,
+          ),
+        ),
+        Text(
+          " :  ",
+          style: Styling.itemGreyText,
+        ),
+        Flexible(
+          flex: 3,
+          fit: FlexFit.tight,
+          child: Text(
+            blackText,
+            style: Styling.itemBlackTest,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget itemSubLineWithBlackAndBlue(String greyText, String blackText) {
+  return Container(
+    padding: EdgeInsets.only(
+        left: 2.4 * SizeConfig.widthMultiplier!,
+        right: 2.4 * SizeConfig.widthMultiplier!),
+    child: Row(
+      children: <Widget>[
+        Flexible(
+          flex: 2,
+          fit: FlexFit.tight,
+          child: Text(
+            greyText,
+            style: Styling.itemGreyText,
+          ),
+        ),
+        Text(
+          " :  ",
+          style: Styling.itemGreyText,
+        ),
+        Flexible(
+          flex: 3,
+          fit: FlexFit.tight,
+          child: Text(
+            blackText,
+            style: Styling.bodyTitleWithBlue,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget itemSubLineWithDD(String greyText, String blackText) {
+  return
+    Container(
+    padding: EdgeInsets.only(
+        left: 2.4 * SizeConfig.widthMultiplier!,
+        right: 2.4 * SizeConfig.widthMultiplier!),
+    child: Row(
+      children: <Widget>[
+        Flexible(
+          flex: 2,
+          fit: FlexFit.tight,
+          child: Text(
+            greyText,
+            style: Styling.itemGreyText,
+          ),
+        ),
+        Text(
+          " :  ",
+          style: Styling.itemGreyText,
+        ),
+        Flexible(
+          flex: 2,
+          fit: FlexFit.tight,
+          child: Text(
+            blackText,
+            style: Styling.itemBlackTest,
+          ),
+        ),
+        Flexible(
+          flex: 1,
+          fit: FlexFit.tight,
+          child:Icon(Icons.arrow_drop_down)
+        ),
+      ],
+    ),
+  );
+}
+
+InputDecoration buildInputBorderUpdateStatus(
+    String hintText, BuildContext context) {
+  return InputDecoration(
+      hintText: hintText,
+      hintStyle: Styling.hintTextSmall,
+      enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey.shade100, width: 0.0)),
+      contentPadding: EdgeInsets.all(1.2 * SizeConfig.heightMultiplier!),
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)));
 }

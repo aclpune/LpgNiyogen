@@ -5,7 +5,9 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
 
 import 'Screen/GodownKeeper/DashboardScreen.dart';
+import 'Screen/GodownKeeper/DelBoyStockReturn/DeliveryMenListShowScreen.dart';
 import 'Screen/GodownKeeper/DelBoyStockReturn/StockReturnFromDelBoy.dart';
+import 'Screen/GodownKeeper/DelBoyStockReturn/StockTransferToGodownScreen.dart';
 import 'Screen/GodownKeeper/DelBoyStockSubmitToManager/StockSubmitToManager.dart';
 import 'Screen/GodownKeeper/DeliveryBoyModel/StockSubmitToManagerListModel.dart';
 import 'Screen/GodownKeeper/ItemReceipt/AddItem/ItemReceiptScreen.dart';
@@ -14,6 +16,7 @@ import 'Screen/GodownKeeper/ItemReceipt/ItemReturn/ItenRetun.dart';
 import 'Screen/ManagerScreen/CashDepositToBankScreen.dart';
 import 'Screen/ManagerScreen/CashHandoverScreen.dart';
 import 'Screen/ManagerScreen/DeliveryBoyWiseListShow.dart';
+import 'Screen/ManagerScreen/ManagerDashboard.dart';
 import 'Screen/ManagerScreen/ManagerUpdateSaleCashUpdation.dart';
 import 'Screen/ManagerScreen/ManagerUpdateSaleScreen.dart';
 import 'Screen/User/ChangePassword.dart';
@@ -128,6 +131,8 @@ class MyApp extends StatelessWidget {
             ChangePassword.screenName: (context) => ChangePassword(),
             VerifyOtp.screenName: (context) => VerifyOtp(),
             StockSubmitToManager.screenName: (context) => StockSubmitToManager(),
+            DeliveryMenListShowScreen.screenName: (context) => DeliveryMenListShowScreen(),
+            StockTransferTOGodownScreen.screenName: (context) => StockTransferTOGodownScreen(),
 
             ///Manager
             CashHandoverScreen.screenName: (context) => CashHandoverScreen(),
@@ -135,6 +140,7 @@ class MyApp extends StatelessWidget {
             ManagerUpdateSaleScreen.screenName: (context) => ManagerUpdateSaleScreen(),
             ManagerUpdateSaleCashUpdation.screenName: (context) => ManagerUpdateSaleCashUpdation(),
             DeliveryBoyWiseListShow.screenName: (context) => DeliveryBoyWiseListShow(),
+            ManagerDashboardScreen.screenName: (context) => ManagerDashboardScreen(),
           },
         ),
       );

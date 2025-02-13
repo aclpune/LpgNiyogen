@@ -248,6 +248,7 @@ class UpdateRefillSale{
       debugPrint("Error deleting row with colID $id: $e");
     }
   }
+
   Future<void> deleteRowByDelBoyIdAndItemId(String delBoyId, String itemId) async {
     try {
       Database db = await initDatabase();
@@ -345,8 +346,22 @@ class UpdateRefillSale{
     // Query to check if an item with the same itemID and deliveryBoyId exists
     List<Map<String, dynamic>> result = await db.query(
       tableUpdateRefillSale,
-      where: '$colitemID = ? AND $coldelBoyId = ? AND $colupdateFlag = ?',
-      whereArgs: [itemId, deliveryBoyId,'pending'],
+      where: '$colitemID = ? AND $coldelBoyId = ? AND $colupdateFlag = ? AND $coldate = ? ',
+      whereArgs: [itemId, deliveryBoyId,'pending',date],
+    );
+
+    // If the result is not empty, the item exists
+    return result.isNotEmpty;
+  }
+
+  Future<bool> checkIfItemExistsInAPIDatabase(String itemId, String deliveryBoyId,String date) async {
+    Database db = await initDatabase();
+
+    // Query to check if an item with the same itemID and deliveryBoyId exists
+    List<Map<String, dynamic>> result = await db.query(
+      tableGetDelBoyStock,
+      where: '$colStockGetItemId = ? AND $colStockGetDMId = ? AND $colStockGetDeliveryDate = ?',
+      whereArgs: [itemId, deliveryBoyId,date],
     );
 
     // If the result is not empty, the item exists

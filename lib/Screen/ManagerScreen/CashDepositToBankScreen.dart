@@ -1780,12 +1780,12 @@ class _CashDepositToBankScreenState extends State<CashDepositToBankScreen> {
     }
 
     final response = await http.get(
-      Uri.parse('${AppUrl.GetItemMasterList}/$distributorId/0/C'),
+      Uri.parse('${AppUrl.GetItemMasterList}/$distributorId/1/C'),
       headers: {
         'Authorization': 'Bearer $bearerToken', // Add Bearer token here
       },
     );
-    debugPrint("item" + '${AppUrl.GetItemMasterList}/$distributorId/0/C');
+    debugPrint("item" + '${AppUrl.GetItemMasterList}/$distributorId/1/C');
     debugPrint("item" + response.body);
     if (response.statusCode == 200) {
       // Parse the response

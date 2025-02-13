@@ -30,6 +30,10 @@ class _ItemReturnScreenState extends State<ItemReturnScreen> {
     super.initState();
     fetchItemReceipts();
   }
+  // Pull-to-refresh function to trigger data fetch
+  Future<void> _refresh() async {
+    await fetchItemReceipts();  // Call fetchItemReceipts to get updated data
+  }
   void showDetailsDialog(BuildContext context, Map<String, dynamic> item) {
     showDialog(
       context: context,
@@ -86,34 +90,37 @@ class _ItemReturnScreenState extends State<ItemReturnScreen> {
         appBar: CustomAppBar(
           title: 'Item Return', // Title or hint text for the text field
         ),
-        body: isLoading?
-        Center(child: CircularProgressIndicator()):
-        receiptList.isNotEmpty?
-        ListView.builder(
-          physics: const BouncingScrollPhysics(),
-          shrinkWrap: true,
-          itemCount: receiptList.length,
-          itemBuilder: (context, index) {
-            return  ItemReturnScreenListItem(
-                receiptList[index]);
-            //   Card(
-            //   margin: EdgeInsets.all(8.0),
-            //   child: ListTile(
-            //     title: Text("Veh No: ${item['vehicleNo']}"),
-            //     subtitle: Text("Return: ${item['return']}"),
-            //     trailing: ElevatedButton(
-            //       onPressed: () {
-            //         showDetailsDialog(context, item);
-            //       },
-            //       child: Text("Out"),
-            //     ),
-            //   ),
-            // );
-          },
-        ):
-            Container(
-              child: Text("No Data Found..!",style: TextStyle(fontSize: 16),),
-            )
+        body: RefreshIndicator(
+          onRefresh: _refresh,
+          child: isLoading?
+          Center(child: CircularProgressIndicator()):
+          receiptList.isNotEmpty?
+          ListView.builder(
+            physics: const BouncingScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: receiptList.length,
+            itemBuilder: (context, index) {
+              return  ItemReturnScreenListItem(
+                  receiptList[index]);
+              //   Card(
+              //   margin: EdgeInsets.all(8.0),
+              //   child: ListTile(
+              //     title: Text("Veh No: ${item['vehicleNo']}"),
+              //     subtitle: Text("Return: ${item['return']}"),
+              //     trailing: ElevatedButton(
+              //       onPressed: () {
+              //         showDetailsDialog(context, item);
+              //       },
+              //       child: Text("Out"),
+              //     ),
+              //   ),
+              // );
+            },
+          ):
+              Container(
+                child: Text("No Data Found..!",style: TextStyle(fontSize: 16),),
+              ),
+        )
       ),
     );
   }

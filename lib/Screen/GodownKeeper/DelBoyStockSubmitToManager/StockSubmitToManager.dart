@@ -560,7 +560,8 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
                   filteredData = stockSubmitData!;
                 }
 
-                return Column(
+                return
+                  Column(
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -581,18 +582,96 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
                           itemCount: filteredData.length,
                           itemBuilder: (context, index) {
                             final sale = filteredData[index];
-                            return Padding(
+                            return
+                              Padding(
                               padding: const EdgeInsets.all(5.0),
-                              child: Card(
-                                color: Colors.white,
+                              child:
+                              Card(
+                                color: Colors.white,shape: BeveledRectangleBorder(),
                                 child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
+                                  padding: const EdgeInsets.all(0.0),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       ListTile(
-                                        title:Text('Delivery Men: ${capitalizeFirstLetter(sale.staffName.toString())}'),
+                                        title: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Text('Delivery Men : ', style: Styling.itemGreyTextSmall),
+                                                Text(
+                                                  '${capitalizeFirstLetter(sale.staffName.toString())}',
+                                                  style: Styling.itemBlackTestSmall,
+                                                ),
+                                              ],
+                                            ),
+                                            sale.dailySaleStatus == 3 || sale.dailySaleStatus == 1?
+                                            !isSearchActive?
+                                            PopupMenuButton<String>(
+                                              onSelected: (String value) {
+                                                if (value == 'edit') {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      // builder: (context) => EditSaleScreen(sale: sale, saleGKId: sale.saleGKId.toString(),),
+                                                      // builder: (context) => EditSaleScreenNew(sale: sale, saleGKId:sale.saleGKId,dMId:sale.dMId),
+                                                      builder: (context) => DailyRefillSalePage(sale : sale , saleGKId:sale.saleGKId,dMId:sale.dMId,flagAdd:"editMode"),
+                                                    ),
+                                                  );
+                                                } else if (value == 'delete') {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (BuildContext context) {
+                                                      return AlertDialog(
+                                                        title: Text("Confirm Deletion"),
+                                                        content: Text("Are you sure you want to delete this record?"),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () {
+                                                              Navigator.of(context).pop(); // Close dialog without action
+                                                            },
+                                                            child: Text("No"),
+                                                          ),
+                                                          TextButton(
+                                                            onPressed: () async {
+                                                              Navigator.of(context).pop(); // Close dialog
+                                                              // Simulate API call and remove item from list
+                                                              await deleteDataToApi(sale.saleGKId!.toInt());
+                                                              // Update filteredData by removing the deleted item
+
+                                                            },
+                                                            child: Text("Yes"),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                }
+                                              },
+                                              itemBuilder: (BuildContext context) {
+                                                return [
+                                                  PopupMenuItem<String>(
+                                                    value: 'edit',
+                                                    child: Text('Edit',style: Styling.textFormText,),
+                                                  ),
+                                                  PopupMenuItem<String>(
+                                                    value: 'delete',
+                                                    child: Text('Delete',style: Styling.textFormText),
+                                                  ),
+                                                ];
+                                              },
+                                              icon: Icon(
+                                                Icons.more_vert,
+                                                color: Colors.blue,
+                                              ),
+                                            ):
+                                                Container():
+                                            Container(),
+                                          ],
+                                        ),
                                       ),
+
                                       Container(
                                         decoration: BoxDecoration(border: Border.all(width: 0.5)),
                                         child: Column(
@@ -747,79 +826,79 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
                                           ],
                                         ),
                                       ),
-                                      sale.dailySaleStatus == 3 || sale.dailySaleStatus == 1?
-                                      !isSearchActive?
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.end,
-                                        children: [
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  // builder: (context) => EditSaleScreen(sale: sale, saleGKId: sale.saleGKId.toString(),),
-                                                  // builder: (context) => EditSaleScreenNew(sale: sale, saleGKId:sale.saleGKId,dMId:sale.dMId),
-                                                  builder: (context) => DailyRefillSalePage(sale : sale , saleGKId:sale.saleGKId,dMId:sale.dMId,flagAdd:"editMode"),
-                                                ),
-                                              );
-                                            },
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.blue,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(50),
-                                              ),
-                                            ),
-                                            child: const Text(
-                                              "Edit",
-                                              style: TextStyle(color: Colors.white),
-                                            ),
-                                          ),
-                                          SizedBox(width: 10),
-                                          ElevatedButton(
-                                            onPressed: () {
-                                              showDialog(
-                                                context: context,
-                                                builder: (BuildContext context) {
-                                                  return AlertDialog(
-                                                    title: Text("Confirm Deletion"),
-                                                    content: Text("Are you sure you want to delete this record?"),
-                                                    actions: [
-                                                      TextButton(
-                                                        onPressed: () {
-                                                          Navigator.of(context).pop(); // Close dialog without action
-                                                        },
-                                                        child: Text("No"),
-                                                      ),
-                                                      TextButton(
-                                                        onPressed: () async {
-                                                          Navigator.of(context).pop(); // Close dialog
-                                                          // Simulate API call and remove item from list
-                                                          await deleteDataToApi(sale.saleGKId!.toInt());
-                                                          // Update filteredData by removing the deleted item
-
-                                                        },
-                                                        child: Text("Yes"),
-                                                      ),
-                                                    ],
-                                                  );
-                                                },
-                                              );
-                                            },
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.blue,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(50),
-                                              ),
-                                            ),
-                                            child: const Text(
-                                              "Delete",
-                                              style: TextStyle(color: Colors.white),
-                                            ),
-                                          ),
-                                        ],
-                                      ):
-                                      Container():
-                                          Container(),
+                                      // sale.dailySaleStatus == 3 || sale.dailySaleStatus == 1?
+                                      // !isSearchActive?
+                                      // Row(
+                                      //   mainAxisAlignment: MainAxisAlignment.end,
+                                      //   children: [
+                                      //     ElevatedButton(
+                                      //       onPressed: () {
+                                      //         Navigator.push(
+                                      //           context,
+                                      //           MaterialPageRoute(
+                                      //             // builder: (context) => EditSaleScreen(sale: sale, saleGKId: sale.saleGKId.toString(),),
+                                      //             // builder: (context) => EditSaleScreenNew(sale: sale, saleGKId:sale.saleGKId,dMId:sale.dMId),
+                                      //             builder: (context) => DailyRefillSalePage(sale : sale , saleGKId:sale.saleGKId,dMId:sale.dMId,flagAdd:"editMode"),
+                                      //           ),
+                                      //         );
+                                      //       },
+                                      //       style: ElevatedButton.styleFrom(
+                                      //         backgroundColor: Colors.blue,
+                                      //         shape: RoundedRectangleBorder(
+                                      //           borderRadius: BorderRadius.circular(50),
+                                      //         ),
+                                      //       ),
+                                      //       child: const Text(
+                                      //         "Edit",
+                                      //         style: TextStyle(color: Colors.white),
+                                      //       ),
+                                      //     ),
+                                      //     SizedBox(width: 10),
+                                      //     ElevatedButton(
+                                      //       onPressed: () {
+                                      //         showDialog(
+                                      //           context: context,
+                                      //           builder: (BuildContext context) {
+                                      //             return AlertDialog(
+                                      //               title: Text("Confirm Deletion"),
+                                      //               content: Text("Are you sure you want to delete this record?"),
+                                      //               actions: [
+                                      //                 TextButton(
+                                      //                   onPressed: () {
+                                      //                     Navigator.of(context).pop(); // Close dialog without action
+                                      //                   },
+                                      //                   child: Text("No"),
+                                      //                 ),
+                                      //                 TextButton(
+                                      //                   onPressed: () async {
+                                      //                     Navigator.of(context).pop(); // Close dialog
+                                      //                     // Simulate API call and remove item from list
+                                      //                     await deleteDataToApi(sale.saleGKId!.toInt());
+                                      //                     // Update filteredData by removing the deleted item
+                                      //
+                                      //                   },
+                                      //                   child: Text("Yes"),
+                                      //                 ),
+                                      //               ],
+                                      //             );
+                                      //           },
+                                      //         );
+                                      //       },
+                                      //       style: ElevatedButton.styleFrom(
+                                      //         backgroundColor: Colors.blue,
+                                      //         shape: RoundedRectangleBorder(
+                                      //           borderRadius: BorderRadius.circular(50),
+                                      //         ),
+                                      //       ),
+                                      //       child: const Text(
+                                      //         "Delete",
+                                      //         style: TextStyle(color: Colors.white),
+                                      //       ),
+                                      //     ),
+                                      //   ],
+                                      // ):
+                                      // Container():
+                                      //     Container(),
                                     ],
                                   ),
                                 ),
@@ -835,40 +914,40 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
             },
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Text("Confirm Refresh"),
-                  content: Text("Do You Want To Refresh Data?"),
-                  actions: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop(); // Close the dialog without action
-                      },
-                      child: Text("No"),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop(); // Close the dialog
-                        setState(() {
-                          // Refresh the data by reassigning the future
-                          stockDataFuture = updateRefillSale!.getDataFromDatabase();
-                          // refreshData();
-                        });
-                      },
-                      child: Text("Yes"),
-                    ),
-                  ],
-                );
-              },
-            );
-          },
-          backgroundColor: Colors.blue,
-          child: Icon(Icons.refresh, color: Colors.white),
-        ),
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: () {
+        //     showDialog(
+        //       context: context,
+        //       builder: (BuildContext context) {
+        //         return AlertDialog(
+        //           title: Text("Confirm Refresh"),
+        //           content: Text("Do You Want To Refresh Data?"),
+        //           actions: [
+        //             TextButton(
+        //               onPressed: () {
+        //                 Navigator.of(context).pop(); // Close the dialog without action
+        //               },
+        //               child: Text("No"),
+        //             ),
+        //             TextButton(
+        //               onPressed: () {
+        //                 Navigator.of(context).pop(); // Close the dialog
+        //                 setState(() {
+        //                   // Refresh the data by reassigning the future
+        //                   stockDataFuture = updateRefillSale!.getDataFromDatabase();
+        //                   // refreshData();
+        //                 });
+        //               },
+        //               child: Text("Yes"),
+        //             ),
+        //           ],
+        //         );
+        //       },
+        //     );
+        //   },
+        //   backgroundColor: Colors.blue,
+        //   child: Icon(Icons.refresh, color: Colors.white),
+        // ),
       ),
     );
   }

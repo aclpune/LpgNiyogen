@@ -21,8 +21,11 @@ import '../Utils/Widget.dart';
 import '../Utils/app_url.dart';
 import '../Utils/constants.dart';
 import '../Utils/shared_preference.dart';
+import 'DelBoyStockReturn/StockTransferToGodownScreen.dart';
 import 'DeliveryBoyModel/StockSubmitToManagerListModel.dart';
 import 'package:http/http.dart' as http;
+
+import 'ItemReceipt/CylItemList/GetCurrentStcOfGodownKeeperModel.dart';
 
 class DashboardScreen extends StatefulWidget {
   static const screenName = '/godownDashboard';
@@ -38,8 +41,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   bool isDomesticListViewVisible = false;
   bool isNonDomesticListViewVisible = false;
   bool isTodayOpeningStockListViewVisible = false;
+  bool isCurrentStockListViewVisible = false;
   List<PhysicalStockImbalanceDataModel> receiptList = [];
   List<TodaysOpeningStockDataModel> todaysOpeningStock = [];
+  List<GetCurrentStcOfGodownKeeperModel> getCurrentStcOfGodownKeeper = [];
   bool isLoading = true;
   String? mobileNo;
   @override
@@ -50,424 +55,647 @@ class _DashboardScreenState extends State<DashboardScreen> {
     insertDelBoyStockList();
     _fetchImbalanceData();
     _fetchTodaysOpeningStockData();
+    fetchCurrentStock();
   }
-
+  // Function to handle pull-to-refresh action
+  Future<void> _onRefresh() async {
+    insertDelBoyStockList();
+    _fetchImbalanceData();
+    _fetchTodaysOpeningStockData();
+    fetchCurrentStock();// Fetch the data again
+  }
   @override
   Widget build(BuildContext context) {
 
-    return Scaffold(
-      key: _scaffoldKey,
-      drawer: CustomeDrawer(), // Assign the scaffold key
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(120), // Custom height for the AppBar
-        child: Container(
-          color: Colors.blueAccent,
-          // Custom background color
-          padding: EdgeInsets.only(top: 40, left: 5, right: 16),
-          // Padding for top & sides
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              IconButton(
-                icon: Icon(Icons.menu, color: Colors.white),
-                // Menu icon for Drawer
-                onPressed: () {
-                  // Toggle the drawer open or closed
-                  if (_scaffoldKey.currentState!.isDrawerOpen) {
-                    _scaffoldKey.currentState!.closeDrawer();
-                  } else {
-                    _scaffoldKey.currentState!.openDrawer();
-                  }
-                },
-              ),
-              SizedBox(width: 20),
-              Text(
-                'Dashboard', // Godown Name
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
+    return
+      Scaffold(
+        key: _scaffoldKey,
+        drawer: CustomeDrawer(), // Assign the scaffold key
+        appBar: PreferredSize(
+          preferredSize: Size.fromHeight(120), // Custom height for the AppBar
+          child:
+          Container(
+            color: Colors.blueAccent,
+            // Custom background color
+            padding: EdgeInsets.only(top: 40, left: 5, right: 16),
+            // Padding for top & sides
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.menu, color: Colors.white),
+                  // Menu icon for Drawer
+                  onPressed: () {
+                    // Toggle the drawer open or closed
+                    if (_scaffoldKey.currentState!.isDrawerOpen) {
+                      _scaffoldKey.currentState!.closeDrawer();
+                    } else {
+                      _scaffoldKey.currentState!.openDrawer();
+                    }
+                  },
                 ),
-              ),
-            ],
+                SizedBox(width: 20),
+                Text(
+                  'Dashboard', // Godown Name
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              // Ensures the content is scrollable
-              child: Padding(
-                padding: const EdgeInsets.only(
-                    left: 5.0, right: 5.0, bottom: 5.0, top: 20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Column(
+        body:
+        RefreshIndicator(
+          onRefresh: _onRefresh,
+          child:
+          Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  // Ensures the content is scrollable
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 5.0, right: 5.0, bottom: 5.0, top: 20.0),
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Title for Cylinder Categories Table
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              isPhysicalStockListViewVisible =
-                                  !isPhysicalStockListViewVisible; // Toggle ListView visibility
-                            });
-                          },
-                          child:
-                          Card(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        bodyTitleBlue("Physical Stock Imbalance As Of Today"),
-
-                                        // Text(
-                                        //   'Physical Stock Imbalance As Of Today',
-                                        //   // style: TextStyle(
-                                        //   //   fontSize: 14,
-                                        //   //   color: Colors.black,
-                                        //   //   fontWeight: FontWeight.bold,
-                                        //   // ),
-                                        //   style: Styling.bodyTitle,
-                                        // ),
-                                        Icon(
-                                          isPhysicalStockListViewVisible
-                                              ? Icons.arrow_drop_up
-                                              : Icons.arrow_drop_down,
-                                          size: 30, // Bigger icon for a more clickable feel
-                                          color: Color(0xff1280b3),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Title for Cylinder Categories Table
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  isTodayOpeningStockListViewVisible =
+                                  !isTodayOpeningStockListViewVisible; // Toggle ListView visibility
+                                });
+                              },
+                              child:
+                              Card(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            // Text(
+                                            //   "View Today's Opening Stock",
+                                            //   style: TextStyle(
+                                            //       fontSize: 14,
+                                            //       color: Colors.black,
+                                            //       fontWeight: FontWeight.bold),
+                                            // ),
+                                            bodyTitleBlue("View Today's Opening Stock"),
+                                            Icon(
+                                              isTodayOpeningStockListViewVisible
+                                                  ? Icons.arrow_drop_up
+                                                  : Icons.arrow_drop_down,
+                                              size: 30, // Bigger icon for a more clickable feel
+                                              color:Color(0xff1280b3),
+                                            ),
+                                          ],
                                         ),
-                                      ],
-                                    ),
-                                  ),
-
-                                  // Visibility(
-                                  //   visible: isPhysicalStockListViewVisible,
-                                  //   child:
-                                  //   Container(
-                                  //     decoration: BoxDecoration(
-                                  //       // Background color of the box
-                                  //       borderRadius: BorderRadius.circular(8),
-                                  //       border: Border.all(
-                                  //           width:
-                                  //               0.5), // Optional: Add rounded corners
-                                  //     ),
-                                  //     child: Column(
-                                  //       crossAxisAlignment:
-                                  //           CrossAxisAlignment.start,
-                                  //       children: [
-                                  //         // Header Row
-                                  //         Container(
-                                  //           decoration: BoxDecoration(
-                                  //             // Background color of the box
-                                  //             borderRadius: BorderRadius.only(topLeft:Radius.circular(8),topRight: Radius.circular(8)),
-                                  //             color: Colors.blue.shade100,
-                                  //             // Optional: Add rounded corners
-                                  //           ),
-                                  //           child: Row(
-                                  //             mainAxisAlignment:
-                                  //                 MainAxisAlignment.center,
-                                  //             children: [
-                                  //               Expanded(
-                                  //                   child: Text('Cylinder',
-                                  //                       style: TextStyle(
-                                  //                           fontWeight: FontWeight
-                                  //                               .bold,),textAlign: TextAlign.center,)),
-                                  //               verticalDividerSmall(),
-                                  //               Expanded(
-                                  //                   child: Text('Imbalance Qty',
-                                  //                       style: TextStyle(
-                                  //                           fontWeight: FontWeight
-                                  //                               .bold),textAlign: TextAlign.center)),
-                                  //
-                                  //             ],
-                                  //           ),
-                                  //         ),
-                                  //
-                                  //         Container(
-                                  //           color: Colors.black12,
-                                  //           height: 1,
-                                  //           width: MediaQuery.of(context)
-                                  //               .size
-                                  //               .width,
-                                  //         ),
-                                  //         // Adds a divider below the header for separation
-                                  //         // List of Entries
-                                  //         ListView.builder(
-                                  //           shrinkWrap: true,
-                                  //           // To make the ListView occupy only the space it needs
-                                  //           physics:
-                                  //               NeverScrollableScrollPhysics(),
-                                  //           // Prevents scrolling inside the ListView
-                                  //           itemCount:
-                                  //               cylinderData.entries.length,
-                                  //           itemBuilder: (context, index) {
-                                  //             var entry = cylinderData.entries
-                                  //                 .elementAt(index);
-                                  //             String category = entry.key;
-                                  //             int emptyCount =
-                                  //                 entry.value['Empty'] ?? 0;
-                                  //             int filledCount = entry.value['Filled'] ?? 0;
-                                  //             int defectiveCount = entry.value['Defective'] ?? 0;
-                                  //
-                                  //             return Column(
-                                  //               children: [
-                                  //                 Row(
-                                  //                   mainAxisAlignment: MainAxisAlignment.center,
-                                  //                   children: [
-                                  //                     Expanded(
-                                  //                       child:Text(
-                                  //                           category,
-                                  //                           textAlign: TextAlign.center,
-                                  //                         ),
-                                  //
-                                  //                     ),
-                                  //                     verticalDividerVerySmall(),
-                                  //                     Expanded(
-                                  //                       child: GestureDetector(
-                                  //                         onTap: () {
-                                  //                           // Handle the tap on the 'emptyCount' text
-                                  //                           setState(() {
-                                  //                             // Perform any action when clicked (e.g., toggle underline state)
-                                  //                           });
-                                  //                         },
-                                  //                         child: Text(
-                                  //                           '$emptyCount',
-                                  //                           textAlign: TextAlign.center,
-                                  //                           style: TextStyle(
-                                  //                             decoration: TextDecoration.underline, // Add blue underline
-                                  //                             decorationColor: Colors.blue, // Set the underline color
-                                  //                           ),
-                                  //                         ),
-                                  //                       ),
-                                  //                     ),
-                                  //                   ],
-                                  //                 ),
-                                  //
-                                  //                 Container(
-                                  //                   color: Colors.black12,
-                                  //                   height: 1,
-                                  //                   width:
-                                  //                       MediaQuery.of(context)
-                                  //                           .size
-                                  //                           .width,
-                                  //                 ),
-                                  //               ],
-                                  //             );
-                                  //           },
-                                  //         ),
-                                  //
-                                  //       ],
-                                  //     ),
-                                  //   ),
-                                  // ),
-                                  Visibility(
-                                    visible: isPhysicalStockListViewVisible,
-                                    child: Container(
-                                      margin: EdgeInsets.symmetric(horizontal: 5),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white70,
-                                        borderRadius: BorderRadius.circular(12),
-                                        boxShadow: [
-                                          BoxShadow(blurRadius: 4, color: Colors.black12, spreadRadius: 2),
-                                        ],
                                       ),
-                                      child: Column(
-                                        children: [
-                                          // Header Row for Cylinder Categories
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              color: Colors.blue.shade100,
-                                              borderRadius: BorderRadius.only(
-                                                topLeft: Radius.circular(12),
-                                                topRight: Radius.circular(12),
-                                              ),
-                                            ),
-                                            padding: const EdgeInsets.only(top: 8,bottom: 8,left: 10),
-                                            child:
-                                            Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                Expanded(
-                                                  child: Text(
-                                                    'Cylinder',
-                                                    style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      color: Colors.black,
-                                                      fontSize: 14,
-                                                    ),
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                ),
-                                                VerticalDivider(thickness: 1, color: Colors.grey),
-                                                Expanded(
-                                                  child: Text(
-                                                    'Imbalance Qty',
-                                                    style: TextStyle(
-                                                      fontWeight: FontWeight.bold,
-                                                      color: Colors.black,
-                                                      fontSize: 14,
-                                                    ),
-                                                    textAlign: TextAlign.center,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
+                                      Visibility(
+                                        visible:
+                                        isTodayOpeningStockListViewVisible,
+                                        child:Card(
+                                          elevation: 5,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(12),
                                           ),
-
-                                          // List of Cylinder Categories
-                                          receiptList.isNotEmpty?
-                                          ListView.builder(
-                                            shrinkWrap: true,
-                                            physics: NeverScrollableScrollPhysics(),
-                                            itemCount: receiptList.length,
-                                            itemBuilder: (context, index) {
-                                              final item = receiptList[index];
-                                              return Card(
-                                                margin: EdgeInsets.symmetric(vertical: 7, horizontal: 7),
-                                                elevation: 4,
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.circular(12)),
+                                          child:
+                                          Column(
+                                            children: [
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.blue.shade100,
+                                                  borderRadius: BorderRadius.only(
+                                                    topLeft: Radius.circular(12),
+                                                    topRight: Radius.circular(12),
+                                                  ),
+                                                ),
                                                 child: Padding(
                                                   padding: const EdgeInsets.all(8.0),
                                                   child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    mainAxisAlignment: MainAxisAlignment.center,
                                                     children: [
-                                                      // Cylinder Category Text
                                                       Expanded(
+                                                        flex:1,
                                                         child: Text(
-                                                      item.itemName ?? "Unknown",
+                                                          '',
                                                           style: TextStyle(
-                                                            fontWeight: FontWeight.normal,
-                                                            fontSize: 16,
+                                                            fontWeight: FontWeight.bold,
                                                             color: Colors.black,
+                                                            fontSize: 14,
                                                           ),
                                                           textAlign: TextAlign.center,
                                                         ),
                                                       ),
-                                                      // Divider between Texts
-                                                      VerticalDivider(thickness: 1, color: Colors.grey),
-                                                      // Imbalance Quantity with Tap Gesture
                                                       Expanded(
-                                                        child: GestureDetector(
-                                                          onTap: () {
-                                                            // Handle the tap on the 'emptyCount' text
-                                                            setState(() {
-                                                              // Perform any action when clicked
-                                                            });
-                                                          },
-                                                          child: Text(
-                                                            '${item.imbalanceStk ?? 0}',
-                                                            textAlign: TextAlign.center,
-                                                            style: TextStyle(
-                                                              decoration: TextDecoration.underline,
-                                                              decorationColor: Color(0xff1280b3),
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Color(0xff1280b3),
-                                                              fontSize: 16,
-                                                            ),
+                                                        flex:1,
+                                                        child: Text(
+                                                          'Filled',
+                                                          style: TextStyle(
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.black,
+                                                            fontSize: 14
+                                                            ,
                                                           ),
+                                                          textAlign: TextAlign.center,
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        flex:1,
+                                                        child: Text(
+                                                          'Empty',
+                                                          style: TextStyle(
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.black,
+                                                            fontSize: 14,
+                                                          ),
+                                                          textAlign: TextAlign.center,
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        flex:1,
+                                                        child: Text(
+                                                          'Defective',
+                                                          style: TextStyle(
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.black,
+                                                            fontSize: 14,
+                                                          ),
+                                                          textAlign: TextAlign.center,
                                                         ),
                                                       ),
                                                     ],
                                                   ),
                                                 ),
-                                              );
-                                            },
-                                          ):
+                                              ),
+                                              todaysOpeningStock.isNotEmpty?
+                                              ListView.builder(
+                                                shrinkWrap: true,
+                                                physics: NeverScrollableScrollPhysics(),
+                                                itemCount: todaysOpeningStock.length,
+                                                itemBuilder: (context, index) {
+                                                  final items = todaysOpeningStock[index];
+
+                                                  return
+                                                    Card(
+                                                      margin: EdgeInsets.symmetric(vertical: 7, horizontal: 7),
+                                                      elevation: 4,
+                                                      shape: RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.circular(12)),
+                                                      child: Padding(
+                                                        padding: const EdgeInsets.all(8.0),
+                                                        child:
+                                                        Column(
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Row(
+                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                              children: [
+                                                                Expanded(
+                                                                  flex:1,
+                                                                  child: Text(
+                                                                    items.itemName.toString(),
+                                                                    style:Styling.textFormText,
+                                                                    textAlign: TextAlign.center,
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  flex:1,
+                                                                  child: Text(
+                                                                    items.filledOpeningStk.toString(),
+                                                                    style:Styling.textFormText,
+                                                                    textAlign: TextAlign.center,
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  flex:1,
+                                                                  child: Text(
+                                                                    items.emptyOpeningStk.toString(),
+                                                                    style:Styling.textFormText,
+                                                                    textAlign: TextAlign.center,
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  flex:1,
+                                                                  child: Text(
+                                                                    items.defOpeningStk.toString(),
+                                                                    style:Styling.textFormText,
+                                                                    textAlign: TextAlign.center,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                },
+                                              ):
                                               Container(
                                                 child: Text("No Data Available"),
-                                              )
-                                        ],
-                                      ),
-                                    ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        //                       Container(
+                                        //                         decoration: BoxDecoration(
+                                        //                           // Background color of the box
+                                        //                           borderRadius: BorderRadius.circular(8),
+                                        //                           border: Border.all(
+                                        //                               width:
+                                        //                               0.5), // Optional: Add rounded corners
+                                        //                         ),
+                                        //                         child: Column(
+                                        //                           crossAxisAlignment:
+                                        //                           CrossAxisAlignment.start,
+                                        //                           children: [
+                                        //                             // Header Row
+                                        //                             Container(
+                                        //                               decoration: BoxDecoration(
+                                        //                                 // Background color of the box
+                                        //                                 borderRadius: BorderRadius.only(topLeft:Radius.circular(8),topRight: Radius.circular(8)),
+                                        //                                 color: Colors.blue.shade100,
+                                        //                                 // Optional: Add rounded corners
+                                        //                               ),
+                                        //
+                                        //                               child:
+                                        //                               Row(
+                                        //                                 mainAxisAlignment:
+                                        //                                 MainAxisAlignment.center,
+                                        //                                 children: [
+                                        //                                   Expanded(
+                                        //                                       child: Text('Cylinder',
+                                        //                                         style: TextStyle(
+                                        //                                           fontWeight: FontWeight
+                                        //                                               .bold,),textAlign: TextAlign.center,)),
+                                        //                                   verticalDividerSmall(),
+                                        //                                   Expanded(
+                                        //                                       child: Text('Filled',
+                                        //                                           style: TextStyle(
+                                        //                                               fontWeight: FontWeight
+                                        //                                                   .bold),textAlign: TextAlign.center)),
+                                        //                                   verticalDividerSmall(),
+                                        //                                   Expanded(
+                                        //                                       child: Text('Empty',
+                                        //                                           style: TextStyle(
+                                        //                                               fontWeight: FontWeight
+                                        //                                                   .bold),textAlign: TextAlign.center)),
+                                        //                                   verticalDividerSmall(),
+                                        //                                   Expanded(
+                                        //                                       child: Text('Def.',
+                                        //                                           style: TextStyle(
+                                        //                                               fontWeight: FontWeight
+                                        //                                                   .bold),textAlign: TextAlign.center)),
+                                        //                                 ],
+                                        //                               ),
+                                        //                             ),
+                                        //
+                                        //                             Container(
+                                        //                               color: Colors.black12,
+                                        //                               height: 1,
+                                        //                               width: MediaQuery.of(context)
+                                        //                                   .size
+                                        //                                   .width,
+                                        //                             ),
+                                        //                             // Adds a divider below the header for separation
+                                        //                             // List of Entries
+                                        //                             // ListView.builder(
+                                        //                             //   shrinkWrap: true,
+                                        //                             //   // To make the ListView occupy only the space it needs
+                                        //                             //   physics:
+                                        //                             //   NeverScrollableScrollPhysics(),
+                                        //                             //   // Prevents scrolling inside the ListView
+                                        //                             //   itemCount:
+                                        //                             //   cylinderData.entries.length,
+                                        //                             //   itemBuilder: (context, index) {
+                                        //                             //     var entry = cylinderData.entries
+                                        //                             //         .elementAt(index);
+                                        //                             //     String category = entry.key;
+                                        //                             //     int emptyCount =
+                                        //                             //         entry.value['Empty'] ?? 0;
+                                        //                             //     int filledCount =
+                                        //                             //         entry.value['Filled'] ?? 0;
+                                        //                             //     int defectiveCount = entry.value['Defective'] ?? 0;
+                                        //                             //     return Column(
+                                        //                             //       children: [
+                                        //                             //         Row(
+                                        //                             //           mainAxisAlignment:
+                                        //                             //           MainAxisAlignment
+                                        //                             //               .center,
+                                        //                             //           children: [
+                                        //                             //             Expanded(
+                                        //                             //                 child:
+                                        //                             //                 Text(category,textAlign: TextAlign.center)),
+                                        //                             //             verticalDividerVerySmall(),
+                                        //                             //             Expanded(
+                                        //                             //                 child: Text(
+                                        //                             //                     '$emptyCount',textAlign: TextAlign.center)),
+                                        //                             //             verticalDividerVerySmall(),
+                                        //                             //             Expanded(
+                                        //                             //                 child: Text(
+                                        //                             //                     '$filledCount',textAlign: TextAlign.center)),
+                                        //                             //             verticalDividerVerySmall(),
+                                        //                             //             Expanded(
+                                        //                             //                 child: Text('$defectiveCount',textAlign: TextAlign.center)),
+                                        //                             //           ],
+                                        //                             //         ),
+                                        //                             //         Container(
+                                        //                             //           color: Colors.black12,
+                                        //                             //           height: 1,
+                                        //                             //           width:
+                                        //                             //           MediaQuery.of(context)
+                                        //                             //               .size
+                                        //                             //               .width,
+                                        //                             //         ),
+                                        //                             //       ],
+                                        //                             //     );
+                                        //                             //   },
+                                        //                             // ),
+                                        // ListView.builder(
+                                        //   shrinkWrap: true,
+                                        //   physics: NeverScrollableScrollPhysics(),
+                                        //   itemCount: cylinderData.entries.length,
+                                        //   itemBuilder: (context, index) {
+                                        //     var entry = cylinderData.entries.elementAt(index);
+                                        //     String category = entry.key;
+                                        //     int emptyCount = entry.value['Empty'] ?? 0;
+                                        //     int filledCount = entry.value['Filled'] ?? 0;
+                                        //     int defectiveCount = entry.value['Defective'] ?? 0;
+                                        //
+                                        //     // Calculate total count
+                                        //     int total = emptyCount + filledCount + defectiveCount;
+                                        //
+                                        //     // Calculate percentage for each type
+                                        //     double emptyPercentage = (emptyCount / total) * 100;
+                                        //     double filledPercentage = (filledCount / total) * 100;
+                                        //     double defectivePercentage = (defectiveCount / total) * 100;
+                                        //
+                                        //     return Card(
+                                        //       elevation: 5,
+                                        //       shape: RoundedRectangleBorder(
+                                        //         borderRadius: BorderRadius.circular(12),
+                                        //       ),
+                                        //       child: Padding(
+                                        //         padding: const EdgeInsets.all(16.0),
+                                        //         child: Column(
+                                        //           crossAxisAlignment: CrossAxisAlignment.start,
+                                        //           children: [
+                                        //             Text(
+                                        //               category,
+                                        //               style: TextStyle(
+                                        //                 fontWeight: FontWeight.bold,
+                                        //                 fontSize: 16,
+                                        //                 color: Colors.black,
+                                        //               ),
+                                        //             ),
+                                        //             SizedBox(height: 10),
+                                        //             Text('Empty: $emptyCount'),
+                                        //             LinearProgressIndicator(
+                                        //               value: emptyPercentage / 100,
+                                        //               backgroundColor: Colors.grey.shade300,
+                                        //               color: Colors.blue,
+                                        //             ),
+                                        //             SizedBox(height: 10),
+                                        //             Text('Filled: $filledCount'),
+                                        //             LinearProgressIndicator(
+                                        //               value: filledPercentage / 100,
+                                        //               backgroundColor: Colors.grey.shade300,
+                                        //               color: Colors.green,
+                                        //             ),
+                                        //             SizedBox(height: 10),
+                                        //             Text('Defective: $defectiveCount'),
+                                        //             LinearProgressIndicator(
+                                        //               value: defectivePercentage / 100,
+                                        //               backgroundColor: Colors.grey.shade300,
+                                        //               color: Colors.red,
+                                        //             ),
+                                        //           ],
+                                        //         ),
+                                        //       ),
+                                        //     );
+                                        //   },
+                                        // ),
+                                        //
+                                        // ],
+                                        //                         ),
+                                        //                       ),
+                                      )
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
                             ),
-                          ),
+                            SizedBox(height: 10),
+                          ],
                         ),
-                        SizedBox(height: 10),
-                      ],
-                    ),
 
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Title for Cylinder Categories Table
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              isTodayOpeningStockListViewVisible =
-                                  !isTodayOpeningStockListViewVisible; // Toggle ListView visibility
-                            });
-                          },
-                          child:
-                          Card(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      mainAxisAlignment:
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Title for Cylinder Categories Table
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  isPhysicalStockListViewVisible =
+                                      !isPhysicalStockListViewVisible; // Toggle ListView visibility
+                                });
+                              },
+                              child:
+                              Card(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Row(
+                                          mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        // Text(
-                                        //   "View Today's Opening Stock",
-                                        //   style: TextStyle(
-                                        //       fontSize: 14,
-                                        //       color: Colors.black,
-                                        //       fontWeight: FontWeight.bold),
-                                        // ),
-                                        bodyTitleBlue("View Today's Opening Stock"),
-                                        Icon(
-                                          isTodayOpeningStockListViewVisible
-                                              ? Icons.arrow_drop_up
-                                              : Icons.arrow_drop_down,
-                                          size: 30, // Bigger icon for a more clickable feel
-                                          color:Color(0xff1280b3),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Visibility(
-                                      visible:
-                                          isTodayOpeningStockListViewVisible,
-                                      child:Card(
-                                        elevation: 5,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
-                                        child:
-                                        Column(
                                           children: [
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                color: Colors.blue.shade100,
-                                                borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(12),
-                                                  topRight: Radius.circular(12),
+                                            bodyTitleBlue("Physical Stock Imbalance As Of Today"),
+
+                                            // Text(
+                                            //   'Physical Stock Imbalance As Of Today',
+                                            //   // style: TextStyle(
+                                            //   //   fontSize: 14,
+                                            //   //   color: Colors.black,
+                                            //   //   fontWeight: FontWeight.bold,
+                                            //   // ),
+                                            //   style: Styling.bodyTitle,
+                                            // ),
+                                            Icon(
+                                              isPhysicalStockListViewVisible
+                                                  ? Icons.arrow_drop_up
+                                                  : Icons.arrow_drop_down,
+                                              size: 30, // Bigger icon for a more clickable feel
+                                              color: Color(0xff1280b3),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+
+                                      // Visibility(
+                                      //   visible: isPhysicalStockListViewVisible,
+                                      //   child:
+                                      //   Container(
+                                      //     decoration: BoxDecoration(
+                                      //       // Background color of the box
+                                      //       borderRadius: BorderRadius.circular(8),
+                                      //       border: Border.all(
+                                      //           width:
+                                      //               0.5), // Optional: Add rounded corners
+                                      //     ),
+                                      //     child: Column(
+                                      //       crossAxisAlignment:
+                                      //           CrossAxisAlignment.start,
+                                      //       children: [
+                                      //         // Header Row
+                                      //         Container(
+                                      //           decoration: BoxDecoration(
+                                      //             // Background color of the box
+                                      //             borderRadius: BorderRadius.only(topLeft:Radius.circular(8),topRight: Radius.circular(8)),
+                                      //             color: Colors.blue.shade100,
+                                      //             // Optional: Add rounded corners
+                                      //           ),
+                                      //           child: Row(
+                                      //             mainAxisAlignment:
+                                      //                 MainAxisAlignment.center,
+                                      //             children: [
+                                      //               Expanded(
+                                      //                   child: Text('Cylinder',
+                                      //                       style: TextStyle(
+                                      //                           fontWeight: FontWeight
+                                      //                               .bold,),textAlign: TextAlign.center,)),
+                                      //               verticalDividerSmall(),
+                                      //               Expanded(
+                                      //                   child: Text('Imbalance Qty',
+                                      //                       style: TextStyle(
+                                      //                           fontWeight: FontWeight
+                                      //                               .bold),textAlign: TextAlign.center)),
+                                      //
+                                      //             ],
+                                      //           ),
+                                      //         ),
+                                      //
+                                      //         Container(
+                                      //           color: Colors.black12,
+                                      //           height: 1,
+                                      //           width: MediaQuery.of(context)
+                                      //               .size
+                                      //               .width,
+                                      //         ),
+                                      //         // Adds a divider below the header for separation
+                                      //         // List of Entries
+                                      //         ListView.builder(
+                                      //           shrinkWrap: true,
+                                      //           // To make the ListView occupy only the space it needs
+                                      //           physics:
+                                      //               NeverScrollableScrollPhysics(),
+                                      //           // Prevents scrolling inside the ListView
+                                      //           itemCount:
+                                      //               cylinderData.entries.length,
+                                      //           itemBuilder: (context, index) {
+                                      //             var entry = cylinderData.entries
+                                      //                 .elementAt(index);
+                                      //             String category = entry.key;
+                                      //             int emptyCount =
+                                      //                 entry.value['Empty'] ?? 0;
+                                      //             int filledCount = entry.value['Filled'] ?? 0;
+                                      //             int defectiveCount = entry.value['Defective'] ?? 0;
+                                      //
+                                      //             return Column(
+                                      //               children: [
+                                      //                 Row(
+                                      //                   mainAxisAlignment: MainAxisAlignment.center,
+                                      //                   children: [
+                                      //                     Expanded(
+                                      //                       child:Text(
+                                      //                           category,
+                                      //                           textAlign: TextAlign.center,
+                                      //                         ),
+                                      //
+                                      //                     ),
+                                      //                     verticalDividerVerySmall(),
+                                      //                     Expanded(
+                                      //                       child: GestureDetector(
+                                      //                         onTap: () {
+                                      //                           // Handle the tap on the 'emptyCount' text
+                                      //                           setState(() {
+                                      //                             // Perform any action when clicked (e.g., toggle underline state)
+                                      //                           });
+                                      //                         },
+                                      //                         child: Text(
+                                      //                           '$emptyCount',
+                                      //                           textAlign: TextAlign.center,
+                                      //                           style: TextStyle(
+                                      //                             decoration: TextDecoration.underline, // Add blue underline
+                                      //                             decorationColor: Colors.blue, // Set the underline color
+                                      //                           ),
+                                      //                         ),
+                                      //                       ),
+                                      //                     ),
+                                      //                   ],
+                                      //                 ),
+                                      //
+                                      //                 Container(
+                                      //                   color: Colors.black12,
+                                      //                   height: 1,
+                                      //                   width:
+                                      //                       MediaQuery.of(context)
+                                      //                           .size
+                                      //                           .width,
+                                      //                 ),
+                                      //               ],
+                                      //             );
+                                      //           },
+                                      //         ),
+                                      //
+                                      //       ],
+                                      //     ),
+                                      //   ),
+                                      // ),
+                                      Visibility(
+                                        visible: isPhysicalStockListViewVisible,
+                                        child: Container(
+                                          margin: EdgeInsets.symmetric(horizontal: 5),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white70,
+                                            borderRadius: BorderRadius.circular(12),
+                                            boxShadow: [
+                                              BoxShadow(blurRadius: 4, color: Colors.black12, spreadRadius: 2),
+                                            ],
+                                          ),
+                                          child: Column(
+                                            children: [
+                                              // Header Row for Cylinder Categories
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.blue.shade100,
+                                                  borderRadius: BorderRadius.only(
+                                                    topLeft: Radius.circular(12),
+                                                    topRight: Radius.circular(12),
+                                                  ),
                                                 ),
-                                              ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(8.0),
-                                                child: Row(
+                                                padding: const EdgeInsets.only(top: 8,bottom: 8,left: 10),
+                                                child:
+                                                Row(
                                                   mainAxisAlignment: MainAxisAlignment.center,
                                                   children: [
                                                     Expanded(
-                                                      flex:1,
                                                       child: Text(
-                                                        '',
+                                                        'Cylinder',
                                                         style: TextStyle(
                                                           fontWeight: FontWeight.bold,
                                                           color: Colors.black,
@@ -476,35 +704,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                         textAlign: TextAlign.center,
                                                       ),
                                                     ),
+                                                    VerticalDivider(thickness: 1, color: Colors.grey),
                                                     Expanded(
-                                                      flex:1,
                                                       child: Text(
-                                                        'Filled',
-                                                        style: TextStyle(
-                                                          fontWeight: FontWeight.bold,
-                                                          color: Colors.black,
-                                                          fontSize: 14
-                                                          ,
-                                                        ),
-                                                        textAlign: TextAlign.center,
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex:1,
-                                                      child: Text(
-                                                        'Empty',
-                                                        style: TextStyle(
-                                                          fontWeight: FontWeight.bold,
-                                                          color: Colors.black,
-                                                          fontSize: 14,
-                                                        ),
-                                                        textAlign: TextAlign.center,
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex:1,
-                                                      child: Text(
-                                                        'Defective',
+                                                        'Imbalance Qty',
                                                         style: TextStyle(
                                                           fontWeight: FontWeight.bold,
                                                           color: Colors.black,
@@ -516,679 +719,925 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                   ],
                                                 ),
                                               ),
-                                            ),
 
-                                            ListView.builder(
-                                              shrinkWrap: true,
-                                              physics: NeverScrollableScrollPhysics(),
-                                              itemCount: todaysOpeningStock.length,
-                                              itemBuilder: (context, index) {
-                                                final items = todaysOpeningStock[index];
-
-                                                return
-                                                  Card(
+                                              // List of Cylinder Categories
+                                              receiptList.isNotEmpty?
+                                              ListView.builder(
+                                                shrinkWrap: true,
+                                                physics: NeverScrollableScrollPhysics(),
+                                                itemCount: receiptList.length,
+                                                itemBuilder: (context, index) {
+                                                  final item = receiptList[index];
+                                                  return Card(
                                                     margin: EdgeInsets.symmetric(vertical: 7, horizontal: 7),
                                                     elevation: 4,
                                                     shape: RoundedRectangleBorder(
                                                         borderRadius: BorderRadius.circular(12)),
                                                     child: Padding(
                                                       padding: const EdgeInsets.all(8.0),
-                                                      child:
-                                                      Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                      child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                         children: [
-                                                          Row(
-                                                            mainAxisAlignment: MainAxisAlignment.center,
-                                                            children: [
-                                                              Expanded(
-                                                                flex:1,
-                                                                child: Text(
-                                                                 items.itemName.toString(),
-                                                                  style: TextStyle(
-                                                                    fontWeight: FontWeight.normal,
-                                                                    color: Colors.black,
-                                                                    fontSize: 16,
-                                                                  ),
-                                                                  textAlign: TextAlign.center,
-                                                                ),
+                                                          // Cylinder Category Text
+                                                          Expanded(
+                                                            child: Text(
+                                                          item.itemName ?? "Unknown",
+                                                              style:Styling.textFormText,
+                                                              textAlign: TextAlign.center,
+                                                            ),
+                                                          ),
+                                                          // Divider between Texts
+                                                          VerticalDivider(thickness: 1, color: Colors.grey),
+                                                          // Imbalance Quantity with Tap Gesture
+                                                          Expanded(
+                                                            child: GestureDetector(
+                                                              onTap: () {
+                                                                // Handle the tap on the 'emptyCount' text
+                                                                setState(() {
+                                                                  // Perform any action when clicked
+                                                                });
+                                                              },
+                                                              child: Text(
+                                                                '${item.imbalanceStk ?? 0}',
+                                                                textAlign: TextAlign.center,
+                                                                style:Styling.textFormText
                                                               ),
-                                                              Expanded(
-                                                                flex:1,
-                                                                child: Text(
-                                                                  items.filledOpeningStk.toString(),
-                                                                  style: TextStyle(
-                                                                    fontWeight: FontWeight.normal,
-                                                                    color: Colors.black,
-                                                                    fontSize: 16,
-                                                                  ),
-                                                                  textAlign: TextAlign.center,
-                                                                ),
-                                                              ),
-                                                              Expanded(
-                                                                flex:1,
-                                                                child: Text(
-                                                                  items.emptyOpeningStk.toString(),
-                                                                  style: TextStyle(
-                                                                    fontWeight: FontWeight.normal,
-                                                                    color: Colors.black,
-                                                                    fontSize: 16,
-                                                                  ),
-                                                                  textAlign: TextAlign.center,
-                                                                ),
-                                                              ),
-                                                              Expanded(
-                                                                flex:1,
-                                                                child: Text(
-                                                                  items.defOpeningStk.toString(),
-                                                                  style: TextStyle(
-                                                                    fontWeight: FontWeight.normal,
-                                                                    color: Colors.black,
-                                                                    fontSize: 16,
-                                                                  ),
-                                                                  textAlign: TextAlign.center,
-                                                                ),
-                                                              ),
-                                                            ],
+                                                            ),
                                                           ),
                                                         ],
                                                       ),
                                                     ),
                                                   );
-                                              },
+                                                },
+                                              ):
+                                                  Container(
+                                                    child: Text("No Data Available"),
+                                                  )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                          ],
+                        ),
+
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Title for Cylinder Categories Table
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  isCurrentStockListViewVisible =
+                                  !isCurrentStockListViewVisible; // Toggle ListView visibility
+                                });
+                              },
+                              child:
+                              Card(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            // Text(
+                                            //   "View Today's Opening Stock",
+                                            //   style: TextStyle(
+                                            //       fontSize: 14,
+                                            //       color: Colors.black,
+                                            //       fontWeight: FontWeight.bold),
+                                            // ),
+                                            bodyTitleBlue("View Current Stock"),
+                                            Icon(
+                                              isCurrentStockListViewVisible
+                                                  ? Icons.arrow_drop_up
+                                                  : Icons.arrow_drop_down,
+                                              size: 30, // Bigger icon for a more clickable feel
+                                              color:Color(0xff1280b3),
                                             ),
                                           ],
                                         ),
                                       ),
+                                      Visibility(
+                                        visible:
+                                        isCurrentStockListViewVisible,
+                                        child:
+                                        Card(
+                                          elevation: 5,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child:
+                                          Column(
+                                            children: [
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.blue.shade100,
+                                                  borderRadius: BorderRadius.only(
+                                                    topLeft: Radius.circular(12),
+                                                    topRight: Radius.circular(12),
+                                                  ),
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      Expanded(
+                                                        flex:1,
+                                                        child: Text(
+                                                          '',
+                                                          style: TextStyle(
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.black,
+                                                            fontSize: 14,
+                                                          ),
+                                                          textAlign: TextAlign.center,
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        flex:1,
+                                                        child: Text(
+                                                          'Filled',
+                                                          style: TextStyle(
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.black,
+                                                            fontSize: 14
+                                                            ,
+                                                          ),
+                                                          textAlign: TextAlign.center,
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        flex:1,
+                                                        child: Text(
+                                                          'Empty',
+                                                          style: TextStyle(
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.black,
+                                                            fontSize: 14,
+                                                          ),
+                                                          textAlign: TextAlign.center,
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        flex:1,
+                                                        child: Text(
+                                                          'Defective',
+                                                          style: TextStyle(
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.black,
+                                                            fontSize: 14,
+                                                          ),
+                                                          textAlign: TextAlign.center,
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        flex:1,
+                                                        child: Text(
+                                                          '',
+                                                          style: TextStyle(
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.black,
+                                                            fontSize: 14,
+                                                          ),
+                                                          textAlign: TextAlign.center,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              getCurrentStcOfGodownKeeper.isNotEmpty?
+                                              ListView.builder(
+                                                shrinkWrap: true,
+                                                physics: NeverScrollableScrollPhysics(),
+                                                itemCount: getCurrentStcOfGodownKeeper.length,
+                                                itemBuilder: (context, index) {
+                                                  final items = getCurrentStcOfGodownKeeper[index];
 
-                //                       Container(
-                //                         decoration: BoxDecoration(
-                //                           // Background color of the box
-                //                           borderRadius: BorderRadius.circular(8),
-                //                           border: Border.all(
-                //                               width:
-                //                               0.5), // Optional: Add rounded corners
-                //                         ),
-                //                         child: Column(
-                //                           crossAxisAlignment:
-                //                           CrossAxisAlignment.start,
-                //                           children: [
-                //                             // Header Row
-                //                             Container(
-                //                               decoration: BoxDecoration(
-                //                                 // Background color of the box
-                //                                 borderRadius: BorderRadius.only(topLeft:Radius.circular(8),topRight: Radius.circular(8)),
-                //                                 color: Colors.blue.shade100,
-                //                                 // Optional: Add rounded corners
-                //                               ),
-                //
-                //                               child:
-                //                               Row(
-                //                                 mainAxisAlignment:
-                //                                 MainAxisAlignment.center,
-                //                                 children: [
-                //                                   Expanded(
-                //                                       child: Text('Cylinder',
-                //                                         style: TextStyle(
-                //                                           fontWeight: FontWeight
-                //                                               .bold,),textAlign: TextAlign.center,)),
-                //                                   verticalDividerSmall(),
-                //                                   Expanded(
-                //                                       child: Text('Filled',
-                //                                           style: TextStyle(
-                //                                               fontWeight: FontWeight
-                //                                                   .bold),textAlign: TextAlign.center)),
-                //                                   verticalDividerSmall(),
-                //                                   Expanded(
-                //                                       child: Text('Empty',
-                //                                           style: TextStyle(
-                //                                               fontWeight: FontWeight
-                //                                                   .bold),textAlign: TextAlign.center)),
-                //                                   verticalDividerSmall(),
-                //                                   Expanded(
-                //                                       child: Text('Def.',
-                //                                           style: TextStyle(
-                //                                               fontWeight: FontWeight
-                //                                                   .bold),textAlign: TextAlign.center)),
-                //                                 ],
-                //                               ),
-                //                             ),
-                //
-                //                             Container(
-                //                               color: Colors.black12,
-                //                               height: 1,
-                //                               width: MediaQuery.of(context)
-                //                                   .size
-                //                                   .width,
-                //                             ),
-                //                             // Adds a divider below the header for separation
-                //                             // List of Entries
-                //                             // ListView.builder(
-                //                             //   shrinkWrap: true,
-                //                             //   // To make the ListView occupy only the space it needs
-                //                             //   physics:
-                //                             //   NeverScrollableScrollPhysics(),
-                //                             //   // Prevents scrolling inside the ListView
-                //                             //   itemCount:
-                //                             //   cylinderData.entries.length,
-                //                             //   itemBuilder: (context, index) {
-                //                             //     var entry = cylinderData.entries
-                //                             //         .elementAt(index);
-                //                             //     String category = entry.key;
-                //                             //     int emptyCount =
-                //                             //         entry.value['Empty'] ?? 0;
-                //                             //     int filledCount =
-                //                             //         entry.value['Filled'] ?? 0;
-                //                             //     int defectiveCount = entry.value['Defective'] ?? 0;
-                //                             //     return Column(
-                //                             //       children: [
-                //                             //         Row(
-                //                             //           mainAxisAlignment:
-                //                             //           MainAxisAlignment
-                //                             //               .center,
-                //                             //           children: [
-                //                             //             Expanded(
-                //                             //                 child:
-                //                             //                 Text(category,textAlign: TextAlign.center)),
-                //                             //             verticalDividerVerySmall(),
-                //                             //             Expanded(
-                //                             //                 child: Text(
-                //                             //                     '$emptyCount',textAlign: TextAlign.center)),
-                //                             //             verticalDividerVerySmall(),
-                //                             //             Expanded(
-                //                             //                 child: Text(
-                //                             //                     '$filledCount',textAlign: TextAlign.center)),
-                //                             //             verticalDividerVerySmall(),
-                //                             //             Expanded(
-                //                             //                 child: Text('$defectiveCount',textAlign: TextAlign.center)),
-                //                             //           ],
-                //                             //         ),
-                //                             //         Container(
-                //                             //           color: Colors.black12,
-                //                             //           height: 1,
-                //                             //           width:
-                //                             //           MediaQuery.of(context)
-                //                             //               .size
-                //                             //               .width,
-                //                             //         ),
-                //                             //       ],
-                //                             //     );
-                //                             //   },
-                //                             // ),
-                // ListView.builder(
-                //   shrinkWrap: true,
-                //   physics: NeverScrollableScrollPhysics(),
-                //   itemCount: cylinderData.entries.length,
-                //   itemBuilder: (context, index) {
-                //     var entry = cylinderData.entries.elementAt(index);
-                //     String category = entry.key;
-                //     int emptyCount = entry.value['Empty'] ?? 0;
-                //     int filledCount = entry.value['Filled'] ?? 0;
-                //     int defectiveCount = entry.value['Defective'] ?? 0;
-                //
-                //     // Calculate total count
-                //     int total = emptyCount + filledCount + defectiveCount;
-                //
-                //     // Calculate percentage for each type
-                //     double emptyPercentage = (emptyCount / total) * 100;
-                //     double filledPercentage = (filledCount / total) * 100;
-                //     double defectivePercentage = (defectiveCount / total) * 100;
-                //
-                //     return Card(
-                //       elevation: 5,
-                //       shape: RoundedRectangleBorder(
-                //         borderRadius: BorderRadius.circular(12),
-                //       ),
-                //       child: Padding(
-                //         padding: const EdgeInsets.all(16.0),
-                //         child: Column(
-                //           crossAxisAlignment: CrossAxisAlignment.start,
-                //           children: [
-                //             Text(
-                //               category,
-                //               style: TextStyle(
-                //                 fontWeight: FontWeight.bold,
-                //                 fontSize: 16,
-                //                 color: Colors.black,
-                //               ),
-                //             ),
-                //             SizedBox(height: 10),
-                //             Text('Empty: $emptyCount'),
-                //             LinearProgressIndicator(
-                //               value: emptyPercentage / 100,
-                //               backgroundColor: Colors.grey.shade300,
-                //               color: Colors.blue,
-                //             ),
-                //             SizedBox(height: 10),
-                //             Text('Filled: $filledCount'),
-                //             LinearProgressIndicator(
-                //               value: filledPercentage / 100,
-                //               backgroundColor: Colors.grey.shade300,
-                //               color: Colors.green,
-                //             ),
-                //             SizedBox(height: 10),
-                //             Text('Defective: $defectiveCount'),
-                //             LinearProgressIndicator(
-                //               value: defectivePercentage / 100,
-                //               backgroundColor: Colors.grey.shade300,
-                //               color: Colors.red,
-                //             ),
-                //           ],
-                //         ),
-                //       ),
-                //     );
-                //   },
-                // ),
-                //
-                // ],
-                //                         ),
-                //                       ),
-                                  )
-                                ],
+                                                  return
+                                                    Card(
+                                                      margin: EdgeInsets.symmetric(vertical: 7, horizontal: 7),
+                                                      elevation: 4,
+                                                      shape: RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.circular(12)),
+                                                      child: Padding(
+                                                        padding: const EdgeInsets.all(8.0),
+                                                        child:
+                                                        Column(
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Row(
+                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                              children: [
+                                                                Expanded(
+                                                                  flex:1,
+                                                                  child: Text(
+                                                                    items.itemName.toString(),
+                                                                    style:Styling.textFormText,
+                                                                    textAlign: TextAlign.center,
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  flex:1,
+                                                                  child: Text(
+                                                                    items.currentStkFilled.toString(),
+                                                                    style:Styling.textFormText,
+                                                                    textAlign: TextAlign.center,
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  flex:1,
+                                                                  child: Text(
+                                                                    items.currentStkEmpty.toString(),
+                                                                    style:Styling.textFormText,
+                                                                    textAlign: TextAlign.center,
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  flex:1,
+                                                                  child: Text(
+                                                                    items.currentStkDefective.toString(),
+                                                                    style:Styling.textFormText,
+                                                                    textAlign: TextAlign.center,
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  flex:1,
+                                                                  child: GestureDetector(
+                                                                    onTap: (){
+                                                                      Navigator.pushNamed(
+                                                                          context,
+                                                                          StockTransferTOGodownScreen
+                                                                              .screenName,
+                                                                          arguments: {
+                                                                            "itemName": items.itemName,
+                                                                            "itemID" : items.itemId,
+                                                                            "filledStock" :items.currentStkFilled,
+                                                                            "emptyStock" :items.currentStkEmpty,
+                                                                            "defectiveStock" :items.currentStkDefective,
+                                                                          });
+                                                                    },
+                                                                    child: Text(
+                                                                      "Transfer",
+                                                                      style:Styling.blueClrTextWithUnderline,
+                                                                      textAlign: TextAlign.center,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
+                                                },
+                                              ):
+                                              Container(
+                                                child: Text("No Data Available"),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        //                       Container(
+                                        //                         decoration: BoxDecoration(
+                                        //                           // Background color of the box
+                                        //                           borderRadius: BorderRadius.circular(8),
+                                        //                           border: Border.all(
+                                        //                               width:
+                                        //                               0.5), // Optional: Add rounded corners
+                                        //                         ),
+                                        //                         child: Column(
+                                        //                           crossAxisAlignment:
+                                        //                           CrossAxisAlignment.start,
+                                        //                           children: [
+                                        //                             // Header Row
+                                        //                             Container(
+                                        //                               decoration: BoxDecoration(
+                                        //                                 // Background color of the box
+                                        //                                 borderRadius: BorderRadius.only(topLeft:Radius.circular(8),topRight: Radius.circular(8)),
+                                        //                                 color: Colors.blue.shade100,
+                                        //                                 // Optional: Add rounded corners
+                                        //                               ),
+                                        //
+                                        //                               child:
+                                        //                               Row(
+                                        //                                 mainAxisAlignment:
+                                        //                                 MainAxisAlignment.center,
+                                        //                                 children: [
+                                        //                                   Expanded(
+                                        //                                       child: Text('Cylinder',
+                                        //                                         style: TextStyle(
+                                        //                                           fontWeight: FontWeight
+                                        //                                               .bold,),textAlign: TextAlign.center,)),
+                                        //                                   verticalDividerSmall(),
+                                        //                                   Expanded(
+                                        //                                       child: Text('Filled',
+                                        //                                           style: TextStyle(
+                                        //                                               fontWeight: FontWeight
+                                        //                                                   .bold),textAlign: TextAlign.center)),
+                                        //                                   verticalDividerSmall(),
+                                        //                                   Expanded(
+                                        //                                       child: Text('Empty',
+                                        //                                           style: TextStyle(
+                                        //                                               fontWeight: FontWeight
+                                        //                                                   .bold),textAlign: TextAlign.center)),
+                                        //                                   verticalDividerSmall(),
+                                        //                                   Expanded(
+                                        //                                       child: Text('Def.',
+                                        //                                           style: TextStyle(
+                                        //                                               fontWeight: FontWeight
+                                        //                                                   .bold),textAlign: TextAlign.center)),
+                                        //                                 ],
+                                        //                               ),
+                                        //                             ),
+                                        //
+                                        //                             Container(
+                                        //                               color: Colors.black12,
+                                        //                               height: 1,
+                                        //                               width: MediaQuery.of(context)
+                                        //                                   .size
+                                        //                                   .width,
+                                        //                             ),
+                                        //                             // Adds a divider below the header for separation
+                                        //                             // List of Entries
+                                        //                             // ListView.builder(
+                                        //                             //   shrinkWrap: true,
+                                        //                             //   // To make the ListView occupy only the space it needs
+                                        //                             //   physics:
+                                        //                             //   NeverScrollableScrollPhysics(),
+                                        //                             //   // Prevents scrolling inside the ListView
+                                        //                             //   itemCount:
+                                        //                             //   cylinderData.entries.length,
+                                        //                             //   itemBuilder: (context, index) {
+                                        //                             //     var entry = cylinderData.entries
+                                        //                             //         .elementAt(index);
+                                        //                             //     String category = entry.key;
+                                        //                             //     int emptyCount =
+                                        //                             //         entry.value['Empty'] ?? 0;
+                                        //                             //     int filledCount =
+                                        //                             //         entry.value['Filled'] ?? 0;
+                                        //                             //     int defectiveCount = entry.value['Defective'] ?? 0;
+                                        //                             //     return Column(
+                                        //                             //       children: [
+                                        //                             //         Row(
+                                        //                             //           mainAxisAlignment:
+                                        //                             //           MainAxisAlignment
+                                        //                             //               .center,
+                                        //                             //           children: [
+                                        //                             //             Expanded(
+                                        //                             //                 child:
+                                        //                             //                 Text(category,textAlign: TextAlign.center)),
+                                        //                             //             verticalDividerVerySmall(),
+                                        //                             //             Expanded(
+                                        //                             //                 child: Text(
+                                        //                             //                     '$emptyCount',textAlign: TextAlign.center)),
+                                        //                             //             verticalDividerVerySmall(),
+                                        //                             //             Expanded(
+                                        //                             //                 child: Text(
+                                        //                             //                     '$filledCount',textAlign: TextAlign.center)),
+                                        //                             //             verticalDividerVerySmall(),
+                                        //                             //             Expanded(
+                                        //                             //                 child: Text('$defectiveCount',textAlign: TextAlign.center)),
+                                        //                             //           ],
+                                        //                             //         ),
+                                        //                             //         Container(
+                                        //                             //           color: Colors.black12,
+                                        //                             //           height: 1,
+                                        //                             //           width:
+                                        //                             //           MediaQuery.of(context)
+                                        //                             //               .size
+                                        //                             //               .width,
+                                        //                             //         ),
+                                        //                             //       ],
+                                        //                             //     );
+                                        //                             //   },
+                                        //                             // ),
+                                        // ListView.builder(
+                                        //   shrinkWrap: true,
+                                        //   physics: NeverScrollableScrollPhysics(),
+                                        //   itemCount: cylinderData.entries.length,
+                                        //   itemBuilder: (context, index) {
+                                        //     var entry = cylinderData.entries.elementAt(index);
+                                        //     String category = entry.key;
+                                        //     int emptyCount = entry.value['Empty'] ?? 0;
+                                        //     int filledCount = entry.value['Filled'] ?? 0;
+                                        //     int defectiveCount = entry.value['Defective'] ?? 0;
+                                        //
+                                        //     // Calculate total count
+                                        //     int total = emptyCount + filledCount + defectiveCount;
+                                        //
+                                        //     // Calculate percentage for each type
+                                        //     double emptyPercentage = (emptyCount / total) * 100;
+                                        //     double filledPercentage = (filledCount / total) * 100;
+                                        //     double defectivePercentage = (defectiveCount / total) * 100;
+                                        //
+                                        //     return Card(
+                                        //       elevation: 5,
+                                        //       shape: RoundedRectangleBorder(
+                                        //         borderRadius: BorderRadius.circular(12),
+                                        //       ),
+                                        //       child: Padding(
+                                        //         padding: const EdgeInsets.all(16.0),
+                                        //         child: Column(
+                                        //           crossAxisAlignment: CrossAxisAlignment.start,
+                                        //           children: [
+                                        //             Text(
+                                        //               category,
+                                        //               style: TextStyle(
+                                        //                 fontWeight: FontWeight.bold,
+                                        //                 fontSize: 16,
+                                        //                 color: Colors.black,
+                                        //               ),
+                                        //             ),
+                                        //             SizedBox(height: 10),
+                                        //             Text('Empty: $emptyCount'),
+                                        //             LinearProgressIndicator(
+                                        //               value: emptyPercentage / 100,
+                                        //               backgroundColor: Colors.grey.shade300,
+                                        //               color: Colors.blue,
+                                        //             ),
+                                        //             SizedBox(height: 10),
+                                        //             Text('Filled: $filledCount'),
+                                        //             LinearProgressIndicator(
+                                        //               value: filledPercentage / 100,
+                                        //               backgroundColor: Colors.grey.shade300,
+                                        //               color: Colors.green,
+                                        //             ),
+                                        //             SizedBox(height: 10),
+                                        //             Text('Defective: $defectiveCount'),
+                                        //             LinearProgressIndicator(
+                                        //               value: defectivePercentage / 100,
+                                        //               backgroundColor: Colors.grey.shade300,
+                                        //               color: Colors.red,
+                                        //             ),
+                                        //           ],
+                                        //         ),
+                                        //       ),
+                                        //     );
+                                        //   },
+                                        // ),
+                                        //
+                                        // ],
+                                        //                         ),
+                                        //                       ),
+                                      )
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
+                            SizedBox(height: 10),
+                          ],
                         ),
-                        SizedBox(height: 10),
+                        // Padding(
+                        //   padding:
+                        //       const EdgeInsets.only(bottom: 0.0, top: 0, left: 10),
+                        //   child: Text(
+                        //     "Total Current Stock Itemised",
+                        //     style: TextStyle(
+                        //         fontWeight: FontWeight.bold,
+                        //         fontSize: 16,
+                        //         color: Colors.blueAccent),
+                        //   ),
+                        // ),
+                        // Column(
+                        //   crossAxisAlignment: CrossAxisAlignment.start,
+                        //   children: [
+                        //     // Title for Cylinder Categories Table
+                        //     GestureDetector(
+                        //       onTap: () {
+                        //         setState(() {
+                        //           isDomesticListViewVisible =
+                        //               !isDomesticListViewVisible; // Toggle ListView visibility
+                        //         });
+                        //       },
+                        //       child: Card(
+                        //         child: Padding(
+                        //           padding: const EdgeInsets.all(8.0),
+                        //           child: Column(
+                        //             children: [
+                        //               Padding(
+                        //                 padding: const EdgeInsets.all(8.0),
+                        //                 child: Row(
+                        //                   mainAxisAlignment:
+                        //                       MainAxisAlignment.spaceBetween,
+                        //                   children: [
+                        //                     Text(
+                        //                       'Domestic',
+                        //                       style: TextStyle(
+                        //                           fontSize: 14,
+                        //                           color: Colors.black,
+                        //                           fontWeight: FontWeight.bold),
+                        //                     ),
+                        //                     Icon(
+                        //                       isDomesticListViewVisible
+                        //                           ? Icons.arrow_drop_up
+                        //                           : Icons.arrow_drop_down,
+                        //                       size: 30, // Bigger icon for a more clickable feel
+                        //                       color: Colors.blue.shade600,
+                        //                     ),
+                        //                   ],
+                        //                 ),
+                        //               ),
+                        //               Visibility(
+                        //                 visible: isDomesticListViewVisible,
+                        //                 child:
+                        //                 Container(
+                        //                   decoration: BoxDecoration(
+                        //                     // Background color of the box
+                        //                     borderRadius: BorderRadius.circular(8),
+                        //                     border: Border.all(
+                        //                         width:
+                        //                         0.5), // Optional: Add rounded corners
+                        //                   ),
+                        //                   child: Column(
+                        //                     crossAxisAlignment:
+                        //                     CrossAxisAlignment.start,
+                        //                     children: [
+                        //                       // Header Row
+                        //                       Container(
+                        //                         decoration: BoxDecoration(
+                        //                           // Background color of the box
+                        //                           borderRadius: BorderRadius.only(topLeft:Radius.circular(8),topRight: Radius.circular(8)),
+                        //                           color: Colors.blue.shade100,
+                        //                           // Optional: Add rounded corners
+                        //                         ),
+                        //
+                        //                         child:
+                        //                         Row(
+                        //                           mainAxisAlignment:
+                        //                           MainAxisAlignment.center,
+                        //                           children: [
+                        //                             Expanded(
+                        //                                 child: Text('Cylinder',
+                        //                                   style: TextStyle(
+                        //                                     fontWeight: FontWeight
+                        //                                         .bold,),textAlign: TextAlign.center,)),
+                        //                             verticalDividerSmall(),
+                        //                             Expanded(
+                        //                                 child: Text('Filled',
+                        //                                     style: TextStyle(
+                        //                                         fontWeight: FontWeight
+                        //                                             .bold),textAlign: TextAlign.center)),
+                        //                             verticalDividerSmall(),
+                        //                             Expanded(
+                        //                                 child: Text('Empty',
+                        //                                     style: TextStyle(
+                        //                                         fontWeight: FontWeight
+                        //                                             .bold),textAlign: TextAlign.center)),
+                        //                             verticalDividerSmall(),
+                        //                             Expanded(
+                        //                                 child: Text('Def.',
+                        //                                     style: TextStyle(
+                        //                                         fontWeight: FontWeight
+                        //                                             .bold),textAlign: TextAlign.center)),
+                        //                           ],
+                        //                         ),
+                        //                       ),
+                        //
+                        //                       Container(
+                        //                         color: Colors.black12,
+                        //                         height: 1,
+                        //                         width: MediaQuery.of(context)
+                        //                             .size
+                        //                             .width,
+                        //                       ),
+                        //                       // Adds a divider below the header for separation
+                        //                       // List of Entries
+                        //                       ListView.builder(
+                        //                         shrinkWrap: true,
+                        //                         // To make the ListView occupy only the space it needs
+                        //                         physics:
+                        //                         NeverScrollableScrollPhysics(),
+                        //                         // Prevents scrolling inside the ListView
+                        //                         itemCount:
+                        //                         cylinderData.entries.length,
+                        //                         itemBuilder: (context, index) {
+                        //                           var entry = cylinderData.entries
+                        //                               .elementAt(index);
+                        //                           String category = entry.key;
+                        //                           int emptyCount =
+                        //                               entry.value['Empty'] ?? 0;
+                        //                           int filledCount =
+                        //                               entry.value['Filled'] ?? 0;
+                        //                           int defectiveCount = entry.value['Defective'] ?? 0;
+                        //                           return Column(
+                        //                             children: [
+                        //                               Row(
+                        //                                 mainAxisAlignment:
+                        //                                 MainAxisAlignment
+                        //                                     .center,
+                        //                                 children: [
+                        //                                   Expanded(
+                        //                                       child:
+                        //                                       Text(category,textAlign: TextAlign.center)),
+                        //                                   verticalDividerVerySmall(),
+                        //                                   Expanded(
+                        //                                       child: Text(
+                        //                                           '$emptyCount',textAlign: TextAlign.center)),
+                        //                                   verticalDividerVerySmall(),
+                        //                                   Expanded(
+                        //                                       child: Text(
+                        //                                           '$filledCount',textAlign: TextAlign.center)),
+                        //                                   verticalDividerVerySmall(),
+                        //                                   Expanded(
+                        //                                       child: Text('$defectiveCount',textAlign: TextAlign.center)),
+                        //                                 ],
+                        //                               ),
+                        //                               Container(
+                        //                                 color: Colors.black12,
+                        //                                 height: 1,
+                        //                                 width:
+                        //                                 MediaQuery.of(context)
+                        //                                     .size
+                        //                                     .width,
+                        //                               ),
+                        //                             ],
+                        //                           );
+                        //                         },
+                        //                       ),
+                        //                     ],
+                        //                   ),
+                        //                 ),
+                        //               )
+                        //             ],
+                        //           ),
+                        //         ),
+                        //       ),
+                        //     ),
+                        //     SizedBox(height: 10),
+                        //   ],
+                        // ),
+                        // Column(
+                        //   crossAxisAlignment: CrossAxisAlignment.start,
+                        //   children: [
+                        //     // Title for Cylinder Categories Table
+                        //     GestureDetector(
+                        //       onTap: () {
+                        //         setState(() {
+                        //           isNonDomesticListViewVisible =
+                        //               !isNonDomesticListViewVisible; // Toggle ListView visibility
+                        //         });
+                        //       },
+                        //       child: Card(
+                        //         child: Padding(
+                        //           padding: const EdgeInsets.all(8.0),
+                        //           child: Column(
+                        //             children: [
+                        //               Padding(
+                        //                 padding: const EdgeInsets.all(8.0),
+                        //                 child: Row(
+                        //                   mainAxisAlignment:
+                        //                       MainAxisAlignment.spaceBetween,
+                        //                   children: [
+                        //                     Text(
+                        //                       'Non-Domestic',
+                        //                       style: TextStyle(
+                        //                           fontSize: 14,
+                        //                           color: Colors.black,
+                        //                           fontWeight: FontWeight.bold),
+                        //                     ),
+                        //                     Icon(
+                        //                       isNonDomesticListViewVisible
+                        //                           ? Icons.arrow_drop_up
+                        //                           : Icons.arrow_drop_down,
+                        //                       size: 30, // Bigger icon for a more clickable feel
+                        //                       color: Colors.blue.shade600,
+                        //                     ),
+                        //                   ],
+                        //                 ),
+                        //               ),
+                        //               Visibility(
+                        //                 visible: isNonDomesticListViewVisible,
+                        //                 child:
+                        //                 Container(
+                        //                   decoration: BoxDecoration(
+                        //                     // Background color of the box
+                        //                     borderRadius: BorderRadius.circular(8),
+                        //                     border: Border.all(
+                        //                         width:
+                        //                         0.5), // Optional: Add rounded corners
+                        //                   ),
+                        //                   child: Column(
+                        //                     crossAxisAlignment:
+                        //                     CrossAxisAlignment.start,
+                        //                     children: [
+                        //                       // Header Row
+                        //                       Container(
+                        //                         decoration: BoxDecoration(
+                        //                           // Background color of the box
+                        //                           borderRadius: BorderRadius.only(topLeft:Radius.circular(8),topRight: Radius.circular(8)),
+                        //                           color: Colors.blue.shade100,
+                        //                           // Optional: Add rounded corners
+                        //                         ),
+                        //
+                        //                         child:
+                        //                         Row(
+                        //                           mainAxisAlignment:
+                        //                           MainAxisAlignment.center,
+                        //                           children: [
+                        //                             Expanded(
+                        //                                 child: Text('Cylinder',
+                        //                                   style: TextStyle(
+                        //                                     fontWeight: FontWeight
+                        //                                         .bold,),textAlign: TextAlign.center,)),
+                        //                             verticalDividerSmall(),
+                        //                             Expanded(
+                        //                                 child: Text('Filled',
+                        //                                     style: TextStyle(
+                        //                                         fontWeight: FontWeight
+                        //                                             .bold),textAlign: TextAlign.center)),
+                        //                             verticalDividerSmall(),
+                        //                             Expanded(
+                        //                                 child: Text('Empty',
+                        //                                     style: TextStyle(
+                        //                                         fontWeight: FontWeight
+                        //                                             .bold),textAlign: TextAlign.center)),
+                        //                             verticalDividerSmall(),
+                        //                             Expanded(
+                        //                                 child: Text('Def.',
+                        //                                     style: TextStyle(
+                        //                                         fontWeight: FontWeight
+                        //                                             .bold),textAlign: TextAlign.center)),
+                        //                           ],
+                        //                         ),
+                        //                       ),
+                        //
+                        //                       Container(
+                        //                         color: Colors.black12,
+                        //                         height: 1,
+                        //                         width: MediaQuery.of(context)
+                        //                             .size
+                        //                             .width,
+                        //                       ),
+                        //                       // Adds a divider below the header for separation
+                        //                       // List of Entries
+                        //                       ListView.builder(
+                        //                         shrinkWrap: true,
+                        //                         // To make the ListView occupy only the space it needs
+                        //                         physics:
+                        //                         NeverScrollableScrollPhysics(),
+                        //                         // Prevents scrolling inside the ListView
+                        //                         itemCount:
+                        //                         cylinderData.entries.length,
+                        //                         itemBuilder: (context, index) {
+                        //                           var entry = cylinderData.entries
+                        //                               .elementAt(index);
+                        //                           String category = entry.key;
+                        //                           int emptyCount =
+                        //                               entry.value['Empty'] ?? 0;
+                        //                           int filledCount =
+                        //                               entry.value['Filled'] ?? 0;
+                        //                           int defectiveCount = entry.value['Defective'] ?? 0;
+                        //                           return Column(
+                        //                             children: [
+                        //                               Row(
+                        //                                 mainAxisAlignment:
+                        //                                 MainAxisAlignment
+                        //                                     .center,
+                        //                                 children: [
+                        //                                   Expanded(
+                        //                                       child:
+                        //                                       Text(category,textAlign: TextAlign.center)),
+                        //                                   verticalDividerVerySmall(),
+                        //                                   Expanded(
+                        //                                       child: Text(
+                        //                                           '$emptyCount',textAlign: TextAlign.center)),
+                        //                                   verticalDividerVerySmall(),
+                        //                                   Expanded(
+                        //                                       child: Text(
+                        //                                           '$filledCount',textAlign: TextAlign.center)),
+                        //                                   verticalDividerVerySmall(),
+                        //                                   Expanded(child: Text('$defectiveCount',textAlign: TextAlign.center)),
+                        //                                 ],
+                        //                               ),
+                        //                               Container(
+                        //                                 color: Colors.black12,
+                        //                                 height: 1,
+                        //                                 width:
+                        //                                 MediaQuery.of(context)
+                        //                                     .size
+                        //                                     .width,
+                        //                               ),
+                        //                             ],
+                        //                           );
+                        //                         },
+                        //                       ),
+                        //                     ],
+                        //                   ),
+                        //                 ),
+                        //               )
+                        //             ],
+                        //           ),
+                        //         ),
+                        //       ),
+                        //     ),
+                        //     SizedBox(height: 10),
+                        //   ],
+                        // ),
                       ],
                     ),
-                    // Padding(
-                    //   padding:
-                    //       const EdgeInsets.only(bottom: 0.0, top: 0, left: 10),
-                    //   child: Text(
-                    //     "Total Current Stock Itemised",
-                    //     style: TextStyle(
-                    //         fontWeight: FontWeight.bold,
-                    //         fontSize: 16,
-                    //         color: Colors.blueAccent),
-                    //   ),
-                    // ),
-                    // Column(
-                    //   crossAxisAlignment: CrossAxisAlignment.start,
-                    //   children: [
-                    //     // Title for Cylinder Categories Table
-                    //     GestureDetector(
-                    //       onTap: () {
-                    //         setState(() {
-                    //           isDomesticListViewVisible =
-                    //               !isDomesticListViewVisible; // Toggle ListView visibility
-                    //         });
-                    //       },
-                    //       child: Card(
-                    //         child: Padding(
-                    //           padding: const EdgeInsets.all(8.0),
-                    //           child: Column(
-                    //             children: [
-                    //               Padding(
-                    //                 padding: const EdgeInsets.all(8.0),
-                    //                 child: Row(
-                    //                   mainAxisAlignment:
-                    //                       MainAxisAlignment.spaceBetween,
-                    //                   children: [
-                    //                     Text(
-                    //                       'Domestic',
-                    //                       style: TextStyle(
-                    //                           fontSize: 14,
-                    //                           color: Colors.black,
-                    //                           fontWeight: FontWeight.bold),
-                    //                     ),
-                    //                     Icon(
-                    //                       isDomesticListViewVisible
-                    //                           ? Icons.arrow_drop_up
-                    //                           : Icons.arrow_drop_down,
-                    //                       size: 30, // Bigger icon for a more clickable feel
-                    //                       color: Colors.blue.shade600,
-                    //                     ),
-                    //                   ],
-                    //                 ),
-                    //               ),
-                    //               Visibility(
-                    //                 visible: isDomesticListViewVisible,
-                    //                 child:
-                    //                 Container(
-                    //                   decoration: BoxDecoration(
-                    //                     // Background color of the box
-                    //                     borderRadius: BorderRadius.circular(8),
-                    //                     border: Border.all(
-                    //                         width:
-                    //                         0.5), // Optional: Add rounded corners
-                    //                   ),
-                    //                   child: Column(
-                    //                     crossAxisAlignment:
-                    //                     CrossAxisAlignment.start,
-                    //                     children: [
-                    //                       // Header Row
-                    //                       Container(
-                    //                         decoration: BoxDecoration(
-                    //                           // Background color of the box
-                    //                           borderRadius: BorderRadius.only(topLeft:Radius.circular(8),topRight: Radius.circular(8)),
-                    //                           color: Colors.blue.shade100,
-                    //                           // Optional: Add rounded corners
-                    //                         ),
-                    //
-                    //                         child:
-                    //                         Row(
-                    //                           mainAxisAlignment:
-                    //                           MainAxisAlignment.center,
-                    //                           children: [
-                    //                             Expanded(
-                    //                                 child: Text('Cylinder',
-                    //                                   style: TextStyle(
-                    //                                     fontWeight: FontWeight
-                    //                                         .bold,),textAlign: TextAlign.center,)),
-                    //                             verticalDividerSmall(),
-                    //                             Expanded(
-                    //                                 child: Text('Filled',
-                    //                                     style: TextStyle(
-                    //                                         fontWeight: FontWeight
-                    //                                             .bold),textAlign: TextAlign.center)),
-                    //                             verticalDividerSmall(),
-                    //                             Expanded(
-                    //                                 child: Text('Empty',
-                    //                                     style: TextStyle(
-                    //                                         fontWeight: FontWeight
-                    //                                             .bold),textAlign: TextAlign.center)),
-                    //                             verticalDividerSmall(),
-                    //                             Expanded(
-                    //                                 child: Text('Def.',
-                    //                                     style: TextStyle(
-                    //                                         fontWeight: FontWeight
-                    //                                             .bold),textAlign: TextAlign.center)),
-                    //                           ],
-                    //                         ),
-                    //                       ),
-                    //
-                    //                       Container(
-                    //                         color: Colors.black12,
-                    //                         height: 1,
-                    //                         width: MediaQuery.of(context)
-                    //                             .size
-                    //                             .width,
-                    //                       ),
-                    //                       // Adds a divider below the header for separation
-                    //                       // List of Entries
-                    //                       ListView.builder(
-                    //                         shrinkWrap: true,
-                    //                         // To make the ListView occupy only the space it needs
-                    //                         physics:
-                    //                         NeverScrollableScrollPhysics(),
-                    //                         // Prevents scrolling inside the ListView
-                    //                         itemCount:
-                    //                         cylinderData.entries.length,
-                    //                         itemBuilder: (context, index) {
-                    //                           var entry = cylinderData.entries
-                    //                               .elementAt(index);
-                    //                           String category = entry.key;
-                    //                           int emptyCount =
-                    //                               entry.value['Empty'] ?? 0;
-                    //                           int filledCount =
-                    //                               entry.value['Filled'] ?? 0;
-                    //                           int defectiveCount = entry.value['Defective'] ?? 0;
-                    //                           return Column(
-                    //                             children: [
-                    //                               Row(
-                    //                                 mainAxisAlignment:
-                    //                                 MainAxisAlignment
-                    //                                     .center,
-                    //                                 children: [
-                    //                                   Expanded(
-                    //                                       child:
-                    //                                       Text(category,textAlign: TextAlign.center)),
-                    //                                   verticalDividerVerySmall(),
-                    //                                   Expanded(
-                    //                                       child: Text(
-                    //                                           '$emptyCount',textAlign: TextAlign.center)),
-                    //                                   verticalDividerVerySmall(),
-                    //                                   Expanded(
-                    //                                       child: Text(
-                    //                                           '$filledCount',textAlign: TextAlign.center)),
-                    //                                   verticalDividerVerySmall(),
-                    //                                   Expanded(
-                    //                                       child: Text('$defectiveCount',textAlign: TextAlign.center)),
-                    //                                 ],
-                    //                               ),
-                    //                               Container(
-                    //                                 color: Colors.black12,
-                    //                                 height: 1,
-                    //                                 width:
-                    //                                 MediaQuery.of(context)
-                    //                                     .size
-                    //                                     .width,
-                    //                               ),
-                    //                             ],
-                    //                           );
-                    //                         },
-                    //                       ),
-                    //                     ],
-                    //                   ),
-                    //                 ),
-                    //               )
-                    //             ],
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     ),
-                    //     SizedBox(height: 10),
-                    //   ],
-                    // ),
-                    // Column(
-                    //   crossAxisAlignment: CrossAxisAlignment.start,
-                    //   children: [
-                    //     // Title for Cylinder Categories Table
-                    //     GestureDetector(
-                    //       onTap: () {
-                    //         setState(() {
-                    //           isNonDomesticListViewVisible =
-                    //               !isNonDomesticListViewVisible; // Toggle ListView visibility
-                    //         });
-                    //       },
-                    //       child: Card(
-                    //         child: Padding(
-                    //           padding: const EdgeInsets.all(8.0),
-                    //           child: Column(
-                    //             children: [
-                    //               Padding(
-                    //                 padding: const EdgeInsets.all(8.0),
-                    //                 child: Row(
-                    //                   mainAxisAlignment:
-                    //                       MainAxisAlignment.spaceBetween,
-                    //                   children: [
-                    //                     Text(
-                    //                       'Non-Domestic',
-                    //                       style: TextStyle(
-                    //                           fontSize: 14,
-                    //                           color: Colors.black,
-                    //                           fontWeight: FontWeight.bold),
-                    //                     ),
-                    //                     Icon(
-                    //                       isNonDomesticListViewVisible
-                    //                           ? Icons.arrow_drop_up
-                    //                           : Icons.arrow_drop_down,
-                    //                       size: 30, // Bigger icon for a more clickable feel
-                    //                       color: Colors.blue.shade600,
-                    //                     ),
-                    //                   ],
-                    //                 ),
-                    //               ),
-                    //               Visibility(
-                    //                 visible: isNonDomesticListViewVisible,
-                    //                 child:
-                    //                 Container(
-                    //                   decoration: BoxDecoration(
-                    //                     // Background color of the box
-                    //                     borderRadius: BorderRadius.circular(8),
-                    //                     border: Border.all(
-                    //                         width:
-                    //                         0.5), // Optional: Add rounded corners
-                    //                   ),
-                    //                   child: Column(
-                    //                     crossAxisAlignment:
-                    //                     CrossAxisAlignment.start,
-                    //                     children: [
-                    //                       // Header Row
-                    //                       Container(
-                    //                         decoration: BoxDecoration(
-                    //                           // Background color of the box
-                    //                           borderRadius: BorderRadius.only(topLeft:Radius.circular(8),topRight: Radius.circular(8)),
-                    //                           color: Colors.blue.shade100,
-                    //                           // Optional: Add rounded corners
-                    //                         ),
-                    //
-                    //                         child:
-                    //                         Row(
-                    //                           mainAxisAlignment:
-                    //                           MainAxisAlignment.center,
-                    //                           children: [
-                    //                             Expanded(
-                    //                                 child: Text('Cylinder',
-                    //                                   style: TextStyle(
-                    //                                     fontWeight: FontWeight
-                    //                                         .bold,),textAlign: TextAlign.center,)),
-                    //                             verticalDividerSmall(),
-                    //                             Expanded(
-                    //                                 child: Text('Filled',
-                    //                                     style: TextStyle(
-                    //                                         fontWeight: FontWeight
-                    //                                             .bold),textAlign: TextAlign.center)),
-                    //                             verticalDividerSmall(),
-                    //                             Expanded(
-                    //                                 child: Text('Empty',
-                    //                                     style: TextStyle(
-                    //                                         fontWeight: FontWeight
-                    //                                             .bold),textAlign: TextAlign.center)),
-                    //                             verticalDividerSmall(),
-                    //                             Expanded(
-                    //                                 child: Text('Def.',
-                    //                                     style: TextStyle(
-                    //                                         fontWeight: FontWeight
-                    //                                             .bold),textAlign: TextAlign.center)),
-                    //                           ],
-                    //                         ),
-                    //                       ),
-                    //
-                    //                       Container(
-                    //                         color: Colors.black12,
-                    //                         height: 1,
-                    //                         width: MediaQuery.of(context)
-                    //                             .size
-                    //                             .width,
-                    //                       ),
-                    //                       // Adds a divider below the header for separation
-                    //                       // List of Entries
-                    //                       ListView.builder(
-                    //                         shrinkWrap: true,
-                    //                         // To make the ListView occupy only the space it needs
-                    //                         physics:
-                    //                         NeverScrollableScrollPhysics(),
-                    //                         // Prevents scrolling inside the ListView
-                    //                         itemCount:
-                    //                         cylinderData.entries.length,
-                    //                         itemBuilder: (context, index) {
-                    //                           var entry = cylinderData.entries
-                    //                               .elementAt(index);
-                    //                           String category = entry.key;
-                    //                           int emptyCount =
-                    //                               entry.value['Empty'] ?? 0;
-                    //                           int filledCount =
-                    //                               entry.value['Filled'] ?? 0;
-                    //                           int defectiveCount = entry.value['Defective'] ?? 0;
-                    //                           return Column(
-                    //                             children: [
-                    //                               Row(
-                    //                                 mainAxisAlignment:
-                    //                                 MainAxisAlignment
-                    //                                     .center,
-                    //                                 children: [
-                    //                                   Expanded(
-                    //                                       child:
-                    //                                       Text(category,textAlign: TextAlign.center)),
-                    //                                   verticalDividerVerySmall(),
-                    //                                   Expanded(
-                    //                                       child: Text(
-                    //                                           '$emptyCount',textAlign: TextAlign.center)),
-                    //                                   verticalDividerVerySmall(),
-                    //                                   Expanded(
-                    //                                       child: Text(
-                    //                                           '$filledCount',textAlign: TextAlign.center)),
-                    //                                   verticalDividerVerySmall(),
-                    //                                   Expanded(child: Text('$defectiveCount',textAlign: TextAlign.center)),
-                    //                                 ],
-                    //                               ),
-                    //                               Container(
-                    //                                 color: Colors.black12,
-                    //                                 height: 1,
-                    //                                 width:
-                    //                                 MediaQuery.of(context)
-                    //                                     .size
-                    //                                     .width,
-                    //                               ),
-                    //                             ],
-                    //                           );
-                    //                         },
-                    //                       ),
-                    //                     ],
-                    //                   ),
-                    //                 ),
-                    //               )
-                    //             ],
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     ),
-                    //     SizedBox(height: 10),
-                    //   ],
-                    // ),
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SizedBox(
+                      height: 40,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.pushReplacementNamed(context, '/deliveryMenListShowScreen');
+                          // Navigator.pushReplacementNamed(context, '/stockReturnFromDelBoy');
+                        },
+                        icon: Icon(Icons.update, size: 20), // Add icon
+                        label: Text("Daily Sale"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 40,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.pushReplacementNamed(context, '/stockSubmitToManager');
+                        },
+                        icon: Icon(Icons.list_alt, size: 20), // Add icon
+                        label: Text("Today's Summary"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
-            ),
+            ],
           ),
-          Container(
-            padding: const EdgeInsets.all(10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(
-                  width: 170,
-                  height: 50,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/stockReturnFromDelBoy');
-                    },
-                    icon: Icon(Icons.update, size: 20), // Add icon
-                    label: Text("Update Sale"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 170,
-                  height: 50,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/stockSubmitToManager');
-                    },
-                    icon: Icon(Icons.list_alt, size: 20), // Add icon
-                    label: Text("Today's Summary"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+        ),
+
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.blue,
+          shape: RoundedRectangleBorder(
+            borderRadius:
+            BorderRadius.circular(50), // Adjust the radius as needed
           ),
-        ],
-      ),
-    );
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text("Confirm Refresh"),
+                  content: Text("Do You Want To Refresh Data?"),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Close the dialog without action
+                      },
+                      child: Text("No"),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Close the dialog
+                        setState(() {
+                          // Refresh the data by reassigning the future
+                          // stockDataFuture = updateRefillSale!.getDataFromDatabase();
+                          _onRefresh();
+                        });
+                      },
+                      child: Text("Yes"),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+
+          child: Icon(Icons.refresh, color: Colors.white),
+        ),
+      );
   }
 
   Future<void> insertDelBoyStockList() async {
@@ -1241,6 +1690,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> _fetchImbalanceData() async {
+    EasyLoading.show();
     Constants.isNetworkAvailable = await InternetConnectionChecker().hasConnection;
     if (Constants.isNetworkAvailable) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -1267,12 +1717,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
           setState(() {
             receiptList = data.map((json) => PhysicalStockImbalanceDataModel.fromJson(json)).toList();
             isLoading = false;
-
+            EasyLoading.dismiss();
             // Optionally, you can store this in a variable or use it in the UI
           });
         } else {
           // Handle non-200 responses
           setState(() {
+            EasyLoading.dismiss();
             isLoading = false;
           });
           ScaffoldMessenger.of(context).showSnackBar(
@@ -1281,6 +1732,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         }
       } catch (e) {
         setState(() {
+          EasyLoading.dismiss();
           isLoading = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1288,11 +1740,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
         );
       }
     } else {
+      EasyLoading.dismiss();
       showFlushBar(context, Constants.connectionTitle, Constants.connectionMessage);
     }
   }
 
   Future<void> _fetchTodaysOpeningStockData() async {
+    EasyLoading.show();
     Constants.isNetworkAvailable = await InternetConnectionChecker().hasConnection;
     if (Constants.isNetworkAvailable) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -1319,20 +1773,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
           setState(() {
             todaysOpeningStock = data.map((json) => TodaysOpeningStockDataModel.fromJson(json)).toList();
             isLoading = false;
-
+            EasyLoading.dismiss();
             // Optionally, you can store this in a variable or use it in the UI
           });
         } else {
           // Handle non-200 responses
           setState(() {
             isLoading = false;
+            EasyLoading.dismiss();
           });
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to fetch data: ${response.statusCode}')),
+            SnackBar(content: Text('Failed to fetch data.')),
           );
         }
       } catch (e) {
         setState(() {
+          EasyLoading.dismiss();
           isLoading = false;
         });
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1340,8 +1796,71 @@ class _DashboardScreenState extends State<DashboardScreen> {
         );
       }
     } else {
+      EasyLoading.dismiss();
       showFlushBar(context, Constants.connectionTitle, Constants.connectionMessage);
     }
+  }
+
+  Future<void> fetchCurrentStock() async {
+    EasyLoading.show();
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+    if(Constants.isNetworkAvailable){
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? distributorId = prefs.getString('DistributorId');
+      String? godownId = prefs.getString('godownId');
+      String? addedBy = prefs.getString('StaffId');
+      String? godownKeeperId = prefs.getString('godownKeeperId');
+      String? token = prefs.getString('token'); // This is your bearer token
+
+      try {
+        final response = await http.get(
+          Uri.parse('${AppUrl.ItemCurrentStkList}/$distributorId/$godownId'),
+          headers: {
+            'Authorization': 'Bearer $token',  // Add the Bearer token here
+            // Any other headers you need can go here
+          },
+        );
+        // Print the URL and the headers (including the Bearer token)
+        print("Request URL ItemCurrentStkList: ${response.request}");
+        print("Request Headers: {'Authorization': 'Bearer $token'}");
+        // Print the raw response for debugging
+        print("API Response Status ItemCurrentStkList: ${response.statusCode}");
+        print("API Response ItemCurrentStkList: ${response.body}");
+        if (response.statusCode == 200) {
+          final List<dynamic> data = json.decode(response.body);
+          setState(() {
+            getCurrentStcOfGodownKeeper = data.map((json) => GetCurrentStcOfGodownKeeperModel.fromJson(json)).toList();
+            isLoading = false;
+            EasyLoading.dismiss();
+
+          });
+        } else {
+          // Handle non-200 responses
+          setState(() {
+            isLoading = false;
+            EasyLoading.dismiss();
+          });
+          showFlushBar(context, "Fail",
+              'Unable To Load Data At This Time. Please Try Again');
+        }
+      } catch (e) {
+        setState(() {
+          EasyLoading.dismiss();
+          isLoading = false;
+        });
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(content: Text('Error: $e')),
+        // );
+        showFlushBar(context, "Fail",
+            'Unable To Load Data At This Time. Please Try Again');
+      }
+    }else{
+      EasyLoading.dismiss();
+      showFlushBar(context,Constants.connectionTitle,
+          Constants.connectionMessage);
+    }
+
   }
 
   Future<void> refreshTokens() async {
@@ -1359,6 +1878,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           if (response['status']) {
             debugPrint('RefreshTokenStatus - True');
             insertDelBoyStockList();
+            _fetchImbalanceData();
+            _fetchTodaysOpeningStockData();
+            fetchCurrentStock();
           } else if (response['message'] == "UnSuccessful") {
             debugPrint('RefreshTokenExc401 - true');
 
