@@ -16,6 +16,7 @@ import 'Screen/GodownKeeper/ItemReceipt/ItemReturn/ItenRetun.dart';
 import 'Screen/ManagerScreen/CashDepositToBankScreen.dart';
 import 'Screen/ManagerScreen/CashHandoverScreen.dart';
 import 'Screen/ManagerScreen/DeliveryBoyWiseListShow.dart';
+import 'Screen/ManagerScreen/ManagerDSRReportScreen.dart';
 import 'Screen/ManagerScreen/ManagerDashboard.dart';
 import 'Screen/ManagerScreen/ManagerUpdateSaleCashUpdation.dart';
 import 'Screen/ManagerScreen/ManagerUpdateSaleScreen.dart';
@@ -141,6 +142,7 @@ class MyApp extends StatelessWidget {
             ManagerUpdateSaleCashUpdation.screenName: (context) => ManagerUpdateSaleCashUpdation(),
             DeliveryBoyWiseListShow.screenName: (context) => DeliveryBoyWiseListShow(),
             ManagerDashboardScreen.screenName: (context) => ManagerDashboardScreen(),
+            ManagerDSRReportScreen.screenName: (context) => ManagerDSRReportScreen(),
           },
         ),
       );

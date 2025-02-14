@@ -179,6 +179,12 @@ class Styling {
       fontFamily: 'OpenSans',
       color: Colors.black,);
 
+  static final TextStyle itemBlackTestBold = TextStyle(
+    fontSize: 1.8 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
+    fontFamily: 'OpenSans',
+    fontWeight: FontWeight.bold,
+    color: Colors.black,);
+
   static final TextStyle itemRedText = TextStyle(
     fontFamily: 'OpenSans',
     color: Colors.red,
@@ -239,6 +245,8 @@ class Styling {
     fontSize: 1.4 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
     fontFamily: 'OpenSans',
     color: Colors.black,);
+
+
 
   /* static final TextStyle selectedTabLight = TextStyle(
     color: Colors.black,

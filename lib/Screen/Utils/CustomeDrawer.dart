@@ -142,12 +142,18 @@ class CustomeDrawer extends StatelessWidget {
               // ),
               ListTile(
                 leading: Icon(Icons.logout),
-                title: Text('deliveryBoyWiseListShow'),
+                title: Text('Dashboard'),
                 onTap: () {
                   Navigator.pushReplacementNamed(context, '/managerDashboardScreen');
                 },
               ),
-
+              ListTile(
+                leading: Icon(Icons.logout),
+                title: Text('DSRReport'),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/managerDSRReportScreen');
+                },
+              ),
             ],
           ),
         );

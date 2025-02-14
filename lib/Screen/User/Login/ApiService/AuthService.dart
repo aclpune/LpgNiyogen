@@ -44,7 +44,7 @@ class AuthService {
         // throw Exception("Failed to login: ${response.statusCode}");
       }
     } catch (e) {
-      throw Exception("Error: $e");
+      throw Exception("Invalid User..!");
     }
   }
 }
