@@ -246,3 +246,9 @@ InputDecoration buildInputBorderUpdateStatus(
       contentPadding: EdgeInsets.all(1.2 * SizeConfig.heightMultiplier!),
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)));
 }
+InputDecoration buildInputWithoutBorderUpdateStatus(
+    BuildContext context) {
+  return InputDecoration(
+      enabledBorder: InputBorder.none,
+      border: InputBorder.none);
+}

@@ -1010,7 +1010,8 @@ class _ManagerUpdateSaleCashUpdationState
               decoration: BoxDecoration(
                 color: Colors.blue[50], // Light blue background color
               ),
-              child: Padding(
+              child:
+              Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
                   children: [

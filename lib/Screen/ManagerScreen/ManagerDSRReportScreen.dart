@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lpgsalesandinventory/Screen/Utils/Styling.dart';
 
 import '../Utils/CustomAppBar.dart';
+import '../Utils/Widget.dart';
 class ManagerDSRReportScreen extends StatefulWidget {
   static const screenName = '/managerDSRReportScreen';
   const ManagerDSRReportScreen({super.key});
@@ -91,13 +92,90 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
           children: [
             Container(
               decoration: BoxDecoration(
-                // color: Colors.blue[50], // Light blue background color
+                color: Colors.blue[50], // Light blue background color
               ),
               child:
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
+                    // Container(
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.all(8.0),
+                    //     child: Column(
+                    //       crossAxisAlignment: CrossAxisAlignment.start,
+                    //       children: [
+                    //         Row(
+                    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //           children: [
+                    //             // First Column (Refill and TV)
+                    //             Column(
+                    //               crossAxisAlignment: CrossAxisAlignment.start,
+                    //               children: [
+                    //                 Row(
+                    //                   children: [
+                    //                     SizedBox(
+                    //                         width: 60,
+                    //                         child: Text('Refill:',
+                    //                             style:
+                    //                             Styling.itemGreyTextSmall)),
+                    //                     Text("9",
+                    //                         style: Styling.itemBlackTestSmall),
+                    //                   ],
+                    //                 ),
+                    //                 const SizedBox(
+                    //                   height: 5,
+                    //                 ),
+                    //                 Row(
+                    //                   children: [
+                    //                     SizedBox(
+                    //                         width: 60,
+                    //                         child: Text('TV:',
+                    //                             style:
+                    //                             Styling.itemGreyTextSmall)),
+                    //                     Text("9",
+                    //                         style: Styling.itemBlackTestSmall),
+                    //                   ],
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //             // Second Column (SV and Amount)
+                    //             Column(
+                    //               crossAxisAlignment: CrossAxisAlignment.start,
+                    //               children: [
+                    //                 Row(
+                    //                   children: [
+                    //                     SizedBox(
+                    //                         width: 70,
+                    //                         child: Text('SV:',
+                    //                             style:
+                    //                             Styling.itemGreyTextSmall)),
+                    //                     Text("9",
+                    //                         style: Styling.itemBlackTestSmall),
+                    //                   ],
+                    //                 ),
+                    //                 SizedBox(
+                    //                   height: 5,
+                    //                 ),
+                    //                 Row(
+                    //                   children: [
+                    //                     SizedBox(
+                    //                         width: 70,
+                    //                         child: Text('Amount:',
+                    //                             style:
+                    //                             Styling.itemGreyTextSmall)),
+                    //                     Text("9",
+                    //                         style: Styling.itemBlackTestSmall),
+                    //                   ],
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //           ],
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    // ),
                     Container(
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
@@ -191,7 +269,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
             style: TextStyle(
                 color: _selectedTabIndex == index ? Colors.blue : Colors.black,
                 fontWeight: FontWeight.bold,
-                fontSize: 16),
+                fontSize: 14),
           ),
           const SizedBox(height: 4),
           Container(
@@ -279,7 +357,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                               ),
                             ),
                             Expanded(
-                              flex: 1,
+                              flex: 2,
                               child: Text(
                                 'Amt',
                                 style: Styling.itemBlackTestBold,
@@ -346,7 +424,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                 ),
                               ),
                               Expanded(
-                                flex: 1,
+                                flex: 2,
                                 child: Text(
                                   amt,
                                   style: Styling.itemBlackTestSmall,
@@ -747,7 +825,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
   }
 
   Widget _buildExpenseTab() {
-    return SingleChildScrollView(
+    return
+      SingleChildScrollView(
       child:
       Padding(
         padding: const EdgeInsets.only(left: 16, right: 16, bottom: 10),
@@ -757,134 +836,506 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: Text("Other Expense", style: Styling.bodyTitleBig),
-              ),
               Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(0),
-                    topRight: Radius.circular(0),
-                  ),
-                  color: Colors
-                      .grey[200], // Add a color to differentiate header row
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: Text(
-                          'Expense Head',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            fontSize: 14,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Text(
-                          'Amt',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            fontSize: 14,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: BouncingScrollPhysics(),
-                itemCount: 5, // Change this to the length of your data
-                itemBuilder: (context, index) {
-                  // You can replace this with data from your source (e.g., getCurrentStockDetailManager[index])
-                  String item = "Miscellaneous";
-                  String amt = "25000";
-
-                  return Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: Text(
-                            item,
-                            style: Styling.textFormText,
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Text(
-                            amt,
-                            style: Styling.textFormText,
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Align(alignment: Alignment.centerLeft,
+                          child: Text("HR Expense", style: Styling.bodyTitleBig)),
                     ),
-                  );
-                },
-              ),
-              Container(
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Text(
-                          '',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            fontSize: 14,
-                          ),
-                          textAlign: TextAlign.center,
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(0),
+                          topRight: Radius.circular(0),
+                        ),
+                       // Add a color to differentiate header row
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                'Expense Head',
+                                style: Styling.itemBlackTestBold,
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                'Amt',
+                                style: Styling.itemBlackTestBold,
+                                textAlign: TextAlign.right,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      Expanded(
-                        flex: 1,
-                        child: Text(
-                          'Cash -',
-                          style: TextStyle(
-                            fontWeight: FontWeight.normal,
-                            color: Colors.black,
-                            fontSize: 14,
+                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: BouncingScrollPhysics(),
+                      itemCount: 5, // Change this to the length of your data
+                      itemBuilder: (context, index) {
+                        // You can replace this with data from your source (e.g., getCurrentStockDetailManager[index])
+                        String item = "Miscellaneous";
+                        String amt = "25000";
+
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  item,
+                                  style: Styling.itemBlackTestSmall,
+                                  textAlign: TextAlign.left,
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  amt,
+                                  style: Styling.itemBlackTestSmall,
+                                  textAlign: TextAlign.right,
+                                ),
+                              ),
+                            ],
                           ),
-                          textAlign: TextAlign.center,
+                        );
+                      },
+                    ),
+                    Container(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Text(
+                                '',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                'Cash -',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                '250000',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.right,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      Expanded(
-                        flex: 2,
-                        child: Text(
-                          '250000',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            fontSize: 14,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
+              Container(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Align(alignment: Alignment.centerLeft,
+                          child: Text("Office Expense", style: Styling.bodyTitleBig)),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(0),
+                          topRight: Radius.circular(0),
+                        ),
+                        // Add a color to differentiate header row
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                'Expense Head',
+                                style: Styling.itemBlackTestBold,
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                'Amt',
+                                style: Styling.itemBlackTestBold,
+                                textAlign: TextAlign.right,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: BouncingScrollPhysics(),
+                      itemCount: 5, // Change this to the length of your data
+                      itemBuilder: (context, index) {
+                        // You can replace this with data from your source (e.g., getCurrentStockDetailManager[index])
+                        String item = "Miscellaneous";
+                        String amt = "25000";
 
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  item,
+                                  style: Styling.itemBlackTestSmall,
+                                  textAlign: TextAlign.left,
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  amt,
+                                  style: Styling.itemBlackTestSmall,
+                                  textAlign: TextAlign.right,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                    Container(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Text(
+                                '',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                'Cash -',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                '250000',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.right,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Align(alignment: Alignment.centerLeft,
+                          child: Text("Operational Expense", style: Styling.bodyTitleBig)),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(0),
+                          topRight: Radius.circular(0),
+                        ),
+                        // Add a color to differentiate header row
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                'Expense Head',
+                                style: Styling.itemBlackTestBold,
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                'Amt',
+                                style: Styling.itemBlackTestBold,
+                                textAlign: TextAlign.right,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: BouncingScrollPhysics(),
+                      itemCount: 5, // Change this to the length of your data
+                      itemBuilder: (context, index) {
+                        // You can replace this with data from your source (e.g., getCurrentStockDetailManager[index])
+                        String item = "Miscellaneous";
+                        String amt = "25000";
+
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  item,
+                                  style: Styling.itemBlackTestSmall,
+                                  textAlign: TextAlign.left,
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  amt,
+                                  style: Styling.itemBlackTestSmall,
+                                  textAlign: TextAlign.right,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                    Container(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Text(
+                                '',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                'Cash -',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                '250000',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.right,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Align(alignment: Alignment.centerLeft,
+                          child: Text("Other Expense", style: Styling.bodyTitleBig)),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(0),
+                          topRight: Radius.circular(0),
+                        ),
+                        // Add a color to differentiate header row
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                'Expense Head',
+                                style: Styling.itemBlackTestBold,
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                'Amt',
+                                style: Styling.itemBlackTestBold,
+                                textAlign: TextAlign.right,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: BouncingScrollPhysics(),
+                      itemCount: 5, // Change this to the length of your data
+                      itemBuilder: (context, index) {
+                        // You can replace this with data from your source (e.g., getCurrentStockDetailManager[index])
+                        String item = "Miscellaneous";
+                        String amt = "25000";
+
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  item,
+                                  style: Styling.itemBlackTestSmall,
+                                  textAlign: TextAlign.left,
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  amt,
+                                  style: Styling.itemBlackTestSmall,
+                                  textAlign: TextAlign.right,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                    Container(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Text(
+                                '',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                'Cash -',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                '250000',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                  fontSize: 14,
+                                ),
+                                textAlign: TextAlign.right,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
 
@@ -895,66 +1346,296 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
   }
 
   Widget _buildCDCMSStockTab() {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Stock Updated On : 13/02/2025 17:42",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 10),
-            SizedBox( // Use SizedBox instead of Expanded
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: DataTable(
-                  columnSpacing: 12,
-                  border: TableBorder.all(),
-                  columns: [
-                    DataColumn(label: Text('Item Name')),
-                    DataColumn(label: Text('Filled')),
-                    DataColumn(label: Text('Empty')),
-                    DataColumn(label: Text('Defective')),
-                    DataColumn(label: Text('CDCMS Filled')),
-                    DataColumn(label: Text('CDCMS Empty')),
-                    DataColumn(label: Text('CDCMS Defective')),
-                    DataColumn(label: Text('Diff. Filled')),
-                    DataColumn(label: Text('Diff. Empty')),
-                    DataColumn(label: Text('Diff. Defective')),
-                    DataColumn(label: Text('Total')),
-                  ],
-                  rows: stockData.map((item) {
-                    return DataRow(cells: [
-                      DataCell(Text(item['name'])),
-                      DataCell(Text(item['filled'].toString())),
-                      DataCell(Text(item['empty'].toString())),
-                      DataCell(Text(item['defective'].toString())),
-                      DataCell(TextField()), // CDCMS Filled Input
-                      DataCell(TextField()), // CDCMS Empty Input
-                      DataCell(TextField()), // CDCMS Defective Input
-                      DataCell(Text(item['filledDiff'].toString())),
-                      DataCell(Text(item['emptyDiff'].toString())),
-                      DataCell(Text(item['defectiveDiff'].toString())),
-                      DataCell(Text(item['total'].toString())),
-                    ]);
-                  }).toList(),
+    return
+      SingleChildScrollView(
+        child:
+        Padding(
+          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 10),
+          child:
+          Container(
+            child:
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Row(
+                          children: [
+                            Align(alignment: Alignment.centerLeft,
+                                child: Text("Stock Updated On : ", style: Styling.bodyTitleBig)),
+                            Text("13-02-2024", style: Styling.bodyTitleBig)
+                          ],
+                        ),
+                      ),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: BouncingScrollPhysics(),
+                        itemCount: 5, // Change this to the length of your data
+                        itemBuilder: (context, index) {
+                          // You can replace this with data from your source (e.g., getCurrentStockDetailManager[index])
+                          String item = "14.2 KG";
+                          String amt = "25000";
+
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child:
+                            Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      flex: 3,
+                                      child: Text(
+                                        item,
+                                        style: Styling.itemBlackTestBold,
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        "Filled",
+                                        style: Styling.itemBlackTestBold,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        "Empty",
+                                        style: Styling.itemBlackTestBold,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        "Def",
+                                        style: Styling.itemBlackTestBold,
+                                        textAlign: TextAlign.right,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      flex: 3,
+                                      child: Text(
+                                        "Current Stock",
+                                        style: Styling.itemBlackTestSmall,
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        "23",
+                                        style: Styling.itemBlackTestSmall,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        "20",
+                                        style: Styling.itemBlackTestSmall,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        "26",
+                                        style: Styling.itemBlackTestSmall,
+                                        textAlign: TextAlign.right,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      flex: 3,
+                                      child: Text(
+                                        "CDCMS",
+                                        style: Styling.itemBlackTestSmall,
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: TextField(
+                                        decoration: buildInputWithoutBorderUpdateStatus( context),
+                                        style: Styling.itemBlackTestSmall,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    SizedBox(width: 7,),
+                                    Expanded(
+                                      flex: 2,
+                                      child: TextField(
+                                        decoration: buildInputWithoutBorderUpdateStatus( context),
+                                        style: Styling.itemBlackTestSmall,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    SizedBox(width: 7,),
+                                    Expanded(
+                                      flex: 2,
+                                      child: TextField(
+                                        decoration: buildInputWithoutBorderUpdateStatus( context),
+                                        style: Styling.itemBlackTestSmall,
+                                        textAlign: TextAlign.right,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      flex: 3,
+                                      child: Text(
+                                        "Difference",
+                                        style: Styling.itemBlackTestSmall,
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        "23",
+                                        style: Styling.itemBlackTestSmall,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        "20",
+                                        style: Styling.itemBlackTestSmall,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        "26",
+                                        style: Styling.itemBlackTestSmall,
+                                        textAlign: TextAlign.right,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        "Total - ",
+                                        style: Styling.itemBlackTestBold,
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 3,
+                                      child: Text(
+                                        "2300",
+                                        style: Styling.itemBlackTestBold,
+                                        textAlign: TextAlign.left,
+                                      ),
+                                    ),
+
+                                  ],
+                                ),
+                              ],
+                            ),
+
+                          );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              ),
+
+              ],
             ),
-            SizedBox(height: 10),
-            Center(
-              child: ElevatedButton(
-                onPressed: () {},
-                child: Text("Save CDCMS Data"),
-              ),
-            ),
-          ],
+
+          ),
+
         ),
-      ),
-    );
+      );
   }
+
+  // Widget _buildCDCMSStockTab() {
+  //   return SingleChildScrollView(
+  //     child: Padding(
+  //       padding: const EdgeInsets.all(8.0),
+  //       child: Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //           Text(
+  //             "Stock Updated On : 13/02/2025 17:42",
+  //             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+  //           ),
+  //           SizedBox(height: 10),
+  //           SizedBox( // Use SizedBox instead of Expanded
+  //             child: SingleChildScrollView(
+  //               scrollDirection: Axis.horizontal,
+  //               child: DataTable(
+  //                 columnSpacing: 12,
+  //                 border: TableBorder.all(),
+  //                 columns: [
+  //                   DataColumn(label: Text('Item Name')),
+  //                   DataColumn(label: Text('Filled')),
+  //                   DataColumn(label: Text('Empty')),
+  //                   DataColumn(label: Text('Defective')),
+  //                   DataColumn(label: Text('CDCMS Filled')),
+  //                   DataColumn(label: Text('CDCMS Empty')),
+  //                   DataColumn(label: Text('CDCMS Defective')),
+  //                   DataColumn(label: Text('Diff. Filled')),
+  //                   DataColumn(label: Text('Diff. Empty')),
+  //                   DataColumn(label: Text('Diff. Defective')),
+  //                   DataColumn(label: Text('Total')),
+  //                 ],
+  //                 rows: stockData.map((item) {
+  //                   return DataRow(cells: [
+  //                     DataCell(Text(item['name'])),
+  //                     DataCell(Text(item['filled'].toString())),
+  //                     DataCell(Text(item['empty'].toString())),
+  //                     DataCell(Text(item['defective'].toString())),
+  //                     DataCell(TextField()), // CDCMS Filled Input
+  //                     DataCell(TextField()), // CDCMS Empty Input
+  //                     DataCell(TextField()), // CDCMS Defective Input
+  //                     DataCell(Text(item['filledDiff'].toString())),
+  //                     DataCell(Text(item['emptyDiff'].toString())),
+  //                     DataCell(Text(item['defectiveDiff'].toString())),
+  //                     DataCell(Text(item['total'].toString())),
+  //                   ]);
+  //                 }).toList(),
+  //               ),
+  //             ),
+  //           ),
+  //           SizedBox(height: 10),
+  //           Center(
+  //             child: ElevatedButton(
+  //               onPressed: () {},
+  //               child: Text("Save CDCMS Data"),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
   final List<Map<String, dynamic>> stockData = [
     {
       'name': '14.2 KG',
