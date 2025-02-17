@@ -20,6 +20,7 @@ import '../GodownKeeper/ItemReceipt/CylItemList/GetCurrentStcOfGodownKeeperModel
 import '../User/Login/provider/LoginProvider.dart';
 import '../User/splashscreen/page/splash_screen.dart';
 import '../Utils/CustomeDrawer.dart';
+import '../Utils/CustomeDrawerManager.dart';
 import '../Utils/Styling.dart';
 import '../Utils/Widget.dart';
 import '../Utils/app_url.dart';
@@ -61,6 +62,9 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
     super.initState();
     fetchCurrentStock();
     fetchDashboarDetail();
+    // Check if any item has a non-null, non-zero defectivCnt
+    // bool hasDefectiveItems = getCurrentStockDetailManager.any((item) =>
+    // item.defectivCnt != null && item.defectivCnt != 0);
   }
   // Function to handle pull-to-refresh action
   Future<void> _onRefresh() async {
@@ -73,7 +77,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
     return
       Scaffold(
         key: _scaffoldKey,
-        drawer: CustomeDrawer(), // Assign the scaffold key
+        drawer: CustomeDrawerManager(), // Assign the scaffold key
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(120), // Custom height for the AppBar
           child:
@@ -644,6 +648,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                       ],
                                     ),
                                   ),
+
                                   Column(
                                     children: [
                                       Padding(
@@ -900,141 +905,144 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                     ],
                                   ),
                                   SizedBox(height: 15,),
-                                  Column(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(left: 8.0),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              "Defective",
-                                              style: Styling.textFormText,
-                                            ),
-
-                                          ],
-                                        ),
-                                      ),
-                                      Card(
-                                        elevation: 5,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
-                                        child:
-                                        Column(
-                                          children: [
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(12),
-                                                  topRight: Radius.circular(12),
-                                                ),
+                                  // Check if any item has a non-null, non-zero defectivCnt
+                                  Container(
+                                    child: Column(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(left: 8.0),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                "Defective",
+                                                style: Styling.textFormText,
                                               ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(8.0),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-                                                    Expanded(
-                                                      flex:1,
-                                                      child: Text(
-                                                        '',
-                                                        style: TextStyle(
-                                                          fontWeight: FontWeight.bold,
-                                                          color: Colors.black,
-                                                          fontSize: 14,
-                                                        ),
-                                                        textAlign: TextAlign.center,
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex:1,
-                                                      child: Text(
-                                                        'Defective',
-                                                        style: TextStyle(
-                                                          fontWeight: FontWeight.bold,
-                                                          color: Colors.black,
-                                                          fontSize: 14,
-                                                        ),
-                                                        textAlign: TextAlign.center,
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex:1,
-                                                      child: Text(
-                                                        'Since',
-                                                        style: TextStyle(
-                                                          fontWeight: FontWeight.bold,
-                                                          color: Colors.black,
-                                                          fontSize: 14,
-                                                        ),
-                                                        textAlign: TextAlign.center,
-                                                      ),
-                                                    ),
-                                                  ],
+
+                                            ],
+                                          ),
+                                        ),
+                                        Card(
+                                          elevation: 5,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child:
+                                          Column(
+                                            children: [
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.only(
+                                                    topLeft: Radius.circular(12),
+                                                    topRight: Radius.circular(12),
+                                                  ),
                                                 ),
-                                              ),
-                                            ),
-                                            getCurrentStockDetailManager.isNotEmpty?
-                                            ListView.builder(
-                                              shrinkWrap: true,
-                                              physics: NeverScrollableScrollPhysics(),
-                                              itemCount: getCurrentStockDetailManager.length,
-                                              itemBuilder: (context, index) {
-                                                final items = getCurrentStockDetailManager[index];
-
-                                                return
-
-                                                    Padding(
-                                                      padding: const EdgeInsets.all(8.0),
-                                                      child:
-                                                      Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        children: [
-                                                          Row(
-                                                            mainAxisAlignment: MainAxisAlignment.center,
-                                                            children: [
-                                                              Expanded(
-                                                                flex:1,
-                                                                child: Text(
-                                                                  items.itemName.toString(),
-                                                                  style:Styling.textFormText,
-                                                                  textAlign: TextAlign.center,
-                                                                ),
-                                                              ),
-                                                              Expanded(
-                                                                flex:1,
-                                                                child: Text(
-                                                                  items.defectivCnt.toString(),
-                                                                  style:Styling.textFormText,
-                                                                  textAlign: TextAlign.center,
-                                                                ),
-                                                              ),
-
-                                                              Expanded(
-                                                                flex:1,
-                                                                child: Text(
-                                                                  DateFormat('dd-MM-yyyy').format(DateTime.parse(items.defectivFromDate.toString() ?? '')),
-                                                                  style:Styling.textFormText,
-                                                                  textAlign: TextAlign.center,
-                                                                ),
-                                                              ),
-                                                            ],
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      Expanded(
+                                                        flex:1,
+                                                        child: Text(
+                                                          '',
+                                                          style: TextStyle(
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.black,
+                                                            fontSize: 14,
                                                           ),
-                                                        ],
+                                                          textAlign: TextAlign.center,
+                                                        ),
                                                       ),
-                                                    );
+                                                      Expanded(
+                                                        flex:1,
+                                                        child: Text(
+                                                          'Defective',
+                                                          style: TextStyle(
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.black,
+                                                            fontSize: 14,
+                                                          ),
+                                                          textAlign: TextAlign.center,
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        flex:1,
+                                                        child: Text(
+                                                          'Since',
+                                                          style: TextStyle(
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.black,
+                                                            fontSize: 14,
+                                                          ),
+                                                          textAlign: TextAlign.center,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              getCurrentStockDetailManager.isNotEmpty?
+                                              ListView.builder(
+                                                shrinkWrap: true,
+                                                physics: NeverScrollableScrollPhysics(),
+                                                itemCount: getCurrentStockDetailManager.length,
+                                                itemBuilder: (context, index) {
+                                                  final items = getCurrentStockDetailManager[index];
+
+                                                  return
+
+                                                      Padding(
+                                                        padding: const EdgeInsets.all(8.0),
+                                                        child:
+                                                        Column(
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Row(
+                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                              children: [
+                                                                Expanded(
+                                                                  flex:1,
+                                                                  child: Text(
+                                                                    items.itemName.toString(),
+                                                                    style:Styling.textFormText,
+                                                                    textAlign: TextAlign.center,
+                                                                  ),
+                                                                ),
+                                                                Expanded(
+                                                                  flex:1,
+                                                                  child: Text(
+                                                                    items.defectivCnt.toString(),
+                                                                    style:Styling.textFormText,
+                                                                    textAlign: TextAlign.center,
+                                                                  ),
+                                                                ),
+
+                                                                Expanded(
+                                                                  flex:1,
+                                                                  child: Text(
+                                                                    DateFormat('dd-MM-yyyy').format(DateTime.parse(items.defectivFromDate.toString() ?? '')),
+                                                                    style:Styling.textFormText,
+                                                                    textAlign: TextAlign.center,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      );
 
 
-                                              },
-                                            ):
-                                            Container(
-                                              child: Text("No Data Available"),
-                                            ),
-                                          ],
+                                                },
+                                              ):
+                                              Container(
+                                                child: Text("No Data Available"),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
@@ -1610,12 +1618,23 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
               onAccountTodays += receipt.staffOnAccToday ?? 0;// Corrected summing of imbQty
               onAccountAsOfDates += receipt.staffOnAccAsOf ?? 0;// Corrected summing of imbQty
             }
-            deliveryMenCount = dMCounts.toInt();
-            totalAmount = totalAmounts.toDouble();
-            totalIncome = totalIncomes.toDouble();
-            totalExpense = totalExpenses.toDouble();
-            onAccountToday = onAccountTodays.toDouble();
-            onAccountAsOfDate = onAccountAsOfDates.toDouble();
+            // deliveryMenCount = dMCounts.toInt();
+            // totalAmount = totalAmounts.toDouble();
+            // totalIncome = totalIncomes.toDouble();
+            // totalExpense = totalExpenses.toDouble();
+            // onAccountToday = onAccountTodays.toDouble();
+            // onAccountAsOfDate = onAccountAsOfDates.toDouble();
+
+            // Print the totalAmount of the first item (if exists)
+            if (getManagerDashboarDetail.isNotEmpty) {
+              print('Total Amount of the first item: ${getManagerDashboarDetail[0].totalAmount}');
+              deliveryMenCount =  getManagerDashboarDetail[0].dMCount?.toInt();
+              totalAmount = getManagerDashboarDetail[0].totalAmount?.toDouble();
+              totalIncome = getManagerDashboarDetail[0].totalIncome?.toDouble();
+              totalExpense = getManagerDashboarDetail[0].totalExp?.toDouble();
+              onAccountToday = getManagerDashboarDetail[0].staffOnAccToday?.toDouble();
+              onAccountAsOfDate = getManagerDashboarDetail[0].staffOnAccAsOf?.toDouble();
+            }
           });
         } else {
           // Handle non-200 responses

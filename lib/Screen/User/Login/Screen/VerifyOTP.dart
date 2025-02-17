@@ -3,6 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../GodownKeeper/DashboardScreen.dart';
+import '../../../ManagerScreen/ManagerDashboard.dart';
+import '../../../Utils/constants.dart';
 import '../../../Utils/shared_preference.dart';
 import 'MyLogin.dart';
 class VerifyOtp extends StatefulWidget {
@@ -16,6 +19,7 @@ class VerifyOtp extends StatefulWidget {
 class _VerifyOtpState extends State<VerifyOtp> {
   final _otpController = TextEditingController();
   String? storeOTP;
+  String? roleId,userActivet;
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +131,9 @@ class _VerifyOtpState extends State<VerifyOtp> {
                          // ScaffoldMessenger.of(context).showSnackBar(
                          //   SnackBar(content: Text('OTP Verified..!')),
                          // );
-                         Navigator.pushReplacementNamed(context, '/godownDashboard');
+                         await getUserData();
+
+                         // Navigator.pushReplacementNamed(context, '/godownDashboard');
                        }else{
                          ScaffoldMessenger.of(context).showSnackBar(
                            SnackBar(content: Text('OTP not match..!')),
@@ -146,5 +152,35 @@ class _VerifyOtpState extends State<VerifyOtp> {
         ),
             ),
       );
+  }
+  Future<void> getUserData() async{
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    roleId = preferences.getString('roleId');
+    userActivet = preferences.getString('userActive');
+    debugPrint(roleId);
+    debugPrint(userActivet);
+
+    if (userActivet == "Y") {
+      if (roleId != null) {
+        if(roleId == Constants.roleIdGodown){
+          Navigator.pushReplacementNamed(context, DashboardScreen.screenName,
+              arguments: "checkVersion");
+        }else if(roleId == Constants.roleIdManager){
+          Navigator.pushReplacementNamed(context, ManagerDashboardScreen.screenName,
+              arguments: "checkVersion");
+        }else{
+          Navigator.pushReplacementNamed(context, MyLogin.screenName);
+        }
+
+      } else if (roleId == Constants.roleIdOwner) {
+        if (mounted) {
+        }
+      }else{
+        Navigator.pushReplacementNamed(context, MyLogin.screenName);
+      }
+    } else {
+      debugPrint("Deactivated User");
+      Navigator.pushReplacementNamed(context, MyLogin.screenName);
+    }
   }
 }

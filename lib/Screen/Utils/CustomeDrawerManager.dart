@@ -5,11 +5,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../User/splashscreen/page/splash_screen.dart';
 
-class CustomeDrawer extends StatelessWidget {
+class CustomeDrawerManager extends StatelessWidget {
   Future<String> getGodownName() async {
     // Fetch Godown name from SharedPreferences
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    String godownName = prefs.getString('StaffName') ?? 'Cylinder Godown';
+    String godownName = prefs.getString('StaffName') ?? 'Cylinder Manager';
     return godownName;
   }
   Future<String> getGodownNId() async {
@@ -37,8 +37,8 @@ class CustomeDrawer extends StatelessWidget {
         }
 
         // Use the fetched godown name
-        String godownName = snapshot.data ?? 'Cylinder Godown';
-        String id = snapshot.data ?? 'Cylinder Godown';
+        String godownName = snapshot.data ?? 'Cylinder Manager';
+        String id = snapshot.data ?? 'Cylinder Manager';
         return Drawer(
           child: ListView(
             padding: EdgeInsets.zero,
@@ -70,20 +70,20 @@ class CustomeDrawer extends StatelessWidget {
                   // Navigate to home screen if required
                 },
               ),
-              ListTile(
-                leading: Icon(Icons.receipt),
-                title: Text('Item Receipt'),
-                onTap: () {
-                  Navigator.pushReplacementNamed(context, '/itemWiseReceipt');
-                },
-              ),
-              ListTile(
-                leading: Icon(Icons.assignment_return_outlined),
-                title: Text('Item Return'),
-                onTap: () {
-                  Navigator.pushReplacementNamed(context, '/itemReturnScreen');
-                },
-              ),
+              // ListTile(
+              //   leading: Icon(Icons.receipt),
+              //   title: Text('DSR Report'),
+              //   onTap: () {
+              //     Navigator.pushReplacementNamed(context, '/managerDSRReportScreen');
+              //   },
+              // ),
+              // ListTile(
+              //   leading: Icon(Icons.assignment_return_outlined),
+              //   title: Text('Item Return'),
+              //   onTap: () {
+              //     Navigator.pushReplacementNamed(context, '/itemReturnScreen');
+              //   },
+              // ),
               /*ListTile(
                 leading: Icon(Icons.edit),
                 title: Text('Edit Item'),

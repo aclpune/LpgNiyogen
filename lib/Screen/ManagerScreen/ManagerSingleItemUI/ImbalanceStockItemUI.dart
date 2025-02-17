@@ -76,13 +76,10 @@ class _ImbalanceStockItemUIState extends State<ImbalanceStockItemUI> {
                       textAlign: TextAlign.center,)
                   ],
                 )
-
               ],
             ),
           ),
         ),
       );
-
   }
-
 }

@@ -53,49 +53,12 @@ BranchAdminAH	cnf@1234*/
   static String appleAppStoreAppUrl =
       "";
 
-  static String pickerRoleName = 'Picker';
-  static String billDrawerRoleName = 'Bill Drawer';
-  static String gateSupervisorRoleName = 'Gate Supervisor';
-  static String typeGatePass = 'Gatepass';
-  static String typeQRSticker = 'Sticker';
-  static String roleIdBillDrawer = "6";
+
+
   static String roleIdGodown = "3";
-  static String roleIdGateSupervisor = "7";
-  static String roleIdExpirySupervisor = "8";
-  static String roleIdInwardSupervisor = "9";
+  static String roleIdManager= "1";
+
   static String roleIdOwner = "11";
-
-  static String local = "1";
-  static String otherCity = "2";
-  static String byHand = "3";
-
-// picklist status
-  static int statusAllottedPickList = 3;
-  static int statusReAllottedPickList = 6;
-  static int statusAcceptedPickList = 4;
-  static int statusRejectedPickList = 2;
-  static int statusCompletedPickList = 8; // picked
-  static int statusRaiseConcernCompletedPickList = 9; // picker concern
-  static int statusVerifiedPickList = 1; //
-  static int statusCompletedVerifiedPickList = 10;
-
-  static int statusAllottedRejectPickList = 5; //
-  static int statusReAllottedRejectPickList = 7; //
-  static int statusRaiseConcernVerifyPickList = 11; //
-
-  //Invoice status
-  static int statusCreatedInvoice = 0;
-  static int statusAcceptedInvoice = 1;
-  static int statusDrawnInvoice = 2;
-  static int statusCompletedInvoice = 3;
-  static int statusPackageConcernInvoice = 4;
-  static int statusReadyToDispatchInvoice = 5;
-
-  //Expiry supervisor
-  static int statusRaiseConcernFirstPhyCheck = 1;
-
-  //Gatepass Supervisor
-  static int statusGatePassGenerated = 7;
 
   //TextSizes
   static double size20 = 20;

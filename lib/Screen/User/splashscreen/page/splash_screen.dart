@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../GodownKeeper/DashboardScreen.dart';
+import '../../../ManagerScreen/ManagerDashboard.dart';
 import '../../../Utils/constants.dart';
 import '../../../Utils/shared_preference.dart';
 import '../../Login/Screen/MyLogin.dart';
@@ -83,8 +84,16 @@ class _SplashScreenState extends State<SplashScreen> {
 
         if (userActivet == "Y") {
         if (roleId != null) {
-          Navigator.pushReplacementNamed(context, DashboardScreen.screenName,
-              arguments: "checkVersion");
+          if(roleId == Constants.roleIdGodown){
+            Navigator.pushReplacementNamed(context, DashboardScreen.screenName,
+                arguments: "checkVersion");
+          }else if(roleId == Constants.roleIdManager){
+            Navigator.pushReplacementNamed(context, ManagerDashboardScreen.screenName,
+                arguments: "checkVersion");
+          }else{
+            Navigator.pushReplacementNamed(context, MyLogin.screenName);
+          }
+
         } else if (roleId == Constants.roleIdOwner) {
           if (mounted) {
           }

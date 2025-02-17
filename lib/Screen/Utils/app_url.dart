@@ -41,5 +41,6 @@ class AppUrl {
   static const String GetCashDenominationItemList = '$baseUrl/Masters/GetCashDenominationItemList';
   static const String GetMobDashboardSummaryForMgr = '$baseUrl/Dashboard/GetMobDashboardSummaryForMgr';
   static const String InventoryCurrentStockDtlsForMobDash = '$baseUrl/Dashboard/InventoryCurrentStockDtlsForMobDash';
+  static const String GetDsrIncomeReportListForMob = '$baseUrl/Reports/GetDsrIncomeReportListForMob';
 
 }
