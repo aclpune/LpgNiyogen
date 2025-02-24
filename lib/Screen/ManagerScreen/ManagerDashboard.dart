@@ -1566,7 +1566,6 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
       );
   }
 
-
   Future<void> fetchDashboarDetail() async {
     EasyLoading.show();
     Constants.isNetworkAvailable =
@@ -1587,6 +1586,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
             // Any other headers you need can go here
           },
         );
+
         // Print the URL and the headers (including the Bearer token)
         print("Request URL GetMobDashboardSummaryForMgr: ${response.request}");
         print("Request Headers: {'Authorization': 'Bearer $token'}");
@@ -1639,17 +1639,21 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
         } else {
           // Handle non-200 responses
           setState(() {
+            refreshTokens();
             isLoading = false;
             EasyLoading.dismiss();
           });
+          refreshTokens();
           showFlushBar(context, "Fail",
               'Unable To Load Data At This Time. Please Try Again');
         }
       } catch (e) {
         setState(() {
+          refreshTokens();
           EasyLoading.dismiss();
           isLoading = false;
         });
+        refreshTokens();
         // ScaffoldMessenger.of(context).showSnackBar(
         //   SnackBar(content: Text('Error: $e')),
         // );
@@ -1701,20 +1705,25 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
         } else {
           // Handle non-200 responses
           setState(() {
+            refreshTokens();
             isLoading = false;
             EasyLoading.dismiss();
           });
+          refreshTokens();
           showFlushBar(context, "Fail",
               'Unable To Load Data At This Time. Please Try Again');
         }
       } catch (e) {
+
         setState(() {
+          refreshTokens();
           EasyLoading.dismiss();
           isLoading = false;
         });
         // ScaffoldMessenger.of(context).showSnackBar(
         //   SnackBar(content: Text('Error: $e')),
         // );
+        refreshTokens();
         showFlushBar(context, "Fail",
             'Unable To Load Data At This Time. Please Try Again');
       }
@@ -1744,7 +1753,6 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
             fetchDashboarDetail();
           } else if (response['message'] == "UnSuccessful") {
             debugPrint('RefreshTokenExc401 - true');
-
             showDialogToExpireSession(context);
           } else {
             debugPrint('RefreshTokenStatus - false');

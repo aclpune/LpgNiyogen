@@ -246,7 +246,21 @@ class Styling {
     fontFamily: 'OpenSans',
     color: Colors.black,);
 
+  static final TextStyle itemBlackTestVerySmallReport = TextStyle(
+    fontSize: 1.4 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
+    fontFamily: 'OpenSans',
+    color: Colors.black,);
 
+  static final TextStyle itemBlackTestSmallReport = TextStyle(
+    fontSize: 1.6 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
+    fontFamily: 'OpenSans',
+    color: Colors.black,);
+
+  static final TextStyle itemBlackTestSmallReportBold = TextStyle(
+    fontSize: 1.6 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
+    fontFamily: 'OpenSans',
+    fontWeight: FontWeight.bold,
+    color: Colors.black,);
 
   /* static final TextStyle selectedTabLight = TextStyle(
     color: Colors.black,

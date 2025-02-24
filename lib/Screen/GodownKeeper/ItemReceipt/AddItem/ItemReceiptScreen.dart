@@ -219,7 +219,7 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
             if ((filledQty.isEmpty || double.tryParse(filledQty) == 0) &&
                 (emrQty.isEmpty || double.tryParse(emrQty) == 0)) {
               showFlushBar(context, "RequiredOne Quantity",
-                  'At Least One Quantity Is Required!');
+                    'At Least One Quantity Is Required!');
               return;
             }
           }
@@ -319,7 +319,7 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
               refreshTokens();
               showFlushBar(context, "Already Exists", 'Record Already Exists!');
               throw Exception(
-                  'Unable To Load Data At This Time. Please Try Again');
+                    'Unable To Load Data At This Time. Please Try Again');
             }
           } catch (e) {
             debugPrint('Error: $e');

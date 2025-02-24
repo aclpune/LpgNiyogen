@@ -246,9 +246,21 @@ InputDecoration buildInputBorderUpdateStatus(
       contentPadding: EdgeInsets.all(1.2 * SizeConfig.heightMultiplier!),
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)));
 }
+
+
 InputDecoration buildInputWithoutBorderUpdateStatus(
     BuildContext context) {
   return InputDecoration(
       enabledBorder: InputBorder.none,
       border: InputBorder.none);
+}
+InputDecoration buildInputWithSmallUnderline(BuildContext context) {
+  return InputDecoration(
+    enabledBorder: UnderlineInputBorder(
+      borderSide: BorderSide(color: Colors.grey, width: 1.0), // Smaller underline
+    ),
+    focusedBorder: UnderlineInputBorder(
+      borderSide: BorderSide(color: Colors.grey, width: 0.5), // Slightly thicker underline when focused
+    ),
+  );
 }

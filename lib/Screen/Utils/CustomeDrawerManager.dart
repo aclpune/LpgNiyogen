@@ -70,13 +70,13 @@ class CustomeDrawerManager extends StatelessWidget {
                   // Navigate to home screen if required
                 },
               ),
-              // ListTile(
-              //   leading: Icon(Icons.receipt),
-              //   title: Text('DSR Report'),
-              //   onTap: () {
-              //     Navigator.pushReplacementNamed(context, '/managerDSRReportScreen');
-              //   },
-              // ),
+              ListTile(
+                leading: Icon(Icons.receipt),
+                title: Text('DSR Report'),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/managerDSRReportScreen');
+                },
+              ),
               // ListTile(
               //   leading: Icon(Icons.assignment_return_outlined),
               //   title: Text('Item Return'),

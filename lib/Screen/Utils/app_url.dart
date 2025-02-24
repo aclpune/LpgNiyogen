@@ -1,7 +1,9 @@
 class AppUrl {
-  static const String baseUrl = 'https://192.168.2.27:502'; // Local
+  // static const String baseUrl = 'https://192.168.2.27:502'; // Local
   // static const String baseUrl = 'https://20.193.149.194/lpgniyojanapi'; // UAT Client
-  // static const String baseUrl = 'https://20.193.149.194/lpgniyojanuatapi'; // UAT New Development
+  static const String baseUrl = 'https://20.193.149.194/lpgniyojanuatapi'; // UAT New Development
+  // static const String baseUrl = 'https://lpgniyojan.aadyaminfotech.com/lpgniyojanapi/'; // Production New
+
 
   ///Log in
   // static const String login = '$baseUrl/Login/LoginUser';
@@ -42,5 +44,14 @@ class AppUrl {
   static const String GetMobDashboardSummaryForMgr = '$baseUrl/Dashboard/GetMobDashboardSummaryForMgr';
   static const String InventoryCurrentStockDtlsForMobDash = '$baseUrl/Dashboard/InventoryCurrentStockDtlsForMobDash';
   static const String GetDsrIncomeReportListForMob = '$baseUrl/Reports/GetDsrIncomeReportListForMob';
+  static const String GetDSRDataAgainstDateForMob = '$baseUrl/Reports/GetDSRDataAgainstDateForMob';
+  static const String GetDsrExpenseReportListForMob = '$baseUrl/Reports/GetDsrExpenseReportListForMob';
+  static const String GetCDCMsStockUpdateForMob = '$baseUrl/Reports/GetCDCMsStockUpdateForMob';
+  static const String GetCashHandOverDSRDtlsForMob = '$baseUrl/Reports/GetCashHandOverDSRDtlsForMob';
+  static const String GetCashDenomDSRRprtForMob = '$baseUrl/Reports/GetCashDenomDSRRprtForMob';
+  static const String SavecDCMSDataFromMob = '$baseUrl/Reports/SavecDCMSDataFromMob';
+  static const String SaveAllDSRDataFromMob = '$baseUrl/Reports/SaveAllDSRDataFromMob';
+  static const String DSRCheckSavedornot = '$baseUrl/Reports/DSRCheckSavedornot';
+  static const String CheckDayEndConfirmation = '$baseUrl/Masters/CheckDayEndConfirmation';
 
 }

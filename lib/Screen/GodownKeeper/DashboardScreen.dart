@@ -1837,6 +1837,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           });
         } else {
           // Handle non-200 responses
+
           setState(() {
             isLoading = false;
             EasyLoading.dismiss();
