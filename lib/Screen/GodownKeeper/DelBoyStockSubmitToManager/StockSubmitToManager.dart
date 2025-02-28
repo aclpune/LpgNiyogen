@@ -25,9 +25,7 @@ import '../DelBoyStockReturn/StockReturnFromDelBoy.dart';
 import '../DeliveryBoyModel/DeliveryBoyInfoModel.dart';
 import '../DeliveryBoyModel/ItemData.dart';
 import '../DeliveryBoyModel/StockSubmitToManagerListModel.dart';
-import 'EditSaleLocalDatabase.dart';
-import 'EditSaleScreen.dart';
-import 'EditSaleScreenNew.dart';
+
 
 class StockSubmitToManager extends StatefulWidget {
   static const screenName = '/stockSubmitToManager';
@@ -1467,9 +1465,5 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
       debugPrint("Error refreshing data: $e");
     }
   }
-
-
-
-
 
 }

@@ -38,7 +38,7 @@ Widget myElevButton(BuildContext context, String title, VoidCallback callback) {
     onPressed: callback,
     style: ButtonStyle(
       backgroundColor:
-      MaterialStateProperty.all<Color>(const Color(0xff1280b3)),
+      MaterialStateProperty.all<Color>(Colors.blue),
     ),
     child: Text(title, style: Styling.buttonText),
   );

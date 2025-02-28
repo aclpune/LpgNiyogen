@@ -128,269 +128,206 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
   @override
   Widget build(BuildContext context) {
    isDateValid = selectedDate.isAfter(today.subtract(Duration(days: 1)));
-    return Scaffold(
-      appBar: CustomAppBarManager(
-        title: 'Daily Sale Report', // Title or hint text for the text field
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(0.0),
-        child: Column(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.blue[50], // Light blue background color
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    // Container(
-                    //   child: Padding(
-                    //     padding: const EdgeInsets.all(8.0),
-                    //     child: Column(
-                    //       crossAxisAlignment: CrossAxisAlignment.start,
-                    //       children: [
-                    //         Row(
-                    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //           children: [
-                    //             // First Column (Refill and TV)
-                    //             Column(
-                    //               crossAxisAlignment: CrossAxisAlignment.start,
-                    //               children: [
-                    //                 Row(
-                    //                   children: [
-                    //                     SizedBox(
-                    //                         width: 60,
-                    //                         child: Text('Refill:',
-                    //                             style:
-                    //                             Styling.itemGreyTextSmall)),
-                    //                     Text("9",
-                    //                         style: Styling.itemBlackTestSmall),
-                    //                   ],
-                    //                 ),
-                    //                 const SizedBox(
-                    //                   height: 5,
-                    //                 ),
-                    //                 Row(
-                    //                   children: [
-                    //                     SizedBox(
-                    //                         width: 60,
-                    //                         child: Text('TV:',
-                    //                             style:
-                    //                             Styling.itemGreyTextSmall)),
-                    //                     Text("9",
-                    //                         style: Styling.itemBlackTestSmall),
-                    //                   ],
-                    //                 ),
-                    //               ],
-                    //             ),
-                    //             // Second Column (SV and Amount)
-                    //             Column(
-                    //               crossAxisAlignment: CrossAxisAlignment.start,
-                    //               children: [
-                    //                 Row(
-                    //                   children: [
-                    //                     SizedBox(
-                    //                         width: 70,
-                    //                         child: Text('SV:',
-                    //                             style:
-                    //                             Styling.itemGreyTextSmall)),
-                    //                     Text("9",
-                    //                         style: Styling.itemBlackTestSmall),
-                    //                   ],
-                    //                 ),
-                    //                 SizedBox(
-                    //                   height: 5,
-                    //                 ),
-                    //                 Row(
-                    //                   children: [
-                    //                     SizedBox(
-                    //                         width: 70,
-                    //                         child: Text('Amount:',
-                    //                             style:
-                    //                             Styling.itemGreyTextSmall)),
-                    //                     Text("9",
-                    //                         style: Styling.itemBlackTestSmall),
-                    //                   ],
-                    //                 ),
-                    //               ],
-                    //             ),
-                    //           ],
-                    //         ),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
-                    Container(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                // First Column (Refill and TV)
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                            width: 60,
-                                            child: Text('Cash:',
-                                                style:
-                                                Styling.itemGreyTextSmall)),
-                                        Text(totalCashAmountCashFlow.toString(),
-                                            style: Styling.itemBlackTestSmallReportBold),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 2,
-                                    ),
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                            width: 60,
-                                            child: Text('Bank:',
-                                                style:
-                                                Styling.itemGreyTextSmall)),
-                                        Text(totalBankAmountCashFlow.toString(),
-                                            style: Styling.itemBlackTestSmallReportBold),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height:2,
-                                    ),
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                            width: 60,
-                                            child: Text('Credit:',
-                                                style:
-                                                Styling.itemGreyTextSmall)),
-                                        Text(totalCreditAmountCashFlow.toString(),
-                                            style: Styling.itemBlackTestSmallReportBold),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                // Second Column (SV and Amount)
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                            width: 70,
-                                            child: Text('Unsettled:',
-                                                style:
-                                                Styling.itemGreyTextSmall)),
-                                        Text(totalUnsettledAmountCashFlow.toString(),
-                                            style: Styling.itemBlackTestSmallReportBold),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 2,
-                                    ),
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                            width: 70,
-                                            child: Text('Settled:',
-                                                style:
-                                                Styling.itemGreyTextSmall)),
-                                        Text(totalSettledAmountCashFlow.toString(),
-                                            style: Styling.itemBlackTestSmallReportBold),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
+   var argLRAdd = ModalRoute.of(context)?.settings.arguments;
+    return
+      WillPopScope(
+        onWillPop: () async {
+          // Show a confirmation dialog
+          if (argLRAdd == "fromDrawer") {
+            Navigator.pop(context);
+            return false;
+          } else {
+            Navigator.pop(context);
+            return false;
+          } // In case `null` is returned, return `false`
+        },
+        child: Scaffold(
+        appBar: CustomAppBarManager(
+          title: 'Daily Sale Report', // Title or hint text for the text field
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(0.0),
+          child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.blue[50], // Light blue background color
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      Container(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  // First Column (Refill and TV)
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          SizedBox(
+                                              width: 60,
+                                              child: Text('Cash:',
+                                                  style:
+                                                  Styling.itemGreyTextSmall)),
+                                          Text(totalCashAmountCashFlow.toString(),
+                                              style: Styling.itemBlackTestSmallReportBold),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 2,
+                                      ),
+                                      Row(
+                                        children: [
+                                          SizedBox(
+                                              width: 60,
+                                              child: Text('Bank:',
+                                                  style:
+                                                  Styling.itemGreyTextSmall)),
+                                          Text(totalBankAmountCashFlow.toString(),
+                                              style: Styling.itemBlackTestSmallReportBold),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height:2,
+                                      ),
+                                      Row(
+                                        children: [
+                                          SizedBox(
+                                              width: 60,
+                                              child: Text('Credit:',
+                                                  style:
+                                                  Styling.itemGreyTextSmall)),
+                                          Text(totalCreditAmountCashFlow.toString(),
+                                              style: Styling.itemBlackTestSmallReportBold),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  // Second Column (SV and Amount)
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          SizedBox(
+                                              width: 70,
+                                              child: Text('Unsettled:',
+                                                  style:
+                                                  Styling.itemGreyTextSmall)),
+                                          Text(totalUnsettledAmountCashFlow.toString(),
+                                              style: Styling.itemBlackTestSmallReportBold),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: 2,
+                                      ),
+                                      Row(
+                                        children: [
+                                          SizedBox(
+                                              width: 70,
+                                              child: Text('Settled:',
+                                                  style:
+                                                  Styling.itemGreyTextSmall)),
+                                          Text(totalSettledAmountCashFlow.toString(),
+                                              style: Styling.itemBlackTestSmallReportBold),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    Container(
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      "${selectedDate.toLocal()}".split(' ')[0],
-                                      // Display date as "yyyy-MM-dd"
-                                      style: TextStyle(fontSize: 14),
-                                    ),
-                                    IconButton(
-                                      icon: Icon(Icons.calendar_today),
-                                      // Icon for the calendar
-                                      onPressed: () => _selectDate(context),
-                                      iconSize: 24,
-                                    ),
-                                  ],
-                                ),
-                                ElevatedButton(
-                                  onPressed: () {
-                                    // Handle submit logic here
-                                    checkIfSavedOrNot(selectedDate);
-                                    print(
-                                        "Date Submitted: ${selectedDate.toLocal()}");
-                                  },
-                                  child: Text(
-                                    'Show DSR',
-                                    style: TextStyle(color: Colors.white),
+                      Container(
+                        child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "${selectedDate.toLocal()}".split(' ')[0],
+                                        // Display date as "yyyy-MM-dd"
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                      IconButton(
+                                        icon: Icon(Icons.calendar_today),
+                                        // Icon for the calendar
+                                        onPressed: () => _selectDate(context),
+                                        iconSize: 24,
+                                      ),
+                                    ],
                                   ),
-                                  style: ButtonStyle(
-                                    backgroundColor:
-                                        MaterialStateProperty.all<Color>(
-                                            const Color(0xff1280b3)),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      // Handle submit logic here
+                                      checkIfSavedOrNot(selectedDate);
+                                      print(
+                                          "Date Submitted: ${selectedDate.toLocal()}");
+                                    },
+                                    child: Text(
+                                      'Show DSR',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                    style: ButtonStyle(
+                                      backgroundColor:
+                                          MaterialStateProperty.all<Color>(
+                                              const Color(0xff1280b3)),
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ],
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(height: 16),
+                      SizedBox(height: 16),
 
-                    // TabBar with clickable tabs
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _buildTabText('Income', 0),
-                        _buildTabText('Expense', 1),
-                        _buildTabText('CDCMS Stock', 2),
-                        _buildTabText('Cash', 3),
-                      ],
-                    ),
+                      // TabBar with clickable tabs
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _buildTabText('Income', 0),
+                          _buildTabText('Expense', 1),
+                          _buildTabText('CDCMS Stock', 2),
+                          _buildTabText('Cash', 3),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Expanded(
+                child: IndexedStack(
+                  index: _selectedTabIndex,
+                  children: [
+                    _buildIncomeTab(),
+                    _buildExpenseTab(),
+                    _buildCDCMSStockTab(),
+                    _buildCashInHandTab(),
                   ],
                 ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: IndexedStack(
-                index: _selectedTabIndex,
-                children: [
-                  _buildIncomeTab(),
-                  _buildExpenseTab(),
-                  _buildCDCMSStockTab(),
-                  _buildCashInHandTab(),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+            ),
+      );
   }
 
   Widget _buildTabText(String label, int index) {
@@ -638,99 +575,6 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                               );
                             },
                           ),
-
-                          // Container(
-                          //   child: Padding(
-                          //     padding: const EdgeInsets.all(8.0),
-                          //     child: Row(
-                          //       mainAxisAlignment: MainAxisAlignment.center,
-                          //       children: [
-                          //         Expanded(
-                          //           flex: 2,
-                          //           child: Text(
-                          //             '',
-                          //             style: TextStyle(
-                          //               fontWeight: FontWeight.bold,
-                          //               color: Colors.black,
-                          //               fontSize: 14,
-                          //             ),
-                          //             textAlign: TextAlign.center,
-                          //           ),
-                          //         ),
-                          //         Expanded(
-                          //           flex: 1,
-                          //           child: Text(
-                          //             'Cash -',
-                          //             style: TextStyle(
-                          //               fontWeight: FontWeight.bold,
-                          //               color: Colors.black,
-                          //               fontSize: 14,
-                          //             ),
-                          //             textAlign: TextAlign.center,
-                          //           ),
-                          //         ),
-                          //         Expanded(
-                          //           flex: 1,
-                          //           child: Text(
-                          //             '250000',
-                          //             style: TextStyle(
-                          //               fontWeight: FontWeight.bold,
-                          //               color: Colors.black,
-                          //               fontSize: 14,
-                          //             ),
-                          //             textAlign: TextAlign.right,
-                          //           ),
-                          //         ),
-                          //       ],
-                          //     ),
-                          //   ),
-                          // ),
-                          // Container(
-                          //   child: Padding(
-                          //     padding: const EdgeInsets.all(8.0),
-                          //     child: Row(
-                          //       mainAxisAlignment: MainAxisAlignment.center,
-                          //       children: [
-                          //         Expanded(
-                          //           flex: 2,
-                          //           child: Text(
-                          //             '',
-                          //             style: TextStyle(
-                          //               fontWeight: FontWeight.bold,
-                          //               color: Colors.black,
-                          //               fontSize: 14,
-                          //             ),
-                          //             textAlign: TextAlign.center,
-                          //           ),
-                          //         ),
-                          //         Expanded(
-                          //           flex: 1,
-                          //           child: Text(
-                          //             'Bank -',
-                          //             style: TextStyle(
-                          //               fontWeight: FontWeight.bold,
-                          //               color: Colors.black,
-                          //               fontSize: 14,
-                          //             ),
-                          //             textAlign: TextAlign.center,
-                          //           ),
-                          //         ),
-                          //         Expanded(
-                          //           flex: 1,
-                          //           child: Text(
-                          //             '250000',
-                          //             style: TextStyle(
-                          //               fontWeight: FontWeight.bold,
-                          //               color: Colors.black,
-                          //               fontSize: 14,
-                          //             ),
-                          //             textAlign: TextAlign.right,
-                          //           ),
-                          //         ),
-                          //       ],
-                          //     ),
-                          //   ),
-                          // ),
                         ],
                       ),
                     )
@@ -944,52 +788,6 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                               );
                             },
                           ),
-                          // Container(
-                          //   child: Padding(
-                          //     padding: const EdgeInsets.all(8.0),
-                          //     child: Row(
-                          //       mainAxisAlignment: MainAxisAlignment.center,
-                          //       children: [
-                          //         Expanded(
-                          //           flex: 2,
-                          //           child: Text(
-                          //             '',
-                          //             style: TextStyle(
-                          //               fontWeight: FontWeight.bold,
-                          //               color: Colors.black,
-                          //               fontSize: 14,
-                          //             ),
-                          //             textAlign: TextAlign.center,
-                          //           ),
-                          //         ),
-                          //         Expanded(
-                          //           flex: 1,
-                          //           child: Text(
-                          //             'Cash -',
-                          //             style: TextStyle(
-                          //               fontWeight: FontWeight.bold,
-                          //               color: Colors.black,
-                          //               fontSize: 14,
-                          //             ),
-                          //             textAlign: TextAlign.center,
-                          //           ),
-                          //         ),
-                          //         Expanded(
-                          //           flex: 1,
-                          //           child: Text(
-                          //             '250000',
-                          //             style: TextStyle(
-                          //               fontWeight: FontWeight.bold,
-                          //               color: Colors.black,
-                          //               fontSize: 14,
-                          //             ),
-                          //             textAlign: TextAlign.right,
-                          //           ),
-                          //         ),
-                          //       ],
-                          //     ),
-                          //   ),
-                          // ),
                         ],
                       ),
                     )
@@ -1205,52 +1003,6 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                               );
                             },
                           ),
-                          // Container(
-                          //   child: Padding(
-                          //     padding: const EdgeInsets.all(8.0),
-                          //     child: Row(
-                          //       mainAxisAlignment: MainAxisAlignment.center,
-                          //       children: [
-                          //         Expanded(
-                          //           flex: 2,
-                          //           child: Text(
-                          //             '',
-                          //             style: TextStyle(
-                          //               fontWeight: FontWeight.bold,
-                          //               color: Colors.black,
-                          //               fontSize: 14,
-                          //             ),
-                          //             textAlign: TextAlign.center,
-                          //           ),
-                          //         ),
-                          //         Expanded(
-                          //           flex: 1,
-                          //           child: Text(
-                          //             'Cash -',
-                          //             style: TextStyle(
-                          //               fontWeight: FontWeight.bold,
-                          //               color: Colors.black,
-                          //               fontSize: 14,
-                          //             ),
-                          //             textAlign: TextAlign.center,
-                          //           ),
-                          //         ),
-                          //         Expanded(
-                          //           flex: 1,
-                          //           child: Text(
-                          //             '250000',
-                          //             style: TextStyle(
-                          //               fontWeight: FontWeight.bold,
-                          //               color: Colors.black,
-                          //               fontSize: 14,
-                          //             ),
-                          //             textAlign: TextAlign.right,
-                          //           ),
-                          //         ),
-                          //       ],
-                          //     ),
-                          //   ),
-                          // ),
                         ],
                       ),
                     )
@@ -1466,52 +1218,6 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                               );
                             },
                           ),
-                          // Container(
-                          //   child: Padding(
-                          //     padding: const EdgeInsets.all(8.0),
-                          //     child: Row(
-                          //       mainAxisAlignment: MainAxisAlignment.center,
-                          //       children: [
-                          //         Expanded(
-                          //           flex: 2,
-                          //           child: Text(
-                          //             '',
-                          //             style: TextStyle(
-                          //               fontWeight: FontWeight.bold,
-                          //               color: Colors.black,
-                          //               fontSize: 14,
-                          //             ),
-                          //             textAlign: TextAlign.center,
-                          //           ),
-                          //         ),
-                          //         Expanded(
-                          //           flex: 1,
-                          //           child: Text(
-                          //             'Cash -',
-                          //             style: TextStyle(
-                          //               fontWeight: FontWeight.bold,
-                          //               color: Colors.black,
-                          //               fontSize: 14,
-                          //             ),
-                          //             textAlign: TextAlign.center,
-                          //           ),
-                          //         ),
-                          //         Expanded(
-                          //           flex: 1,
-                          //           child: Text(
-                          //             '250000',
-                          //             style: TextStyle(
-                          //               fontWeight: FontWeight.bold,
-                          //               color: Colors.black,
-                          //               fontSize: 14,
-                          //             ),
-                          //             textAlign: TextAlign.right,
-                          //           ),
-                          //         ),
-                          //       ],
-                          //     ),
-                          //   ),
-                          // ),
                         ],
                       ),
                     )
@@ -1534,72 +1240,6 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
               Container(
                 child: Column(
                   children: [
-                    // ListView.builder(
-                    //   shrinkWrap: true,
-                    //   physics: BouncingScrollPhysics(),
-                    //   itemCount: dataExpenseList.length, // Change this to the length of your data
-                    //   itemBuilder: (context, index) {
-                    //     var item = dataExpenseList[index];
-                    //     return
-                    //       Padding(
-                    //       padding: const EdgeInsets.all(8.0),
-                    //       child:
-                    //       Column(
-                    //         children: [
-                    //           Align(alignment: Alignment.centerLeft,
-                    //               child: Text(item is ManagerDsrReportExpenseDetailListModel ? item.transCate : item.transCate,
-                    //                    style: Styling.bodyTitleBig)),
-                    //           Row(
-                    //             mainAxisAlignment: MainAxisAlignment.center,
-                    //             children: [
-                    //               Expanded(
-                    //                 flex: 2,
-                    //                 child: Text(
-                    //                   'Expense Head',
-                    //                   style: Styling.itemBlackTestBold,
-                    //                   textAlign: TextAlign.left,
-                    //                 ),
-                    //               ),
-                    //               Expanded(
-                    //                 flex: 2,
-                    //                 child: Text(
-                    //                   'Amt',
-                    //                   style: Styling.itemBlackTestBold,
-                    //                   textAlign: TextAlign.right,
-                    //                 ),
-                    //               ),
-                    //             ],
-                    //           ),
-                    //           Row(
-                    //             mainAxisAlignment: MainAxisAlignment.center,
-                    //             children: [
-                    //               Expanded(
-                    //                 flex: 2,
-                    //                 child: Text(
-                    //                   item is ManagerDsrReportExpenseDetailListModel ? item.expenseItemName : item.expenseItemName,
-                    //                   style: Styling.itemBlackTestSmall,
-                    //                   textAlign: TextAlign.left,
-                    //                 ),
-                    //               ),
-                    //               Expanded(
-                    //                 flex: 2,
-                    //                 child:
-                    //                 Text(
-                    //                   item is ManagerDsrReportExpenseDetailListModel
-                    //                       ? item.expenseAmount.toString()  // Convert double to string
-                    //                       : item.expenseAmount.toString(), // Convert double to string for both conditions
-                    //                   style: Styling.itemBlackTestSmall,
-                    //                   textAlign: TextAlign.right,
-                    //                 )
-                    //               ),
-                    //             ],
-                    //           ),
-                    //         ],
-                    //       ),
-                    //
-                    //     );
-                    //   },
-                    // ),
                     ListView.builder(
                       shrinkWrap: true,
                       physics: BouncingScrollPhysics(),
@@ -1757,315 +1397,6 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                         ],
                       ),
                     ),
-                    // ListView.builder(
-                    //   shrinkWrap: true,
-                    //   physics: BouncingScrollPhysics(),
-                    //   itemCount: cdcmsListData.length, // Change this to the length of your data
-                    //   itemBuilder: (context, index) {
-                    //     // You can replace this with data from your source (e.g., getCurrentStockDetailManager[index])
-                    //     String item = "14.2 KG";
-                    //     String amt = "25000";
-                    //
-                    //     return Padding(
-                    //       padding: const EdgeInsets.all(8.0),
-                    //       child:
-                    //       Column(
-                    //         children: [
-                    //           Row(
-                    //             mainAxisAlignment: MainAxisAlignment.center,
-                    //             children: [
-                    //               Expanded(
-                    //                 flex: 3,
-                    //                 child: Text(
-                    //                   item,
-                    //                   style: Styling.itemBlackTestBold,
-                    //                   textAlign: TextAlign.left,
-                    //                 ),
-                    //               ),
-                    //               Expanded(
-                    //                 flex: 2,
-                    //                 child: Text(
-                    //                   "Filled",
-                    //                   style: Styling.itemBlackTestBold,
-                    //                   textAlign: TextAlign.center,
-                    //                 ),
-                    //               ),
-                    //               Expanded(
-                    //                 flex: 2,
-                    //                 child: Text(
-                    //                   "Empty",
-                    //                   style: Styling.itemBlackTestBold,
-                    //                   textAlign: TextAlign.center,
-                    //                 ),
-                    //               ),
-                    //               Expanded(
-                    //                 flex: 2,
-                    //                 child: Text(
-                    //                   "Def",
-                    //                   style: Styling.itemBlackTestBold,
-                    //                   textAlign: TextAlign.right,
-                    //                 ),
-                    //               ),
-                    //             ],
-                    //           ),
-                    //           Row(
-                    //             mainAxisAlignment: MainAxisAlignment.center,
-                    //             children: [
-                    //               Expanded(
-                    //                 flex: 3,
-                    //                 child: Text(
-                    //                   "Current Stock",
-                    //                   style: Styling.itemBlackTestSmall,
-                    //                   textAlign: TextAlign.left,
-                    //                 ),
-                    //               ),
-                    //               Expanded(
-                    //                 flex: 2,
-                    //                 child: Text(
-                    //                   "23",
-                    //                   style: Styling.itemBlackTestSmall,
-                    //                   textAlign: TextAlign.center,
-                    //                 ),
-                    //               ),
-                    //               Expanded(
-                    //                 flex: 2,
-                    //                 child: Text(
-                    //                   "20",
-                    //                   style: Styling.itemBlackTestSmall,
-                    //                   textAlign: TextAlign.center,
-                    //                 ),
-                    //               ),
-                    //               Expanded(
-                    //                 flex: 2,
-                    //                 child: Text(
-                    //                   "26",
-                    //                   style: Styling.itemBlackTestSmall,
-                    //                   textAlign: TextAlign.right,
-                    //                 ),
-                    //               ),
-                    //             ],
-                    //           ),
-                    //           Row(
-                    //             mainAxisAlignment: MainAxisAlignment.center,
-                    //             children: [
-                    //               Expanded(
-                    //                 flex: 3,
-                    //                 child: Text(
-                    //                   "CDCMS",
-                    //                   style: Styling.itemBlackTestSmall,
-                    //                   textAlign: TextAlign.left,
-                    //                 ),
-                    //               ),
-                    //               Expanded(
-                    //                 flex: 2,
-                    //                 child: TextField(
-                    //                   decoration: buildInputWithoutBorderUpdateStatus( context),
-                    //                   style: Styling.itemBlackTestSmall,
-                    //                   textAlign: TextAlign.center,
-                    //                 ),
-                    //               ),
-                    //               SizedBox(width: 7,),
-                    //               Expanded(
-                    //                 flex: 2,
-                    //                 child: TextField(
-                    //                   decoration: buildInputWithoutBorderUpdateStatus( context),
-                    //                   style: Styling.itemBlackTestSmall,
-                    //                   textAlign: TextAlign.center,
-                    //                 ),
-                    //               ),
-                    //               SizedBox(width: 7,),
-                    //               Expanded(
-                    //                 flex: 2,
-                    //                 child: TextField(
-                    //                   decoration: buildInputWithoutBorderUpdateStatus( context),
-                    //                   style: Styling.itemBlackTestSmall,
-                    //                   textAlign: TextAlign.right,
-                    //                 ),
-                    //               ),
-                    //             ],
-                    //           ),
-                    //           Row(
-                    //             mainAxisAlignment: MainAxisAlignment.center,
-                    //             children: [
-                    //               Expanded(
-                    //                 flex: 3,
-                    //                 child: Text(
-                    //                   "Difference",
-                    //                   style: Styling.itemBlackTestSmall,
-                    //                   textAlign: TextAlign.left,
-                    //                 ),
-                    //               ),
-                    //               Expanded(
-                    //                 flex: 2,
-                    //                 child: Text(
-                    //                   "23",
-                    //                   style: Styling.itemBlackTestSmall,
-                    //                   textAlign: TextAlign.center,
-                    //                 ),
-                    //               ),
-                    //               Expanded(
-                    //                 flex: 2,
-                    //                 child: Text(
-                    //                   "20",
-                    //                   style: Styling.itemBlackTestSmall,
-                    //                   textAlign: TextAlign.center,
-                    //                 ),
-                    //               ),
-                    //               Expanded(
-                    //                 flex: 2,
-                    //                 child: Text(
-                    //                   "26",
-                    //                   style: Styling.itemBlackTestSmall,
-                    //                   textAlign: TextAlign.right,
-                    //                 ),
-                    //               ),
-                    //             ],
-                    //           ),
-                    //           Row(
-                    //             mainAxisAlignment: MainAxisAlignment.end,
-                    //             children: [
-                    //               Expanded(
-                    //                 flex: 1,
-                    //                 child: Text(
-                    //                   "Total - ",
-                    //                   style: Styling.itemBlackTestBold,
-                    //                   textAlign: TextAlign.left,
-                    //                 ),
-                    //               ),
-                    //               Expanded(
-                    //                 flex: 3,
-                    //                 child: Text(
-                    //                   "2300",
-                    //                   style: Styling.itemBlackTestBold,
-                    //                   textAlign: TextAlign.left,
-                    //                 ),
-                    //               ),
-                    //
-                    //             ],
-                    //           ),
-                    //         ],
-                    //       ),
-                    //
-                    //     );
-                    //   },
-                    // ),
-
-                    // ListView.builder(
-                    //   shrinkWrap: true,
-                    //   physics: BouncingScrollPhysics(),
-                    //   itemCount: cdcmsListData.length,
-                    //   itemBuilder: (context, index) {
-                    //     ManagerDsrReportCdcmsListModel data = cdcmsListData[index];
-                    //
-                    //     // Initialize controllers only once
-                    //     if (filledCDControllers.length <= index) {
-                    //       filledCDControllers.add(TextEditingController());
-                    //       emptyCDControllers.add(TextEditingController());
-                    //       defectiveCDControllers.add(TextEditingController());
-                    //     }
-                    //
-                    //     // Set initial text to controllers
-                    //     filledCDControllers[index].text = (data.filledCD?.toString() ?? '0');
-                    //     emptyCDControllers[index].text = (data.currentStkEmpty?.toString() ?? '0');
-                    //     defectiveCDControllers[index].text = (data.currentStkDefective?.toString() ?? '0');
-                    //
-                    //     double filledDiff = data.currentStkFilled?.toDouble() ?? 0.0;
-                    //     double emptyDiff = data.currentStkEmpty?.toDouble() ?? 0.0;
-                    //     double defectiveDiff = data.currentStkDefective?.toDouble() ?? 0.0;
-                    //
-                    //     return Padding(
-                    //       padding: const EdgeInsets.all(8.0),
-                    //       child: Column(
-                    //         children: [
-                    //           Row(
-                    //             mainAxisAlignment: MainAxisAlignment.center,
-                    //             children: [
-                    //               Expanded(flex: 3, child: Text(data.itemName ?? 'Item Name', style: TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.left)),
-                    //               Expanded(flex: 2, child: Text("Filled", style: TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.center)),
-                    //               Expanded(flex: 2, child: Text("Empty", style: TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.center)),
-                    //               Expanded(flex: 2, child: Text("Def", style: TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.right)),
-                    //             ],
-                    //           ),
-                    //           Row(
-                    //             mainAxisAlignment: MainAxisAlignment.center,
-                    //             children: [
-                    //               Expanded(flex: 3, child: Text("Current Stock", style: TextStyle(fontSize: 12), textAlign: TextAlign.left)),
-                    //               Expanded(flex: 2, child: Text(data.currentStkFilled?.toString() ?? '0', style: TextStyle(fontSize: 12), textAlign: TextAlign.center)),
-                    //               Expanded(flex: 2, child: Text(data.currentStkEmpty?.toString() ?? '0', style: TextStyle(fontSize: 12), textAlign: TextAlign.center)),
-                    //               Expanded(flex: 2, child: Text(data.currentStkDefective?.toString() ?? '0', style: TextStyle(fontSize: 12), textAlign: TextAlign.right)),
-                    //             ],
-                    //           ),
-                    //           Row(
-                    //             mainAxisAlignment: MainAxisAlignment.center,
-                    //             children: [
-                    //               Expanded(flex: 3, child: Text("CDCMS", style: TextStyle(fontSize: 12), textAlign: TextAlign.left)),
-                    //               Expanded(
-                    //                 flex: 2,
-                    //                 child:
-                    //                 TextField(
-                    //                   controller: filledCDControllers[index],
-                    //                   decoration: InputDecoration(border: OutlineInputBorder()),
-                    //                   style: TextStyle(fontSize: 12),
-                    //                   textAlign: TextAlign.center,
-                    //                   keyboardType: TextInputType.number,
-                    //                     onChanged: (value) {
-                    //                       double newValue = double.tryParse(value) ?? 0.0;
-                    //                       debugPrint("filledDiff $newValue");
-                    //                         filledDiff =(data.currentStkFilled?.toDouble() ?? 0.0) - newValue ;
-                    //                         debugPrint("filledDiff $filledDiff");
-                    //                     }
-                    //                 ),
-                    //               ),
-                    //               SizedBox(width: 7),
-                    //               Expanded(
-                    //                 flex: 2,
-                    //                 child: TextField(
-                    //                   controller: emptyCDControllers[index],
-                    //                   decoration: InputDecoration(border: OutlineInputBorder()),
-                    //                   style: TextStyle(fontSize: 12),
-                    //                   textAlign: TextAlign.center,
-                    //                   keyboardType: TextInputType.number,
-                    //                   onChanged: (value) {
-                    //                     double newValue = double.tryParse(value) ?? 0.0;
-                    //                     setState(() {
-                    //                       emptyDiff = newValue - (data.currentStkEmpty?.toDouble() ?? 0.0);
-                    //                     });
-                    //                   },
-                    //                 ),
-                    //               ),
-                    //               SizedBox(width: 7),
-                    //               Expanded(
-                    //                 flex: 2,
-                    //                 child: TextField(
-                    //                   controller: defectiveCDControllers[index],
-                    //                   decoration: InputDecoration(border: OutlineInputBorder()),
-                    //                   style: TextStyle(fontSize: 12),
-                    //                   textAlign: TextAlign.right,
-                    //                   keyboardType: TextInputType.number,
-                    //                   onChanged: (value) {
-                    //                     double newValue = double.tryParse(value) ?? 0.0;
-                    //                     setState(() {
-                    //                       defectiveDiff = newValue - (data.currentStkDefective?.toDouble() ?? 0.0);
-                    //                     });
-                    //                   },
-                    //                 ),
-                    //               ),
-                    //             ],
-                    //           ),
-                    //           Row(
-                    //             mainAxisAlignment: MainAxisAlignment.center,
-                    //             children: [
-                    //               Expanded(flex: 3, child: Text("Difference", style: TextStyle(fontSize: 12), textAlign: TextAlign.left)),
-                    //               Expanded(flex: 2, child: Text(filledDiff.toStringAsFixed(2), style: TextStyle(fontSize: 12), textAlign: TextAlign.center)),
-                    //               Expanded(flex: 2, child: Text(emptyDiff.toStringAsFixed(2), style: TextStyle(fontSize: 12), textAlign: TextAlign.center)),
-                    //               Expanded(flex: 2, child: Text(defectiveDiff.toStringAsFixed(2), style: TextStyle(fontSize: 12), textAlign: TextAlign.right)),
-                    //             ],
-                    //           ),
-                    //         ],
-                    //       ),
-                    //     );
-                    //   },
-                    // ),
                     ListView.builder(
                       shrinkWrap: true,
                       physics: BouncingScrollPhysics(),
@@ -2594,69 +1925,6 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
     );
   }
 
-  // Widget _buildCDCMSStockTab() {
-  //   return SingleChildScrollView(
-  //     child: Padding(
-  //       padding: const EdgeInsets.all(8.0),
-  //       child: Column(
-  //         crossAxisAlignment: CrossAxisAlignment.start,
-  //         children: [
-  //           Text(
-  //             "Stock Updated On : 13/02/2025 17:42",
-  //             style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-  //           ),
-  //           SizedBox(height: 10),
-  //           SizedBox( // Use SizedBox instead of Expanded
-  //             child: SingleChildScrollView(
-  //               scrollDirection: Axis.horizontal,
-  //               child: DataTable(
-  //                 columnSpacing: 12,
-  //                 border: TableBorder.all(),
-  //                 columns: [
-  //                   DataColumn(label: Text('Item Name')),
-  //                   DataColumn(label: Text('Filled')),
-  //                   DataColumn(label: Text('Empty')),
-  //                   DataColumn(label: Text('Defective')),
-  //                   DataColumn(label: Text('CDCMS Filled')),
-  //                   DataColumn(label: Text('CDCMS Empty')),
-  //                   DataColumn(label: Text('CDCMS Defective')),
-  //                   DataColumn(label: Text('Diff. Filled')),
-  //                   DataColumn(label: Text('Diff. Empty')),
-  //                   DataColumn(label: Text('Diff. Defective')),
-  //                   DataColumn(label: Text('Total')),
-  //                 ],
-  //                 rows: stockData.map((item) {
-  //                   return DataRow(cells: [
-  //                     DataCell(Text(item['name'])),
-  //                     DataCell(Text(item['filled'].toString())),
-  //                     DataCell(Text(item['empty'].toString())),
-  //                     DataCell(Text(item['defective'].toString())),
-  //                     DataCell(TextField()), // CDCMS Filled Input
-  //                     DataCell(TextField()), // CDCMS Empty Input
-  //                     DataCell(TextField()), // CDCMS Defective Input
-  //                     DataCell(Text(item['filledDiff'].toString())),
-  //                     DataCell(Text(item['emptyDiff'].toString())),
-  //                     DataCell(Text(item['defectiveDiff'].toString())),
-  //                     DataCell(Text(item['total'].toString())),
-  //                   ]);
-  //                 }).toList(),
-  //               ),
-  //             ),
-  //           ),
-  //           SizedBox(height: 10),
-  //           Center(
-  //             child: ElevatedButton(
-  //               onPressed: () {},
-  //               child: Text("Save CDCMS Data"),
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // Call first API when flag is 'y'
   Future<void> _fetchIncomeData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? distributorId = prefs.getString('DistributorId');
@@ -3158,136 +2426,6 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
     });
   }
 
-  // Future<void> saveCDCMSDataMob() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? distributorId = prefs.getString('DistributorId');
-  //   String? bearerToken = prefs.getString('token');
-  //   String? StaffId = prefs.getString('StaffId');
-  //   int? staffIds = int.parse(StaffId!);
-  //   int? distributorIds = int.parse(distributorId!);
-  //   // DateTime now = DateTime.now();
-  //   // String formattedDate = DateFormat('yyyy-MM-dd').format(now);
-  //   String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
-  //   // final String consumerNumbers = getConsumerNumbersAsCommaSeparatedString(_consumerList);
-  //   final List<Map<String, dynamic>> cDCMSModel = cdcmsListData.map((e) => e.toJson()).toList();
-  //
-  //   // Request body
-  //   final Map<String, dynamic> requestBody = {
-  //     "Sktrecold":0,
-  //     "DistributorId":distributorId,
-  //     "StkUpdateDate":formattedDate,
-  //     "IsDayEndDone":1,
-  //     "DayEndTime":0,
-  //     "AddedBy":StaffId,
-  //     "Action":'ADD',
-  //     "CDCMSDetailList":cDCMSModel
-  //   };
-  //
-  //   // Making the POST request
-  //   try {
-  //     final response = await http.post(
-  //       Uri.parse('${AppUrl.SavecDCMSDataFromMob}'),
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         "Authorization": "Bearer $bearerToken",
-  //       },
-  //       body: json.encode(requestBody),
-  //     );
-  //     print("response SavecDCMSDataFromMob: ${response.statusCode} - ${response.body}");
-  //     print("requestBody SavecDCMSDataFromMob: ${response.statusCode} - ${response.request}${requestBody}");
-  //     // Handling response
-  //     if (response.statusCode == 200) {
-  //       // Successful response
-  //       print("Response: ${response.body}");
-  //     } else {
-  //       // Error response
-  //       print("Error: ${response.statusCode} - ${response.body}");
-  //     }
-  //   } catch (e) {
-  //     // Exception handling
-  //     print("Exception: $e");
-  //   }
-  // }
-
-  // Future<void> saveCDCMSDataMob() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? distributorId = prefs.getString('DistributorId');
-  //   String? bearerToken = prefs.getString('token');
-  //   String? StaffId = prefs.getString('StaffId');
-  //   int? staffIds = int.parse(StaffId!);
-  //   int? distributorIds = int.parse(distributorId!);
-  //
-  //   // Format selectedDate to match the format required by the API
-  //   String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
-  //
-  //   // Now update the cdcmsListData based on user inputs from the TextFields
-  //   for (int i = 0; i < cdcmsListData.length; i++) {
-  //     ManagerDsrReportCdcmsListModel data = cdcmsListData[i];
-  //
-  //     // Capture the updated values from TextField controllers
-  //     double filledCDValue = double.tryParse(filledCDControllers[i].text) ?? 0.0;
-  //     double emptyCDValue = double.tryParse(emptyCDControllers[i].text) ?? 0.0;
-  //     double defectiveCDValue = double.tryParse(defectiveCDControllers[i].text) ?? 0.0;
-  //
-  //     // Update the model's properties based on the user input
-  //     data = data.copyWith(
-  //       filledCD: filledCDValue,
-  //       emptyCD: emptyCDValue,
-  //       defectiveCD: defectiveCDValue,
-  //       filledDiff: (data.currentStkFilled?.toDouble() ?? 0.0) - filledCDValue,
-  //       emptyDiff: (data.currentStkEmpty?.toDouble() ?? 0.0) - emptyCDValue,
-  //       defectiveDiff: (data.currentStkDefective?.toDouble() ?? 0.0) - defectiveCDValue,
-  //       total: (data.currentStkFilled?.toDouble() ?? 0.0) - filledCDValue +
-  //           (data.currentStkEmpty?.toDouble() ?? 0.0) - emptyCDValue +
-  //           (data.currentStkDefective?.toDouble() ?? 0.0) - defectiveCDValue,
-  //     );
-  //
-  //     // Save the updated data back to the list
-  //     cdcmsListData[i] = data;
-  //   }
-  //
-  //   // Map the updated cdcmsListData into the request body
-  //   final List<Map<String, dynamic>> cDCMSModel = cdcmsListData.map((e) => e.toJson()).toList();
-  //
-  //   // Request body
-  //   final Map<String, dynamic> requestBody = {
-  //     "Sktrecold": 0,
-  //     "DistributorId": distributorId,
-  //     "StkUpdateDate": formattedDate,
-  //     "IsDayEndDone": 1,
-  //     "DayEndTime": 0,
-  //     "AddedBy": StaffId,
-  //     "Action": 'ADD',
-  //     "CDCMSDetailList": cDCMSModel
-  //   };
-  //
-  //   // Making the POST request
-  //   try {
-  //     final response = await http.post(
-  //       Uri.parse('${AppUrl.SavecDCMSDataFromMob}'),
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         "Authorization": "Bearer $bearerToken",
-  //       },
-  //       body: json.encode(requestBody),
-  //     );
-  //     print("response SavecDCMSDataFromMob: ${response.statusCode} - ${response.body}");
-  //     print("requestBody SavecDCMSDataFromMob: $requestBody");
-  //
-  //     // Handling response
-  //     if (response.statusCode == 200) {
-  //       // Successful response
-  //       print("Response: ${response.body}");
-  //     } else {
-  //       // Error response
-  //       print("Error: ${response.statusCode} - ${response.body}");
-  //     }
-  //   } catch (e) {
-  //     // Exception handling
-  //     print("Exception: $e");
-  //   }
-  // }
-
   Future<void> saveCDCMSDataMob() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? distributorId = prefs.getString('DistributorId');
@@ -3380,67 +2518,6 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
       print("Exception: $e");
     }
   }
-
-  // Future<void> saveDayEndDataMob() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? distributorId = prefs.getString('DistributorId');
-  //   String? bearerToken = prefs.getString('token');
-  //   String? StaffId = prefs.getString('StaffId');
-  //   String? StaffName = prefs.getString('StaffName');
-  //   int? staffIds = int.parse(StaffId!);
-  //   int? distributorIds = int.parse(distributorId!);
-  //   // DateTime now = DateTime.now();
-  //   // String formattedDate = DateFormat('yyyy-MM-dd').format(now);
-  //   String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
-  //   final List dataCashDenomination = dataCashDenominationList.map((e) => e.toJson()).toList();
-  //   final List dataCashInHand = dataCashInHandList.map((e) => e.toJson()).toList();
-  //   final List<dynamic> dataIncomeTotalAmount = []
-  //     ..addAll(dataIncomeTotalAmountList)  // Add items from dataIncomeTotalAmountList
-  //     ..addAll(dataExpenseList);
-  //   final Map<String, dynamic> requestBody = {
-  //     "DSRId": 0,
-  //     "DistributorId":distributorIds,
-  //     "DSRDate": formattedDate,
-  //     "IncCash": totalCashAmountCashFlow,
-  //     "IncBank": totalBankAmountCashFlow,
-  //     "IncCredit": totalCreditAmountCashFlow,
-  //     "UnsettledAmt": totalUnsettledAmountCashFlow,
-  //     "SettledAmt": totalSettledAmountCashFlow,
-  //     "ExpCash": 0,
-  //     "ExpBank": 0,
-  //     "ExpCredit": 0,
-  //     "AddedBy":staffIds,
-  //     "DSRIncomeExpenseList":dataIncomeTotalAmount,
-  //     "CashInhandDetailList":dataCashInHand,
-  //     "DenomDetailList":dataCashDenomination,
-  //     "Action": 'ADD'
-  //   };
-  //
-  //   // Making the POST request
-  //   try {
-  //     final response = await http.post(
-  //       Uri.parse('${AppUrl.SaveAllDSRDataFromMob}'),
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         "Authorization": "Bearer $bearerToken",
-  //       },
-  //       body: json.encode(requestBody),
-  //     );
-  //     print("response SaveAllDSRDataFromMob: ${response.statusCode} - ${response.body}");
-  //     print("requestBody SaveAllDSRDataFromMob: ${response.statusCode} - ${response.request}${requestBody}");
-  //     // Handling response
-  //     if (response.statusCode == 200) {
-  //       // Successful response
-  //       print("Response: ${response.body}");
-  //     } else {
-  //       // Error response
-  //       print("Error: ${response.statusCode} - ${response.body}");
-  //     }
-  //   } catch (e) {
-  //     // Exception handling
-  //     print("Exception: $e");
-  //   }
-  // }
 
   Future<void> saveDayEndDataMob() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -3690,7 +2767,5 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
       print("Exception: $e");
     }
   }
-
-
 
 }

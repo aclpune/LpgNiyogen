@@ -120,28 +120,7 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                     child: Text("Out"),
                   ) :
 
-                  // ElevatedButton(
-                  //   style: ElevatedButton.styleFrom(
-                  //       backgroundColor: Colors.blue,
-                  //       padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
-                  //       foregroundColor: Colors.white,
-                  //       textStyle: const TextStyle(
-                  //           fontSize: 15,
-                  //           fontWeight: FontWeight.bold)),
-                  //   onPressed: () {
-                  //     var itemsToShow = value.itemDetails?.where(
-                  //           (item) => item.filledQty != 0,
-                  //     ).toList();
-                  //     var receiptId = value.receiptId;
-                  //     if (itemsToShow != null && itemsToShow.isNotEmpty) {
-                  //       showDetailsDialog(context, itemsToShow,receiptId);
-                  //     } else {
-                  //       showFlushBar(context, "No Items Available",
-                  //           'No Items For Return.');
-                  //     }
-                  //   },
-                  //   child: Text("Out"),
-                  // ):
+
                       Text(""),
                   value.returnOn =="0001-01-01T00:00:00"?
                   ElevatedButton(
@@ -219,17 +198,7 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Padding(
-                              //   padding: const EdgeInsets.all(5.0),
-                              //   child: Row(
-                              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              //     children: [
-                              //       Text('Filled Qty: ${item.filledQty}'),
-                              //       Text('EMR Qty: ${item.eMRQty}'),
-                              //       Text('Invoice Qty: ${item.invoiceQty}'),
-                              //     ],
-                              //   ),
-                              // ),
+
                               const Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
@@ -336,47 +305,6 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
         );
   }
 
-  // void showDetailsDialog(BuildContext context, List<ItemDetails> items) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) {
-  //       return AlertDialog(
-  //         title: Text('Details for Items Return'),
-  //         content: SingleChildScrollView(
-  //           child: Column(
-  //             mainAxisSize: MainAxisSize.min,
-  //             children: items.map((item) {
-  //               return Column(
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: [
-  //                   Text("Item Name: ${item.itemName}"),
-  //                   Text("Return Qty: ${item.invoiceQty}"),
-  //                   Text("Defective: ${item.eMRQty}"),
-  //                   Divider(),
-  //                 ],
-  //               );
-  //             }).toList(),
-  //           ),
-  //         ),
-  //         actions: [
-  //           TextButton(
-  //             onPressed: () {
-  //               Navigator.of(context).pop(); // Close the dialog
-  //             },
-  //             child: Text("Close"),
-  //           ),
-  //           ElevatedButton(
-  //             onPressed: () {
-  //               // Handle the "Out" action for the items if needed
-  //               Navigator.of(context).pop(); // Close the dialog
-  //             },
-  //             child: Text("Out"),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
   void showDetailsDialog(BuildContext context, List<ItemDetails> items, num? receiptId) {
     // Controllers to track changes in text fields
     List<TextEditingController> returnQtyControllers = [];
@@ -466,25 +394,7 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
               },
               child: Text("Close",style: TextStyle(fontWeight:FontWeight.bold,fontSize: 14),),
             ),
-            // ElevatedButton(
-            //   onPressed: () async {
-            //     // Gather the updated item details, including ItemId, ReturnQty, and DefectiveQty
-            //     List<Map<String, dynamic>> updatedItemDetails = [];
-            //     for (int i = 0; i < items.length; i++) {
-            //       updatedItemDetails.add({
-            //         "ItemId": items[i].itemId,
-            //         "EmptyReturnQty": int.tryParse(returnQtyControllers[i].text) ?? 0,
-            //         "DefectiveQty": int.tryParse(defectiveQtyControllers[i].text) ?? 0,
-            //       });
-            //     }
-            //
-            //     // Send the data to the API
-            //     await sendItemDetailsToApi(updatedItemDetails, receiptId);
-            //
-            //     Navigator.of(context).pop(); // Close the dialog
-            //   },
-            //   child: Text("Out"),
-            // ),
+
             ElevatedButton(
               onPressed: () async {
                 // Gather the updated item details, including ItemId, EmptyReturnQty, and DefectiveQty

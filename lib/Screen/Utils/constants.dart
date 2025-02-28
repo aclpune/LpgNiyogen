@@ -65,6 +65,7 @@ BranchAdminAH	cnf@1234*/
   static double size18 = 18;
   static double size16 = 16;
   static double size14 = 14;
+  static String AppBarTitle = "LPG Niyojan";
 
   static String DSRMessage =
       "Warning: Once you confirm the DSR,\nApplication will close the day and save the closing entries for inventory (cyl and ARB), along with cash flow transactions.\nYou will not be allowed to make any changes to any transaction once you confirm, and today’s closing will be done.\nAre you sure you want to proceed?";

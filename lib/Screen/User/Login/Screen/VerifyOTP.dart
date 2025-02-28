@@ -33,55 +33,23 @@ class _VerifyOtpState extends State<VerifyOtp> {
         },
         child: SafeArea(
         child: Scaffold(
-          // appBar:
-          // AppBar(
-          //    // You can change the color as needed
-          //   backgroundColor: Colors.white,
-          //   automaticallyImplyLeading: false, // Disable default back button
-          //   title: Padding(
-          //     padding: const EdgeInsets.only(left: 0),
-          //     child: Row(
-          //       children: [
-          //         // Back Arrow Button
-          //         IconButton(
-          //           icon: Icon(Icons.arrow_back, color: Colors.black),
-          //           onPressed: () {
-          //             Navigator.pushReplacementNamed(context, '/login');
-          //           },
-          //         ),
-          //         // Text Field
-          //         // SizedBox(width: 10,),
-          //         // Expanded(
-          //         //   child: TextField(
-          //         //     decoration: InputDecoration(
-          //         //       hintText: "", // You can pass dynamic title here
-          //         //       hintStyle: TextStyle(color: Colors.white),
-          //         //       border: InputBorder.none,
-          //         //       contentPadding: EdgeInsets.all(8.0),
-          //         //     ),
-          //         //     style: TextStyle(color: Colors.white,fontSize: 20),
-          //         //   ),
-          //         // ),
-          //       ],
-          //     ),
-          //   ),
-          // ),
           body: SingleChildScrollView(
             child:
             Container(
-              margin: EdgeInsets.only(left: 40,right: 40),
+              margin: EdgeInsets.only(left: 40,right: 40,top: 60),
               child: Column(
                 children: [
                   Image.asset(
-                    'assets/redlockuser.png',  // Path to your image
-                    height: 200, // Adjust the height as needed
-                    width: 200,  // Adjust the width as needed
+                    'assets/icononlytransparentnobuffer.png',  // Path to your image
+                    height: 150, // Adjust the height as needed
+                    width: 150,  // Adjust the width as needed
                   ),
+                  SizedBox(height: 20),
                   // Large LOGIN Text
                   Text(
                     'Verify OTP',
                     style: TextStyle(
-                      fontSize: 32, // Large font size for LOGIN
+                      fontSize:18, // Large font size for LOGIN
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
