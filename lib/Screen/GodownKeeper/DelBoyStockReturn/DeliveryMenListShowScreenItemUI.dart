@@ -31,6 +31,7 @@ class _DeliveryMenListShowScreenItemUIState extends State<DeliveryMenListShowScr
   void initState() {
     // TODO: implement initState
     super.initState();
+    checkAndSaveDayEndData();
   }
   @override
   Widget build(BuildContext context) {

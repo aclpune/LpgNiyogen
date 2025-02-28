@@ -28,11 +28,13 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
   bool isListViewVisible = false; // Tracks if ListView is visible
   List<GetCurrentStcOfGodownKeeperModel> getCurrentStcOfGodownKeeper = [];
   bool isLoading = true;
+  bool saveFlag = false;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     fetchCurrentStock();
+    checkAndSaveDayEndData();
   }
   @override
   Widget build(BuildContext context) {
@@ -57,7 +59,7 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                   value.returnOn =="0001-01-01T00:00:00"?
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: saveFlag ? Colors.grey:Colors.grey,
                       padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
                       foregroundColor: Colors.white,
                       textStyle: const TextStyle(
@@ -66,56 +68,61 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                       ),
                     ),
                     onPressed: () {
-                      var itemsToShow = value.itemDetails?.where(
-                            (item) => item.filledQty != 0,
-                      ).toList();
+                      if(saveFlag){
 
-                      if (itemsToShow != null && itemsToShow.isNotEmpty) {
-                        // List to store names of items where filledQty > current stock
-                        List<String> invalidItems = [];
+                      }else{
+                        var itemsToShow = value.itemDetails?.where(
+                              (item) => item.filledQty != 0,
+                        ).toList();
 
-                        // Loop through items and check if filledQty is greater than stock
-                        for (var item in itemsToShow) {
-                          final stockInfo = getCurrentStcOfGodownKeeper.firstWhere(
-                                (stock) => stock.itemId == item.itemId,
-                            orElse: () => GetCurrentStcOfGodownKeeperModel(), // Default if not found
-                          );
+                        if (itemsToShow != null && itemsToShow.isNotEmpty) {
+                          // List to store names of items where filledQty > current stock
+                          List<String> invalidItems = [];
 
-                          if (item.filledQty! > (stockInfo.currentStkEmpty ?? 0)) {
-                            invalidItems.add(item.itemName ?? "Unknown Item");
+                          // Loop through items and check if filledQty is greater than stock
+                          for (var item in itemsToShow) {
+                            final stockInfo = getCurrentStcOfGodownKeeper.firstWhere(
+                                  (stock) => stock.itemId == item.itemId,
+                              orElse: () => GetCurrentStcOfGodownKeeperModel(), // Default if not found
+                            );
+
+                            if (item.filledQty! > (stockInfo.currentStkEmpty ?? 0)) {
+                              invalidItems.add(item.itemName ?? "Unknown Item");
+                            }
                           }
-                        }
 
-                        if (invalidItems.isNotEmpty) {
-                          // Show AlertDialog if there are items with invalid quantity
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text("Invalid Quantity"),
-                                content: Text(
-                                  "The following items have a filled quantity greater than the available stock:\n\n" +
-                                      invalidItems.join("\n"),
-                                ),
-                                actions: [
-                                  TextButton(
-                                    onPressed: () {
-                                      Navigator.pop(context); // Close the dialog
-                                    },
-                                    child: Text("OK"),
+                          if (invalidItems.isNotEmpty) {
+                            // Show AlertDialog if there are items with invalid quantity
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: Text("Invalid Quantity"),
+                                  content: Text(
+                                    "The following items have a filled quantity greater than the available stock:\n\n" +
+                                        invalidItems.join("\n"),
                                   ),
-                                ],
-                              );
-                            },
-                          );
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.pop(context); // Close the dialog
+                                      },
+                                      child: Text("OK"),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          } else {
+                            // Proceed with showing details dialog if no invalid qty
+                            var receiptId = value.receiptId;
+                            showDetailsDialog(context, itemsToShow, receiptId);
+                          }
                         } else {
-                          // Proceed with showing details dialog if no invalid qty
-                          var receiptId = value.receiptId;
-                          showDetailsDialog(context, itemsToShow, receiptId);
+                          showFlushBar(context, "No Items Available", 'No Items For Return.');
                         }
-                      } else {
-                        showFlushBar(context, "No Items Available", 'No Items For Return.');
                       }
+
                     },
                     child: Text("Out"),
                   ) :
@@ -125,7 +132,7 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                   value.returnOn =="0001-01-01T00:00:00"?
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
+                      backgroundColor: saveFlag ? Colors.grey:Colors.grey,
                       padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
                       foregroundColor: Colors.white,
                       textStyle: const TextStyle(
@@ -134,27 +141,32 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                       ),
                     ),
                     onPressed: () {
-                      var itemsToShow = value.itemDetails?.toList();
-                      var receiptId = value.receiptId;
-                      var vehicleNo = value.vehicleNo.toString();
-                      var receiptDate = value.receiptDate.toString();
-                      if (itemsToShow != null && itemsToShow.isNotEmpty) {
-                        // Navigate to the target screen and pass the data
-                        Navigator.pushNamed(
-                          context,
-                          ItemReceiptScreen.screenName,
-                          arguments: {
-                            'vehicleNo': vehicleNo,
-                            'receiptDate': receiptDate,
-                            'itemsToShow': itemsToShow,
-                            'modeChange' : "Edit",
-                            'receiptID' : receiptId
+                      if(saveFlag){
 
-                          },
-                        );
-                      } else {
-                        showFlushBar(context, "No Items Available", 'No Items For Return.');
+                      }else{
+                        var itemsToShow = value.itemDetails?.toList();
+                        var receiptId = value.receiptId;
+                        var vehicleNo = value.vehicleNo.toString();
+                        var receiptDate = value.receiptDate.toString();
+                        if (itemsToShow != null && itemsToShow.isNotEmpty) {
+                          // Navigate to the target screen and pass the data
+                          Navigator.pushNamed(
+                            context,
+                            ItemReceiptScreen.screenName,
+                            arguments: {
+                              'vehicleNo': vehicleNo,
+                              'receiptDate': receiptDate,
+                              'itemsToShow': itemsToShow,
+                              'modeChange' : "Edit",
+                              'receiptID' : receiptId
+
+                            },
+                          );
+                        } else {
+                          showFlushBar(context, "No Items Available", 'No Items For Return.');
+                        }
                       }
+
                     },
                     child: Text("Edit"),
                   ):
@@ -553,4 +565,62 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
     }
 
   }
+
+  Future<void> checkAndSaveDayEndData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? distributorId = prefs.getString('DistributorId');
+    String? bearerToken = prefs.getString('token');
+    String? StaffId = prefs.getString('StaffId');
+    int? staffIds = int.parse(StaffId!);
+    int? distributorIds = int.parse(distributorId!);
+    try {
+      // Make the GET request
+      final response = await http.get(
+        Uri.parse('${AppUrl.CheckDayEndConfirmation}/$distributorIds'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $bearerToken", // Pass bearer token in headers
+        },
+      );
+      debugPrint("Response bodyCheckDayEndConfirmation: ${response.body}");
+      debugPrint("requesr bodyCheckDayEndConfirmation: ${response.request}");
+      if (response.statusCode == 200) {
+        // Parse the API response
+        List<dynamic> apiResponse = json.decode(response.body);
+
+        // Check if the response list is empty
+        if (apiResponse.isEmpty) {
+          // If the list is empty, do not save
+          saveFlag = false;
+          print("The list is empty, no data to save.");
+        } else {
+          // If there is data in the response, process it and save
+          var dayEndData = apiResponse[0]; // Access the first item in the list (assuming it's an object)
+
+          // You can validate the fields in the response as needed
+          int DSRSaved = dayEndData['DSRSaved'] ?? 0;
+          int CDCMSStkSaved = dayEndData['CDCMSStkSaved'] ?? 0;
+          int OpClSaved = dayEndData['OpClSaved'] ?? 0;
+
+          // Check if all required fields are saved
+          if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
+            saveFlag = true;
+            // If the conditions are met, set the flag and save the data
+            print("Data is valid, proceeding to save.");
+          } else {
+            // If any condition is not met, print a message
+            print("Data is incomplete. Cannot proceed to save.");
+          }
+        }
+      } else {
+        // Handle API error
+        print("Error: ${response.statusCode}");
+      }
+    }
+    catch (e) {
+      // Exception handling
+      print("Exception: $e");
+    }
+  }
+
 }

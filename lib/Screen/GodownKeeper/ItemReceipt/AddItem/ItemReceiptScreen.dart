@@ -61,7 +61,7 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
     receiptDateController.text = formattedDate;
     _addNewItem();
     fetchItems();
-
+    checkAndSaveDayEndData();
     vehicleNoController.addListener(_updateButtonState);
     Future.delayed(Duration.zero, () {
       setState(() {
@@ -642,14 +642,20 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                   child: ElevatedButton(
                     onPressed:
                         // _submitData,
+
                         () {
-                      if (vehicleNoController.text.isNotEmpty) {
-                          setState(() {
-                            _submitData();
-                          });
-                      } else {
-                        print('Invalid vehicle number');
-                      }
+                          if(saveFlag){
+
+                          }else{
+                            if (vehicleNoController.text.isNotEmpty) {
+                              setState(() {
+                                _submitData();
+                              });
+                            } else {
+                              print('Invalid vehicle number');
+                            }
+                          }
+
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(
@@ -662,10 +668,9 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          vehicleNoController.text.isNotEmpty
-                              ? Colors.blue
-                              : Colors.grey,
+                      backgroundColor: saveFlag
+                          ? (vehicleNoController.text.isNotEmpty ? Colors.blue : Colors.grey)
+                          : (vehicleNoController.text.isNotEmpty ? Colors.blue : Colors.grey),
                       // Button expands to fill available width// Text color of the button
                       shape: RoundedRectangleBorder(
                         // Optional: Set rounded corners
