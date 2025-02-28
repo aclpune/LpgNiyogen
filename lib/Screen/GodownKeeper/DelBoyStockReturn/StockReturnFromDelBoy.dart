@@ -400,8 +400,6 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
     Future.delayed(Duration.zero, () {
       setState(() {
         argValue = ModalRoute.of(context)?.settings.arguments as Map;
-        // delBoyNameName = argValue["delBoyName"] ?? '';
-        // delBoyIDs = argValue["delBoyID"] ?? 0;
         debugPrint("delBoyNameName :- ${delBoyNameName.toString()}");
         selectedDelBoyName = argValue["delBoyName"] ?? '';
         selectedDelBoyId = argValue["delBoyID"] ?? 0;
