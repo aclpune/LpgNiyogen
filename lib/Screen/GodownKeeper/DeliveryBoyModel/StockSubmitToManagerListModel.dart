@@ -197,6 +197,7 @@ class ItemList {
       num? closingEmpty,
       num? closingDef,
     String? sVConsStr,
+    String? TVConsStr,
   String? FlagColumnUpdate,}){
     _SaleGKItemId = SaleGKItemId;
     _itemId = itemId;
@@ -212,6 +213,7 @@ class ItemList {
     _closingEmpty = closingEmpty;
     _closingDef = closingDef;
     _sVConsStr = sVConsStr;
+    _TVConsStr = TVConsStr;
     _FlagColumnUpdate = FlagColumnUpdate;
 }
 
@@ -230,6 +232,7 @@ class ItemList {
     _closingEmpty = json['ClosingEmpty'];
     _closingDef = json['ClosingDef'];
     _sVConsStr = json['SVConsStr'];
+    _TVConsStr = json['TVConsStr'];
     _FlagColumnUpdate = json['FlagColumnUpdate'];
   }
   num? _itemId;
@@ -246,6 +249,7 @@ class ItemList {
   num? _closingEmpty;
   num? _closingDef;
   String? _sVConsStr;
+  String? _TVConsStr;
   String? _FlagColumnUpdate;
 ItemList copyWith({
   num? SaleGKItemId,
@@ -262,6 +266,7 @@ ItemList copyWith({
   num? closingEmpty,
   num? closingDef,
   String? sVConsStr,
+  String? TVConsStr,
   String? FlagColumnUpdate,
 }) => ItemList(
   SaleGKItemId: SaleGKItemId ?? _SaleGKItemId,
@@ -278,6 +283,7 @@ ItemList copyWith({
   closingEmpty: closingEmpty ?? _closingEmpty,
   closingDef: closingDef ?? _closingDef,
   sVConsStr: sVConsStr ?? _sVConsStr,
+  TVConsStr: TVConsStr ?? _TVConsStr,
   FlagColumnUpdate: FlagColumnUpdate ?? _FlagColumnUpdate,
 );
   num? get SaleGKItemId => _SaleGKItemId;
@@ -294,6 +300,7 @@ ItemList copyWith({
   num? get closingEmpty => _closingEmpty;
   num? get closingDef => _closingDef;
   String? get sVConsStr => _sVConsStr;
+  String? get TVConsStr => _TVConsStr;
   String? get FlagColumnUpdate => _FlagColumnUpdate;
 
   Map<String, dynamic> toJson() {
@@ -312,6 +319,7 @@ ItemList copyWith({
     map['ClosingEmpty'] = _closingEmpty;
     map['ClosingDef'] = _closingDef;
     map['SVConsStr'] = _sVConsStr;
+    map['TVConsStr'] = _TVConsStr;
     map['FlagColumnUpdate'] = _FlagColumnUpdate;
     return map;
   }
