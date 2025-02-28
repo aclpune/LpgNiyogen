@@ -61,6 +61,7 @@ class UpdateRefillSale{
   String collessEmpty = "lessEmpty";
   String colremark = "remark";
   String colsvRemark = "svRemark";
+  String coltvConsumerNo = "tvConsumerNo";
   String colupdateFlag = "updateFlag";
   String colitemAddedDate = "itemAddedDate";
 
@@ -96,6 +97,7 @@ class UpdateRefillSale{
   String colStockGetClosingEmpty = "ClosingEmpty";
   String colStockGetClosingDef = "ClosingDef";
   String colStockGetSVConsStr = "SVConsStr";
+  String colStockGetTVConsStr = "TVConsStr";
   String colFlagColumnUpdate  = "FlagColumnUpdate";
   String colFlagColumnEdit  = "FlagColumnEdit";
 
@@ -118,6 +120,7 @@ class UpdateRefillSale{
             $collessEmpty TEXT NOT NULL ,
             $colremark TEXT NOT NULL ,
             $colsvRemark TEXT NOT NULL ,
+            $coltvConsumerNo TEXT NOT NULL ,
             $colupdateFlag TEXT NOT NULL,
             $colitemAddedDate TEXT NOT NULL
           )
@@ -155,6 +158,7 @@ class UpdateRefillSale{
         $colStockGetClosingEmpty INTEGER NOT NULL,                        
         $colStockGetClosingDef INTEGER NOT NULL,                          
         $colStockGetSVConsStr TEXT NOT NULL, 
+        $colStockGetTVConsStr TEXT NOT NULL, 
         $colFlagColumnUpdate TEXT NOT NULL, 
         $colFlagColumnEdit TEXT NOT NULL
           )
@@ -329,6 +333,7 @@ class UpdateRefillSale{
         'lessEmpty': data.lessEmpty,
         'remark': data.remark,
         'svRemark': data.svRemark,
+        'tvConsumerNo': data.tvConsumerNo,
         'updateFlag': data.updateFlag,
       },
       where: 'ID = ?',
@@ -557,6 +562,7 @@ class UpdateRefillSale{
             'ClosingEmpty': item.closingEmpty,
             'ClosingDef': item.closingDef,
             'SVConsStr': item.sVConsStr ?? '',
+            'TVConsStr': item.TVConsStr ?? '',
             'FlagColumnUpdate': flagColumnUpdate,  // Flag 1 is a string
             'FlagColumnEdit': flagColumnEdit
     };
@@ -703,6 +709,7 @@ class UpdateRefillSale{
     required int lessEmpty,
     required String remark,
     required String svList,
+    required String tvList,
   }) async {
     Database db = await initDatabase(); // Assuming `initDatabase()` initializes the database.
 
@@ -719,6 +726,7 @@ class UpdateRefillSale{
         'ItemName': itemName, // Update the item name// Update the item name
         'Remark': remark, // Update the item name// Update the item name
         'SVConsStr': svList, // Update the item name// Update the item name
+        'TVConsStr': tvList, // Update the item name// Update the item name
       },
       where: 'ItemId = ? AND SaleGKId = ? AND DistributorId = ?', // WHERE clause
       whereArgs: [itemId, saleGKId, distributorId], // Arguments for the WHERE clause

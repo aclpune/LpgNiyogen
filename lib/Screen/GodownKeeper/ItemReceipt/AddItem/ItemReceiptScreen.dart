@@ -45,7 +45,7 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
   List<ItemDetails> itemsToShow = [];
   String? modes;
   int? receiptIds;
-
+  bool saveFlag = false;
   @override
   void initState() {
     super.initState();
@@ -861,7 +861,7 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
             fetchItems();
           } else if (response['message'] == "UnSuccessful") {
             debugPrint('RefreshTokenExc401 - true');
-
+            checkAndSaveDayEndData();
             showDialogToExpireSession(context);
           } else {
             debugPrint('RefreshTokenStatus - false');
@@ -1011,5 +1011,64 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
       // Debugging: Print after removing
       print('Selected Items After: $_selectedItems');
     });
+  }
+
+  Future<void> checkAndSaveDayEndData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? distributorId = prefs.getString('DistributorId');
+    String? bearerToken = prefs.getString('token');
+    String? StaffId = prefs.getString('StaffId');
+    int? staffIds = int.parse(StaffId!);
+    int? distributorIds = int.parse(distributorId!);
+    try {
+      // Make the GET request
+      final response = await http.get(
+        Uri.parse('${AppUrl.CheckDayEndConfirmation}/$distributorIds'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $bearerToken", // Pass bearer token in headers
+        },
+      );
+      debugPrint("Response bodyCheckDayEndConfirmation: ${response.body}");
+      debugPrint("requesr bodyCheckDayEndConfirmation: ${response.request}");
+      if (response.statusCode == 200) {
+        // Parse the API response
+        List<dynamic> apiResponse = json.decode(response.body);
+
+        // Check if the response list is empty
+        if (apiResponse.isEmpty) {
+          // If the list is empty, do not save
+          saveFlag = false;
+          print("The list is empty, no data to save.");
+        } else {
+          // If there is data in the response, process it and save
+          var dayEndData = apiResponse[0]; // Access the first item in the list (assuming it's an object)
+
+          // You can validate the fields in the response as needed
+          int DSRSaved = dayEndData['DSRSaved'] ?? 0;
+          int CDCMSStkSaved = dayEndData['CDCMSStkSaved'] ?? 0;
+          int OpClSaved = dayEndData['OpClSaved'] ?? 0;
+
+          // Check if all required fields are saved
+          if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
+            saveFlag = true;
+            // If the conditions are met, set the flag and save the data
+            print("Data is valid, proceeding to save.");
+          } else {
+            // If any condition is not met, print a message
+            print("Data is incomplete. Cannot proceed to save.");
+          }
+        }
+      } else {
+        // Handle API error
+        refreshTokens();
+        print("Error: ${response.statusCode}");
+      }
+    }
+    catch (e) {
+      refreshTokens();
+      // Exception handling
+      print("Exception: $e");
+    }
   }
 }

@@ -56,14 +56,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
     _fetchImbalanceData();
     _fetchTodaysOpeningStockData();
     fetchCurrentStock();
+    checkAndSaveDayEndData();
   }
   // Function to handle pull-to-refresh action
   Future<void> _onRefresh() async {
     insertDelBoyStockList();
     _fetchImbalanceData();
     _fetchTodaysOpeningStockData();
-    fetchCurrentStock();// Fetch the data again
+    fetchCurrentStock();
+    checkAndSaveDayEndData();// Fetch the data again
   }
+  bool saveFlag = false;
   @override
   Widget build(BuildContext context) {
 
@@ -976,21 +979,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                                   flex:1,
                                                                   child: GestureDetector(
                                                                     onTap: (){
-                                                                      Navigator.pushNamed(
-                                                                          context,
-                                                                          StockTransferTOGodownScreen
-                                                                              .screenName,
-                                                                          arguments: {
-                                                                            "itemName": items.itemName,
-                                                                            "itemID" : items.itemId,
-                                                                            "filledStock" :items.currentStkFilled,
-                                                                            "emptyStock" :items.currentStkEmpty,
-                                                                            "defectiveStock" :items.currentStkDefective,
-                                                                          });
+                                                                      if(saveFlag){
+
+                                                                      }else{
+                                                                        Navigator.pushNamed(
+                                                                            context,
+                                                                            StockTransferTOGodownScreen
+                                                                                .screenName,
+                                                                            arguments: {
+                                                                              "itemName": items.itemName,
+                                                                              "itemID" : items.itemId,
+                                                                              "filledStock" :items.currentStkFilled,
+                                                                              "emptyStock" :items.currentStkEmpty,
+                                                                              "defectiveStock" :items.currentStkDefective,
+                                                                            });
+                                                                      }
+
                                                                     },
                                                                     child: Text(
                                                                       "Transfer",
-                                                                      style:Styling.blueClrTextWithUnderline,
+                                                                      style:saveFlag? Styling.blueClrTextWithUnderlineGrey:Styling.blueClrTextWithUnderline,
                                                                       textAlign: TextAlign.center,
                                                                     ),
                                                                   ),
@@ -1882,6 +1890,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             _fetchImbalanceData();
             _fetchTodaysOpeningStockData();
             fetchCurrentStock();
+            checkAndSaveDayEndData();
           } else if (response['message'] == "UnSuccessful") {
             debugPrint('RefreshTokenExc401 - true');
 
@@ -1990,6 +1999,65 @@ class _DashboardScreenState extends State<DashboardScreen> {
     } catch (error) {
       EasyLoading.dismiss();
       debugPrint("LogoutPrefEcx: $error");
+    }
+  }
+
+  Future<void> checkAndSaveDayEndData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? distributorId = prefs.getString('DistributorId');
+    String? bearerToken = prefs.getString('token');
+    String? StaffId = prefs.getString('StaffId');
+    int? staffIds = int.parse(StaffId!);
+    int? distributorIds = int.parse(distributorId!);
+    try {
+      // Make the GET request
+      final response = await http.get(
+        Uri.parse('${AppUrl.CheckDayEndConfirmation}/$distributorIds'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $bearerToken", // Pass bearer token in headers
+        },
+      );
+      debugPrint("Response bodyCheckDayEndConfirmation: ${response.body}");
+      debugPrint("requesr bodyCheckDayEndConfirmation: ${response.request}");
+      if (response.statusCode == 200) {
+        // Parse the API response
+        List<dynamic> apiResponse = json.decode(response.body);
+
+        // Check if the response list is empty
+        if (apiResponse.isEmpty) {
+          // If the list is empty, do not save
+          saveFlag = false;
+          print("The list is empty, no data to save.");
+        } else {
+          // If there is data in the response, process it and save
+          var dayEndData = apiResponse[0]; // Access the first item in the list (assuming it's an object)
+
+          // You can validate the fields in the response as needed
+          int DSRSaved = dayEndData['DSRSaved'] ?? 0;
+          int CDCMSStkSaved = dayEndData['CDCMSStkSaved'] ?? 0;
+          int OpClSaved = dayEndData['OpClSaved'] ?? 0;
+
+          // Check if all required fields are saved
+          if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
+            saveFlag = true;
+            // If the conditions are met, set the flag and save the data
+            print("Data is valid, proceeding to save.");
+          } else {
+            // If any condition is not met, print a message
+            print("Data is incomplete. Cannot proceed to save.");
+          }
+        }
+      } else {
+        refreshTokens();
+        // Handle API error
+        print("Error: ${response.statusCode}");
+      }
+    }
+    catch (e) {
+      refreshTokens();
+      // Exception handling
+      print("Exception: $e");
     }
   }
 }

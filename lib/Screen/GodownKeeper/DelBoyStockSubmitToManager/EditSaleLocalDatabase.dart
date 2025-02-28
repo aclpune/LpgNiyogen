@@ -132,6 +132,7 @@ class _EditSaleLocalDatabaseState extends State<EditSaleLocalDatabase> {
       lessEmpty: int.parse(lessEmptyQtyController.text),
       remark:"",
       svList:"",
+      tvList:"",
     );
 
     // Update state after async operation

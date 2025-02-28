@@ -13,6 +13,7 @@ class ItemData {
   final String lessEmpty;
   final String remark;
   final String svRemark;
+  final String tvConsumerNo;
   final String updateFlag;
   final String itemAddedDate;
 
@@ -31,6 +32,7 @@ class ItemData {
     required this.lessEmpty,
     required this.remark,
     required this.svRemark,
+    required this.tvConsumerNo,
     required this.updateFlag,
     required this.itemAddedDate,
   });
@@ -52,6 +54,7 @@ class ItemData {
       lessEmpty: json['lessEmpty'],
       remark: json['remark'],
       svRemark: json['svRemark'],
+      tvConsumerNo: json['tvConsumerNo'],
       updateFlag: json['updateFlag'],
       itemAddedDate: json['itemAddedDate'],
     );
@@ -74,6 +77,7 @@ class ItemData {
       'lessEmpty': lessEmpty,
       'remark': remark,
       'svRemark': svRemark,
+      'tvConsumerNo': tvConsumerNo,
       'updateFlag': updateFlag,
       'itemAddedDate': itemAddedDate,
     };

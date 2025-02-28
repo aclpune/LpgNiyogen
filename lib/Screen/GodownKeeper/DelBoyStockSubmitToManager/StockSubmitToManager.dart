@@ -625,7 +625,7 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
                                                     builder: (BuildContext context) {
                                                       return AlertDialog(
                                                         title: Text("Confirm Deletion"),
-                                                        content: Text("Are you sure you want to delete this record?"),
+                                                          content: Text("Are you sure you want to delete this record?"),
                                                         actions: [
                                                           TextButton(
                                                             onPressed: () {

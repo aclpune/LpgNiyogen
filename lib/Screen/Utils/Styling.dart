@@ -220,6 +220,15 @@ class Styling {
     fontSize: 1.8 * SizeConfig.textMultiplier!, // Size = 16-- [18/8.66] = 1.0
   );
 
+  static final TextStyle blueClrTextWithUnderlineGrey = TextStyle(
+    color:  Colors.grey,
+    fontFamily: 'OpenSans',
+    decoration:
+    TextDecoration.underline,
+    decorationColor: Colors.grey,
+    fontSize: 1.8 * SizeConfig.textMultiplier!, // Size = 16-- [18/8.66] = 1.0
+  );
+
   static final TextStyle blueClrTextSmall = TextStyle(
     color: const Color(0xff1280b3),
     fontFamily: 'OpenSans',
