@@ -5,7 +5,6 @@ import 'package:lpgsalesandinventory/Screen/User/Login/provider/LoginProvider.da
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../ConstantScreen/widgets.dart';
-import '../../ForgetPassword/Screen/ForgetPassword.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -23,9 +22,6 @@ class MyLogin extends StatefulWidget {
 
 class _MyLoginState extends State<MyLogin> {
   final _mobileNoController = TextEditingController();
-  final _distributorCodeController = TextEditingController();
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
   bool _isHidden = true;
   String? _userName, _password;
   final key = encrypt.Key.fromUtf8('8080808080808080'); //16 chars
@@ -60,27 +56,29 @@ class _MyLoginState extends State<MyLogin> {
 
     return SafeArea(
       child: Scaffold(
-        body: SingleChildScrollView(
+        body:
+        SingleChildScrollView(
               child:
               Container(
-                margin: EdgeInsets.only(left: 40,right: 40),
+                margin: EdgeInsets.only(left: 40,right: 40,top: 60),
                 child: Column(
                   children: [
                     Image.asset(
-                      'assets/cylinderred.png',  // Path to your image
-                      height: 200, // Adjust the height as needed
-                      width: 200,  // Adjust the width as needed
+                      'assets/icononlytransparentnobuffer.png',  // Path to your image
+                      height: 150, // Adjust the height as needed
+                      width: 150,  // Adjust the width as needed
                     ),
+                    SizedBox(height: 20),
                     // Large LOGIN Text
                     Text(
-                      'LOGIN',
+                      'LPG Niyojan',
                       style: TextStyle(
-                        fontSize: 32, // Large font size for LOGIN
+                        fontSize: 18, // Large font size for LOGIN
                         fontWeight: FontWeight.bold,
                         color: Colors.black,
                       ),
                     ),
-                    SizedBox(height: 40),
+                    SizedBox(height: 50),
                     TextField(
                       controller: _mobileNoController,
                       keyboardType: TextInputType.number, // Set keyboard type to numeric
@@ -139,7 +137,7 @@ class _MyLoginState extends State<MyLogin> {
                                 );
                         },
                         child: Center( // Align the text in the center
-                          child: Text('LOG IN', style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 16)),
+                          child: Text('Login', style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 16)),
                         ),
                       ),
                     ),
@@ -169,33 +167,6 @@ class _MyLoginState extends State<MyLogin> {
             ),
       ),
     );
-  }
-
-  // String encryptPassword(String? password) {
-  //   if (password!.isEmpty) {
-  //     throw ArgumentError('Password cannot be empty');
-  //   } else{
-  //     final encrypter = Encrypter(AES(key, mode: AESMode.cbc));
-  //   final encryptedData = encrypter.encrypt(password!, iv: iv);
-  //   _password = encryptedData.base64.toString();
-  //   debugPrint('encryptPass: $_password');
-  //   return encryptedData.base64;
-  // }
-  // }
-  String encryptPassword(String? password, BuildContext context) {
-    if (password == null || password.isEmpty) {
-      // Show an error message if password is empty
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Password cannot be empty')),
-      );
-      return ''; // Return an empty string or handle as needed
-    } else {
-      final encrypter = Encrypter(AES(key, mode: AESMode.cbc));
-      final encryptedData = encrypter.encrypt(password, iv: iv);
-      _password = encryptedData.base64.toString();
-      debugPrint('encryptPass: $_password');
-      return encryptedData.base64;
-    }
   }
 
 }

@@ -73,21 +73,55 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
   }
   @override
   Widget build(BuildContext context) {
-
     return
       Scaffold(
         key: _scaffoldKey,
         drawer: CustomeDrawerManager(), // Assign the scaffold key
-        appBar: PreferredSize(
+        appBar:
+
+        // PreferredSize(
+        //   preferredSize: Size.fromHeight(120), // Custom height for the AppBar
+        //   child:
+        //   Container(
+        //     color: Colors.blueAccent,
+        //     // Custom background color
+        //     padding: EdgeInsets.only(top: 40, left: 5, right: 16),
+        //     // Padding for top & sides
+        //     child: Row(
+        //       mainAxisAlignment: MainAxisAlignment.start,
+        //       children: [
+        //         IconButton(
+        //           icon: Icon(Icons.menu, color: Colors.white),
+        //           // Menu icon for Drawer
+        //           onPressed: () {
+        //             // Toggle the drawer open or closed
+        //             if (_scaffoldKey.currentState!.isDrawerOpen) {
+        //               _scaffoldKey.currentState!.closeDrawer();
+        //             } else {
+        //               _scaffoldKey.currentState!.openDrawer();
+        //             }
+        //           },
+        //         ),
+        //         SizedBox(width: 20),
+        //         Text(
+        //           'Dashboard', // Godown Name
+        //           style: TextStyle(
+        //             color: Colors.white,
+        //             fontSize: 20,
+        //             fontWeight: FontWeight.bold,
+        //           ),
+        //         ),
+        //       ],
+        //     ),
+        //   ),
+        // ),
+        PreferredSize(
           preferredSize: Size.fromHeight(120), // Custom height for the AppBar
-          child:
-          Container(
-            color: Colors.blueAccent,
-            // Custom background color
-            padding: EdgeInsets.only(top: 40, left: 5, right: 16),
-            // Padding for top & sides
+          child: Container(
+            color: Colors.blueAccent, // Custom background color
+            padding: EdgeInsets.only(top: 40, left: 5, right: 16), // Padding for top & sides
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start, // Align items to the start
               children: [
                 IconButton(
                   icon: Icon(Icons.menu, color: Colors.white),
@@ -102,14 +136,29 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                   },
                 ),
                 SizedBox(width: 20),
-                Text(
-                  'Dashboard', // Godown Name
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
+
+                // Replacing the Text widget with the Row for Logo and App Name
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    // App Logo
+                    Image.asset(
+                      'assets/playstore.png', // Path to your logo image
+                      height: 30, // Adjust the height as needed
+                    ),
+                    SizedBox(width: 8), // Add some space between the logo and the app name
+                    // App Name (Replace 'App Name' with your constant or dynamic value)
+                    Text(
+                      Constants.AppBarTitle, // Your app name constant or dynamic value
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
                 ),
+
               ],
             ),
           ),
@@ -158,89 +207,6 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                           ],
                                         ),
                                       ),
-                                      // Column(
-                                      //     children: [
-                                      //       getCurrentStcOfGodownKeeper.isNotEmpty
-                                      //           ?
-                                      //       SingleChildScrollView(
-                                      //         scrollDirection: Axis.horizontal,
-                                      //         child:
-                                      //         Row(
-                                      //           children:
-                                      //           List.generate(10, (index) {
-                                      //             return
-                                      //               Container(
-                                      //               width: 150,
-                                      //               height: 100,// Width of each card
-                                      //               margin: EdgeInsets.symmetric(horizontal: 7),
-                                      //               child:
-                                      //               Card(
-                                      //                 margin: EdgeInsets.symmetric(vertical: 7),
-                                      //                 elevation: 4,
-                                      //                 shape: RoundedRectangleBorder(
-                                      //                   borderRadius: BorderRadius.circular(12),
-                                      //                 ),
-                                      //                 child: Padding(
-                                      //                   padding: const EdgeInsets.all(8.0),
-                                      //                   child: Column(
-                                      //                     crossAxisAlignment: CrossAxisAlignment.center,
-                                      //                     children: [
-                                      //                       Text(
-                                      //                         "25", // Replace this with your dynamic data
-                                      //                         style: Styling.textFormText,
-                                      //                         textAlign: TextAlign.center,
-                                      //                       ),
-                                      //                       Text(
-                                      //                         "20 kg", // Replace this with your dynamic data
-                                      //                         style: Styling.textFormText,
-                                      //                         textAlign: TextAlign.center,
-                                      //                       ),
-                                      //                     ],
-                                      //                   ),
-                                      //                 ),
-                                      //               ),
-                                      //             );
-                                      //           }
-                                      //           ),
-                                      //         ),
-                                      //       )
-                                      //           : Container(
-                                      //         child: Text("No Data Available"),
-                                      //       ),
-                                      //     ],
-                                      //   ),
-                                      // Column(
-                                      //   children: [
-                                      //     getManagerDashboarDetail.isNotEmpty
-                                      //         ? Column(
-                                      //       children: [
-                                      //         getManagerDashboarDetail.any((sale) => sale.todayImbQty != 0 || sale.asOfDateImbQty != 0)
-                                      //             ? SingleChildScrollView(
-                                      //           scrollDirection: Axis.horizontal,
-                                      //           child: Row(
-                                      //             children: List.generate(getManagerDashboarDetail.length, (index) {
-                                      //               var sale = getManagerDashboarDetail[index];
-                                      //
-                                      //               if (sale.todayImbQty == 0 && sale.asOfDateImbQty == 0) {
-                                      //                 return SizedBox(); // Hide item if both counts are zero
-                                      //               }
-                                      //
-                                      //               return Padding(
-                                      //                 padding: const EdgeInsets.only(right: 10.0),
-                                      //                 child: ImbalanceStockItemUI(sale),
-                                      //               );
-                                      //             }),
-                                      //           ),
-                                      //         )
-                                      //             : Center(child: Text("No data available")), // Show a message when no items meet the condition
-                                      //       ],
-                                      //     )
-                                      //
-                                      //         : Container(
-                                      //       child: Text("No Data Available"),
-                                      //     ),
-                                      //   ],
-                                      // ),
                                       Column(
                                         children: [
                                           getManagerDashboarDetail.isNotEmpty
@@ -298,57 +264,6 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                       ],
                                     ),
                                   ),
-                                  // Column(
-                                  //     children: [
-                                  //       getCurrentStcOfGodownKeeper.isNotEmpty
-                                  //           ?
-                                  //       SingleChildScrollView(
-                                  //         scrollDirection: Axis.horizontal,
-                                  //         child:
-                                  //         Row(
-                                  //           children:
-                                  //           List.generate(10, (index) {
-                                  //             return
-                                  //               Container(
-                                  //               width: 150,
-                                  //               height: 100,// Width of each card
-                                  //               margin: EdgeInsets.symmetric(horizontal: 7),
-                                  //               child:
-                                  //               Card(
-                                  //                 margin: EdgeInsets.symmetric(vertical: 7),
-                                  //                 elevation: 4,
-                                  //                 shape: RoundedRectangleBorder(
-                                  //                   borderRadius: BorderRadius.circular(12),
-                                  //                 ),
-                                  //                 child: Padding(
-                                  //                   padding: const EdgeInsets.all(8.0),
-                                  //                   child: Column(
-                                  //                     crossAxisAlignment: CrossAxisAlignment.center,
-                                  //                     children: [
-                                  //                       Text(
-                                  //                         "25", // Replace this with your dynamic data
-                                  //                         style: Styling.textFormText,
-                                  //                         textAlign: TextAlign.center,
-                                  //                       ),
-                                  //                       Text(
-                                  //                         "20 kg", // Replace this with your dynamic data
-                                  //                         style: Styling.textFormText,
-                                  //                         textAlign: TextAlign.center,
-                                  //                       ),
-                                  //                     ],
-                                  //                   ),
-                                  //                 ),
-                                  //               ),
-                                  //             );
-                                  //           }
-                                  //           ),
-                                  //         ),
-                                  //       )
-                                  //           : Container(
-                                  //         child: Text("No Data Available"),
-                                  //       ),
-                                  //     ],
-                                  //   ),
                                   Column(
                                     children: [
                                       getManagerDashboarDetail.isNotEmpty
@@ -1339,7 +1254,6 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                         ),
                                                       );
 
-
                                                   },
                                                 ):
                                                 Container(
@@ -1477,49 +1391,6 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                   ),
                 ),
               ),
-              // Container(
-              //   padding: const EdgeInsets.all(10.0),
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //     children: [
-              //       SizedBox(
-              //         height: 40,
-              //         child: ElevatedButton.icon(
-              //           onPressed: () {
-              //             Navigator.pushReplacementNamed(context, '/deliveryMenListShowScreen');
-              //             // Navigator.pushReplacementNamed(context, '/stockReturnFromDelBoy');
-              //           },
-              //           icon: Icon(Icons.update, size: 20), // Add icon
-              //           label: Text("Daily Sale"),
-              //           style: ElevatedButton.styleFrom(
-              //             backgroundColor: Colors.blue,
-              //             foregroundColor: Colors.white,
-              //             shape: RoundedRectangleBorder(
-              //               borderRadius: BorderRadius.circular(50),
-              //             ),
-              //           ),
-              //         ),
-              //       ),
-              //       SizedBox(
-              //         height: 40,
-              //         child: ElevatedButton.icon(
-              //           onPressed: () {
-              //             Navigator.pushReplacementNamed(context, '/stockSubmitToManager');
-              //           },
-              //           icon: Icon(Icons.list_alt, size: 20), // Add icon
-              //           label: Text("Today's Summary"),
-              //           style: ElevatedButton.styleFrom(
-              //             backgroundColor: Colors.blue,
-              //             foregroundColor: Colors.white,
-              //             shape: RoundedRectangleBorder(
-              //               borderRadius: BorderRadius.circular(50),
-              //             ),
-              //           ),
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
             ],
           ),
         ),

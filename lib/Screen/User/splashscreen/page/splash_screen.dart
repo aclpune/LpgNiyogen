@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lpgsalesandinventory/Screen/Utils/Styling.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../GodownKeeper/DashboardScreen.dart';
@@ -24,14 +25,6 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
 
-    // SharedPref().setDashboardApiCallStatus("Pending");
-    // SharedPref().setDashboardCountApiCallStatusForNA("Pending");
-    // SharedPref().setDashboardCountApiCallStatusForTP("Pending");
-
-    // getVersionName().whenComplete(() {
-    //   setState(() {});
-    // });
-
     Future.delayed(const Duration(milliseconds: 3000), () async {
       navigateToDashboard();
     });
@@ -51,11 +44,15 @@ class _SplashScreenState extends State<SplashScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               // Image.asset('assets/login.png'),
-              Text(
-                "LPG Niyojan",
+              Image.asset(
+                'assets/icononlytransparentnobuffer.png',  // Path to your image
+                height: 250, // Adjust the height as needed
+                width: 250,  // Adjust the width as needed
               ),
+              SizedBox(height: 10),
               Text(
-                "Version: " + version.toString(),
+                "Version: " + "1.0.0",
+                style: Styling.itemBlackTestSmall,
               )
             ],
           )
@@ -66,13 +63,6 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
-  // Future<String> getVersionName() async {
-  //   PackageInfo packageInfo = await PackageInfo.fromPlatform();
-  //   version = packageInfo.version;
-  //
-  //   debugPrint('Version::: ' + version.toString());
-  //   return version;
-  // }
 
   Future<void> navigateToDashboard() async {
     try {

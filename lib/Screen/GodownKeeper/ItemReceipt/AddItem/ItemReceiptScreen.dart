@@ -59,12 +59,9 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
 
     // Set the formatted date as the default value in the TextField
     receiptDateController.text = formattedDate;
-    // vehicleNoController.addListener(_validateVehicleNo);
     _addNewItem();
     fetchItems();
-    // argValue = ModalRoute.of(context)?.settings.arguments as Map;
-    // itemsToShow = argValue["itemsToShow"] ?? [];
-    // _initializeItems(itemsToShow);
+
     vehicleNoController.addListener(_updateButtonState);
     Future.delayed(Duration.zero, () {
       setState(() {
@@ -86,19 +83,6 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
     });
   }
 
-  // Function to validate vehicle number using a regex
-  void _validateVehicleNo() {
-    String vehicleNo = vehicleNoController.text;
-
-    // Example of simple vehicle number regex validation (can be customized)
-    RegExp regExp = RegExp(r'^[A-Za-z]{2}\d{2}[A-Za-z]{2}\d{4}$');
-    bool valid = regExp.hasMatch(vehicleNo);
-
-    setState(() {
-      isValid = valid;
-    });
-  }
-
   void _addNewItem() {
     setState(() {
       int newIndex = items.length;
@@ -112,37 +96,6 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
     });
   }
 
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   final argValue = ModalRoute.of(context)?.settings.arguments as Map?;
-  //   vehicleNoController.text = argValue?["vehicleNo"] ??'';
-  //   modes = argValue?["modeChange"];
-  //   if (argValue != null) {
-  //     final itemsToShow = argValue["itemsToShow"] ?? [];
-  //     // _initializeItems(itemsToShow);
-  //     if (itemsToShow.isNotEmpty) {
-  //       _initializeItems(itemsToShow);
-  //     } else {
-  //       // If no initial data, start with an empty list or default values
-  //       _initializeItems([]);
-  //     }
-  //   }
-  // }
-  // void _initializeItems(List<ItemDetails> itemsToShow) {
-  //   setState(() {
-  //     items.clear();  // Clear any existing data
-  //
-  //     for (var item in itemsToShow) {
-  //       items.add({
-  //         'selectItem': TextEditingController(text: item.itemName ?? ''),
-  //         'receivedQty': TextEditingController(text: item.filledQty?.toString() ?? ''),
-  //         'emr': TextEditingController(text: item.eMRQty?.toString() ?? ''),
-  //         'invoice': TextEditingController(text: item.invoiceQty?.toString() ?? ''),
-  //       });
-  //     }
-  //   });
-  // }
 
   void _initializeItems(List<ItemDetails> itemsToShow) {
     setState(() {
@@ -171,14 +124,6 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
       print('Items Count: ${items.length}');
       print('Selected Items: $_selectedItems');
     });
-  }
-
-  void _removeLastItem() {
-    if (items.length > 1) {
-      setState(() {
-        items.removeLast();
-      });
-    }
   }
 
   Future<void> _submitData() async {
@@ -382,14 +327,15 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
     // Check if there are any available items that haven't been selected yet
     return _items.any((item) => !_selectedItems.values.contains(item.itemName));
   }
+
   void _updateButtonState() {
     setState(() {});  // Trigger a rebuild when text changes
   }
+
   @override
   void dispose() {
     receiptDateController.dispose();
     vehicleNoController.removeListener(_updateButtonState);
-    // vehicleNoController.removeListener(_validateVehicleNo);
     vehicleNoController.dispose();
     // Dispose controllers to avoid memory leaks
     for (var item in items) {
@@ -401,26 +347,15 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
   @override
   Widget build(BuildContext context) {
     var argLRAdd = ModalRoute.of(context)?.settings.arguments;
-    // final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-    //
-    // // Extract values from the arguments
-    // final String vehicleNo = args?['vehicleNo'] ?? '';
-    // final String receiptDate = args?['receiptDate'] ?? '';
-    // final List<ItemDetails> itemsToShow = args?['itemsToShow'] ?? [];
+
     return WillPopScope(
       onWillPop: () async {
         // Show a confirmation dialog
         if (argLRAdd == "fromDrawer") {
           Navigator.pop(context);
-
-          // Navigator.pushReplacementNamed(
-          //     context, DashboardScreen.screenName,
-          //     arguments: "onBack");
           return false;
         } else {
           Navigator.pop(context);
-          // Navigator.pushReplacementNamed(
-          //     context, DashboardScreen.screenName);
           return false;
         } // In case `null` is returned, return `false`
       },
@@ -479,13 +414,7 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                         LengthLimitingTextInputFormatter(11),
                         // Allow only digits
                       ],
-                      // InputDecoration(
-                      //   labelText: 'Vehicle No.',
-                      //   border: OutlineInputBorder(),
-                      //   errorText: isValid
-                      //       ? null
-                      //       : 'Please enter a valid vehicle number.',
-                      // ),
+
                     ),
                   ),
                 ],
@@ -514,15 +443,7 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                         backgroundColor: Colors.blue),
                   ),
                   SizedBox(width: 8),
-                  // ElevatedButton(
-                  //   onPressed: _removeLastItem,
-                  //   child: Icon(Icons.remove),
-                  //   style: ElevatedButton.styleFrom(
-                  //     shape: CircleBorder(),
-                  //     padding: EdgeInsets.all(12),
-                  //     // backgroundColor: Colors.red,
-                  //   ),
-                  // ),
+
                 ],
               ),
               SizedBox(height: 16),
@@ -542,52 +463,6 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                                 child:
 
                                     ///working
-//                                   DropdownButtonFormField<String>(
-//                                     decoration:
-//                                     InputDecoration(
-//                                       label: Row(
-//                                         mainAxisSize: MainAxisSize.min,
-//                                         children: const [
-//                                           Text(
-//                                             'Select Item',
-//                                             style: TextStyle(fontSize: 12),
-//                                           ),
-//                                           SizedBox(width: 4), // Add some space between the text and the icon
-//                                           Icon(
-//                                             Icons.star, // Use a star or any other icon
-//                                             color: Colors.red, // Set the icon color to red
-//                                             size: 10, // Adjust the size of the icon
-//                                           ),
-//                                         ],
-//                                       ),
-//                                       border: const OutlineInputBorder(),
-//                                       contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-//                                     ),
-//                                     items: _items
-//                                         .where((item) => !_selectedItems.values.contains(item.itemName) || _selectedItems[index] == item.itemName)
-//                                         .map((CylItemListModel item) {
-//                                       return DropdownMenuItem<String>(
-//                                         value: item.itemName,
-//                                         child: Text(item.itemName ?? 'Unknown'),
-//                                       );
-//                                     }).toList(),
-//                                     onChanged: (value) {
-//                                       setState(() {
-//                                         // Update the selected value for the current dropdown
-//                                         _selectedItems[index] = value;
-//                                         // items[index]['selectItem']?.text = value ?? '';
-//                                         // debugPrint('Selected: ' + _selectedItems.toString());
-//                                         // if (_items.any((item) => item.itemName == value)) {
-//                                         //   _selectedItems[index] = value;
-//                                         //   items[index]['selectItem']?.text = value ?? '';
-//                                         // }
-//                                       });
-//                                     },
-//                                     value: _selectedItems[index],
-//                                     // value: _selectedItems[index] == null || !_items.any((item) => item.itemName == _selectedItems[index])
-//                                     //     ? null // Set null if value doesn't match any available item
-//                                     //     : _selectedItems[index],
-//                                   )
                                     DropdownButtonFormField<String>(
                                   decoration: InputDecoration(
                                     label: Row(
@@ -636,14 +511,7 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                               SizedBox(
                                 width: 20,
                               ),
-                              // Remove Button for this item
-                              // IconButton(
-                              //   icon: Icon(Icons.remove,size: 30,),
-                              //   onPressed: () {
-                              //     _removeItem(index);
-                              //   },
-                              //   color: Colors.red,
-                              // ),
+
                               ElevatedButton(
                                 onPressed: () {
                                   _removeItem(index);
@@ -776,14 +644,9 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                         // _submitData,
                         () {
                       if (vehicleNoController.text.isNotEmpty) {
-                        // if (isValid) {
                           setState(() {
                             _submitData();
                           });
-                          // print('Valid vehicle number');
-                        // } else {
-                        //   print('Invalid vehicle number');
-                        // }
                       } else {
                         print('Invalid vehicle number');
                       }

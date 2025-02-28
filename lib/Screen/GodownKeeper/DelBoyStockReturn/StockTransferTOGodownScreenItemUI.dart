@@ -22,7 +22,6 @@ class StockTransferTOGodownScreenItemUI extends StatefulWidget {
 
 
   StockTransferTOGodownScreenItemUI(this._listModel,{Key? key}) : super(key: key);
-  // StockTransferTOGodownScreenItemUI({Key? key}) : super(key: key);
 
   @override
   State<StockTransferTOGodownScreenItemUI> createState() => _StockTransferTOGodownScreenItemUIState();

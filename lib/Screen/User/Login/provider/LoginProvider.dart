@@ -74,14 +74,8 @@ class LoginProvider extends ChangeNotifier {
         await sharedPref.setUserName("N");
         Navigator.pushReplacementNamed(context, '/verifyOtp');
         final SharedPreferences prefs = await SharedPreferences.getInstance();
-        // await prefs.setString("encryptPass", encryptPassword);
-        // await prefs.setString("password", password);
-        // await prefs.setString("distributorCode", distributorCode);
         debugPrint("dashbpa");
-        // Show success message
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(content: Text('Login Successful!')),
-        // );
+
       }else{
       showFlushBar(context,Constants.connectionTitle,
           Constants.connectionMessage);
@@ -145,11 +139,7 @@ class LoginProvider extends ChangeNotifier {
           notifyListeners();
 
           result = {'status': true, 'message': 'Successful', 'user': authToken};
-          // Optionally, navigate to another screen after successful refresh
-          // Navigator.pushReplacementNamed(context, '/godownDashboard');
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   SnackBar(content: Text('Token Refresh Successful!')),
-          // );
+
         } else if (response.statusCode == Constants.tokenExpireAuth) {
           // Handle token expiration case
           loggedInStatus = Status.notLoggedIn;
@@ -186,51 +176,3 @@ class LoginProvider extends ChangeNotifier {
   }
 }
 
-
-// import 'package:flutter/material.dart';
-// import '../../../Utils/shared_preference.dart';
-// import '../ApiService/AuthService.dart';
-// import '../model/LoginResponseModel.dart';
-//
-//
-// class LoginProvider extends ChangeNotifier {
-//   bool _isLoading = false;
-//   String? _errorMessage;
-//   LoginResponseModel? _loginResponse;
-//
-//   bool get isLoading => _isLoading;
-//   String? get errorMessage => _errorMessage;
-//   LoginResponseModel? get loginResponse => _loginResponse;
-//
-//   void login(String distributorCode,String username, String password,BuildContext context) async {
-//     _isLoading = true;
-//     _errorMessage = null;
-//     notifyListeners();
-//
-//     try {
-//       final authService = AuthService();
-//       final response = await authService.login(distributorCode,username, password);
-//
-//       _loginResponse = response;
-//       _errorMessage = null;
-//       // Save the token and user info in SharedPreferences
-//       final sharedPref = SharedPref();
-//       await sharedPref.setAuthToken(_loginResponse!.authToken!); // Save the auth token
-//       await sharedPref.saveUser(_loginResponse!.authToken!.userInfo!);
-//       Navigator.pushReplacementNamed(context, '/godownDashboard');
-//       debugPrint("dashbpa");
-//       // Show success message
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         SnackBar(content: Text('Login Successful!')),
-//       );
-//     } catch (e) {
-//       _errorMessage = e.toString();
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         SnackBar(content: Text(_errorMessage!)),
-//       );
-//     } finally {
-//       _isLoading = false;
-//       notifyListeners();
-//     }
-//   }
-// }

@@ -11,7 +11,6 @@ import 'Screen/GodownKeeper/DelBoyStockReturn/StockTransferToGodownScreen.dart';
 import 'Screen/GodownKeeper/DelBoyStockSubmitToManager/StockSubmitToManager.dart';
 import 'Screen/GodownKeeper/DeliveryBoyModel/StockSubmitToManagerListModel.dart';
 import 'Screen/GodownKeeper/ItemReceipt/AddItem/ItemReceiptScreen.dart';
-import 'Screen/GodownKeeper/ItemReceipt/EditItem/ItemEditScreen.dart';
 import 'Screen/GodownKeeper/ItemReceipt/ItemReturn/ItenRetun.dart';
 import 'Screen/ManagerScreen/CashDepositToBankScreen.dart';
 import 'Screen/ManagerScreen/CashHandoverScreen.dart';
@@ -20,9 +19,6 @@ import 'Screen/ManagerScreen/ManagerDSRReportScreen.dart';
 import 'Screen/ManagerScreen/ManagerDashboard.dart';
 import 'Screen/ManagerScreen/ManagerUpdateSaleCashUpdation.dart';
 import 'Screen/ManagerScreen/ManagerUpdateSaleScreen.dart';
-import 'Screen/User/ChangePassword.dart';
-import 'Screen/User/ForgetPassword/Screen/ForgetPassword.dart';
-import 'Screen/User/ForgetPassword/provider/forget_password_provider.dart';
 import 'Screen/User/Login/Screen/MyLogin.dart';
 import 'Screen/User/Login/Screen/VerifyOTP.dart';
 import 'Screen/User/Login/provider/LoginProvider.dart';
@@ -60,7 +56,6 @@ class MyApp extends StatelessWidget {
       MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => LoginProvider()),
-          ChangeNotifierProvider(create: (_) => ForgotPasswordProvider()),
         ],
         child:
         MaterialApp(
@@ -121,15 +116,12 @@ class MyApp extends StatelessWidget {
           routes: {
             SplashScreen.screenName: (context) => SplashScreen(),
             MyLogin.screenName: (context) => MyLogin(),
-            ForgetPassword.screenName: (context) => ForgetPassword(),
 
             ///GK
             DashboardScreen.screenName: (context) => DashboardScreen(),
             ItemReceiptScreen.screenName: (context) => ItemReceiptScreen(),
             DailyRefillSalePage.screenName: (context) => DailyRefillSalePage(sale:null,saleGKId: null,dMId: null,flagAdd: null),
-            EditItemReceiptPage.screenName: (context) => EditItemReceiptPage(),
             ItemReturnScreen.screenName: (context) => ItemReturnScreen(),
-            ChangePassword.screenName: (context) => ChangePassword(),
             VerifyOtp.screenName: (context) => VerifyOtp(),
             StockSubmitToManager.screenName: (context) => StockSubmitToManager(),
             DeliveryMenListShowScreen.screenName: (context) => DeliveryMenListShowScreen(),
