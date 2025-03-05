@@ -645,7 +645,7 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
 
                         () {
                           if(saveFlag){
-
+                            print('saveFlag $saveFlag');
                           }else{
                             if (vehicleNoController.text.isNotEmpty) {
                               setState(() {
@@ -668,9 +668,9 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: saveFlag
-                          ? (vehicleNoController.text.isNotEmpty ? Colors.blue : Colors.grey)
-                          : (vehicleNoController.text.isNotEmpty ? Colors.blue : Colors.grey),
+                      backgroundColor: saveFlag? Colors.grey:
+                          (vehicleNoController.text.isNotEmpty ? Colors.blue : Colors.grey),
+                          // : (vehicleNoController.text.isNotEmpty ? Colors.blue : Colors.grey),
                       // Button expands to fill available width// Text color of the button
                       shape: RoundedRectangleBorder(
                         // Optional: Set rounded corners

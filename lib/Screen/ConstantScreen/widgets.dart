@@ -5,13 +5,11 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import '../utils/constants.dart';
 
-
-
 void showFlushBar(BuildContext context, String title, String message) {
   Flushbar(
     title: title,
     message: message,
-    duration: const Duration(seconds: 3),
+    duration: const Duration(seconds: 2),
   ).show(context);
 }
 

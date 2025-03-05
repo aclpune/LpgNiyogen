@@ -40,6 +40,7 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
   UpdateRefillSale? updateRefillSale;
   List<StockSubmitToManagerListModel>? stockSubmitData = [];
   late Future<List<StockSubmitToManagerListModel>> stockDataFuture;
+  List<StockSubmitToManagerListModel> groupedData =[];
   // late Future<List<StockSubmitToManagerListModel>> stockDataFuture;
   // List<StockSubmitToManagerListModel> stockSubmitData = [];
   List<StockSubmitToManagerListModel> filteredData = [];
@@ -538,7 +539,8 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
+              }
+              else if (snapshot.hasError) {
                 return Center(child: Text('Error: ${snapshot.error}'));
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return Center(child: Text('No Data Found.'));
@@ -564,14 +566,354 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
-                      child: TextField(
-                        controller: searchController,
-                        decoration: InputDecoration(
-                          labelText: 'Search',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.search),
+                      child: SizedBox(height: 40,
+                        child: TextField(
+                          controller: searchController,
+                          decoration: InputDecoration(
+                            labelText: 'Search',
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.search),
+                          ),
+                          onChanged: (value) => filterSearchResults(value),
                         ),
-                        onChanged: (value) => filterSearchResults(value),
+                      ),
+                    ),
+                    // Expanded(
+                    //   child:
+                    //   Padding(
+                    //     padding: const EdgeInsets.all(5.0),
+                    //     child:
+                    //     Card(
+                    //       color: Colors.white,shape: BeveledRectangleBorder(),
+                    //       child:
+                    //       Container(
+                    //         decoration: BoxDecoration(border: Border.all(width: 0.5)),
+                    //         child:
+                    //         Column(
+                    //           children: [
+                    //             Row(
+                    //               children: [
+                    //                 Expanded(
+                    //                   flex: 2,
+                    //                   child: Center(child: Text("Item", style: TextStyle(fontWeight: FontWeight.bold))),
+                    //                 ),
+                    //                 verticalDividerVerySmall(),
+                    //                 Expanded(
+                    //                   flex: 2,
+                    //                   child: Center(child: Text("Sale", style: TextStyle(fontWeight: FontWeight.bold))),
+                    //                 ),
+                    //                 verticalDividerVerySmall(),
+                    //                 Expanded(
+                    //                   flex: 2,
+                    //                   child: Center(child: Text("SV", style: TextStyle(fontWeight: FontWeight.bold))),
+                    //                 ),
+                    //                 verticalDividerVerySmall(),
+                    //                 Expanded(
+                    //                   flex: 2,
+                    //                   child: Center(child: Text("TV", style: TextStyle(fontWeight: FontWeight.bold))),
+                    //                 ),
+                    //                 verticalDividerVerySmall(),
+                    //                 Expanded(
+                    //                   flex: 3,
+                    //                   child: Center(child: Text("Empty", style: TextStyle(fontWeight: FontWeight.bold))),
+                    //                 ),
+                    //                 verticalDividerVerySmall(),
+                    //                 Expanded(
+                    //                   flex: 2,
+                    //                   child: Center(child: Text("Def.", style: TextStyle(fontWeight: FontWeight.bold))),
+                    //                 ),
+                    //                 verticalDividerVerySmall(),
+                    //                 Expanded(
+                    //                   flex: 3,
+                    //                   child: Center(child: Text("Less\nEmpty", style: TextStyle(fontWeight: FontWeight.bold))),
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //             Container(
+                    //               color: const Color(0xff1280B3),
+                    //               height: 1,
+                    //               width: MediaQuery.of(context).size.width,
+                    //             ),
+                    //             Expanded(
+                    //               child:
+                    //               ListView.builder(
+                    //                 itemCount: groupedData.length ?? 0, // Check if the list is null and provide a default value of 0
+                    //                 itemBuilder: (context, index) {
+                    //                   // Add a null check to ensure stock is not null
+                    //                   StockSubmitToManagerListModel? stock = groupedData[index];
+                    //
+                    //                   // Return a widget only if stock is not null
+                    //                   if (stock == null) {
+                    //                     return SizedBox.shrink(); // Return an empty widget if stock is null
+                    //                   }
+                    //
+                    //                   // Use a Container instead of ListTile to remove extra padding
+                    //                   return
+                    //                     Container(
+                    //                     padding: EdgeInsets.symmetric(vertical: 0.0), // Control the vertical padding
+                    //                     child: Column(
+                    //                       children: [
+                    //                         Container(
+                    //                           padding: EdgeInsets.symmetric(horizontal: 0.0), // Control horizontal padding
+                    //                           child: Row(
+                    //                             children: [
+                    //                               // Column 1: Item Name
+                    //                               Expanded(
+                    //                                 flex: 2,
+                    //                                 child: Padding(
+                    //                                   padding: const EdgeInsets.only(left: 5.0),
+                    //                                   child: Text(
+                    //                                     stock.itemList![0].itemName ?? 'N/A',
+                    //                                     style: TextStyle(fontSize: 14, color: Colors.black54),
+                    //                                   ),
+                    //                                 ),
+                    //                               ),
+                    //                               verticalDividerVerySmall(),
+                    //                               // Column 2: Filled
+                    //                               Expanded(
+                    //                                 flex: 2,
+                    //                                 child: Text(
+                    //                                   stock.itemList![0].sVQty.toString(),
+                    //                                   style: TextStyle(fontSize: 14, color: Colors.black54),
+                    //                                   textAlign: TextAlign.center,
+                    //                                 ),
+                    //                               ),
+                    //                               verticalDividerVerySmall(),
+                    //                               // Column 3: SV
+                    //                               Expanded(
+                    //                                 flex: 2,
+                    //                                 child: Text(
+                    //                                   stock.itemList![0].filledSaleQty.toString(),
+                    //                                   style: TextStyle(fontSize: 14, color: Colors.black54),
+                    //                                   textAlign: TextAlign.center,
+                    //                                 ),
+                    //                               ),
+                    //                               verticalDividerVerySmall(),
+                    //                               // Column 4: TV
+                    //                               Expanded(
+                    //                                 flex: 2,
+                    //                                 child: Text(
+                    //                                   stock.itemList![0].tVQty.toString(),
+                    //                                   style: TextStyle(fontSize: 14, color: Colors.black54),
+                    //                                   textAlign: TextAlign.center,
+                    //                                 ),
+                    //                               ),
+                    //                               verticalDividerVerySmall(),
+                    //                               // Column 5: Empty
+                    //                               Expanded(
+                    //                                 flex: 3,
+                    //                                 child: Text(
+                    //                                   stock.itemList![0].emptyRetQty.toString(),
+                    //                                   style: TextStyle(fontSize: 14, color: Colors.black54),
+                    //                                   textAlign: TextAlign.center,
+                    //                                 ),
+                    //                               ),
+                    //                               verticalDividerVerySmall(),
+                    //                               // Column 6: Def
+                    //                               Expanded(
+                    //                                 flex: 2,
+                    //                                 child: Text(
+                    //                                   stock.itemList![0].deffQty.toString(),
+                    //                                   style: TextStyle(fontSize: 14, color: Colors.black54),
+                    //                                   textAlign: TextAlign.center,
+                    //                                 ),
+                    //                               ),
+                    //                               verticalDividerVerySmall(),
+                    //                               // Column 7: Less Empty
+                    //                               Expanded(
+                    //                                 flex: 3,
+                    //                                 child: Text(
+                    //                                   stock.itemList![0].lessEmptyQty.toString(),
+                    //                                   style: TextStyle(fontSize: 14, color: Colors.black54),
+                    //                                   textAlign: TextAlign.center,
+                    //                                 ),
+                    //                               ),
+                    //                             ],
+                    //                           ),
+                    //                         ),
+                    //                         Container(
+                    //                           color: Colors.black12,
+                    //                           height: 1,
+                    //                           width: MediaQuery.of(context).size.width,
+                    //                         ),
+                    //                       ],
+                    //                     ),
+                    //                   );
+                    //                 },
+                    //               ),
+                    //             ),
+                    //
+                    //           ],
+                    //         ),
+                    //       ),
+                    //     ),
+                    //
+                    //   ),
+                    //
+                    // ),
+                    Align(
+                      alignment: Alignment.centerLeft,  // Ensures left alignment
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 5.0),
+                        child: Text(
+                          "Total Sale",
+                          style: Styling.bodyTitleWithBlue,
+                        ),
+                      ),
+                    ),
+
+                    Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Card(
+                        color: Colors.white,
+                        shape: BeveledRectangleBorder(),
+                        child: Container(
+                          decoration: BoxDecoration(border: Border.all(width: 0.5)),
+                          child: Column(
+                            children: [
+                              // Header row with column titles
+                              Row(
+                                children: [
+                                  Expanded(flex: 2, child: Center(child: Text("Item", style: TextStyle(fontWeight: FontWeight.bold)))),
+                                  verticalDividerVerySmall(),
+                                  Expanded(flex: 2, child: Center(child: Text("Sale", style: TextStyle(fontWeight: FontWeight.bold)))),
+                                  verticalDividerVerySmall(),
+                                  Expanded(flex: 2, child: Center(child: Text("SV", style: TextStyle(fontWeight: FontWeight.bold)))),
+                                  verticalDividerVerySmall(),
+                                  Expanded(flex: 2, child: Center(child: Text("TV", style: TextStyle(fontWeight: FontWeight.bold)))),
+                                  verticalDividerVerySmall(),
+                                  Expanded(flex: 3, child: Center(child: Text("Empty", style: TextStyle(fontWeight: FontWeight.bold)))),
+                                  verticalDividerVerySmall(),
+                                  Expanded(flex: 2, child: Center(child: Text("Def.", style: TextStyle(fontWeight: FontWeight.bold)))),
+                                  verticalDividerVerySmall(),
+                                  Expanded(flex: 3, child: Center(child: Text("Less\nEmpty", style: TextStyle(fontWeight: FontWeight.bold)))),
+                                ],
+                              ),
+                              // Divider below header row
+                              Container(
+                                color: const Color(0xff1280B3),
+                                height: 1,
+                                width: MediaQuery.of(context).size.width,
+                              ),
+                              // ListView.builder with shrinkWrap
+                              ListView.builder(
+                                shrinkWrap: true, // This ensures the ListView takes only as much space as it needs
+                                physics: NeverScrollableScrollPhysics(), // Disable internal scrolling if you want to scroll the parent instead
+                                itemCount: groupedData.length ?? 0, // Number of items in your data list
+                                itemBuilder: (context, index) {
+                                  StockSubmitToManagerListModel? stock = groupedData[index]; // Get stock item at index
+
+                                  // If the stock data is null, skip to the next item
+                                  if (stock == null) {
+                                    return SizedBox.shrink(); // Return an empty widget if stock is null
+                                  }
+
+                                  return Container(
+                                    padding: EdgeInsets.symmetric(vertical: 0.0), // Remove unnecessary vertical padding
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          padding: EdgeInsets.symmetric(horizontal: 0.0), // Remove horizontal padding
+                                          child: Row(
+                                            children: [
+                                              // Column 1: Item Name
+                                              Expanded(
+                                                flex: 2,
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(left: 5.0),
+                                                  child: Text(
+                                                    stock.itemList![0].itemName ?? 'N/A',
+                                                    style: TextStyle(fontSize: 14, color: Colors.black54),
+                                                  ),
+                                                ),
+                                              ),
+                                              verticalDividerVerySmall(),
+                                              // Column 2: Filled
+                                              Expanded(
+                                                flex: 2,
+                                                child: Text(
+                                                  stock.itemList![0].filledSaleQty.toString(),
+                                                  style: TextStyle(fontSize: 14, color: Colors.black54),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                              verticalDividerVerySmall(),
+                                              // Column 3: SV
+                                              Expanded(
+                                                flex: 2,
+                                                child: Text(
+                                                  stock.itemList![0].sVQty.toString(),
+                                                  style: TextStyle(fontSize: 14, color: Colors.black54),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                              verticalDividerVerySmall(),
+                                              // Column 4: TV
+                                              Expanded(
+                                                flex: 2,
+                                                child: Text(
+                                                  stock.itemList![0].tVQty.toString(),
+                                                  style: TextStyle(fontSize: 14, color: Colors.black54),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                              verticalDividerVerySmall(),
+                                              // Column 5: Empty
+                                              Expanded(
+                                                flex: 3,
+                                                child: Text(
+                                                  stock.itemList![0].emptyRetQty.toString(),
+                                                  style: TextStyle(fontSize: 14, color: Colors.black54),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                              verticalDividerVerySmall(),
+                                              // Column 6: Def
+                                              Expanded(
+                                                flex: 2,
+                                                child: Text(
+                                                  stock.itemList![0].deffQty.toString(),
+                                                  style: TextStyle(fontSize: 14, color: Colors.black54),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                              verticalDividerVerySmall(),
+                                              // Column 7: Less Empty
+                                              Expanded(
+                                                flex: 3,
+                                                child: Text(
+                                                  stock.itemList![0].lessEmptyQty.toString(),
+                                                  style: TextStyle(fontSize: 14, color: Colors.black54),
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        // Divider between items
+                                        Container(
+                                          color: Colors.black12,
+                                          height: 1,
+                                          width: MediaQuery.of(context).size.width,
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerLeft,  // Ensures left alignment
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Text(
+                          "Delivery Men Wise Sale",
+                          style: Styling.bodyTitleWithBlue,
+                        ),
                       ),
                     ),
                     Expanded(
@@ -674,7 +1016,8 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
 
                                       Container(
                                         decoration: BoxDecoration(border: Border.all(width: 0.5)),
-                                        child: Column(
+                                        child:
+                                        Column(
                                           children: [
                                             // Header Row with equal width for all columns using Expanded
                                             Row(
@@ -703,7 +1046,8 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
                                             ),
                                             // ListView to display the data
                                             sale.itemList!.isNotEmpty
-                                                ? ListView.builder(
+                                                ?
+                                            ListView.builder(
                                               physics: const BouncingScrollPhysics(),
                                               itemCount: sale.itemList!.length,
                                               shrinkWrap: true,
@@ -713,7 +1057,8 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
                                                 debugPrint("flagUpdate${isFlagPending}");
                                                 debugPrint("flagUpdate${item.FlagColumnUpdate}");
                                                 // Get the item at the current index
-                                                return Column(
+                                                return
+                                                  Column(
                                                   children: [
                                                     Container(
                                                       child: Row(
@@ -1077,12 +1422,13 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
 
           // Fetch data from the database
           stockDataFuture = updateRefillSale!.getDataFromDatabase();
-
+           groupedData = _groupAndSumItems(result);
           // Update the UI
           stockDataFuture.then((data) {
             setState(() {
               stockSubmitData = data;
-              filteredData = data; // Assign data to filteredData
+              filteredData = data;
+              // Assign data to filteredData
             });
           });
 
@@ -1335,6 +1681,7 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
       return word;
     }).join(' ');
   }
+
   Future<List<StockSubmitToManagerListModel>> fetchStockData() async {
     // Simulate data fetching
     await Future.delayed(Duration(seconds: 2));
@@ -1467,6 +1814,7 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
       debugPrint("Error refreshing data: $e");
     }
   }
+
   Future<void> checkAndSaveDayEndData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? distributorId = prefs.getString('DistributorId');
@@ -1523,4 +1871,210 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
       print("Exception: $e");
     }
   }
+
+  List<StockSubmitToManagerListModel> _groupAndSumItems(List<StockSubmitToManagerListModel> result) {
+    Map<num, StockSubmitToManagerListModel> groupedDataMap = {};
+
+    // Loop through each StockSubmitToManagerListModel
+    for (var stock in result) {
+      for (var item in stock.itemList!) {
+        num itemId = item.itemId!;
+
+        // If itemId already exists in the map, sum the quantities
+        if (groupedDataMap.containsKey(itemId)) {
+          StockSubmitToManagerListModel existingStock = groupedDataMap[itemId]!;
+
+          // Find the corresponding ItemList in the existing stock
+          ItemList existingItem = existingStock.itemList!.firstWhere((i) => i.itemId == itemId);
+
+          // Create a new ItemList with summed quantities
+          ItemList updatedItem = existingItem.copyWith(
+            filledSaleQty: (existingItem.filledSaleQty ?? 0) + (item.filledSaleQty ?? 0),
+            sVQty: (existingItem.sVQty ?? 0) + (item.sVQty ?? 0),
+            tVQty: (existingItem.tVQty ?? 0) + (item.tVQty ?? 0),
+            emptyRetQty: (existingItem.emptyRetQty ?? 0) + (item.emptyRetQty ?? 0),
+            deffQty: (existingItem.deffQty ?? 0) + (item.deffQty ?? 0),
+            lessEmptyQty: (existingItem.lessEmptyQty ?? 0) + (item.lessEmptyQty ?? 0),
+          );
+
+          // Update the itemList with the new summed item
+          List<ItemList> updatedItemList = [
+            ...existingStock.itemList!.where((i) => i.itemId != itemId), // Remove the old item
+            updatedItem, // Add the updated item
+          ];
+
+          // Update the StockSubmitToManagerListModel with the new itemList
+          StockSubmitToManagerListModel updatedStock = existingStock.copyWith(
+            itemList: updatedItemList,
+          );
+
+          // Update the map with the modified StockSubmitToManagerListModel
+          groupedDataMap[itemId] = updatedStock;
+        } else {
+          // If itemId doesn't exist in the map, create a new entry
+          groupedDataMap[itemId] = StockSubmitToManagerListModel(
+            saleGKId: stock.saleGKId,
+            distributorId: stock.distributorId,
+            deliveryDate: stock.deliveryDate,
+            dMId: stock.dMId,
+            vehicleId: stock.vehicleId,
+            dailySaleStatus: stock.dailySaleStatus,
+            staffNo: stock.staffNo,
+            staffName: stock.staffName,
+            vehicleNo: stock.vehicleNo,
+            statusStr: stock.statusStr,
+            addedOn: stock.addedOn,
+            addedByNo: stock.addedByNo,
+            addedByName: stock.addedByName,
+            addedBy: stock.addedBy,
+            action: stock.action,
+            itemList: [
+              ItemList(
+                itemId: item.itemId,
+                itemName: item.itemName,
+                filledSaleQty: item.filledSaleQty,
+                sVQty: item.sVQty,
+                tVQty: item.tVQty,
+                emptyRetQty: item.emptyRetQty,
+                deffQty: item.deffQty,
+                lessEmptyQty: item.lessEmptyQty,
+                remark: item.remark,
+                closingFilled: item.closingFilled,
+                closingEmpty: item.closingEmpty,
+                closingDef: item.closingDef,
+                sVConsStr: item.sVConsStr,
+                TVConsStr: item.TVConsStr,
+                FlagColumnUpdate: item.FlagColumnUpdate,
+              )
+            ],
+          );
+        }
+      }
+    }
+
+    // Convert the map values to a list and return
+    return groupedDataMap.values.toList();
+  }
+
+
+  // List<StockSubmitToManagerListModel> _groupAndSumItems(List<StockSubmitToManagerListModel> result) {
+  //   Map<num, StockSubmitToManagerListModel> groupedDataMap = {};
+  //
+  //   // Loop through each StockSubmitToManagerListModel in the filtered result
+  //   for (var stock in result) {
+  //     for (var item in stock.itemList!) {
+  //       num itemId = item.itemId!;
+  //
+  //       // If itemId already exists in the map, sum the quantities
+  //       if (groupedDataMap.containsKey(itemId)) {
+  //         StockSubmitToManagerListModel existingStock = groupedDataMap[itemId]!;
+  //
+  //         // Find the corresponding ItemList in the existing stock
+  //         ItemList existingItem = existingStock.itemList!.firstWhere((i) => i.itemId == itemId);
+  //
+  //         // Create a new ItemList with summed quantities
+  //         ItemList updatedItem = existingItem.copyWith(
+  //           filledSaleQty: (existingItem.filledSaleQty ?? 0) + (item.filledSaleQty ?? 0),
+  //           sVQty: (existingItem.sVQty ?? 0) + (item.sVQty ?? 0),
+  //           tVQty: (existingItem.tVQty ?? 0) + (item.tVQty ?? 0),
+  //           emptyRetQty: (existingItem.emptyRetQty ?? 0) + (item.emptyRetQty ?? 0),
+  //           deffQty: (existingItem.deffQty ?? 0) + (item.deffQty ?? 0),
+  //           lessEmptyQty: (existingItem.lessEmptyQty ?? 0) + (item.lessEmptyQty ?? 0),
+  //         );
+  //
+  //         // Update the itemList with the new summed item
+  //         List<ItemList> updatedItemList = [
+  //           ...existingStock.itemList!.where((i) => i.itemId != itemId), // Remove the old item
+  //           updatedItem, // Add the updated item
+  //         ];
+  //
+  //         // Update the StockSubmitToManagerListModel with the new itemList
+  //         StockSubmitToManagerListModel updatedStock = existingStock.copyWith(
+  //           itemList: updatedItemList,
+  //         );
+  //
+  //         // Update the map with the modified StockSubmitToManagerListModel
+  //         groupedDataMap[itemId] = updatedStock;
+  //       } else {
+  //         // If itemId doesn't exist in the map, create a new entry
+  //         groupedDataMap[itemId] = StockSubmitToManagerListModel(
+  //           saleGKId: stock.saleGKId,
+  //           distributorId: stock.distributorId,
+  //           deliveryDate: stock.deliveryDate,
+  //           dMId: stock.dMId,
+  //           vehicleId: stock.vehicleId,
+  //           dailySaleStatus: stock.dailySaleStatus,
+  //           staffNo: stock.staffNo,
+  //           staffName: stock.staffName,
+  //           vehicleNo: stock.vehicleNo,
+  //           statusStr: stock.statusStr,
+  //           addedOn: stock.addedOn,
+  //           addedByNo: stock.addedByNo,
+  //           addedByName: stock.addedByName,
+  //           addedBy: stock.addedBy,
+  //           action: stock.action,
+  //           itemList: [
+  //             ItemList(
+  //               itemId: item.itemId,
+  //               itemName: item.itemName,
+  //               filledSaleQty: item.filledSaleQty,
+  //               sVQty: item.sVQty,
+  //               tVQty: item.tVQty,
+  //               emptyRetQty: item.emptyRetQty,
+  //               deffQty: item.deffQty,
+  //               lessEmptyQty: item.lessEmptyQty,
+  //               remark: item.remark,
+  //               closingFilled: item.closingFilled,
+  //               closingEmpty: item.closingEmpty,
+  //               closingDef: item.closingDef,
+  //               sVConsStr: item.sVConsStr,
+  //               TVConsStr: item.TVConsStr,
+  //               FlagColumnUpdate: item.FlagColumnUpdate,
+  //             )
+  //           ],
+  //         );
+  //       }
+  //     }
+  //   }
+  //
+  //   // Convert the map values to a list and return
+  //   return groupedDataMap.values.toList();
+  // }
+  // void filterSearchResults(String query) {
+  //   if (query.isEmpty) {
+  //     setState(() {
+  //       isSearchActive = false;
+  //       filteredData = stockSubmitData!;  // Reset to original data when query is empty
+  //       // After resetting, perform grouping and summing
+  //       groupedData = _groupAndSumItems(filteredData);
+  //     });
+  //   } else {
+  //     setState(() {
+  //       isSearchActive = true;
+  //       filteredData = stockSubmitData!
+  //           .where((sale) {
+  //         final staffNameMatches = sale.staffName != null &&
+  //             sale.staffName!.toLowerCase().contains(query.toLowerCase());
+  //         final itemNameMatches = sale.itemList != null &&
+  //             sale.itemList!.any((item) =>
+  //             item.itemName != null &&
+  //                 item.itemName!.toLowerCase().contains(query.toLowerCase()));
+  //         return staffNameMatches || itemNameMatches;
+  //       })
+  //           .toList();
+  //
+  //       // Check if no results are found
+  //       if (filteredData.isEmpty) {
+  //         print('No matching data found');
+  //         filteredData = [];
+  //       }
+  //
+  //       // Now call _groupAndSumItems with the filtered data
+  //       groupedData = _groupAndSumItems(filteredData);
+  //     });
+  //   }
+  // }
+
+
 }
+

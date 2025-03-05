@@ -938,6 +938,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           setState(() {
             EasyLoading.dismiss();
             isLoading = false;
+            refreshTokens();
           });
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Failed to fetch data: ${response.statusCode}')),
@@ -947,12 +948,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
         setState(() {
           EasyLoading.dismiss();
           isLoading = false;
+          refreshTokens();
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: $e')),
         );
       }
     } else {
+      refreshTokens();
       EasyLoading.dismiss();
       showFlushBar(context, Constants.connectionTitle, Constants.connectionMessage);
     }
@@ -994,6 +997,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           setState(() {
             isLoading = false;
             EasyLoading.dismiss();
+            refreshTokens();
           });
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Failed to fetch data.')),
@@ -1003,6 +1007,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         setState(() {
           EasyLoading.dismiss();
           isLoading = false;
+          refreshTokens();
         });
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: $e')),
@@ -1010,6 +1015,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       }
     } else {
       EasyLoading.dismiss();
+      refreshTokens();
       showFlushBar(context, Constants.connectionTitle, Constants.connectionMessage);
     }
   }
@@ -1054,6 +1060,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           setState(() {
             isLoading = false;
             EasyLoading.dismiss();
+            refreshTokens();
           });
           showFlushBar(context, "Fail",
               'Unable To Load Data At This Time. Please Try Again');
@@ -1062,15 +1069,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
         setState(() {
           EasyLoading.dismiss();
           isLoading = false;
+          refreshTokens();
         });
         // ScaffoldMessenger.of(context).showSnackBar(
         //   SnackBar(content: Text('Error: $e')),
         // );
+
         showFlushBar(context, "Fail",
             'Unable To Load Data At This Time. Please Try Again');
       }
     }else{
       EasyLoading.dismiss();
+      refreshTokens();
       showFlushBar(context,Constants.connectionTitle,
           Constants.connectionMessage);
     }
