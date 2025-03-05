@@ -140,46 +140,95 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     },
                   ),
                   // Second Column (Logo and App Name)
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center, // Vertically center the column
-                    crossAxisAlignment: CrossAxisAlignment.center, // Center the content horizontally
+                  // Column(
+                  //   mainAxisAlignment: MainAxisAlignment.center, // Vertically center the column
+                  //   crossAxisAlignment: CrossAxisAlignment.center, // Center the content horizontally
+                  //   children: [
+                  //     // Logo
+                  //     Row(
+                  //       children: [
+                  //         Image.asset(
+                  //           'assets/playstore.png', // Your logo image path
+                  //           height: 30, // Adjust the height as needed
+                  //           width: 30,  // Adjust the width as needed
+                  //         ),
+                  //        // Space between logo and app name
+                  //         // App Name
+                  //         SizedBox(width: 5,),
+                  //         Text(
+                  //           Constants.appName, // Replace with your app's name
+                  //           style: TextStyle(
+                  //             color: Colors.white,
+                  //             fontSize: 16,
+                  //             fontWeight: FontWeight.bold,
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //     Row(
+                  //       children: [
+                  //         Padding(
+                  //           padding: const EdgeInsets.only(left: 5.0),
+                  //           child: Text(
+                  //                 title, // Replace with dynamic title or text input
+                  //                 textAlign: TextAlign.start,
+                  //                 style: Styling.appBarDesc
+                  //               ),
+                  //         ),
+                  //
+                  //       ],
+                  //     )
+                  //   ],
+                  // ),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center, // Vertically center the content in the row
+                    crossAxisAlignment: CrossAxisAlignment.center, // Center the content horizontally in the row
                     children: [
-                      // Logo
-                      Row(
+                      // First Column: Logo
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Image.asset(
                             'assets/playstore.png', // Your logo image path
-                            height: 30, // Adjust the height as needed
-                            width: 30,  // Adjust the width as needed
-                          ),
-                         // Space between logo and app name
-                          // App Name
-                          SizedBox(width: 5,),
-                          Text(
-                            Constants.appName, // Replace with your app's name
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            height: 40, // Adjust the height as needed
+                            width: 40,  // Adjust the width as needed
                           ),
                         ],
                       ),
-                      Row(
+
+                      // Second Column: App Name and Screen Name
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 5.0),
-                            child: Text(
+                          // First Row: App Name
+                          Row(
+                            children: [
+                              SizedBox(width: 5), // Space between logo and app name
+                              Text(
+                                Constants.appName, // Replace with your app's name
+                                style: Styling.appBarTitle,
+                              ),
+                            ],
+                          ),
+                        SizedBox(height: 5,),
+                          // Second Row: Screen Name
+                          Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(left: 5.0),
+                                child: Text(
                                   title, // Replace with dynamic title or text input
                                   textAlign: TextAlign.start,
-                                  style: Styling.appBarDesc
+                                  style: Styling.appBarDesc, // Define this style as needed
                                 ),
+                              ),
+                            ],
                           ),
-
                         ],
-                      )
+                      ),
                     ],
-                  ),
+                  )
                 ],
               ),
             ],

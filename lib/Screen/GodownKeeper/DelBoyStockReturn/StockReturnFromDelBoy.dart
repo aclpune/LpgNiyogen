@@ -3136,6 +3136,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
   }
 
   Future<void> sendDataToApi(String deliveryBoyId, String delDate) async {
+    EasyLoading.show(status: 'Sending Data...');
     Constants.isNetworkAvailable =
         await InternetConnectionChecker().hasConnection;
     if (Constants.isNetworkAvailable) {
@@ -3254,21 +3255,26 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                   null; // Clear the selected item in the dropdown
               _selectedItem = ''; // Clear the selected item text
               // vehicleNoController.clear();
+              EasyLoading.dismiss();
             });
           } else {
             print('Failed to send data: ${response.statusCode}');
             EasyLoading.showToast("Failed To Send Data.",
                 duration: const Duration(milliseconds: 3000));
+            EasyLoading.dismiss();
           }
         } else {
           // ScaffoldMessenger.of(context).showSnackBar(
           //   SnackBar(content: Text('Enter record for that delivery boy..!')),
           // );
+          EasyLoading.dismiss();
         }
       } catch (e) {
+        EasyLoading.dismiss();
         print('Error sending data to API: $e');
       }
     } else {
+      EasyLoading.dismiss();
       showFlushBar(
           context, Constants.connectionTitle, Constants.connectionMessage);
     }
@@ -3669,6 +3675,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
   Future<void> addItemImbalanceQty(
       int dmId, int itemID, int imbQty) async {
     // Construct the request payload
+    EasyLoading.show(status: 'Sending Data...');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? distributorId = prefs.getString('DistributorId');
     String? godownId = prefs.getString('godownId');
@@ -3708,17 +3715,21 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
         EasyLoading.showToast("Data Sent Successfully..",
             duration: const Duration(milliseconds: 3000));
         _fetchImbalanceData(dmId);
+        EasyLoading.dismiss();
       } else {
         // Handle error response
         print("Failed to add imbalance quantity: ${response.statusCode}");
+        EasyLoading.dismiss();
       }
     } catch (e) {
       // Handle any exceptions
       print("Error occurred: $e");
+      EasyLoading.dismiss();
     }
   }
 
   void sendEditedDataToApi(BuildContext context) async {
+    EasyLoading.show(status: 'Sending Data...');
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
     Constants.isNetworkAvailable =
@@ -3743,6 +3754,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
         print('No data found for delivery ${deliveryData}');
         if (deliveryData.isEmpty) {
           print('No data found for delivery');
+          EasyLoading.dismiss();
           return;
         }
         int? dailyStatus;
@@ -3781,6 +3793,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
         if (apiItemList.isEmpty) {
           showFlushBar(context, "No Records",
               'No Records Available To Send!!');
+          EasyLoading.dismiss();
           return;
         }
 
@@ -3814,15 +3827,19 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
           EasyLoading.showToast("Data Sent Successfully..",
               duration: const Duration(milliseconds: 3000));
           Navigator.pushReplacementNamed(context, '/godownDashboard');
+          EasyLoading.dismiss();
         } else {
           print('Failed to send data: ${response.statusCode}');
           showFlushBar(context, "Fail",
               'Failed To Send Data. Please Try Again Later!');
+          EasyLoading.dismiss();
         }
       } catch (e) {
+        EasyLoading.dismiss();
         print('Error in sending data: $e');
       }
     } else {
+      EasyLoading.dismiss();
       showFlushBar(
           context, Constants.connectionTitle, Constants.connectionMessage);
     }

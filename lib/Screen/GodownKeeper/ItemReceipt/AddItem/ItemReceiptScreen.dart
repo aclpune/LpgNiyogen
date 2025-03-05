@@ -352,10 +352,10 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
       onWillPop: () async {
         // Show a confirmation dialog
         if (argLRAdd == "fromDrawer") {
-          Navigator.pop(context);
+          Navigator.pushReplacementNamed(context, '/godownDashboard');
           return false;
         } else {
-          Navigator.pop(context);
+          Navigator.pushReplacementNamed(context, '/godownDashboard');
           return false;
         } // In case `null` is returned, return `false`
       },

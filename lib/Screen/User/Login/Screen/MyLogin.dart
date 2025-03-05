@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:encrypt/encrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,6 +13,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
+
+import '../../../Utils/UpdateService.dart';
 
 class MyLogin extends StatefulWidget {
   static const screenName = '/login';
@@ -37,6 +41,12 @@ class _MyLoginState extends State<MyLogin> {
   @override
   void initState() {
     super.initState();
+    if(Platform.isAndroid){
+      UpdateService.checkForUpdate(context);
+      debugPrint("Firebase initialize Dash${Platform}");
+    }else{
+      debugPrint("Firebase not initialize");
+    }
     _loadStoredUserData();
   }
 

@@ -1390,6 +1390,7 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
   //
   // }
   Future<void> insertDelBoyStockList() async {
+    EasyLoading.show();
     Constants.isNetworkAvailable = await InternetConnectionChecker().hasConnection;
     if (Constants.isNetworkAvailable) {
       try {
@@ -1429,19 +1430,23 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
               stockSubmitData = data;
               filteredData = data;
               // Assign data to filteredData
+              EasyLoading.dismiss();
             });
           });
 
           debugPrint("Fetched data: $stockSubmitData");
         } else {
+          EasyLoading.dismiss();
           refreshTokens();
           debugPrint("Failed to fetch data from API: ${response.statusCode}");
         }
       } catch (e) {
+        EasyLoading.dismiss();
         refreshTokens();
         debugPrint("Error during API call: $e");
       }
     } else {
+      EasyLoading.dismiss();
       showFlushBar(context, Constants.connectionTitle, Constants.connectionMessage);
     }
   }
@@ -1874,7 +1879,7 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
 
   List<StockSubmitToManagerListModel> _groupAndSumItems(List<StockSubmitToManagerListModel> result) {
     Map<num, StockSubmitToManagerListModel> groupedDataMap = {};
-
+    EasyLoading.show();
     // Loop through each StockSubmitToManagerListModel
     for (var stock in result) {
       for (var item in stock.itemList!) {
@@ -1910,6 +1915,7 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
 
           // Update the map with the modified StockSubmitToManagerListModel
           groupedDataMap[itemId] = updatedStock;
+          EasyLoading.dismiss();
         } else {
           // If itemId doesn't exist in the map, create a new entry
           groupedDataMap[itemId] = StockSubmitToManagerListModel(
@@ -1948,10 +1954,11 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
               )
             ],
           );
+          EasyLoading.dismiss();
         }
       }
     }
-
+    EasyLoading.dismiss();
     // Convert the map values to a list and return
     return groupedDataMap.values.toList();
   }

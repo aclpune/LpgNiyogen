@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
@@ -35,9 +36,20 @@ class MyHttpOverrides extends HttpOverrides {
   }
 }
 
-void main() {
+void main() async{
   /// Http ssl certificate...
   HttpOverrides.global = MyHttpOverrides();
+  try{
+    WidgetsFlutterBinding.ensureInitialized();
+    if(Platform.isAndroid){
+      await Firebase.initializeApp();
+      debugPrint("Firebase initialize");
+    }else{
+      debugPrint("Firebase not initialize");
+    }
+  }catch(e){
+    debugPrint("Firebase not initialize");
+  }
   runApp(
       const MyApp()
   );

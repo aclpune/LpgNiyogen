@@ -134,10 +134,10 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
         onWillPop: () async {
           // Show a confirmation dialog
           if (argLRAdd == "fromDrawer") {
-            Navigator.pop(context);
+            Navigator.pushReplacementNamed(context, '/managerDashboardScreen');
             return false;
           } else {
-            Navigator.pop(context);
+            Navigator.pushReplacementNamed(context, '/managerDashboardScreen');
             return false;
           } // In case `null` is returned, return `false`
         },
