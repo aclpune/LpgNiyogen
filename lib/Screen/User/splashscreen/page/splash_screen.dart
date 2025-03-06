@@ -7,6 +7,7 @@ import '../../../ManagerScreen/ManagerDashboard.dart';
 import '../../../Utils/constants.dart';
 import '../../../Utils/shared_preference.dart';
 import '../../Login/Screen/MyLogin.dart';
+import 'dart:io' as io;
 
 
 class SplashScreen extends StatefulWidget {
@@ -51,7 +52,7 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
               SizedBox(height: 10),
               Text(
-                "Version: " + "1.0.0",
+                "Version: " + "1.0.1",
                 style: Styling.itemBlackTestSmall,
               )
             ],
@@ -98,4 +99,6 @@ class _SplashScreenState extends State<SplashScreen> {
       rethrow;
     }
   }
+
+
 }

@@ -121,210 +121,228 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
       int emptyValue = int.tryParse(_emptyController.text) ?? 0;
       int defectiveValue = int.tryParse(_defectiveController.text) ?? 0;
       int lessEmptyValue = int.tryParse(_lessEmptyController.text) ?? 0;
-
-      if (filledValue > lessEmptyValue) {
-        if (filledValue > svValue) {
-          if (filledValue > tvValue) {
-            if (filledValue > defectiveValue) {
-              if (emptyValue > 0) {
-                // Check if the item already exists for the given deliveryBoyId
-                bool itemExists = await updateRefillSale!.checkIfItemExists(
-                    selectedItemId.toString(),
-                    selectedDelBoyId.toString(),
-                    formattedDate);
-                bool itemExistInDMDatabaseToday = await updateRefillSale!.checkIfItemExistsInAPIDatabase(
-                    selectedItemId.toString(), selectedDelBoyId.toString(), formattedDateNew);
-                debugPrint(selectedItemId.toString());
-                debugPrint(selectedDelBoyId.toString());
-                debugPrint(formattedDate);
-                if (itemExists) {
-                  showFlushBar(context, "Already Exists",
-                      'The Entered Item Already Exists For The Selected Delivery Men!');
-                } else {
-                  if(itemExistInDMDatabaseToday){
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text("Start New Trip"),
-                          content: Text("Do You Want To Start New Trip?"),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop(false); // Cancel deletion
-                              },
-                              child: Text("No"),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                setState(() {
-                                  String remarksString =
-                                  remarksList.isEmpty ? '' : remarksList.join(', ');
-                                  print('Sending remarks to API: $remarksString');
-
-                                  String tvConsumerNoString =
-                                  tvConsumerList.isEmpty ? '' : tvConsumerList.join(', ');
-                                  print('Sending tvConsumerNoString to API: $tvConsumerNoString');
-
-                                  // Ensure that all fields have valid values
-                                  String filledValue = _filledController.text.isEmpty
-                                      ? ''
-                                      : _filledController.text;
-                                  String svValue =
-                                  _svController.text.isEmpty ? '' : _svController.text;
-                                  String tvValue =
-                                  _tvController.text.isEmpty ? '' : _tvController.text;
-                                  String emptyValue = _emptyController.text.isEmpty
-                                      ? ''
-                                      : _emptyController.text;
-                                  String defectiveValue = _defectiveController.text.isEmpty
-                                      ? ''
-                                      : _defectiveController.text;
-                                  String lessEmptyValue = _lessEmptyController.text.isEmpty
-                                      ? ''
-                                      : _lessEmptyController.text;
-                                  String remarkValue = _remarkController.text.isEmpty
-                                      ? ''
-                                      : _remarkController.text;
-
-                                  // Create an ItemData object from the input fields
-                                  ItemData newItem = ItemData(
-                                    date: deliveryDateController.text,
-                                    deliveryBoyName: selectedDelBoyName.toString(),
-                                    delBoyId: selectedDelBoyId.toString(),
-                                    vehicleNo: vehicleNo.toString() ?? '',
-
-                                    // Handle empty vehicle number
-                                    itemName: _selectedItem.toString(),
-                                    itemID: selectedItemId.toString(),
-                                    filled: filledValue,
-                                    sv: svValue,
-                                    tv: tvValue,
-                                    empty: emptyValue,
-                                    defective: defectiveValue,
-                                    lessEmpty: lessEmptyValue,
-                                    remark: remarkValue,
-                                    svRemark: remarksString,
-                                    tvConsumerNo: tvConsumerNoString,
-                                    updateFlag: 'pending',
-                                    itemAddedDate: formattedDate,
-                                  );
-
-                                  // Insert the ItemData object into the database
-                                  updateRefillSale?.insertUpdateRefillSale([newItem]);
-
-                                  setState(() {
-                                    fetchData(selectedDelBoyId.toString(),
-                                        deliveryDateController.text);
-
-                                    _selectedItemModel =
-                                    null; // Clear the selected item in the dropdown
-                                    _selectedItem = '';
-                                  });
-
-                                  // Clear the input fields after adding the item
-                                  _filledController.clear();
-                                  _svController.clear();
-                                  _tvController.clear();
-                                  _emptyController.clear();
-                                  _defectiveController.clear();
-                                  _lessEmptyController.clear();
-                                  _remarkController.clear();
-                                  _svRemarkController.clear();
-                                  remarksList.clear();
-                                  tvConsumerList.clear();
-                                }
-                                );
-                                Navigator.of(context).pop(true); // Proceed with deletion
-                              },
-                              child: Text("Yes"),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  }else{
-                    setState(() {
-                      String remarksString =
-                      remarksList.isEmpty ? '' : remarksList.join(', ');
-                      print('Sending remarks to API: $remarksString');
-
-                      String tvConsumerNoString =
-                      tvConsumerList.isEmpty ? '' : tvConsumerList.join(', ');
-                      print('Sending tvConsumerNoString to API: $tvConsumerNoString');
-
-                      // Ensure that all fields have valid values
-                      String filledValue = _filledController.text.isEmpty
-                          ? ''
-                          : _filledController.text;
-                      String svValue =
-                      _svController.text.isEmpty ? '' : _svController.text;
-                      String tvValue =
-                      _tvController.text.isEmpty ? '' : _tvController.text;
-                      String emptyValue = _emptyController.text.isEmpty
-                          ? ''
-                          : _emptyController.text;
-                      String defectiveValue = _defectiveController.text.isEmpty
-                          ? ''
-                          : _defectiveController.text;
-                      String lessEmptyValue = _lessEmptyController.text.isEmpty
-                          ? ''
-                          : _lessEmptyController.text;
-                      String remarkValue = _remarkController.text.isEmpty
-                          ? ''
-                          : _remarkController.text;
-
-                      // Create an ItemData object from the input fields
-                      ItemData newItem = ItemData(
-                        date: deliveryDateController.text,
-                        deliveryBoyName: selectedDelBoyName.toString(),
-                        delBoyId: selectedDelBoyId.toString(),
-                        vehicleNo: vehicleNo.toString() ?? '',
-                        // Handle empty vehicle number
-                        itemName: _selectedItem.toString(),
-                        itemID: selectedItemId.toString(),
-                        filled: filledValue,
-                        sv: svValue,
-                        tv: tvValue,
-                        empty: emptyValue,
-                        defective: defectiveValue,
-                        lessEmpty: lessEmptyValue,
-                        remark: remarkValue,
-                        svRemark: remarksString,
-                        tvConsumerNo: tvConsumerNoString,
-                        updateFlag: 'pending',
-                        itemAddedDate: formattedDate,
-                      );
-
-                      // Insert the ItemData object into the database
-                      updateRefillSale?.insertUpdateRefillSale([newItem]);
-
-                      setState(() {
-                        fetchData(selectedDelBoyId.toString(),
-                            deliveryDateController.text);
-
-                        _selectedItemModel =
-                        null; // Clear the selected item in the dropdown
-                        _selectedItem = '';
-                      });
-
-                      // Clear the input fields after adding the item
-                      _filledController.clear();
-                      _svController.clear();
-                      _tvController.clear();
-                      _emptyController.clear();
-                      _defectiveController.clear();
-                      _lessEmptyController.clear();
-                      _remarkController.clear();
-                      _svRemarkController.clear();
-                      remarksList.clear();
-                      tvConsumerList.clear();
-                    }
-                    );
-                  }
-
-                }
+      if (filledValue <= (filledStock ?? 0)) {
+        if (filledValue >= lessEmptyValue) {
+          if (filledValue >= svValue) {
+            // if (filledValue >= tvValue) {
+            if (filledValue >= defectiveValue) {
+              if (emptyValue >= 0) {
+              // Check if the item already exists for the given deliveryBoyId
+              bool itemExists = await updateRefillSale!.checkIfItemExists(
+                  selectedItemId.toString(),
+                  selectedDelBoyId.toString(),
+                  formattedDate);
+              bool itemExistInDMDatabaseToday = await updateRefillSale!
+                  .checkIfItemExistsInAPIDatabase(
+                  selectedItemId.toString(), selectedDelBoyId.toString(),
+                  formattedDateNew);
+              debugPrint(selectedItemId.toString());
+              debugPrint(selectedDelBoyId.toString());
+              debugPrint(formattedDate);
+              if (itemExists) {
+                showFlushBar(context, "Already Exists",
+                    'The Entered Item Already Exists For The Selected Delivery Men!');
               } else {
+                if (itemExistInDMDatabaseToday) {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text("Start New Trip"),
+                        content: Text("Do You Want To Start New Trip?"),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(
+                                  false); // Cancel deletion
+                            },
+                            child: Text("No"),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              setState(() {
+                                String remarksString =
+                                remarksList.isEmpty ? '' : remarksList.join(
+                                    ', ');
+                                print('Sending remarks to API: $remarksString');
+
+                                String tvConsumerNoString =
+                                tvConsumerList.isEmpty ? '' : tvConsumerList
+                                    .join(', ');
+                                print(
+                                    'Sending tvConsumerNoString to API: $tvConsumerNoString');
+
+                                // Ensure that all fields have valid values
+                                String filledValue = _filledController.text
+                                    .isEmpty
+                                    ? ''
+                                    : _filledController.text;
+                                String svValue =
+                                _svController.text.isEmpty ? '' : _svController
+                                    .text;
+                                String tvValue =
+                                _tvController.text.isEmpty ? '' : _tvController
+                                    .text;
+                                String emptyValue = _emptyController.text
+                                    .isEmpty
+                                    ? ''
+                                    : _emptyController.text;
+                                String defectiveValue = _defectiveController
+                                    .text.isEmpty
+                                    ? ''
+                                    : _defectiveController.text;
+                                String lessEmptyValue = _lessEmptyController
+                                    .text.isEmpty
+                                    ? ''
+                                    : _lessEmptyController.text;
+                                String remarkValue = _remarkController.text
+                                    .isEmpty
+                                    ? ''
+                                    : _remarkController.text;
+
+                                // Create an ItemData object from the input fields
+                                ItemData newItem = ItemData(
+                                  date: deliveryDateController.text,
+                                  deliveryBoyName: selectedDelBoyName
+                                      .toString(),
+                                  delBoyId: selectedDelBoyId.toString(),
+                                  vehicleNo: vehicleNo.toString() ?? '',
+
+                                  // Handle empty vehicle number
+                                  itemName: _selectedItem.toString(),
+                                  itemID: selectedItemId.toString(),
+                                  filled: filledValue,
+                                  sv: svValue,
+                                  tv: tvValue,
+                                  empty: emptyValue,
+                                  defective: defectiveValue,
+                                  lessEmpty: lessEmptyValue,
+                                  remark: remarkValue,
+                                  svRemark: remarksString,
+                                  tvConsumerNo: tvConsumerNoString,
+                                  updateFlag: 'pending',
+                                  itemAddedDate: formattedDate,
+                                );
+
+                                // Insert the ItemData object into the database
+                                updateRefillSale?.insertUpdateRefillSale(
+                                    [newItem]);
+
+                                setState(() {
+                                  fetchData(selectedDelBoyId.toString(),
+                                      deliveryDateController.text);
+
+                                  _selectedItemModel =
+                                  null; // Clear the selected item in the dropdown
+                                  _selectedItem = '';
+                                });
+
+                                // Clear the input fields after adding the item
+                                _filledController.clear();
+                                _svController.clear();
+                                _tvController.clear();
+                                _emptyController.clear();
+                                _defectiveController.clear();
+                                _lessEmptyController.clear();
+                                _remarkController.clear();
+                                _svRemarkController.clear();
+                                remarksList.clear();
+                                tvConsumerList.clear();
+                              }
+                              );
+                              Navigator.of(context).pop(
+                                  true); // Proceed with deletion
+                            },
+                            child: Text("Yes"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
+                else {
+                  setState(() {
+                    String remarksString =
+                    remarksList.isEmpty ? '' : remarksList.join(', ');
+                    print('Sending remarks to API: $remarksString');
+
+                    String tvConsumerNoString =
+                    tvConsumerList.isEmpty ? '' : tvConsumerList.join(', ');
+                    print(
+                        'Sending tvConsumerNoString to API: $tvConsumerNoString');
+
+                    // Ensure that all fields have valid values
+                    String filledValue = _filledController.text.isEmpty
+                        ? ''
+                        : _filledController.text;
+                    String svValue =
+                    _svController.text.isEmpty ? '' : _svController.text;
+                    String tvValue =
+                    _tvController.text.isEmpty ? '' : _tvController.text;
+                    String emptyValue = _emptyController.text.isEmpty
+                        ? ''
+                        : _emptyController.text;
+                    String defectiveValue = _defectiveController.text.isEmpty
+                        ? ''
+                        : _defectiveController.text;
+                    String lessEmptyValue = _lessEmptyController.text.isEmpty
+                        ? ''
+                        : _lessEmptyController.text;
+                    String remarkValue = _remarkController.text.isEmpty
+                        ? ''
+                        : _remarkController.text;
+
+                    // Create an ItemData object from the input fields
+                    ItemData newItem = ItemData(
+                      date: deliveryDateController.text,
+                      deliveryBoyName: selectedDelBoyName.toString(),
+                      delBoyId: selectedDelBoyId.toString(),
+                      vehicleNo: vehicleNo.toString() ?? '',
+                      // Handle empty vehicle number
+                      itemName: _selectedItem.toString(),
+                      itemID: selectedItemId.toString(),
+                      filled: filledValue,
+                      sv: svValue,
+                      tv: tvValue,
+                      empty: emptyValue,
+                      defective: defectiveValue,
+                      lessEmpty: lessEmptyValue,
+                      remark: remarkValue,
+                      svRemark: remarksString,
+                      tvConsumerNo: tvConsumerNoString,
+                      updateFlag: 'pending',
+                      itemAddedDate: formattedDate,
+                    );
+
+                    // Insert the ItemData object into the database
+                    updateRefillSale?.insertUpdateRefillSale([newItem]);
+
+                    setState(() {
+                      fetchData(selectedDelBoyId.toString(),
+                          deliveryDateController.text);
+
+                      _selectedItemModel =
+                      null; // Clear the selected item in the dropdown
+                      _selectedItem = '';
+                    });
+
+                    // Clear the input fields after adding the item
+                    _filledController.clear();
+                    _svController.clear();
+                    _tvController.clear();
+                    _emptyController.clear();
+                    _defectiveController.clear();
+                    _lessEmptyController.clear();
+                    _remarkController.clear();
+                    _svRemarkController.clear();
+                    remarksList.clear();
+                    tvConsumerList.clear();
+                  }
+                  );
+                }
+              }
+              }
+              else {
                 showFlushBar(context, "Invalid Count",
                     'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
               }
@@ -332,6 +350,10 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
               showFlushBar(context, "Invalid Count",
                   'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
             }
+            // } else {
+            //   showFlushBar(context, "Invalid Count",
+            //       'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+            // }
           } else {
             showFlushBar(context, "Invalid Count",
                 'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
@@ -340,10 +362,10 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
           showFlushBar(context, "Invalid Count",
               'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
         }
-      } else {
-        showFlushBar(context, "Invalid Count",
-            'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
-
+      }else{
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Total Sale Cannot Be Greater Than Filled Stock')),
+        );
       }
     }
   }
@@ -778,7 +800,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
 
                           showFlushBar(context, "Invalid Count",
                               'Consumer Details Count Should Not Exceed The SV Count!');
-                          Navigator.pop(context);
+
                           // showDialog(
                           //   context: context,
                           //   builder: (context) {
@@ -807,6 +829,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                           //   },
                           // );
                         } else {
+
                           // Otherwise, proceed to close the dialog
                           String remark = controller.text.trim();
                           if (remark.isNotEmpty) {
@@ -825,9 +848,12 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                               setState(() {
                                 remarksList.add(
                                     remark); // Add the new remark to the list
-                                controller.clear(); // Clear the input field
+                                controller.clear();
+                                Navigator.pop(context);// Clear the input field
                               });
                             }
+                          }else{
+                            Navigator.pop(context);
                           }
                           controller.clear();
 
@@ -969,12 +995,15 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                         tvConsumerList.add(
                                             input); // Add input to the list
                                         controller
-                                            .clear(); // Clear the input field for the next entry
+                                            .clear();
+                                        // Clear the input field for the next entry
                                       });
                                     }
                                   }
                                 });
                               }
+                            }else{
+                              Navigator.pop(context);
                             }
                           },
                         ),
@@ -1098,7 +1127,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
 
                           showFlushBar(context, "Invalid Count",
                               'Consumer Details Count Should Not Exceed The TV Count!');
-                          Navigator.pop(context);
+
                           // showDialog(
                           //   context: context,
                           //   builder: (context) {
@@ -1145,12 +1174,14 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                               setState(() {
                                 tvConsumerList.add(
                                     remark); // Add the new remark to the list
-                                controller.clear(); // Clear the input field
+                                controller.clear();
+                                Navigator.pop(context);// Clear the input field
                               });
                             }
+                          }else{
+                            Navigator.pop(context);
                           }
                           controller.clear();
-
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -1485,13 +1516,14 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                             int filledQty = int.tryParse(value) ?? 0;
 
                             // Check if total sale is greater than filled stock
-                            if (filledQty > (filledStock ?? 0)) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Total Sale Cannot Be Greater Than Filled Stock')),
-                              );
-                              _filledController.clear();
-                              filledQty = 0;
-                            }
+                            // if (filledQty >= (filledStock ?? 0)) {
+                            //   ScaffoldMessenger.of(context).showSnackBar(
+                            //     SnackBar(content: Text('Total Sale Cannot Be Greater Than Filled Stock')),
+                            //   );
+                            //   _filledController.clear();
+                            //   filledQty = 0;
+                            // }
+
                             // Recalculate the empty quantity based on other fields
                             int svQty = int.tryParse(_svController.text) ?? 0;
                             int tvQty = int.tryParse(_tvController.text) ?? 0;
@@ -1540,15 +1572,15 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                           int tvQty = int.tryParse(_tvController.text) ?? 0;
                           int defQty =
                               int.tryParse(_defectiveController.text) ?? 0;
-                          if (lessEmpty > filledQty) {
-                            showFlushBar(context, "Invalid Count",
-                                'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
-                          } else {
+                          // if (lessEmpty >= filledQty) {
+                          //   showFlushBar(context, "Invalid Count",
+                          //       'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+                          // } else {
                             // Calculate the new empty quantity
                             int emptyQty =
                                 filledQty - svQty + tvQty - defQty - lessEmpty;
                             _emptyController.text = emptyQty.toString();
-                          }
+                          // }
                         });
                       },
                     ),
@@ -1593,10 +1625,10 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                 int lessEmptyQty =
                                     int.tryParse(_lessEmptyController.text) ??
                                         0;
-                                if (svQty > filledQty) {
-                                  showFlushBar(context, "Invalid Count",
-                                      'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
-                                } else {
+                                // if (svQty >= filledQty) {
+                                //   showFlushBar(context, "Invalid Count",
+                                //       'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+                                // } else {
                                   // Calculate the new empty quantity
                                   int emptyQty = filledQty -
                                       svQty +
@@ -1604,7 +1636,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                       defQty -
                                       lessEmptyQty;
                                   _emptyController.text = emptyQty.toString();
-                                }
+                                // }
                               });
                             },
                           ),
@@ -1662,10 +1694,10 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                     int.tryParse(_lessEmptyController.text) ??
                                         0;
                                 // Validate TV value
-                                if (tvQty > filledQty) {
-                                  showFlushBar(context, "Invalid Count",
-                                      'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
-                                } else {
+                                // if (tvQty > filledQty) {
+                                //   showFlushBar(context, "Invalid Count",
+                                //       'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+                                // } else {
                                   // Calculate the new empty quantity
                                   int emptyQty = filledQty -
                                       svQty +
@@ -1673,7 +1705,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                       defQty -
                                       lessEmptyQty;
                                   _emptyController.text = emptyQty.toString();
-                                }
+                                // }
                               });
                             },
                           ),
@@ -1728,10 +1760,10 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                 int lessEmptyQty =
                                     int.tryParse(_lessEmptyController.text) ??
                                         0;
-                                if (defQty > filledQty) {
-                                  showFlushBar(context, "Invalid Count",
-                                      'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
-                                } else {
+                                // if (defQty > filledQty) {
+                                //   showFlushBar(context, "Invalid Count",
+                                //       'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+                                // } else {
                                   // Calculate the new empty quantity
                                   int emptyQty = filledQty -
                                       svQty +
@@ -1739,7 +1771,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                       defQty -
                                       lessEmptyQty;
                                   _emptyController.text = emptyQty.toString();
-                                }
+                                // }
                               });
                             },
                           ),
@@ -1781,17 +1813,17 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                 int emptyQty = int.tryParse(value) ?? 0;
 
                                 // If the empty quantity exceeds the filled (sale) quantity, show an error
-                                if (emptyQty > filledQty) {
-                                  // Show an error message
-                                  showFlushBar(context, "Invalid Count",
-                                      'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
-                                  // Update the empty quantity to be equal to the sale quantity
-                                  _emptyController.text = filledQty.toString();
-                                  // Optionally, move the cursor to the end of the input field after setting the value
-                                  _emptyController.selection =
-                                      TextSelection.collapsed(
-                                          offset: _emptyController.text.length);
-                                }
+                                // if (emptyQty > filledQty) {
+                                //   // Show an error message
+                                //   showFlushBar(context, "Invalid Count",
+                                //       'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+                                //   // Update the empty quantity to be equal to the sale quantity
+                                //   _emptyController.text = filledQty.toString();
+                                //   // Optionally, move the cursor to the end of the input field after setting the value
+                                //   _emptyController.selection =
+                                //       TextSelection.collapsed(
+                                //           offset: _emptyController.text.length);
+                                // }
                               });
                             },
                           ),
@@ -1824,7 +1856,8 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
-                      onPressed: (_filledController.text.isNotEmpty &&
+                      onPressed: ((_filledController.text.isNotEmpty
+                     || _tvController.text.isNotEmpty) &&
                           selectedDelBoyName != null &&
                           _selectedItem != null)
                           ? () async {
@@ -1845,11 +1878,11 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                         DateFormat('yyyy-MM-dd').format(now);
                         if (_editingItemId != null) {
                           if(flagEditMode == "editMode"){
-                            if (filledValue > lessEmptyValue) {
-                              if (filledValue > svValue) {
-                                if (filledValue > tvValue) {
-                                  if (filledValue > defectiveValue) {
-                                    if (emptyValue > 0) {
+                            if (filledValue >= lessEmptyValue) {
+                              if (filledValue >= svValue) {
+                                // if (filledValue > tvValue) {
+                                  if (filledValue >= defectiveValue) {
+                                    if (emptyValue >= 0) {
                                       if(_svController.text.isNotEmpty){
                                         int currentCount = remarksList
                                             .map((remark) => remark.split(',').length)
@@ -1899,10 +1932,10 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                     showFlushBar(context, "Cylinder Count",
                                         'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
                                   }
-                                } else {
-                                  showFlushBar(context, "Cylinder Count",
-                                      'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
-                                }
+                                // } else {
+                                //   showFlushBar(context, "Cylinder Count",
+                                //       'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+                                // }
                               } else {
                                 showFlushBar(context, "Cylinder Count",
                                     'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
@@ -1913,12 +1946,12 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                             }
                           }else{
                             if(_dataGetFromDBDelBoy.isNotEmpty) {
-                              if(filledValue > 0) {
-                                if (filledValue > lessEmptyValue) {
-                                  if (filledValue > svValue) {
-                                    if (filledValue > tvValue) {
+                              // if(filledValue > 0) {
+                                if (filledValue >= lessEmptyValue) {
+                                  if (filledValue >= svValue) {
+                                    // if (filledValue > tvValue) {
                                       if (filledValue > defectiveValue) {
-                                        if (emptyValue > 0) {
+                                        if (emptyValue >= 0) {
                                           if(_svController.text.isNotEmpty){
                                             int currentCount = remarksList
                                                 .map((remark) =>
@@ -2235,9 +2268,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                     'This Item Already Exists!');
                                               }
                                             }
-
                                           }
-
                                         } else {
                                           showFlushBar(context, "Cylinder Count",
                                               'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
@@ -2246,10 +2277,10 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                         showFlushBar(context, "Cylinder Count",
                                             'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
                                       }
-                                    } else {
-                                      showFlushBar(context, "Cylinder Count",
-                                          'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
-                                    }
+                                    // } else {
+                                    //   showFlushBar(context, "Cylinder Count",
+                                    //       'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+                                    // }
                                   } else {
                                     showFlushBar(context, "Cylinder Count",
                                         'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
@@ -2258,7 +2289,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                   showFlushBar(context, "Cylinder Count",
                                       'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
                                 }
-                              }
+                              // }
 
                             }else{
 
@@ -2284,7 +2315,8 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: _filledController.text.isNotEmpty &&
+                        backgroundColor:(_filledController.text.isNotEmpty
+                            || _tvController.text.isNotEmpty) &&
                             selectedDelBoyName != null &&
                             (_selectedItem != null )
                             ? Colors.blue
@@ -3103,8 +3135,8 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
     }
   }
 
-
   Future<void> sendDataToApi(String deliveryBoyId, String delDate) async {
+    EasyLoading.show(status: 'Sending Data...');
     Constants.isNetworkAvailable =
         await InternetConnectionChecker().hasConnection;
     if (Constants.isNetworkAvailable) {
@@ -3188,8 +3220,10 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
             },
             body: jsonRequestBody, // The body of the request
           );
-          print('response ${response.body}');
-          print('response ${response}');
+          print('response UpdateDailyRefillSale ${response.body}');
+          print('response UpdateDailyRefillSale ${response}');
+          print('response UpdateDailyRefillSale ${response.request}');
+          print('jsonRequestBody UpdateDailyRefillSale ${jsonRequestBody}');
           // Check response status
           if (response.statusCode == 200) {
             print('Data sent successfully');
@@ -3221,21 +3255,26 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                   null; // Clear the selected item in the dropdown
               _selectedItem = ''; // Clear the selected item text
               // vehicleNoController.clear();
+              EasyLoading.dismiss();
             });
           } else {
             print('Failed to send data: ${response.statusCode}');
             EasyLoading.showToast("Failed To Send Data.",
                 duration: const Duration(milliseconds: 3000));
+            EasyLoading.dismiss();
           }
         } else {
           // ScaffoldMessenger.of(context).showSnackBar(
           //   SnackBar(content: Text('Enter record for that delivery boy..!')),
           // );
+          EasyLoading.dismiss();
         }
       } catch (e) {
+        EasyLoading.dismiss();
         print('Error sending data to API: $e');
       }
     } else {
+      EasyLoading.dismiss();
       showFlushBar(
           context, Constants.connectionTitle, Constants.connectionMessage);
     }
@@ -3636,6 +3675,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
   Future<void> addItemImbalanceQty(
       int dmId, int itemID, int imbQty) async {
     // Construct the request payload
+    EasyLoading.show(status: 'Sending Data...');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? distributorId = prefs.getString('DistributorId');
     String? godownId = prefs.getString('godownId');
@@ -3675,17 +3715,21 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
         EasyLoading.showToast("Data Sent Successfully..",
             duration: const Duration(milliseconds: 3000));
         _fetchImbalanceData(dmId);
+        EasyLoading.dismiss();
       } else {
         // Handle error response
         print("Failed to add imbalance quantity: ${response.statusCode}");
+        EasyLoading.dismiss();
       }
     } catch (e) {
       // Handle any exceptions
       print("Error occurred: $e");
+      EasyLoading.dismiss();
     }
   }
 
   void sendEditedDataToApi(BuildContext context) async {
+    EasyLoading.show(status: 'Sending Data...');
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
     Constants.isNetworkAvailable =
@@ -3710,6 +3754,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
         print('No data found for delivery ${deliveryData}');
         if (deliveryData.isEmpty) {
           print('No data found for delivery');
+          EasyLoading.dismiss();
           return;
         }
         int? dailyStatus;
@@ -3748,6 +3793,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
         if (apiItemList.isEmpty) {
           showFlushBar(context, "No Records",
               'No Records Available To Send!!');
+          EasyLoading.dismiss();
           return;
         }
 
@@ -3781,15 +3827,19 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
           EasyLoading.showToast("Data Sent Successfully..",
               duration: const Duration(milliseconds: 3000));
           Navigator.pushReplacementNamed(context, '/godownDashboard');
+          EasyLoading.dismiss();
         } else {
           print('Failed to send data: ${response.statusCode}');
           showFlushBar(context, "Fail",
               'Failed To Send Data. Please Try Again Later!');
+          EasyLoading.dismiss();
         }
       } catch (e) {
+        EasyLoading.dismiss();
         print('Error in sending data: $e');
       }
     } else {
+      EasyLoading.dismiss();
       showFlushBar(
           context, Constants.connectionTitle, Constants.connectionMessage);
     }
@@ -3846,9 +3896,6 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
       showFlushBar(context, Constants.connectionTitle, Constants.connectionMessage);
     }
   }
-
-  // Assuming you already have the selected item and fetched stock data in your app
-  // This will hold the filled stock for the selected item
 
 // Add this method to compare total sale with filled stock
   Future<void> fetchCurrentStock() async {

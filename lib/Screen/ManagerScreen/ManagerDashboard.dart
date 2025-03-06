@@ -22,6 +22,7 @@ import '../User/splashscreen/page/splash_screen.dart';
 import '../Utils/CustomeDrawer.dart';
 import '../Utils/CustomeDrawerManager.dart';
 import '../Utils/Styling.dart';
+import '../Utils/UpdateService.dart';
 import '../Utils/Widget.dart';
 import '../Utils/app_url.dart';
 import '../Utils/constants.dart';
@@ -60,6 +61,12 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
   @override
   void initState() {
     super.initState();
+    if(Platform.isAndroid){
+      UpdateService.checkForUpdate(context);
+      debugPrint("Firebase initialize Dash${Platform}");
+    }else{
+      debugPrint("Firebase not initialize");
+    }
     fetchCurrentStock();
     fetchDashboarDetail();
     // Check if any item has a non-null, non-zero defectivCnt
@@ -136,7 +143,6 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                   },
                 ),
                 SizedBox(width: 20),
-
                 // Replacing the Text widget with the Row for Logo and App Name
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -144,7 +150,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                     // App Logo
                     Image.asset(
                       'assets/playstore.png', // Path to your logo image
-                      height: 30, // Adjust the height as needed
+                      height: 40, // Adjust the height as needed
                     ),
                     SizedBox(width: 8), // Add some space between the logo and the app name
                     // App Name (Replace 'App Name' with your constant or dynamic value)
@@ -528,7 +534,6 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                       ),
                                     ],
                                   ),
-
                                 ],
                               ),
                             ),

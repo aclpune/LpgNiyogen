@@ -17,6 +17,7 @@ import '../User/Login/provider/LoginProvider.dart';
 import '../User/splashscreen/page/splash_screen.dart';
 import '../Utils/CustomeDrawer.dart';
 import '../Utils/Styling.dart';
+import '../Utils/UpdateService.dart';
 import '../Utils/Widget.dart';
 import '../Utils/app_url.dart';
 import '../Utils/constants.dart';
@@ -50,6 +51,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
+    if(Platform.isAndroid){
+      UpdateService.checkForUpdate(context);
+      debugPrint("Firebase initialize Dash${Platform}");
+    }else{
+      debugPrint("Firebase not initialize");
+    }
     updateRefillSale = UpdateRefillSale();
     // Call the insert method when the screen is loaded
     insertDelBoyStockList();
@@ -104,7 +111,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     // App Logo
                     Image.asset(
                       'assets/playstore.png', // Path to your logo image
-                      height: 30, // Adjust the height as needed
+                      height: 40, // Adjust the height as needed
                     ),
                     SizedBox(width: 8), // Add some space between the logo and the app name
                     // App Name (Replace 'App Name' with your constant or dynamic value)
@@ -938,21 +945,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
           setState(() {
             EasyLoading.dismiss();
             isLoading = false;
+            refreshTokens();
           });
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to fetch data: ${response.statusCode}')),
-          );
+          showFlushBar(context, "Fail",
+              'Unable To Load Data At This Time. Please Try Again');
         }
       } catch (e) {
         setState(() {
           EasyLoading.dismiss();
           isLoading = false;
+          refreshTokens();
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
+          SnackBar(content: Text('Error: Failed to fetch data')),
         );
       }
     } else {
+      refreshTokens();
       EasyLoading.dismiss();
       showFlushBar(context, Constants.connectionTitle, Constants.connectionMessage);
     }
@@ -994,22 +1003,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
           setState(() {
             isLoading = false;
             EasyLoading.dismiss();
+            refreshTokens();
           });
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to fetch data.')),
-          );
+          showFlushBar(context, "Fail",
+              'Unable To Load Data At This Time. Please Try Again');
         }
       } catch (e) {
         setState(() {
           EasyLoading.dismiss();
           isLoading = false;
+          refreshTokens();
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
+    showFlushBar(context, "Fail",
+    'Unable To Load Data At This Time. Please Try Again');
       }
     } else {
       EasyLoading.dismiss();
+      refreshTokens();
       showFlushBar(context, Constants.connectionTitle, Constants.connectionMessage);
     }
   }
@@ -1054,6 +1064,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           setState(() {
             isLoading = false;
             EasyLoading.dismiss();
+            refreshTokens();
           });
           showFlushBar(context, "Fail",
               'Unable To Load Data At This Time. Please Try Again');
@@ -1062,15 +1073,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
         setState(() {
           EasyLoading.dismiss();
           isLoading = false;
+          refreshTokens();
         });
         // ScaffoldMessenger.of(context).showSnackBar(
         //   SnackBar(content: Text('Error: $e')),
         // );
+
         showFlushBar(context, "Fail",
             'Unable To Load Data At This Time. Please Try Again');
       }
     }else{
       EasyLoading.dismiss();
+      refreshTokens();
       showFlushBar(context,Constants.connectionTitle,
           Constants.connectionMessage);
     }
