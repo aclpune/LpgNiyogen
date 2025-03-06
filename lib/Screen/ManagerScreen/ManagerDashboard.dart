@@ -143,7 +143,6 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                   },
                 ),
                 SizedBox(width: 20),
-
                 // Replacing the Text widget with the Row for Logo and App Name
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
