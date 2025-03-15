@@ -15,11 +15,13 @@ import '../../../ConstantScreen/widgets.dart';
 import '../../../User/Login/provider/LoginProvider.dart';
 import '../../../User/splashscreen/page/splash_screen.dart';
 import '../../../Utils/CustomAppBar.dart';
+import '../../../Utils/CustomeAlertDialog.dart';
 import '../../../Utils/Styling.dart';
 import '../../../Utils/app_url.dart';
 import '../../../Utils/constants.dart';
 import '../../../Utils/shared_preference.dart';
 import '../../DashboardScreen.dart';
+import '../../DeliveryBoyModel/GetStockTransferListModel.dart';
 import '../CylItemList/CylItemListModel.dart';
 import '../EditItem/Model/GetItemReceiptListModel.dart';
 
@@ -46,6 +48,9 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
   String? modes;
   int? receiptIds;
   bool saveFlag = false;
+  bool stockTransferFlag = false;
+  List<GetStockTransferListModel> _stockTransferList = [];
+  bool isLoading = true;
   @override
   void initState() {
     super.initState();
@@ -62,6 +67,7 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
     _addNewItem();
     fetchItems();
     checkAndSaveDayEndData();
+    fetchTransactionList();
     vehicleNoController.addListener(_updateButtonState);
     Future.delayed(Duration.zero, () {
       setState(() {
@@ -95,7 +101,6 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
       _selectedItems[newIndex] = '';
     });
   }
-
 
   void _initializeItems(List<ItemDetails> itemsToShow) {
     setState(() {
@@ -150,21 +155,18 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
 
             // Check if the selected item is valid (not empty)
             if (selectedItemName == null || selectedItemName.isEmpty) {
-              showFlushBar(context, "Select a Valid Item",
-                  'Please Select a Valid Item For Each Entry');
+              showFlushBar(context, Constants.selectValidItemReceipt);
               return; // Stop the submission process
             }
 
             // Check if InvoiceQty is empty or zero
             if (invoiceQty.isEmpty || double.tryParse(invoiceQty) == 0) {
-              showFlushBar(context, "RequiredOne Quantity",
-                  'At Least One Quantity Is Required!');
+              showFlushBar(context,Constants.atLeastOneQtyRequired);
               return; // Stop the submission process
             }
             if ((filledQty.isEmpty || double.tryParse(filledQty) == 0) &&
                 (emrQty.isEmpty || double.tryParse(emrQty) == 0)) {
-              showFlushBar(context, "RequiredOne Quantity",
-                    'At Least One Quantity Is Required!');
+              showFlushBar(context, Constants.atLeastOneQtyRequired);
               return;
             }
           }
@@ -191,7 +193,7 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
               int itemId = selectedItem.itemId!.toInt(); // Convert num to int
               if (itemIds.contains(itemId)) {
                 showFlushBar(
-                    context, "Already Exists", 'This Item Already Exists');
+                    context,Constants.recordExist);
                 return; // Stop the submission process
               }
               itemIds.add(itemId);
@@ -244,7 +246,7 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
               debugPrint('Response: ${response.body}');
               int responseValue = int.tryParse(response.body) ?? 0;
               if (responseValue > 0) {
-                EasyLoading.showToast("Item Added Successfully.",
+                EasyLoading.showToast(Constants.itemAddedSuccessfully,
                     duration: const Duration(milliseconds: 3000));
                 Navigator.pushReplacementNamed(context, '/godownDashboard');
                 setState(() {
@@ -256,31 +258,36 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                   });
                   _selectedItems.clear();
                 });
-              } else {
+              } else if(responseValue == -1) {
                 showFlushBar(
-                    context, "Fail", 'Fail To Insert Record!');
+                    context,Constants.vehicleNotReturn);
+              }else if(responseValue == -2){
+                showFlushBar(
+                context,Constants.itemreceiptDataNotInserted);
+              }else{
+                showFlushBar(
+                    context,Constants.failToInserRecord);
               }
             } else {
               refreshTokens();
-              showFlushBar(context, "Already Exists", 'Record Already Exists!');
+              showFlushBar(context, Constants.recordExist);
               throw Exception(
-                    'Unable To Load Data At This Time. Please Try Again');
+                    Constants.listGettingFail);
             }
           } catch (e) {
             debugPrint('Error: $e');
-            showFlushBar(context, "Already Exists", 'Record Already Exists!');
+            showFlushBar(context, Constants.recordExist);
           }
         // } else {
         //   showFlushBar(context, "Invalid Vehicle Number",
         //       'Please Enter a Valid Vehicle Number!');
         // }
       } else {
-        showFlushBar(context, "Invalid Vehicle Number",
-            'Please Enter a Valid Vehicle Number!');
+        showFlushBar(context, Constants.vehicleValidation);
       }
     } else {
       showFlushBar(
-          context, Constants.connectionTitle, Constants.connectionMessage);
+          context, Constants.connectionMessage);
     }
   }
 
@@ -318,7 +325,7 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
       }
     } else {
       showFlushBar(
-          context, Constants.connectionTitle, Constants.connectionMessage);
+          context,Constants.connectionMessage);
     }
   }
 
@@ -348,7 +355,8 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
   Widget build(BuildContext context) {
     var argLRAdd = ModalRoute.of(context)?.settings.arguments;
 
-    return WillPopScope(
+    return
+      WillPopScope(
       onWillPop: () async {
         // Show a confirmation dialog
         if (argLRAdd == "fromDrawer") {
@@ -646,13 +654,20 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                         () {
                           if(saveFlag){
                             print('saveFlag $saveFlag');
+                            showFlushBar(context,
+                                Constants.dayEndCompleted);
                           }else{
-                            if (vehicleNoController.text.isNotEmpty) {
-                              setState(() {
-                                _submitData();
-                              });
-                            } else {
-                              print('Invalid vehicle number');
+                            if(stockTransferFlag){
+
+                              if (vehicleNoController.text.isNotEmpty) {
+                                setState(() {
+                                  _submitData();
+                                });
+                              } else {
+                                print('Invalid vehicle number');
+                              }
+                            }else{
+                              CustomAlertDialog.showCustomAlert(context,Constants.stockNotAccepted);
                             }
                           }
 
@@ -668,8 +683,8 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                       ),
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: saveFlag? Colors.grey:
-                          (vehicleNoController.text.isNotEmpty ? Colors.blue : Colors.grey),
+                      backgroundColor: saveFlag? Colors.grey:stockTransferFlag?
+                          (vehicleNoController.text.isNotEmpty ? Colors.blue : Colors.grey):Colors.grey,
                           // : (vehicleNoController.text.isNotEmpty ? Colors.blue : Colors.grey),
                       // Button expands to fill available width// Text color of the button
                       shape: RoundedRectangleBorder(
@@ -707,7 +722,7 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
         items[index]['invoice']?.text = totalSum.toInt().toString();
       } else {
         showFlushBar(
-            context, "Enter Quantity", 'At Least One Quantity Is Required!');
+            context,Constants.atLeastOneQtyRequired);
       }
     }
   }
@@ -730,6 +745,7 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
           } else if (response['message'] == "UnSuccessful") {
             debugPrint('RefreshTokenExc401 - true');
             checkAndSaveDayEndData();
+            fetchTransactionList();
             showDialogToExpireSession(context);
           } else {
             debugPrint('RefreshTokenStatus - false');
@@ -939,4 +955,62 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
       print("Exception: $e");
     }
   }
+  Future<void> fetchTransactionList() async {
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+    if (Constants.isNetworkAvailable) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? distributorId = prefs.getString('DistributorId');
+      String? godownId = prefs.getString('godownId');
+      String? bearerToken = prefs.getString('token'); // Assuming the token is stored here
+      int dId = int.parse(distributorId!);
+      int gId = int.parse(godownId!);
+      if (bearerToken == null) {
+        throw Exception('Bearer token is missing');
+      }
+
+      final response = await http.get(
+        Uri.parse('${AppUrl.GetStockTransferDtls}/$dId/$gId'),
+        headers: {
+          'Authorization': 'Bearer $bearerToken', // Add Bearer token here
+        },
+      );
+      debugPrint(
+          "GetStockTransferDtls" + '${AppUrl.GetStockTransferDtls}/$distributorId/1/2');
+      debugPrint("GetStockTransferDtls" + response.body);
+      if (response.statusCode == 200) {
+        // Parse the response
+        List<dynamic> data = json.decode(response.body);
+        setState(() {
+          _stockTransferList = data.map((json) => GetStockTransferListModel.fromJson(json)).toList();
+          bool hasZeroStkTrans = false;
+          for (int i = 0; i < _stockTransferList.length; i++) {
+            if (_stockTransferList[i].isStkTrans == 0) {
+              hasZeroStkTrans = true;
+              debugPrint("Found item with isStkTrans = 0");
+              break; // No need to continue checking once we find an item with isStkTrans = 0
+            }
+          }
+          if (hasZeroStkTrans) {
+            stockTransferFlag = false; // Disable the button
+            // showFlushBar(
+            //     context, "Action Restricted", "Cannot perform the action as one or more items have isStkTrans = 0");
+          } else {
+            stockTransferFlag = true; // Enable the button
+          }
+        });
+        isLoading = false;
+      } else {
+        refreshTokens();
+        isLoading = false;
+        throw Exception('Failed To Load Items');
+      }
+    } else {
+      refreshTokens();
+      isLoading = false;
+      showFlushBar(
+          context,Constants.connectionMessage);
+    }
+  }
+
 }

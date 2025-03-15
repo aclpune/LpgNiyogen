@@ -1447,7 +1447,7 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
       }
     } else {
       EasyLoading.dismiss();
-      showFlushBar(context, Constants.connectionTitle, Constants.connectionMessage);
+      showFlushBar(context, Constants.connectionMessage);
     }
   }
 
@@ -1487,7 +1487,7 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
         debugPrint("Error during API call: $e");
       }
     }else{
-      showFlushBar(context,Constants.connectionTitle,
+      showFlushBar(context,
           Constants.connectionMessage);
     }
 
@@ -1755,7 +1755,7 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
           // Check response status
           if (response.statusCode == 200) {
             print('Data sent successfully');
-            EasyLoading.showToast("Data Deleted Successfully.",
+            EasyLoading.showToast(Constants.dataDeleted,
                 duration: const Duration(milliseconds: 3000));
 
             // Safely extract ItemIds (ensure they're integers)
@@ -1783,8 +1783,7 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
             });
           } else {
             print('Failed to send data: ${response.statusCode}');
-            showFlushBar(context, "Fail",
-                'Failed To Delete Data');
+            showFlushBar(context, Constants.dataDeletedFail);
           }
         } else {
           // ScaffoldMessenger.of(context).showSnackBar(
@@ -1796,7 +1795,7 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
       }
     } else {
       showFlushBar(
-          context, Constants.connectionTitle, Constants.connectionMessage);
+          context, Constants.connectionMessage);
     }
   }
 

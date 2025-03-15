@@ -33,7 +33,7 @@ BranchAdminAH	cnf@1234*/
   static String connectionTitle = 'No Internet';
   static String loginFailedTitle = 'Login Failed';
   static String connectionMessage =
-      'No Internet connection please try again later';
+      'No internet connection. Please try again later.';
   static String loginFailedMessage = 'Authentication failed';
   static String titleSuccess = 'Success';
   static String titleContent = 'New password is sent to your email id.';
@@ -50,8 +50,37 @@ BranchAdminAH	cnf@1234*/
       '';
 
   ///TODO: Replace below URL with Apple App Store URL
-  static String appleAppStoreAppUrl =
-      "";
+  static String appleAppStoreAppUrl = "";
+  static String listGettingFail = "Unable to load data at this time. Please try again";
+  static String recordAlreadyExist = "The entered item already exists for the selected delivery personnel.";
+  static String countShouldNotBeGreater = "The total cylinder count must be greater than all other quantities.";
+  static String svConsumerCountExceed = "Consumer details count should not exceed the SV cyl quantity.";
+  static String tvConsumerCountExceed = "Consumer details count should not exceed the TV cyl quantity.";
+  static String svConsumerCountExceedTwoLine = "Consumer details count should \n not exceed the SV cyl quantity.";
+  static String tvConsumerCountExceedTwoLine = "Consumer details count should \n not exceed the tv cyl quantity.";
+  static String consumerExist = "This consumer already exists.";
+  static String recordExist = "This item already exists.";
+  static String dataDeleted = "Data deleted successfully.";
+  static String dataDeletedFail = "Failed to delete the record.";
+  static String dataUpdated = "Data updated successfully.";
+  static String nodataFound = "No data found.";
+  static String validCountEnter = "Enter a valid count.";
+  static String recordNotInserted = "Unsuccessful to send data.";
+  static String imbalanceCountValidation = "Input quantity must be smaller than the empty quantity.";
+  static String stockTransferValidation = "Stock transfer quantity entered should not exceed current stock.";
+  static String selectValidItemReceipt = "Please select a valid item for each entry.";
+  static String atLeastOneQtyRequired = "At least one quantity is required.";
+  static String itemAddedSuccessfully = "Item added successfully.";
+  static String vehicleValidation = "Please enter a valid vehicle number.";
+  static String stockNotAccepted = "Kindly complete the stock transfer request for this godown before taking any further action.";
+  static String vehicleNotReturn = "Item return action for this vehicle no. is pending, you need to first return this vehicle and then proceed to Item receipt for the same.";
+  static String vehicleNotIn = "The vehicle no. being returned has not been received in the system, please use EXMI receipt menu to first receive it and then proceed to item return for the same vehicle no.";
+  static String itemreceiptDataNotInserted = "Data not inserted/updated";
+  static String failToInserRecord = "Something went wrong.";
+  static String defectiveQtyItemReturn = "Defective quantity must be less than the return quantity.";
+  static String gretaerItemQty = "The following items have a quantity greater than the available stock.";
+  static String dayEndCompleted = "This action is not permitted as today's day end operation has already been completed.";
+  static String totalSaleQtyDailySale = "Refill sale qty exceeds current filled stock for this item, kindly check the qty entered or add filled stock using item receipt menu.";
 
 
 

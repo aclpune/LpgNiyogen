@@ -1286,7 +1286,7 @@ class _ManagerUpdateSaleCashUpdationState
                            if(_consumerList.length < qtyPrepaid){
                              _addConsumer();
                            }else{
-                             showFlushBar(context, "Consumer Detail",
+                             showFlushBar(context,
                                  'Consumer Detail Should Not Be Greater Than Cylinder Qty');
                              _consumerController.clear();
                            }
@@ -1724,7 +1724,7 @@ class _ManagerUpdateSaleCashUpdationState
                               if(qtyPostpaid>_transactionList.length) {
                                 _addTransaction();
                               }else{
-                                showFlushBar(context, "Transaction Detail",
+                                showFlushBar(context,
                                     'Transaction Detail Should Not Be Greater Than Cylinder Qty');
                                 _transactionCodeControllerPostpaid.clear();
                                 _timeControllerPostpaid.clear();
@@ -1977,7 +1977,7 @@ class _ManagerUpdateSaleCashUpdationState
                           if(_qtyControllerCredit.text.isNotEmpty){
                           int qtyCredit= int.parse(_qtyControllerCredit.text);
                           if(qtyVendorCylinder > qtyCredit){
-                            showFlushBar(context, "Quantity Exceeds",
+                            showFlushBar(context,
                                 'Quantity Should Not Be Greater Than Cylinder Qty');
                             _vendorCylinderQtyControllerCredit.clear();
                           }
@@ -2070,7 +2070,7 @@ class _ManagerUpdateSaleCashUpdationState
                             if(qtyCredit > _reticulatedList.length){
                               _addReticulated();
                             }else{
-                              showFlushBar(context, "Vendor Detail",
+                              showFlushBar(context,
                                   'Vendor Detail Should Not Be Greater Than Cylinder Qty');
                               _vendorCylinderQtyControllerCredit.clear();
                               selectedPaymentMode = '';
@@ -3954,7 +3954,7 @@ class _ManagerUpdateSaleCashUpdationState
     if (!Constants.isNetworkAvailable) {
       // Return an empty list if there is no network connection
       showFlushBar(
-          context, Constants.connectionTitle, Constants.connectionMessage);
+          context, Constants.connectionMessage);
       isLoading = false;
     } else {
       try {
@@ -4107,7 +4107,7 @@ class _ManagerUpdateSaleCashUpdationState
     if (!Constants.isNetworkAvailable) {
       // Return an empty list if there is no network connection
       showFlushBar(
-          context, Constants.connectionTitle, Constants.connectionMessage);
+          context, Constants.connectionMessage);
       isLoading = false;
     } else {
       try {
@@ -4393,7 +4393,7 @@ class _ManagerUpdateSaleCashUpdationState
     if (!Constants.isNetworkAvailable) {
       // Return an empty list if there is no network connection
       showFlushBar(
-          context, Constants.connectionTitle, Constants.connectionMessage);
+          context,  Constants.connectionMessage);
       isLoading = false;
     } else {
       try {

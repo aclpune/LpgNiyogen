@@ -499,7 +499,7 @@ class _ManagerUpdateSaleScreenState extends State<ManagerUpdateSaleScreen> {
 
     if (!Constants.isNetworkAvailable) {
       // Return an empty list if there is no network connection
-      showFlushBar(context, Constants.connectionTitle, Constants.connectionMessage);
+      showFlushBar(context, Constants.connectionMessage);
       isLoading = false;
     } else {
       try {
@@ -691,7 +691,7 @@ class _ManagerUpdateSaleScreenState extends State<ManagerUpdateSaleScreen> {
 
     if (!Constants.isNetworkAvailable) {
       // Return an empty list if there is no network connection
-      showFlushBar(context,Constants.connectionTitle,
+      showFlushBar(context,
           Constants.connectionMessage);
       isLoading = false;
     }else {
@@ -744,7 +744,7 @@ class _ManagerUpdateSaleScreenState extends State<ManagerUpdateSaleScreen> {
 
     if (!Constants.isNetworkAvailable) {
       // Return an empty list if there is no network connection
-      showFlushBar(context, Constants.connectionTitle, Constants.connectionMessage);
+      showFlushBar(context,Constants.connectionMessage);
       isLoading = false;
     } else {
       try {
@@ -809,7 +809,7 @@ class _ManagerUpdateSaleScreenState extends State<ManagerUpdateSaleScreen> {
 
     if (!Constants.isNetworkAvailable) {
       // Return an empty list if there is no network connection
-      showFlushBar(context,Constants.connectionTitle,
+      showFlushBar(context,
           Constants.connectionMessage);
       isLoading = false;
     }else {

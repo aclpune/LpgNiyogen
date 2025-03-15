@@ -35,6 +35,8 @@ class _DeliveryMenListShowScreenState extends State<DeliveryMenListShowScreen> {
   List<DeliveryMenSaleListModel> _delBoyInfo = [];
   bool isLoading = true;
   String? mobileNo;
+  List<DeliveryMenSaleListModel> _filteredDelBoyInfo = [];
+  TextEditingController _searchController = TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
@@ -64,17 +66,38 @@ class _DeliveryMenListShowScreenState extends State<DeliveryMenListShowScreen> {
         appBar: CustomAppBar(
           title: 'Daily Sale', // Title or hint text for the text field
         ),
-        body: isLoading
+        body:
+        isLoading
             ? Center(child: CircularProgressIndicator())
             : SingleChildScrollView(  // Add SingleChildScrollView to make entire body scrollable
           child:
           Padding(
             padding: const EdgeInsets.only(left: 2.0,right: 2,top: 0),
-            child: Container(
+            child:
+            Container(
               decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
               margin: const EdgeInsets.only(left: 2, right: 2),
               child: Column(
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(height: 40,
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: InputDecoration(
+                          labelText: 'Search',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.search),
+                        ),
+                        onChanged: (value) => filterSearchResults(value),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    color: Colors.grey ,
+                    height: 1,
+                    width: MediaQuery.of(context).size.width,
+                  ),
                   Padding(
                     padding: const EdgeInsets.only(top: 0.0, bottom: 0),
                     child: Row(
@@ -114,14 +137,14 @@ class _DeliveryMenListShowScreenState extends State<DeliveryMenListShowScreen> {
                     height: 1.5,
                     width: MediaQuery.of(context).size.width,
                   ),
-                  _delBoyInfo.isNotEmpty
+                  _filteredDelBoyInfo.isNotEmpty
                       ? ListView.builder(
                     physics: const BouncingScrollPhysics(),
                     shrinkWrap: true,
-                    itemCount: _delBoyInfo.length,
+                    itemCount: _filteredDelBoyInfo.length,
                     itemBuilder: (context, index) {
                       return DeliveryMenListShowScreenItemUI(
-                          _delBoyInfo[index]);
+                          _filteredDelBoyInfo[index]);
                     },
                   )
                       : Container(
@@ -138,50 +161,57 @@ class _DeliveryMenListShowScreenState extends State<DeliveryMenListShowScreen> {
       )
     );
   }
-
-  Future<void> fetchDeliveryBoyInfo() async {
-    Constants.isNetworkAvailable =
-    await InternetConnectionChecker().hasConnection;
-    if (Constants.isNetworkAvailable) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? distributorId = prefs.getString('DistributorId');
-      String? bearerToken =
-      prefs.getString('token'); // Assuming the token is stored here
-
-      if (bearerToken == null) {
-        throw Exception('Bearer token is missing');
-      }
-
-      final response = await http.get(
-        Uri.parse('${AppUrl.GetDeliveryBoyListForMob}/$distributorId/1/2'),
-        headers: {
-          'Authorization': 'Bearer $bearerToken', // Add Bearer token here
-        },
-      );
-      debugPrint(
-          "_delBoyInfo" + '${AppUrl.GetDeliveryBoyListForMob}/$distributorId/1/2');
-      debugPrint("_delBoyInfo" + response.body);
-      if (response.statusCode == 200) {
-        // Parse the response
-        List<dynamic> data = json.decode(response.body);
-        setState(() {
-          _delBoyInfo =
-              data.map((json) => DeliveryMenSaleListModel.fromJson(json)).toList();
-          _delBoyInfo.sort((a, b) => a.staffName!.toLowerCase().compareTo(b.staffName!.toLowerCase()));
-
-        });
-        isLoading = false;
-      } else {
-        refreshTokens();
-        isLoading = false;
-        throw Exception('Failed To Load Items');
-      }
-    } else {
-      isLoading = false;
-      showFlushBar(
-          context, Constants.connectionTitle, Constants.connectionMessage);
-    }
+  void filterSearchResults(String query) {
+    setState(() {
+      _filteredDelBoyInfo = _delBoyInfo
+          .where((item) => item.staffName!.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
   }
+    Future<void> fetchDeliveryBoyInfo() async {
+      Constants.isNetworkAvailable =
+      await InternetConnectionChecker().hasConnection;
+      if (Constants.isNetworkAvailable) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? distributorId = prefs.getString('DistributorId');
+        String? bearerToken =
+        prefs.getString('token'); // Assuming the token is stored here
+
+        if (bearerToken == null) {
+          throw Exception('Bearer token is missing');
+        }
+
+        final response = await http.get(
+          Uri.parse('${AppUrl.GetDeliveryBoyListForMob}/$distributorId/1/2'),
+          headers: {
+            'Authorization': 'Bearer $bearerToken', // Add Bearer token here
+          },
+        );
+        debugPrint(
+            "_delBoyInfo" + '${AppUrl.GetDeliveryBoyListForMob}/$distributorId/1/2');
+        debugPrint("_delBoyInfo" + response.body);
+        if (response.statusCode == 200) {
+          // Parse the response
+          List<dynamic> data = json.decode(response.body);
+          setState(() {
+            _delBoyInfo =
+                data.map((json) => DeliveryMenSaleListModel.fromJson(json)).toList();
+            _delBoyInfo.sort((a, b) => a.staffName!.toLowerCase().compareTo(b.staffName!.toLowerCase()));
+            _filteredDelBoyInfo = List.from(_delBoyInfo); // Initialize the filtered list with all data
+
+          });
+          isLoading = false;
+        } else {
+          refreshTokens();
+          isLoading = false;
+          throw Exception(Constants.listGettingFail);
+        }
+      } else {
+        isLoading = false;
+        showFlushBar(
+            context, Constants.connectionMessage);
+      }
+    }
 
   Future<void> refreshTokens() async {
     LoginProvider auth = Provider.of<LoginProvider>(context, listen: false);

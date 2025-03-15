@@ -12,6 +12,7 @@ class CustomeDrawer extends StatelessWidget {
     String godownName = prefs.getString('StaffName') ?? 'Cylinder Godown';
     return godownName;
   }
+
   Future<String> getGodownNId() async {
     // Fetch Godown name from SharedPreferences
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -82,6 +83,20 @@ class CustomeDrawer extends StatelessWidget {
                 title: Text('Item Return'),
                 onTap: () {
                   Navigator.pushReplacementNamed(context, '/itemReturnScreen');
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.assignment_return_outlined),
+                title: Text('Return EXMI/Rev-EMR'),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/addReturnItemXMIScreen');
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.receipt),
+                title: Text('Receipt EXMI'),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/itemReturnXMIListScreen');
                 },
               ),
               /*ListTile(

@@ -6,7 +6,9 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:lpgsalesandinventory/Screen/Utils/Styling.dart';
 import 'package:lpgsalesandinventory/Screen/Utils/app_url.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../ConstantScreen/widgets.dart';
 import '../../Utils/Widget.dart';
+import '../../Utils/constants.dart';
 import '../DeliveryBoyModel/DeliveryBoyInfoModel.dart';
 import 'package:http/http.dart' as http;
 
@@ -59,7 +61,8 @@ class _DeliveryMenListShowScreenItemUIState extends State<DeliveryMenListShowScr
                               GestureDetector(
                                 onTap: (){
                                   if(saveFlag){
-
+                                    showFlushBar(context,
+                                        Constants.dayEndCompleted);
                                   }else{
                                     Navigator.pushNamed(
                                         context,

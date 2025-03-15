@@ -1,14 +1,26 @@
 import 'dart:convert';
 import 'dart:ffi';
+import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:intl/intl.dart';
 import 'package:lpgsalesandinventory/Screen/Utils/app_url.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../ConstantScreen/widgets.dart';
+import '../../../User/Login/provider/LoginProvider.dart';
+import '../../../User/splashscreen/page/splash_screen.dart';
+import '../../../Utils/CustomeAlertDialog.dart';
+import '../../../Utils/Styling.dart';
 import '../../../Utils/constants.dart';
+import '../../../Utils/shared_preference.dart';
 import '../../DashboardScreen.dart';
+import '../../DeliveryBoyModel/GetStockTransferListModel.dart';
 import '../AddItem/ItemReceiptScreen.dart';
 import '../CylItemList/GetCurrentStcOfGodownKeeperModel.dart';
 import '../EditItem/Model/GetItemReceiptListModel.dart';
@@ -29,19 +41,30 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
   List<GetCurrentStcOfGodownKeeperModel> getCurrentStcOfGodownKeeper = [];
   bool isLoading = true;
   bool saveFlag = false;
+  bool stockTransferFlag = false;
+  List<GetStockTransferListModel> _stockTransferList = [];
+  String? mobileNo;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     fetchCurrentStock();
     checkAndSaveDayEndData();
+    fetchTransactionList();
   }
+
   @override
   Widget build(BuildContext context) {
     var value = widget._listModel;
     return
     value != null && value != ""?
       Card(
+        elevation: 5,
+        margin: EdgeInsets.all(8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
       child:
       SingleChildScrollView(  // Make the Column scrollable
         child: Column(
@@ -53,124 +76,134 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(left: 10.0,top: 5),
-                    child: Text("Vehicle No. - "+value.vehicleNo.toString(),style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15),),
+                    padding: const EdgeInsets.only(left: 8,top: 0),
+                    child:
+                    Text("Vehicle No. - "+value.vehicleNo.toString(),
+                      style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15),
+                    ),
                   ),
-                  value.returnOn =="0001-01-01T00:00:00"?
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: saveFlag ? Colors.grey:Colors.blue,
-                      padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
-                      foregroundColor: Colors.white,
-                      textStyle: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    onPressed: () {
-                      if(saveFlag){
-
-                      }else{
-                        var itemsToShow = value.itemDetails?.where(
-                              (item) => item.filledQty != 0,
-                        ).toList();
-
-                        if (itemsToShow != null && itemsToShow.isNotEmpty) {
-                          // List to store names of items where filledQty > current stock
-                          List<String> invalidItems = [];
-
-                          // Loop through items and check if filledQty is greater than stock
-                          for (var item in itemsToShow) {
-                            final stockInfo = getCurrentStcOfGodownKeeper.firstWhere(
-                                  (stock) => stock.itemId == item.itemId,
-                              orElse: () => GetCurrentStcOfGodownKeeperModel(), // Default if not found
-                            );
-
-                            if (item.filledQty! > (stockInfo.currentStkEmpty ?? 0)) {
-                              invalidItems.add(item.itemName ?? "Unknown Item");
-                            }
-                          }
-
-                          if (invalidItems.isNotEmpty) {
-                            // Show AlertDialog if there are items with invalid quantity
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text("Invalid Quantity"),
-                                  content: Text(
-                                    "The following items have a filled quantity greater than the available stock:\n\n" +
-                                        invalidItems.join("\n"),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.pop(context); // Close the dialog
-                                      },
-                                      child: Text("OK"),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                          } else {
-                            // Proceed with showing details dialog if no invalid qty
-                            var receiptId = value.receiptId;
-                            showDetailsDialog(context, itemsToShow, receiptId);
-                          }
-                        } else {
-                          showFlushBar(context, "No Items Available", 'No Items For Return.');
-                        }
-                      }
-
-                    },
-                    child: Text("Out"),
-                  ) :
-
-
-                      Text(""),
-                  value.returnOn =="0001-01-01T00:00:00"?
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: saveFlag ? Colors.grey:Colors.blue,
-                      padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
-                      foregroundColor: Colors.white,
-                      textStyle: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    onPressed: () {
-                      if(saveFlag){
-
-                      }else{
-                        var itemsToShow = value.itemDetails?.toList();
-                        var receiptId = value.receiptId;
-                        var vehicleNo = value.vehicleNo.toString();
-                        var receiptDate = value.receiptDate.toString();
-                        if (itemsToShow != null && itemsToShow.isNotEmpty) {
-                          // Navigate to the target screen and pass the data
-                          Navigator.pushNamed(
-                            context,
-                            ItemReceiptScreen.screenName,
-                            arguments: {
-                              'vehicleNo': vehicleNo,
-                              'receiptDate': receiptDate,
-                              'itemsToShow': itemsToShow,
-                              'modeChange' : "Edit",
-                              'receiptID' : receiptId
-
-                            },
-                          );
-                        } else {
-                          showFlushBar(context, "No Items Available", 'No Items For Return.');
-                        }
-                      }
-
-                    },
-                    child: Text("Edit"),
-                  ):
-                  Text(""),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Text( value.receiptDate != null
+                        ? DateFormat('yyyy-MM-dd').format(DateTime.parse(value.receiptDate!))
+                        : '', style: TextStyle(fontWeight: FontWeight.bold,fontSize: 15)),
+                  ),
+                  // value.returnOn =="0001-01-01T00:00:00"?
+                  // ElevatedButton(
+                  //   style: ElevatedButton.styleFrom(
+                  //     backgroundColor: saveFlag ? Colors.grey:stockTransferFlag?Colors.blue:Colors.grey,
+                  //     padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+                  //     foregroundColor: Colors.white,
+                  //     textStyle: const TextStyle(
+                  //       fontSize: 15,
+                  //       fontWeight: FontWeight.bold,
+                  //     ),
+                  //   ),
+                  //   onPressed: () {
+                  //     if(saveFlag){
+                  //     }
+                  //     else{
+                  //       if(stockTransferFlag){
+                  //         var itemsToShow = value.itemDetails?.where(
+                  //               (item) => item.filledQty != 0,
+                  //         ).toList();
+                  //         if (itemsToShow != null && itemsToShow.isNotEmpty) {
+                  //           // List to store names of items where filledQty > current stock
+                  //           List<String> invalidItems = [];
+                  //           // Loop through items and check if filledQty is greater than stock
+                  //           for (var item in itemsToShow) {
+                  //             final stockInfo = getCurrentStcOfGodownKeeper.firstWhere(
+                  //                   (stock) => stock.itemId == item.itemId,
+                  //               orElse: () => GetCurrentStcOfGodownKeeperModel(), // Default if not found
+                  //             );
+                  //             if (item.filledQty! > (stockInfo.currentStkEmpty ?? 0)) {
+                  //               invalidItems.add(item.itemName ?? "Unknown Item");
+                  //             }
+                  //           }
+                  //           if (invalidItems.isNotEmpty) {
+                  //             // Show AlertDialog if there are items with invalid quantity
+                  //             showDialog(
+                  //               context: context,
+                  //               builder: (BuildContext context) {
+                  //                 return AlertDialog(
+                  //                   title: Text("Invalid Quantity"),
+                  //                   content: Text(
+                  //                     "The following items have a filled quantity greater than the available stock:\n\n" +
+                  //                         invalidItems.join("\n"),
+                  //                   ),
+                  //                   actions: [
+                  //                     TextButton(
+                  //                       onPressed: () {
+                  //                         Navigator.pop(context); // Close the dialog
+                  //                       },
+                  //                       child: Text("OK"),
+                  //                     ),
+                  //                   ],
+                  //                 );
+                  //               },
+                  //             );
+                  //           } else {
+                  //             // Proceed with showing details dialog if no invalid qty
+                  //             var receiptId = value.receiptId;
+                  //             showDetailsDialog(context, itemsToShow, receiptId);
+                  //           }
+                  //         } else {
+                  //           showFlushBar(context, Constants.nodataFound);
+                  //         }
+                  //       }else{
+                  //         CustomAlertDialog.showCustomAlert(context, Constants.stockNotAccepted);
+                  //       }
+                  //     }
+                  //   },
+                  //   child: Text("Out"),
+                  // ) :
+                  //     Text(""),
+                  // value.returnOn =="0001-01-01T00:00:00"?
+                  // ElevatedButton(
+                  //   style: ElevatedButton.styleFrom(
+                  //     backgroundColor: saveFlag ? Colors.grey:stockTransferFlag?Colors.blue:Colors.grey,
+                  //     padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+                  //     foregroundColor: Colors.white,
+                  //     textStyle: const TextStyle(
+                  //       fontSize: 15,
+                  //       fontWeight: FontWeight.bold,
+                  //     ),
+                  //   ),
+                  //   onPressed: () {
+                  //     if(saveFlag){
+                  //
+                  //     }else {
+                  //       if (stockTransferFlag) {
+                  //         var itemsToShow = value.itemDetails?.toList();
+                  //         var receiptId = value.receiptId;
+                  //         var vehicleNo = value.vehicleNo.toString();
+                  //         var receiptDate = value.receiptDate.toString();
+                  //         if (itemsToShow != null && itemsToShow.isNotEmpty) {
+                  //           // Navigate to the target screen and pass the data
+                  //           Navigator.pushNamed(
+                  //             context,
+                  //             ItemReceiptScreen.screenName,
+                  //             arguments: {
+                  //               'vehicleNo': vehicleNo,
+                  //               'receiptDate': receiptDate,
+                  //               'itemsToShow': itemsToShow,
+                  //               'modeChange': "Edit",
+                  //               'receiptID': receiptId
+                  //             },
+                  //           );
+                  //         } else {
+                  //           showFlushBar(context,Constants.nodataFound);
+                  //         }
+                  //       } else {
+                  //         CustomAlertDialog.showCustomAlert(context,
+                  //             Constants.stockNotAccepted);
+                  //       }
+                  //     }
+                  //
+                  //   },
+                  //   child: Text("Edit"),
+                  // ):
+                  // Text(""),
                 ],
               ),
             ),
@@ -250,6 +283,7 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                           padding: const EdgeInsets.all(5.0),
                           child:
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text("Item name: ${item.itemName}",style: TextStyle(fontWeight:FontWeight.bold)),
                               Text("Current stock: ${stockInfo.currentStkEmpty}",style: TextStyle(fontWeight:FontWeight.bold)),
@@ -285,27 +319,157 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                     );
                   },
                 ),
-
-
-
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(isListViewVisible ? "View Less" :"View More"),
-                IconButton(
-                  icon: Icon(
-                    isListViewVisible ? Icons.keyboard_arrow_up_sharp : Icons.keyboard_arrow_down_sharp,
-                    size: 30,
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0,right: 8,bottom: 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Text(isListViewVisible ? "View Less" :"View More",style: Styling.actionsShowMoreText),
+                      IconButton(
+                        icon: Icon(
+                          isListViewVisible ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+                          size: 24,
+                          color:Colors.blue,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            isListViewVisible = !isListViewVisible; // Toggle ListView visibility
+                          });
+                        },
+                      ),
+                    ],
                   ),
-                  onPressed: () {
-                    setState(() {
-                      isListViewVisible = !isListViewVisible; // Toggle ListView visibility
-                    });
-                  },
-                ),
-              ],
+                  Row(
+                    children: [
+                      value.returnOn =="0001-01-01T00:00:00"?
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: saveFlag ? Colors.grey:stockTransferFlag?Colors.blue:Colors.grey,
+                          padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+                          foregroundColor: Colors.white,
+                          textStyle: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        onPressed: () {
+                          if(saveFlag){
+                            showFlushBar(context,
+                                Constants.dayEndCompleted);
+                          }
+                          else{
+                            if(stockTransferFlag){
+                              var itemsToShow = value.itemDetails?.where(
+                                    (item) => item.filledQty != 0,
+                              ).toList();
+                              if (itemsToShow != null && itemsToShow.isNotEmpty) {
+                                // List to store names of items where filledQty > current stock
+                                List<String> invalidItems = [];
+                                // Loop through items and check if filledQty is greater than stock
+                                for (var item in itemsToShow) {
+                                  final stockInfo = getCurrentStcOfGodownKeeper.firstWhere(
+                                        (stock) => stock.itemId == item.itemId,
+                                    orElse: () => GetCurrentStcOfGodownKeeperModel(), // Default if not found
+                                  );
+                                  if (item.filledQty! > (stockInfo.currentStkEmpty ?? 0)) {
+                                    invalidItems.add(item.itemName ?? "Unknown Item");
+                                  }
+                                }
+                                if (invalidItems.isNotEmpty) {
+                                  // Show AlertDialog if there are items with invalid quantity
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return
+                                        AlertDialog(
+                                        title: Text(""),
+                                        content: Text(
+                                          "The following items have a quantity greater than the available stock:\n\n" +
+                                              invalidItems.join("\n"),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context); // Close the dialog
+                                            },
+                                            child: Text("OK"),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                } else {
+                                  // Proceed with showing details dialog if no invalid qty
+                                  var receiptId = value.receiptId;
+                                  showDetailsDialog(context, itemsToShow, receiptId);
+                                }
+                              } else {
+                                showFlushBar(context, Constants.nodataFound);
+                              }
+                            }else{
+                              CustomAlertDialog.showCustomAlert(context, Constants.stockNotAccepted);
+                            }
+                          }
+                        },
+                        child: Text("Out"),
+                      ) :
+                      Text(""),
+                      SizedBox(width: 10,),
+                      value.returnOn =="0001-01-01T00:00:00"?
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: saveFlag ? Colors.grey:stockTransferFlag?Colors.blue:Colors.grey,
+                          padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+                          foregroundColor: Colors.white,
+                          textStyle: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        onPressed: () {
+                          if(saveFlag){
+                            showFlushBar(context,
+                                Constants.dayEndCompleted);
+                          }else {
+                            if (stockTransferFlag) {
+                              var itemsToShow = value.itemDetails?.toList();
+                              var receiptId = value.receiptId;
+                              var vehicleNo = value.vehicleNo.toString();
+                              var receiptDate = value.receiptDate.toString();
+                              if (itemsToShow != null && itemsToShow.isNotEmpty) {
+                                // Navigate to the target screen and pass the data
+                                Navigator.pushNamed(
+                                  context,
+                                  ItemReceiptScreen.screenName,
+                                  arguments: {
+                                    'vehicleNo': vehicleNo,
+                                    'receiptDate': receiptDate,
+                                    'itemsToShow': itemsToShow,
+                                    'modeChange': "Edit",
+                                    'receiptID': receiptId
+                                  },
+                                );
+                              } else {
+                                showFlushBar(context,Constants.nodataFound);
+                              }
+                            } else {
+                              CustomAlertDialog.showCustomAlert(context,
+                                  Constants.stockNotAccepted);
+                            }
+                          }
+
+                        },
+                        child: Text("Edit"),
+                      ):
+                      Text(""),
+                    ],
+                  )
+                ],
+              ),
             ),
           ],
         ),
@@ -322,10 +486,12 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
     List<TextEditingController> returnQtyControllers = [];
     List<TextEditingController> defectiveQtyControllers = [];
 
+
     // Initialize controllers for each item
     for (var item in items) {
       returnQtyControllers.add(TextEditingController(text: item.filledQty.toString()));
       defectiveQtyControllers.add(TextEditingController(text: "0"));
+
     }
 
     showDialog(
@@ -370,8 +536,7 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                           } else if (defectiveQty > 0) {
                             int? f = filledQty?.toInt();
                             if(defectiveQty>filledQty!){
-                              showFlushBar(context, "Invalid Quantity",
-                                  'Defective Qty Must Be Small Than Return Quantity!');
+                              showFlushBar(context, Constants.defectiveQtyItemReturn);
                             }else{
                               // If defective quantity is a valid number, subtract it from the filled quantity
                               int remainingReturnQty = f! - defectiveQty;
@@ -387,11 +552,8 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                           defectiveQtyControllers[index].text = defectiveQty.toString();
                         },
                       ),
-                      // TextFormField(
-                      //   controller: defectiveQtyControllers[index],
-                      //   decoration: InputDecoration(labelText: 'Defective'),
-                      //   keyboardType: TextInputType.number,
-                      // ),
+
+
                       Divider(),
                     ],
                   ),
@@ -440,8 +602,7 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                 // If validation fails, show an error message
                 if (!isValid) {
                   // Display the error message as a SnackBar
-                  showFlushBar(context, "Invalid Quantity",
-                      '$errorMessage');
+                  showFlushBar(context, Constants.defectiveQtyItemReturn);
                 } else {
                   // Send the data to the API if validation is successful
                   await sendItemDetailsToApi(updatedItemDetails, receiptId);
@@ -505,7 +666,7 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
         print("Request failed: ${response.statusCode}");
       }
     }else{
-      showFlushBar(context,Constants.connectionTitle,
+      showFlushBar(context,
           Constants.connectionMessage);
     }
   }
@@ -546,8 +707,7 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
           setState(() {
             isLoading = false;
           });
-          showFlushBar(context, "Fail",
-              'Unable To Load Data At This Time. Please Try Again');
+          showFlushBar(context, Constants.listGettingFail);
         }
       } catch (e) {
         setState(() {
@@ -556,11 +716,10 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
         // ScaffoldMessenger.of(context).showSnackBar(
         //   SnackBar(content: Text('Error: $e')),
         // );
-        showFlushBar(context, "Fail",
-            'Unable To Load Data At This Time. Please Try Again');
+        showFlushBar(context,  Constants.listGettingFail);
       }
     }else{
-      showFlushBar(context,Constants.connectionTitle,
+      showFlushBar(context,
           Constants.connectionMessage);
     }
 
@@ -620,6 +779,191 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
     catch (e) {
       // Exception handling
       print("Exception: $e");
+    }
+  }
+
+  Future<void> fetchTransactionList() async {
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+    if (Constants.isNetworkAvailable) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? distributorId = prefs.getString('DistributorId');
+      String? godownId = prefs.getString('godownId');
+      String? bearerToken = prefs.getString('token'); // Assuming the token is stored here
+      int dId = int.parse(distributorId!);
+      int gId = int.parse(godownId!);
+      if (bearerToken == null) {
+        throw Exception('Bearer token is missing');
+      }
+
+      final response = await http.get(
+        Uri.parse('${AppUrl.GetStockTransferDtls}/$dId/$gId'),
+        headers: {
+          'Authorization': 'Bearer $bearerToken', // Add Bearer token here
+        },
+      );
+      debugPrint(
+          "GetStockTransferDtls" + '${AppUrl.GetStockTransferDtls}/$distributorId/1/2');
+      debugPrint("GetStockTransferDtls" + response.body);
+      if (response.statusCode == 200) {
+        // Parse the response
+        List<dynamic> data = json.decode(response.body);
+        setState(() {
+          _stockTransferList = data.map((json) => GetStockTransferListModel.fromJson(json)).toList();
+          bool hasZeroStkTrans = false;
+          for (int i = 0; i < _stockTransferList.length; i++) {
+            if (_stockTransferList[i].isStkTrans == 0) {
+              hasZeroStkTrans = true;
+              debugPrint("Found item with isStkTrans = 0");
+              break; // No need to continue checking once we find an item with isStkTrans = 0
+            }
+          }
+          if (hasZeroStkTrans) {
+            stockTransferFlag = false; // Disable the button
+            // showFlushBar(
+            //     context, "Action Restricted", "Cannot perform the action as one or more items have isStkTrans = 0");
+          } else {
+            stockTransferFlag = true; // Enable the button
+          }
+        });
+        isLoading = false;
+      } else {
+        refreshTokens();
+        isLoading = false;
+        throw Exception(Constants.listGettingFail);
+      }
+    } else {
+      refreshTokens();
+      isLoading = false;
+      showFlushBar(
+          context, Constants.connectionMessage);
+    }
+  }
+
+  Future<void> refreshTokens() async {
+    LoginProvider auth = Provider.of<LoginProvider>(context, listen: false);
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      mobileNo = preferences.getString('MobileNo').toString();
+
+      final Future<Map<String, dynamic>> respose =
+      auth.refreshToken(mobileNo!, context);
+
+      try {
+        respose.then((response) {
+          EasyLoading.dismiss();
+          if (response['status']) {
+            debugPrint('RefreshTokenStatus - True');
+            fetchCurrentStock();
+            checkAndSaveDayEndData();
+            fetchTransactionList();
+          } else if (response['message'] == "UnSuccessful") {
+            debugPrint('RefreshTokenExc401 - true');
+            showDialogToExpireSession(context);
+          } else {
+            debugPrint('RefreshTokenStatus - false');
+          }
+        }).catchError((error) {
+          EasyLoading.dismiss();
+          debugPrint('RefreshTokenError1: $error');
+        });
+      } on HttpException catch (error) {
+        EasyLoading.dismiss();
+        debugPrint('RefreshTokenHttpExc: $error');
+      } catch (error) {
+        EasyLoading.dismiss();
+        debugPrint('RefreshTokenError2: $error');
+      }
+    } catch (error) {
+      EasyLoading.dismiss();
+      debugPrint('RefreshTokenError3: $error');
+    }
+  }
+
+  showDialogToExpireSession(BuildContext context) async {
+    await showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        String title = "Expired";
+        String message = "Your session is expire. Click ok to login again.";
+        String btnLabel = "Ok";
+        return Platform.isIOS
+            ? WillPopScope(
+          onWillPop: () async {
+            SystemNavigator.pop();
+            return true;
+          },
+          child: CupertinoAlertDialog(
+            title: Text(
+              title,
+              style: Styling.bodyTitle,
+            ),
+            content: Text(
+              message,
+              style: Styling.bodyTitle,
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text(
+                  btnLabel,
+                  style: Styling.blueClrText,
+                ),
+                onPressed: () {},
+              ),
+            ],
+          ),
+        )
+            : WillPopScope(
+          child: AlertDialog(
+            title: Text(title),
+            content: Text(message),
+            actions: <Widget>[
+              TextButton(
+                child: Text(btnLabel),
+                onPressed: () => logoutUser(context),
+              ),
+            ],
+          ),
+          onWillPop: () async {
+            SystemNavigator.pop();
+            return true;
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> logoutUser(BuildContext context) async {
+    ///Save data before logout logic
+    EasyLoading.show(status: 'Loading...');
+
+    try {
+      SharedPref().removeUser();
+
+      // try {
+      //   if (Platform.isAndroid) {
+      //     await FirebaseMessaging.instance
+      //         .deleteToken()
+      //         .whenComplete(() => debugPrint("Android FCM Token Deleted"));
+      //   } else if (Platform.isIOS) {
+      //     await FirebaseMessaging.instance
+      //         .deleteToken()
+      //         .whenComplete(() => debugPrint("iOS FCM Token Deleted"));
+      //   }
+      // } on PlatformException {
+      //   debugPrint('###PlatformExc');
+      // }
+
+      EasyLoading.dismiss();
+
+      Navigator.pushNamedAndRemoveUntil(
+          context, SplashScreen.screenName, (r) => false);
+
+      debugPrint("Logout Successful");
+    } catch (error) {
+      EasyLoading.dismiss();
+      debugPrint("LogoutPrefEcx: $error");
     }
   }
 

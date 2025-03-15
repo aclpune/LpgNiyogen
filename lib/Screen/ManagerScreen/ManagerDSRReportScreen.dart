@@ -177,7 +177,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                               child: Text('Cash:',
                                                   style:
                                                   Styling.itemGreyTextSmall)),
-                                          Text(totalCashAmountCashFlow.toString(),
+                                          Text(totalCashAmountCashFlow.toStringAsFixed(2),
                                               style: Styling.itemBlackTestSmallReportBold),
                                         ],
                                       ),
@@ -191,7 +191,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                               child: Text('Bank:',
                                                   style:
                                                   Styling.itemGreyTextSmall)),
-                                          Text(totalBankAmountCashFlow.toString(),
+                                          Text(totalBankAmountCashFlow.toStringAsFixed(2),
                                               style: Styling.itemBlackTestSmallReportBold),
                                         ],
                                       ),
@@ -205,7 +205,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                               child: Text('Credit:',
                                                   style:
                                                   Styling.itemGreyTextSmall)),
-                                          Text(totalCreditAmountCashFlow.toString(),
+                                          Text(totalCreditAmountCashFlow.toStringAsFixed(2),
                                               style: Styling.itemBlackTestSmallReportBold),
                                         ],
                                       ),
@@ -222,7 +222,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                               child: Text('Unsettled:',
                                                   style:
                                                   Styling.itemGreyTextSmall)),
-                                          Text(totalUnsettledAmountCashFlow.toString(),
+                                          Text(totalUnsettledAmountCashFlow.toStringAsFixed(2),
                                               style: Styling.itemBlackTestSmallReportBold),
                                         ],
                                       ),
@@ -236,7 +236,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                               child: Text('Settled:',
                                                   style:
                                                   Styling.itemGreyTextSmall)),
-                                          Text(totalSettledAmountCashFlow.toString(),
+                                          Text(totalSettledAmountCashFlow.toStringAsFixed(2),
                                               style: Styling.itemBlackTestSmallReportBold),
                                         ],
                                       ),
@@ -501,10 +501,10 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                   (item is ManagerDsrReportIncomeSalesModel)
                                       ? (item.amount == null || item.amount == 0
                                           ? "0"
-                                          : item.amount.toString())
+                                          : item.amount!.toStringAsFixed(2))
                                       : (item.amount == null || item.amount == 0
                                           ? "0"
-                                          : item.amount.toString());
+                                          : item.amount.toStringAsFixed(2));
 
 // Apply different styles based on the condition
                               TextStyle amountStyle = (item.mode == null ||
@@ -714,10 +714,10 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                   (item is ManagerDsrReportIncomeSalesModel)
                                       ? (item.amount == null || item.amount == 0
                                           ? ''
-                                          : item.amount.toString())
+                                          : item.amount!.toStringAsFixed(2))
                                       : (item.amount == null || item.amount == 0
                                           ? ''
-                                          : item.amount.toString());
+                                          : item.amount.toStringAsFixed(2));
 
 // Apply different styles based on the condition
                               TextStyle amountStyle = (item.mode == null ||
@@ -929,10 +929,10 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                   (item is ManagerDsrReportIncomeSalesModel)
                                       ? (item.amount == null || item.amount == 0
                                           ? ''
-                                          : item.amount.toString())
+                                          : item.amount!.toStringAsFixed(2))
                                       : (item.amount == null || item.amount == 0
                                           ? ''
-                                          : item.amount.toString());
+                                          : item.amount.toStringAsFixed(2));
 
 // Apply different styles based on the condition
                               TextStyle amountStyle = (item.mode == null ||
@@ -1144,10 +1144,10 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                   (item is ManagerDsrReportIncomeSalesModel)
                                       ? (item.amount == null || item.amount == 0
                                           ? ''
-                                          : item.amount.toString())
+                                          : item.amount!.toStringAsFixed(2))
                                       : (item.amount == null || item.amount == 0
                                           ? ''
-                                          : item.amount.toString());
+                                          : item.amount.toStringAsFixed(2));
 
 // Apply different styles based on the condition
                               TextStyle amountStyle = (item.mode == null ||
@@ -1253,11 +1253,11 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                 ? (item.expenseAmount == null ||
                                         item.expenseAmount == 0
                                     ? ''
-                                    : item.expenseAmount.toString())
+                                    : item.expenseAmount!.toStringAsFixed(2))
                                 : (item.expenseAmount == null ||
                                         item.expenseAmount == 0
                                     ? ''
-                                    : item.expenseAmount.toString());
+                                    : item.expenseAmount.toStringAsFixed(2));
 
 // Apply different styles based on the condition
                         TextStyle amountStyle = (item.mode == null ||
@@ -1596,28 +1596,27 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                           textAlign: TextAlign.center)),
                                 ],
                               ),
-                              SizedBox(height: 5,),
+                              SizedBox(height: 7,),
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Expanded(
-                                      flex: 3,
-                                      child: Text("Total",
-                                          style: TextStyle(fontSize: 12),
+                                      flex: 0,
+                                      child: Text("Total : ",
+                                          style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold),
                                           textAlign: TextAlign.left)),
                                   // Display the updated differences from the lists
                                   Expanded(
-                                      flex: 2,
+                                      flex: 0,
                                       child: Text(
                                           totalDiffList[index]
                                               .toStringAsFixed(2),
-                                          style: TextStyle(fontSize: 12,
+                                          style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,
                                             color: totalDiffList[index] < 0 ? Colors.red : Colors.black, // If negative, color is red, else black
                                           ),
                                           textAlign: TextAlign.center)),
                                 ],
                               ),
-
                             ],
                           ),
                         );
@@ -1630,6 +1629,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                           onPressed: isDateValid ? (){
                             if(saveFlag){
                               debugPrint("Save data$saveFlag");
+                              showFlushBar(context,
+                                  Constants.dayEndCompleted);
                             }else{
                               saveCDCMSDataMob();
                               debugPrint("Save data$saveFlag");
@@ -1730,24 +1731,24 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                       flex: 2,
                                       child: Text(
                                           data is ManagerDsrReportCashHandOverModel
-                                              ? data.collAmt?.toString() ??'0'
-                                              : data.collAmt?.toString() ??'0',
+                                              ? data.collAmt?.toStringAsFixed(2) ??'0'
+                                              : data.collAmt?.toStringAsFixed(2) ??'0',
                                           style: Styling.itemBlackTestSmallReport,
                                           textAlign: TextAlign.center)),
                                   Expanded(
                                       flex: 2,
                                       child: Text(
                                           data is ManagerDsrReportCashHandOverModel
-                                              ? data.paidAmt?.toString() ??'0'
-                                              : data.paidAmt?.toString() ??'0',
+                                              ? data.paidAmt?.toStringAsFixed(2) ??'0'
+                                              : data.paidAmt?.toStringAsFixed(2)??'0',
                                           style: Styling.itemBlackTestSmallReport,
                                           textAlign: TextAlign.center)),
                                   Expanded(
                                       flex: 2,
                                       child: Text(
                                           data is ManagerDsrReportCashHandOverModel
-                                              ? data.totalAmt?.toString() ??'0'
-                                              : data.totalAmt?.toString() ??'0',
+                                              ? data.totalAmt?.toStringAsFixed(2)??'0'
+                                              : data.totalAmt?.toStringAsFixed(2) ??'0',
                                           style: Styling.itemBlackTestSmallReport,
                                           textAlign: TextAlign.center)),
                                 ],
@@ -1765,8 +1766,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                       flex: 0,
                                       child: Text(
                                         data is ManagerDsrReportCashHandOverModel
-                                            ? data.totalAmt?.toString() ??'0'
-                                            : data.totalAmt?.toString() ??'0',
+                                            ? data.totalAmt?.toStringAsFixed(2) ??'0'
+                                            : data.totalAmt?.toStringAsFixed(2) ??'0',
                                           style: Styling.itemBlackTestBold,
                                           )),
                                 ],
@@ -1854,8 +1855,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                       flex: 2,
                                       child: Text(
                                           data is ManagerDsrReportCashDeniminationModel
-                                              ? data.amount?.toString() ??'0'
-                                              : data.amount?.toString() ??'0',
+                                              ? data.amount?.toStringAsFixed(2)??'0'
+                                              : data.amount?.toStringAsFixed(2) ??'0',
                                           style: Styling.itemBlackTestSmallReport,
                                           textAlign: TextAlign.right)),
 
@@ -1900,6 +1901,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                             // saveDayEndDataMob();
                             if(saveFlag){
                               debugPrint("Save data");
+                              showFlushBar(context,
+                                  Constants.dayEndCompleted);
                             }else{
                               _showConfirmationDialog(context);
                             }

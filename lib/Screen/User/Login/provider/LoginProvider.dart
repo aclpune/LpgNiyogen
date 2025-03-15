@@ -77,7 +77,7 @@ class LoginProvider extends ChangeNotifier {
         debugPrint("dashbpa");
 
       }else{
-      showFlushBar(context,Constants.connectionTitle,
+      showFlushBar(context,
           Constants.connectionMessage);
     }
       } catch (e) {
@@ -119,6 +119,7 @@ class LoginProvider extends ChangeNotifier {
 
         debugPrint('RefreshTokenResCode: ${response.statusCode}');
         debugPrint('RefreshTokenParams: $refreshTokenData');
+        debugPrint('RefreshTokenParams body: ${response.request}');
 
         // Handle successful response
         if (response.statusCode == Constants.success) {
@@ -161,7 +162,7 @@ class LoginProvider extends ChangeNotifier {
         result = {'status': false, 'message': 'An error occurred: ${error.toString()}'};
       }
     }else{
-      showFlushBar(context,Constants.connectionTitle,
+      showFlushBar(context,
       Constants.connectionMessage);
     }
 

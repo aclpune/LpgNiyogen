@@ -345,7 +345,7 @@ class _DeliveryBoyWiseListShowState extends State<DeliveryBoyWiseListShow> {
 
     if (!Constants.isNetworkAvailable) {
       // Return an empty list if there is no network connection
-      showFlushBar(context,Constants.connectionTitle,
+      showFlushBar(context,
           Constants.connectionMessage);
       isLoading = false;
     }else {
