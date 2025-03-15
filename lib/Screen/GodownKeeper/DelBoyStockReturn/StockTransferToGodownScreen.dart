@@ -14,6 +14,7 @@ import '../../ConstantScreen/widgets.dart';
 import '../../User/Login/provider/LoginProvider.dart';
 import '../../User/splashscreen/page/splash_screen.dart';
 import '../../Utils/CustomAppBar.dart';
+import '../../Utils/CustomeAlertDialog.dart';
 import '../../Utils/Styling.dart';
 import '../../Utils/Widget.dart';
 import '../../Utils/app_url.dart';
@@ -48,7 +49,7 @@ class _StockTransferTOGodownScreenState extends State<StockTransferTOGodownScree
   String? itemNames;
   int? itemIds,filledCount, emptyCount, defectiveCount;
   String? mobileNo;
-
+  bool stockTransferFlag = false;
 
   @override
   void initState() {
@@ -131,7 +132,7 @@ class _StockTransferTOGodownScreenState extends State<StockTransferTOGodownScree
                             setState(() {
                               int filledQty = int.tryParse(value) ?? 0;
                               if (filledQty > (filledCount ?? 0)) {
-                                showFlushBar(context, "Invalid Count", 'Stock Should Not Be Transferred More Than The Current Stock.!');
+                                showFlushBar(context, Constants.stockTransferValidation);
                                 _filledQtyController.clear();
                               }
                             });
@@ -158,7 +159,7 @@ class _StockTransferTOGodownScreenState extends State<StockTransferTOGodownScree
                             setState(() {
                               int emptyQtys = int.tryParse(value) ?? 0;
                               if (emptyQtys > (emptyCount ?? 0)) {
-                                showFlushBar(context, "Invalid Count", 'Stock Should Not Be Transferred More Than The Current Stock.!');
+                                showFlushBar(context, Constants.stockTransferValidation);
                                 _emptyQtyController.clear();
                               }
                             });
@@ -189,7 +190,7 @@ class _StockTransferTOGodownScreenState extends State<StockTransferTOGodownScree
                                   setState(() {
                                     int defectiveQtys = int.tryParse(value) ?? 0;
                                     if (defectiveQtys > (defectiveCount ?? 0)) {
-                                      showFlushBar(context, "Invalid Count", 'Stock Should Not Be Transferred More Than The Current Stock.!');
+                                      showFlushBar(context, Constants.stockTransferValidation);
                                       _defectiveQtyController.clear();
                                     }
                                   });
@@ -209,12 +210,13 @@ class _StockTransferTOGodownScreenState extends State<StockTransferTOGodownScree
                         child: DropdownButtonFormField<GetGodownListModel>(
                           decoration: buildInputBorderUpdateStatus("Select Godown", context),
                           value: _selectedGodownModel,
+                          style: Styling.textFormText,
                           items: _godownItems.map((GetGodownListModel item) {
                             return DropdownMenuItem<GetGodownListModel>(
                               value: item,
                               child: Text(
                                 item.godownNo ?? 'Unknown',
-                                style: TextStyle(fontSize: 14.0, fontWeight: FontWeight.normal),
+                                style: Styling.textFormText,
                               ),
                             );
                           }).toList(),
@@ -252,11 +254,17 @@ class _StockTransferTOGodownScreenState extends State<StockTransferTOGodownScree
                       margin: const EdgeInsets.symmetric(horizontal: 10),
                       child: ElevatedButton(
                         onPressed: () {
-                          submitStockToApi();
+    if(stockTransferFlag){
+      submitStockToApi();
+    }else{
+      CustomAlertDialog.showCustomAlert(context, Constants.stockNotAccepted);
+
+    }
+
                         },
                         child: Text("Submit", style: TextStyle(color: Colors.white)),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
+                          backgroundColor: stockTransferFlag?Colors.blue:Colors.grey,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(50),
                           ),
@@ -331,7 +339,7 @@ class _StockTransferTOGodownScreenState extends State<StockTransferTOGodownScree
       }
     } else {
       showFlushBar(
-          context, Constants.connectionTitle, Constants.connectionMessage);
+          context, Constants.connectionMessage);
     }
   }
 
@@ -418,54 +426,54 @@ class _StockTransferTOGodownScreenState extends State<StockTransferTOGodownScree
     }
   }
 
-  Future<void> fetchTransactionList() async {
-    EasyLoading.show();
-    Constants.isNetworkAvailable =
-    await InternetConnectionChecker().hasConnection;
-    if (Constants.isNetworkAvailable) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? distributorId = prefs.getString('DistributorId');
-      String? godownId = prefs.getString('godownId');
-      String? bearerToken = prefs.getString('token'); // Assuming the token is stored here
-      int dId = int.parse(distributorId!);
-      int gId = int.parse(godownId!);
-      if (bearerToken == null) {
-        throw Exception('Bearer token is missing');
-      }
-
-      final response = await http.get(
-        Uri.parse('${AppUrl.GetStockTransferDtls}/$dId/$gId'),
-        headers: {
-          'Authorization': 'Bearer $bearerToken', // Add Bearer token here
-        },
-      );
-      debugPrint(
-          "GetStockTransferDtls" + '${AppUrl.GetStockTransferDtls}/$distributorId/1/2');
-      debugPrint("GetStockTransferDtls" + response.body);
-      if (response.statusCode == 200) {
-        // Parse the response
-        List<dynamic> data = json.decode(response.body);
-        setState(() {
-          _stockTransferList =
-              data.map((json) => GetStockTransferListModel.fromJson(json)).toList();
-
-        });
-        EasyLoading.dismiss();
-        isLoading = false;
-      } else {
-        refreshTokens();
-        isLoading = false;
-        EasyLoading.dismiss();
-
-        throw Exception('Failed To Load Items');
-      }
-    } else {
-      isLoading = false;
-      EasyLoading.dismiss();
-      showFlushBar(
-          context, Constants.connectionTitle, Constants.connectionMessage);
-    }
-  }
+  // Future<void> fetchTransactionList() async {
+  //   EasyLoading.show();
+  //   Constants.isNetworkAvailable =
+  //   await InternetConnectionChecker().hasConnection;
+  //   if (Constants.isNetworkAvailable) {
+  //     SharedPreferences prefs = await SharedPreferences.getInstance();
+  //     String? distributorId = prefs.getString('DistributorId');
+  //     String? godownId = prefs.getString('godownId');
+  //     String? bearerToken = prefs.getString('token'); // Assuming the token is stored here
+  //     int dId = int.parse(distributorId!);
+  //     int gId = int.parse(godownId!);
+  //     if (bearerToken == null) {
+  //       throw Exception('Bearer token is missing');
+  //     }
+  //
+  //     final response = await http.get(
+  //       Uri.parse('${AppUrl.GetStockTransferDtls}/$dId/$gId'),
+  //       headers: {
+  //         'Authorization': 'Bearer $bearerToken', // Add Bearer token here
+  //       },
+  //     );
+  //     debugPrint(
+  //         "GetStockTransferDtls" + '${AppUrl.GetStockTransferDtls}/$distributorId/1/2');
+  //     debugPrint("GetStockTransferDtls" + response.body);
+  //     if (response.statusCode == 200) {
+  //       // Parse the response
+  //       List<dynamic> data = json.decode(response.body);
+  //       setState(() {
+  //         _stockTransferList =
+  //             data.map((json) => GetStockTransferListModel.fromJson(json)).toList();
+  //
+  //       });
+  //       EasyLoading.dismiss();
+  //       isLoading = false;
+  //     } else {
+  //       refreshTokens();
+  //       isLoading = false;
+  //       EasyLoading.dismiss();
+  //
+  //       throw Exception(Constants.listGettingFail);
+  //     }
+  //   } else {
+  //     isLoading = false;
+  //     EasyLoading.dismiss();
+  //     showFlushBar(
+  //         context, Constants.connectionMessage);
+  //   }
+  // }
 
   Future<void> refreshTokens() async {
     LoginProvider auth = Provider.of<LoginProvider>(context, listen: false);
@@ -593,4 +601,68 @@ class _StockTransferTOGodownScreenState extends State<StockTransferTOGodownScree
       debugPrint("LogoutPrefEcx: $error");
     }
   }
+
+  Future<void> fetchTransactionList() async {
+    EasyLoading.show();
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+    if (Constants.isNetworkAvailable) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? distributorId = prefs.getString('DistributorId');
+      String? godownId = prefs.getString('godownId');
+      String? bearerToken = prefs.getString('token'); // Assuming the token is stored here
+      int dId = int.parse(distributorId!);
+      int gId = int.parse(godownId!);
+      if (bearerToken == null) {
+        throw Exception('Bearer token is missing');
+      }
+
+      final response = await http.get(
+        Uri.parse('${AppUrl.GetStockTransferDtls}/$dId/$gId'),
+        headers: {
+          'Authorization': 'Bearer $bearerToken', // Add Bearer token here
+        },
+      );
+      debugPrint(
+          "GetStockTransferDtls" + '${AppUrl.GetStockTransferDtls}/$distributorId/1/2');
+      debugPrint("GetStockTransferDtls" + response.body);
+      if (response.statusCode == 200) {
+        // Parse the response
+        List<dynamic> data = json.decode(response.body);
+        setState(() {
+          _stockTransferList = data.map((json) => GetStockTransferListModel.fromJson(json)).toList();
+          bool hasZeroStkTrans = false;
+          for (int i = 0; i < _stockTransferList.length; i++) {
+            if (_stockTransferList[i].isStkTrans == 0) {
+              hasZeroStkTrans = true;
+              debugPrint("Found item with isStkTrans = 0");
+              break; // No need to continue checking once we find an item with isStkTrans = 0
+            }
+          }
+          if (hasZeroStkTrans) {
+            stockTransferFlag = false; // Disable the button
+            // showFlushBar(
+            //     context, "Action Restricted", "Cannot perform the action as one or more items have isStkTrans = 0");
+          } else {
+            stockTransferFlag = true; // Enable the button
+          }
+          EasyLoading.dismiss();
+        });
+
+        isLoading = false;
+      } else {
+        EasyLoading.dismiss();
+        refreshTokens();
+        isLoading = false;
+        throw Exception(Constants.listGettingFail);
+      }
+    } else {
+      EasyLoading.dismiss();
+      refreshTokens();
+      isLoading = false;
+      showFlushBar(
+          context, Constants.connectionMessage);
+    }
+  }
+
 }

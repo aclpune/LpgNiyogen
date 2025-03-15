@@ -203,7 +203,7 @@ class Styling {
   static final TextStyle actionsShowMoreText = TextStyle(
       fontSize: 1.8 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
       fontFamily: 'OpenSans',
-      color: const Color(0xff1280b3));
+      color: Colors.blue);
 
   static final TextStyle blueClrText = TextStyle(
     color: const Color(0xff1280b3),
@@ -270,6 +270,18 @@ class Styling {
     fontFamily: 'OpenSans',
     fontWeight: FontWeight.bold,
     color: Colors.black,);
+
+  static final TextStyle itemGreyTextBig = TextStyle(
+      fontSize: 2 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
+      fontFamily: 'OpenSans',
+      color: Colors.grey[700]);
+
+  static final TextStyle itemBlackTestBigs = TextStyle(
+    fontSize: 2 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
+    fontFamily: 'OpenSans',
+    color: Colors.black,);
+
+
 
   /* static final TextStyle selectedTabLight = TextStyle(
     color: Colors.black,

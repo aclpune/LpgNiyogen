@@ -111,7 +111,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
     // Validate input for the empty cylinder count
     if (_emptyController.text.isEmpty) {
 
-      showFlushBar(context, "Consumer Count",
+      showFlushBar(context,
           'Add Empty Cylinder Count!');
     } else {
       // Parse all input values to integers (default to 0 if empty)
@@ -140,16 +140,16 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
               debugPrint(selectedDelBoyId.toString());
               debugPrint(formattedDate);
               if (itemExists) {
-                showFlushBar(context, "Already Exists",
-                    'The Entered Item Already Exists For The Selected Delivery Men!');
+                showFlushBar(context,
+                    Constants.recordAlreadyExist);
               } else {
                 if (itemExistInDMDatabaseToday) {
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
-                        title: Text("Start New Trip"),
-                        content: Text("Do You Want To Start New Trip?"),
+                        title: Text(""),
+                        content: Text("Do you want to start a new trip?"),
                         actions: [
                           TextButton(
                             onPressed: () {
@@ -343,28 +343,24 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
               }
               }
               else {
-                showFlushBar(context, "Invalid Count",
-                    'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+                showFlushBar(context, Constants.countShouldNotBeGreater);
               }
             } else {
-              showFlushBar(context, "Invalid Count",
-                  'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+              showFlushBar(context, Constants.countShouldNotBeGreater);
             }
             // } else {
             //   showFlushBar(context, "Invalid Count",
             //       'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
             // }
           } else {
-            showFlushBar(context, "Invalid Count",
-                'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+            showFlushBar(context,Constants.countShouldNotBeGreater);
           }
         } else {
-          showFlushBar(context, "Invalid Count",
-              'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+          showFlushBar(context, Constants.countShouldNotBeGreater);
         }
       }else{
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Total Sale Cannot Be Greater Than Filled Stock')),
+          SnackBar(content: Text(Constants.totalSaleQtyDailySale)),
         );
       }
     }
@@ -610,8 +606,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                               // Check if we can add more consumers
                               if (currentCount >= svQty) {
                                 controller.clear();
-                                showFlushBar(context, "Consumer Count Exceed",
-                                    'Consumer Details Count Should Not Exceed The SV Count!');
+                                showFlushBar(context, Constants.svConsumerCountExceed);
                               } else {
                                 // Add the input as a string in the remarksList
                                 // setState(() {
@@ -663,8 +658,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
 
                                     if (alreadyExists) {
                                       // Show a SnackBar if the input value already exists
-                                      showFlushBar(context, "Consumer Exist",
-                                          'This Consumer Already Exist!');
+                                      showFlushBar(context,Constants.consumerExist);
                                     } else {
                                       // Add input to the list if it's not already present
                                       setState(() {
@@ -747,7 +741,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                           return Row(
                             children: [
                               Text(
-                                'Consumer Details Count Should\n Not Exceed The SV Count!.',
+                                Constants.svConsumerCountExceedTwoLine,
                                 style: TextStyle(color: Colors.red),
                               ),
                             ],
@@ -798,8 +792,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                           //   ),
                           // );
 
-                          showFlushBar(context, "Invalid Count",
-                              'Consumer Details Count Should Not Exceed The SV Count!');
+                          showFlushBar(context,Constants.svConsumerCountExceed);
 
                           // showDialog(
                           //   context: context,
@@ -841,8 +834,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                             // Check if adding the new remark will exceed svQty
                             if (currentCount >= svQty) {
                               // If the number of items exceeds svQty, show a message to the user
-                              showFlushBar(context, "Invalid Count",
-                                  'Consumer Details Count Should Not Exceed The SV Count!');
+                              showFlushBar(context, Constants.svConsumerCountExceed);
                             } else {
                               // If the current count is within the limit, add the new remark
                               setState(() {
@@ -934,8 +926,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                               // Check if we can add more consumers
                               if (currentCount >= tvQty) {
                                 controller.clear();
-                                showFlushBar(context, "Consumer Count Exceed",
-                                    'Consumer Details Count Should Not Exceed The TV Count!');
+                                showFlushBar(context, Constants.tvConsumerCountExceed);
                               } else {
                                 // Add the input as a string in the remarksList
                                 // setState(() {
@@ -987,8 +978,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
 
                                     if (alreadyExists) {
                                       // Show a SnackBar if the input value already exists
-                                      showFlushBar(context, "Consumer Exist",
-                                          'This Consumer Already Exist!');
+                                      showFlushBar(context, Constants.consumerExist);
                                     } else {
                                       // Add input to the list if it's not already present
                                       setState(() {
@@ -1048,7 +1038,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                             }
                                           });
 
-                                          EasyLoading.showToast("Data Deleted Successfully.",
+                                          EasyLoading.showToast(Constants.dataDeleted,
                                               duration: const Duration(milliseconds: 3000));
                                         },
                                       ),
@@ -1074,7 +1064,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                           return Row(
                             children: [
                               Text(
-                                'Consumer Details Count Should\n Not Exceed The TV Count!.',
+                                Constants.tvConsumerCountExceedTwoLine,
                                 style: TextStyle(color: Colors.red),
                               ),
                             ],
@@ -1125,8 +1115,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                           //   ),
                           // );
 
-                          showFlushBar(context, "Invalid Count",
-                              'Consumer Details Count Should Not Exceed The TV Count!');
+                          showFlushBar(context, Constants.tvConsumerCountExceed);
 
                           // showDialog(
                           //   context: context,
@@ -1167,8 +1156,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                             // Check if adding the new remark will exceed svQty
                             if (currentCount >= tvQty) {
                               // If the number of items exceeds svQty, show a message to the user
-                              showFlushBar(context, "Invalid Count",
-                                  'Consumer Details Count Should Not Exceed The TV Count!');
+                              showFlushBar(context, Constants.tvConsumerCountExceed);
                             } else {
                               // If the current count is within the limit, add the new remark
                               setState(() {
@@ -1890,8 +1878,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                         int svQty = int.parse(_svController.text);
                                         // Check if we can add more consumers
                                         if (currentCount > svQty) {
-                                          showFlushBar(context, "No Of Consumer",
-                                              'Consumer Details Count Should Not Exceed The SV Count!');
+                                          showFlushBar(context,  Constants.svConsumerCountExceed);
                                         }else {
                                           if(_tvController.text.isNotEmpty){
                                             int currentCountTV = tvConsumerList
@@ -1899,8 +1886,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                 .fold(0, (a, b) => a + b);
                                             int tvQty = int.parse(_tvController.text);
                                             if(currentCountTV > tvQty){
-                                              showFlushBar(context, "No Of Consumer",
-                                                  'Consumer Details Count Should Not Exceed The TV Count!');
+                                              showFlushBar(context,Constants.tvConsumerCountExceed);
                                             }else{
                                               _updateItem();
                                             }
@@ -1915,8 +1901,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                               .fold(0, (a, b) => a + b);
                                           int tvQty = int.parse(_tvController.text);
                                           if(currentCountTV > tvQty){
-                                            showFlushBar(context, "No Of Consumer",
-                                                'Consumer Details Count Should Not Exceed The TV Count!');
+                                            showFlushBar(context,Constants.tvConsumerCountExceed);
                                           }else{
                                             _updateItem();
                                           }
@@ -1925,24 +1910,20 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                         }
                                       }
                                     } else {
-                                      showFlushBar(context, "Cylinder Count",
-                                          'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+                                      showFlushBar(context,Constants.countShouldNotBeGreater);
                                     }
                                   } else {
-                                    showFlushBar(context, "Cylinder Count",
-                                        'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+                                    showFlushBar(context, Constants.countShouldNotBeGreater);
                                   }
                                 // } else {
                                 //   showFlushBar(context, "Cylinder Count",
                                 //       'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
                                 // }
                               } else {
-                                showFlushBar(context, "Cylinder Count",
-                                    'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+                                showFlushBar(context, Constants.countShouldNotBeGreater);
                               }
                             } else {
-                              showFlushBar(context, "Cylinder Count",
-                                  'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+                              showFlushBar(context,Constants.countShouldNotBeGreater);
                             }
                           }else{
                             if(_dataGetFromDBDelBoy.isNotEmpty) {
@@ -1963,8 +1944,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                 _svController.text);
                                             // Check if we can add more consumers
                                             if (currentCount > svQty) {
-                                              showFlushBar(context, "Consumer Count Exceed",
-                                                  'Consumer Details Count Should Not Exceed The SV Count!');
+                                              showFlushBar(context,Constants.svConsumerCountExceed);
                                             } else {
                                               if(_tvController.text.isNotEmpty){
                                                 int currentCountTV = tvConsumerList
@@ -1972,8 +1952,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                     .fold(0, (a, b) => a + b);
                                                 int tvQty = int.parse(_tvController.text);
                                                 if(currentCountTV > tvQty){
-                                                  showFlushBar(context, "No Of Consumer",
-                                                      'Consumer Details Count Should Not Exceed The TV Count!');
+                                                  showFlushBar(context,Constants.tvConsumerCountExceed);
                                                 }else{
                                                   final isUpdated =
                                                   await updateRefillSale
@@ -2015,7 +1994,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                   );
 
                                                   if (isUpdated == true) {
-                                                    EasyLoading.showToast("Data Updated Successfully",
+                                                    EasyLoading.showToast(Constants.dataDeleted,
                                                         duration: const Duration(milliseconds: 3000));
 
                                                     fetchData(
@@ -2041,8 +2020,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                       _selectedItem = '';
                                                     });
                                                   } else {
-                                                    showFlushBar(context, "Item Exists",
-                                                        'This Item Already Exists!');
+                                                    showFlushBar(context, Constants.recordAlreadyExist);
                                                   }
                                                 }
                                               }else{
@@ -2086,7 +2064,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                 );
 
                                                 if (isUpdated == true) {
-                                                  EasyLoading.showToast("Data Updated Successfully",
+                                                  EasyLoading.showToast(Constants.dataUpdated,
                                                       duration: const Duration(milliseconds: 3000));
 
                                                   fetchData(
@@ -2112,8 +2090,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                     _selectedItem = '';
                                                   });
                                                 } else {
-                                                  showFlushBar(context, "Item Exists",
-                                                      'This Item Already Exists!');
+                                                  showFlushBar(context, Constants.recordAlreadyExist);
                                                 }
                                               }
                                             }
@@ -2124,8 +2101,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                   .fold(0, (a, b) => a + b);
                                               int tvQty = int.parse(_tvController.text);
                                               if(currentCountTV > tvQty){
-                                                showFlushBar(context, "No Of Consumer",
-                                                    'Consumer Details Count Should Not Exceed The TV Count!');
+                                                showFlushBar(context,Constants.tvConsumerCountExceed);
                                               }else{
                                                 final isUpdated =
                                                 await updateRefillSale
@@ -2167,7 +2143,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                 );
 
                                                 if (isUpdated == true) {
-                                                  EasyLoading.showToast("Data Updated Successfully",
+                                                  EasyLoading.showToast(Constants.dataUpdated,
                                                       duration: const Duration(milliseconds: 3000));
 
                                                   fetchData(
@@ -2193,8 +2169,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                     _selectedItem = '';
                                                   });
                                                 } else {
-                                                  showFlushBar(context, "Item Exists",
-                                                      'This Item Already Exists!');
+                                                  showFlushBar(context, Constants.recordAlreadyExist);
                                                 }
                                               }
                                             }else{
@@ -2238,7 +2213,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                               );
 
                                               if (isUpdated == true) {
-                                                EasyLoading.showToast("Data Updated Successfully",
+                                                EasyLoading.showToast(Constants.dataUpdated,
                                                     duration: const Duration(milliseconds: 3000));
 
                                                 fetchData(
@@ -2264,30 +2239,25 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                   _selectedItem = '';
                                                 });
                                               } else {
-                                                showFlushBar(context, "Item Exists",
-                                                    'This Item Already Exists!');
+                                                showFlushBar(context, Constants.recordAlreadyExist);
                                               }
                                             }
                                           }
                                         } else {
-                                          showFlushBar(context, "Cylinder Count",
-                                              'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+                                          showFlushBar(context,Constants.countShouldNotBeGreater);
                                         }
                                       } else {
-                                        showFlushBar(context, "Cylinder Count",
-                                            'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+                                        showFlushBar(context, Constants.countShouldNotBeGreater);
                                       }
                                     // } else {
                                     //   showFlushBar(context, "Cylinder Count",
                                     //       'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
                                     // }
                                   } else {
-                                    showFlushBar(context, "Cylinder Count",
-                                        'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+                                    showFlushBar(context, Constants.countShouldNotBeGreater);
                                   }
                                 } else {
-                                  showFlushBar(context, "Cylinder Count",
-                                      'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+                                  showFlushBar(context,Constants.countShouldNotBeGreater);
                                 }
                               // }
 
@@ -2662,14 +2632,13 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                               widget.dMId
                                                                   ?.toInt() ??
                                                                   0);
-                                                          EasyLoading.showToast("Data Deleted Successfully.",
+                                                          EasyLoading.showToast(Constants.dataDeleted,
                                                               duration: const Duration(milliseconds: 3000));
 
                                                         } catch (e) {
                                                           debugPrint(
                                                               "Error deleting row: $e");
-                                                          showFlushBar(context, "Fail",
-                                                              'Fail To Deleted Record.!');
+                                                          showFlushBar(context, Constants.dataDeletedFail);
                                                         }
                                                       }
                                                       // If the user confirms, proceed with deletion
@@ -2884,7 +2853,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                     );
 
                                                     // Optionally show a confirmation message (snack bar, dialog, etc.)
-                                                    EasyLoading.showToast("Data Deleted Successfully.",
+                                                    EasyLoading.showToast(Constants.dataDeleted,
                                                         duration: const Duration(milliseconds: 3000));
                                                   } else {
                                                     debugPrint(
@@ -2893,8 +2862,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                 } catch (e) {
                                                   debugPrint(
                                                       "Error deleting row: $e");
-                                                  showFlushBar(context, "Fail",
-                                                      'Fail To Deleted Record.');
+                                                  showFlushBar(context,Constants.dataDeletedFail);
                                                 }
                                               }
                                             },
@@ -3034,7 +3002,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
     } else {
       EasyLoading.dismiss();
       showFlushBar(
-          context, Constants.connectionTitle, Constants.connectionMessage);
+          context,Constants.connectionMessage);
     }
   }
 
@@ -3070,11 +3038,11 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
         });
       } else {
         refreshTokens();
-        throw Exception('Failed To Load Items');
+        throw Exception(Constants.listGettingFail);
       }
     } else {
       showFlushBar(
-          context, Constants.connectionTitle, Constants.connectionMessage);
+          context, Constants.connectionMessage);
     }
   }
 
@@ -3127,11 +3095,11 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
         }
       } else {
         // Optionally handle token refresh here or show an error
-        throw Exception('Failed To Load Items');
+        throw Exception(Constants.listGettingFail);
       }
     } else {
       showFlushBar(
-          context, Constants.connectionTitle, Constants.connectionMessage);
+          context, Constants.connectionMessage);
     }
   }
 
@@ -3276,7 +3244,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
     } else {
       EasyLoading.dismiss();
       showFlushBar(
-          context, Constants.connectionTitle, Constants.connectionMessage);
+          context, Constants.connectionMessage);
     }
   }
 
@@ -3409,8 +3377,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                             remainingCount = emptyCount - inputCount!;
                             debugPrint("y");
                           } else {
-                            showFlushBar(context, " Invalid Count",
-                                'Input count must me smaller than empty!');
+                            showFlushBar(context, Constants.imbalanceCountValidation);
                             countController.text = '';
                             remainingCount = emptyCount;
                             debugPrint("yu");
@@ -3446,8 +3413,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                       addItemImbalanceQty(delMenId, itemId,inputCount);
                       Navigator.of(context).pop(); // Close the popup
                     } else {
-                      showFlushBar(context, "Invalid Count",
-                          'Enter a Valid Count!');
+                      showFlushBar(context, Constants.imbalanceCountValidation);
                     }
                   },
                   child: Text(
@@ -3651,8 +3617,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
             EasyLoading.dismiss();
             isLoading = false;
           });
-          showFlushBar(context, "Please Try Again",
-              'Unable To Load Data At This Time. Please Try Again');
+          showFlushBar(context, Constants.listGettingFail);
         }
       } catch (e) {
         setState(() {
@@ -3662,13 +3627,12 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
         // ScaffoldMessenger.of(context).showSnackBar(
         //   SnackBar(content: Text('Error: $e')),
         // );
-        showFlushBar(context, "Please Try Again",
-            'Unable To Load Data At This Time. Please Try Again');
+        showFlushBar(context,  Constants.listGettingFail);
       }
     } else {
       EasyLoading.dismiss();
       showFlushBar(
-          context, Constants.connectionTitle, Constants.connectionMessage);
+          context, Constants.connectionMessage);
     }
   }
 
@@ -3791,8 +3755,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
         }
 
         if (apiItemList.isEmpty) {
-          showFlushBar(context, "No Records",
-              'No Records Available To Send!!');
+          showFlushBar(context, Constants.nodataFound);
           EasyLoading.dismiss();
           return;
         }
@@ -3830,8 +3793,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
           EasyLoading.dismiss();
         } else {
           print('Failed to send data: ${response.statusCode}');
-          showFlushBar(context, "Fail",
-              'Failed To Send Data. Please Try Again Later!');
+          showFlushBar(context, Constants.failToInserRecord);
           EasyLoading.dismiss();
         }
       } catch (e) {
@@ -3841,7 +3803,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
     } else {
       EasyLoading.dismiss();
       showFlushBar(
-          context, Constants.connectionTitle, Constants.connectionMessage);
+          context, Constants.connectionMessage);
     }
   }
 
@@ -3881,7 +3843,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
             isLoading = false;
           });
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to fetch data.')),
+            SnackBar(content: Text(Constants.listGettingFail)),
           );
         }
       } catch (e) {
@@ -3893,7 +3855,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
         );
       }
     } else {
-      showFlushBar(context, Constants.connectionTitle, Constants.connectionMessage);
+      showFlushBar(context, Constants.connectionMessage);
     }
   }
 
@@ -3937,8 +3899,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
             isLoading = false;
             EasyLoading.dismiss();
           });
-          showFlushBar(context, "Fail",
-              'Unable To Load Data At This Time. Please Try Again');
+          showFlushBar(context, Constants.listGettingFail);
         }
       } catch (e) {
         setState(() {
@@ -3948,12 +3909,11 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
         // ScaffoldMessenger.of(context).showSnackBar(
         //   SnackBar(content: Text('Error: $e')),
         // );
-        showFlushBar(context, "Fail",
-            'Unable To Load Data At This Time. Please Try Again');
+        showFlushBar(context,Constants.listGettingFail);
       }
     }else{
       EasyLoading.dismiss();
-      showFlushBar(context,Constants.connectionTitle,
+      showFlushBar(context,
           Constants.connectionMessage);
     }
 

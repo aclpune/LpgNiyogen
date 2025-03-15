@@ -569,264 +569,8 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                     ),
                                   ),
 
-                                  Column(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(left: 8.0),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              "Filled",
-                                              style: Styling.textFormText,
-                                            ),
-
-                                          ],
-                                        ),
-                                      ),
-                                      Card(
-                                        elevation: 5,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
-                                        child:
-                                        Column(
-                                          children: [
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(12),
-                                                  topRight: Radius.circular(12),
-                                                ),
-                                              ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(8.0),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-                                                    Expanded(
-                                                      flex:1,
-                                                      child: Text(
-                                                        '',
-                                                        style: TextStyle(
-                                                          fontWeight: FontWeight.bold,
-                                                          color: Colors.black,
-                                                          fontSize: 14,
-                                                        ),
-                                                        textAlign: TextAlign.center,
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex:1,
-                                                      child: Text(
-                                                        'Invoice',
-                                                        style: TextStyle(
-                                                          fontWeight: FontWeight.bold,
-                                                          color: Colors.black,
-                                                          fontSize: 14,
-                                                        ),
-                                                        textAlign: TextAlign.center,
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex:1,
-                                                      child: Text(
-                                                        'EMR',
-                                                        style: TextStyle(
-                                                          fontWeight: FontWeight.bold,
-                                                          color: Colors.black,
-                                                          fontSize: 14,
-                                                        ),
-                                                        textAlign: TextAlign.center,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            getCurrentStockDetailManager.isNotEmpty?
-                                            ListView.builder(
-                                              shrinkWrap: true,
-                                              physics: NeverScrollableScrollPhysics(),
-                                              itemCount: getCurrentStockDetailManager.length,
-                                              itemBuilder: (context, index) {
-                                                final items = getCurrentStockDetailManager[index];
-
-                                                return
-                                                  Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child:
-                                                    Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      children: [
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                          children: [
-                                                            Expanded(
-                                                              flex:1,
-                                                              child: Text(
-                                                                items.itemName.toString(),
-                                                                style:Styling.textFormText,
-                                                                textAlign: TextAlign.center,
-                                                              ),
-                                                            ),
-                                                            Expanded(
-                                                              flex:1,
-                                                              child: Text(
-                                                                items.totalInvoiceCnt.toString(),
-                                                                style:Styling.textFormText,
-                                                                textAlign: TextAlign.center,
-                                                              ),
-                                                            ),
-
-                                                            Expanded(
-                                                              flex:1,
-                                                              child: Text(
-                                                                items.filledEMRCnt.toString(),
-                                                                style:Styling.textFormText,
-                                                                textAlign: TextAlign.center,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  );
-
-
-                                              },
-                                            ):
-                                            Container(
-                                              child: Text("No Data Available"),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 15,),
-                                  Column(
-                                    children: [
-                                      Column(
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(left: 8.0),
-                                            child: Row(
-                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Text(
-                                                  "Empty (TV)",
-                                                  style: Styling.textFormText,
-                                                ),
-
-                                              ],
-                                            ),
-                                          ),
-                                          Card(
-                                            elevation: 5,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(12),
-                                            ),
-                                            child:
-                                            Column(
-                                              children: [
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                    borderRadius: BorderRadius.only(
-                                                      topLeft: Radius.circular(12),
-                                                      topRight: Radius.circular(12),
-                                                    ),
-                                                  ),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        Expanded(
-                                                          flex:1,
-                                                          child: Text(
-                                                            '',
-                                                            style: TextStyle(
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.black,
-                                                              fontSize: 14,
-                                                            ),
-                                                            textAlign: TextAlign.center,
-                                                          ),
-                                                        ),
-                                                        Expanded(
-                                                          flex:1,
-                                                          child: Text(
-                                                            'TV',
-                                                            style: TextStyle(
-                                                              fontWeight: FontWeight.bold,
-                                                              color: Colors.black,
-                                                              fontSize: 14,
-                                                            ),
-                                                            textAlign: TextAlign.center,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                                getCurrentStockDetailManager.isNotEmpty?
-                                                ListView.builder(
-                                                  shrinkWrap: true,
-                                                  physics: NeverScrollableScrollPhysics(),
-                                                  itemCount: getCurrentStockDetailManager.length,
-                                                  itemBuilder: (context, index) {
-                                                    final items = getCurrentStockDetailManager[index];
-
-                                                    return
-                                                      Padding(
-                                                        padding: const EdgeInsets.all(8.0),
-                                                        child:
-                                                        Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment: MainAxisAlignment.center,
-                                                              children: [
-                                                                Expanded(
-                                                                  flex:1,
-                                                                  child: Text(
-                                                                    items.itemName.toString(),
-                                                                    style:Styling.textFormText,
-                                                                    textAlign: TextAlign.center,
-                                                                  ),
-                                                                ),
-                                                                Expanded(
-                                                                  flex:1,
-                                                                  child: Text(
-                                                                    items.emptyTVCnt.toString(),
-                                                                    style:Styling.textFormText,
-                                                                    textAlign: TextAlign.center,
-                                                                  ),
-                                                                ),
-
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      );
-
-
-                                                  },
-                                                ):
-                                                Container(
-                                                  child: Text("No Data Available"),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 15,),
-                                  // Check if any item has a non-null, non-zero defectivCnt
-                                  Container(
+                                  Visibility(
+                                    visible: getCurrentStockDetailManager.any((item) => item.totalInvoiceCnt! > 0 || item.filledEMRCnt! > 0), // Condition to check visibility
                                     child: Column(
                                       children: [
                                         Padding(
@@ -835,7 +579,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
-                                                "Defective",
+                                                "Filled",
                                                 style: Styling.textFormText,
                                               ),
 
@@ -877,7 +621,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                       Expanded(
                                                         flex:1,
                                                         child: Text(
-                                                          'Defective',
+                                                          'Invoice',
                                                           style: TextStyle(
                                                             fontWeight: FontWeight.bold,
                                                             color: Colors.black,
@@ -889,7 +633,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                       Expanded(
                                                         flex:1,
                                                         child: Text(
-                                                          'Since',
+                                                          'EMR',
                                                           style: TextStyle(
                                                             fontWeight: FontWeight.bold,
                                                             color: Colors.black,
@@ -906,51 +650,53 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                               ListView.builder(
                                                 shrinkWrap: true,
                                                 physics: NeverScrollableScrollPhysics(),
-                                                itemCount: getCurrentStockDetailManager.length,
+                                                // itemCount: getCurrentStockDetailManager.length,
+                                                itemCount: getCurrentStockDetailManager
+                                                    .where((item) => item.totalInvoiceCnt! > 0 || item.filledEMRCnt! > 0) // Filter items with defectivCnt > 0
+                                                    .length,
                                                 itemBuilder: (context, index) {
                                                   final items = getCurrentStockDetailManager[index];
 
                                                   return
+                                                    Padding(
+                                                      padding: const EdgeInsets.all(8.0),
+                                                      child:
+                                                      Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            children: [
+                                                              Expanded(
+                                                                flex:1,
+                                                                child: Text(
+                                                                  items.itemName.toString(),
+                                                                  style:Styling.textFormText,
+                                                                  textAlign: TextAlign.center,
+                                                                ),
+                                                              ),
+                                                              Expanded(
+                                                                flex:1,
+                                                                child: Text(
+                                                                  items.totalInvoiceCnt.toString(),
+                                                                  style:Styling.textFormText,
+                                                                  textAlign: TextAlign.center,
+                                                                ),
+                                                              ),
 
-                                                      Padding(
-                                                        padding: const EdgeInsets.all(8.0),
-                                                        child:
-                                                        Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment: MainAxisAlignment.center,
-                                                              children: [
-                                                                Expanded(
-                                                                  flex:1,
-                                                                  child: Text(
-                                                                    items.itemName.toString(),
-                                                                    style:Styling.textFormText,
-                                                                    textAlign: TextAlign.center,
-                                                                  ),
+                                                              Expanded(
+                                                                flex:1,
+                                                                child: Text(
+                                                                  items.filledEMRCnt.toString(),
+                                                                  style:Styling.textFormText,
+                                                                  textAlign: TextAlign.center,
                                                                 ),
-                                                                Expanded(
-                                                                  flex:1,
-                                                                  child: Text(
-                                                                    items.defectivCnt.toString(),
-                                                                    style:Styling.textFormText,
-                                                                    textAlign: TextAlign.center,
-                                                                  ),
-                                                                ),
-
-                                                                Expanded(
-                                                                  flex:1,
-                                                                  child: Text(
-                                                                    DateFormat('dd-MM-yyyy').format(DateTime.parse(items.defectivFromDate.toString() ?? '')),
-                                                                    style:Styling.textFormText,
-                                                                    textAlign: TextAlign.center,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      );
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
 
 
                                                 },
@@ -961,182 +707,143 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                             ],
                                           ),
                                         ),
+                                        SizedBox(height: 15,),
                                       ],
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                          ],
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment:
-                            MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("Outward",style:Styling.bodyTitleWithBlueHight,),
-                            ],
-                          ),
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Title for Cylinder Categories Table
-                            Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child: Column(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  // SizedBox(height: 15,),
+                                  Visibility(
+                                    visible: getCurrentStockDetailManager.any((item) => item.emptyTVCnt! > 0 ), // Condition to check visibility
+                                    child: Column(
                                       children: [
-                                        Text("Current Outward Stock",style:Styling.bodyTitleBig,),
-                                      ],
-                                    ),
-                                  ),
-                                  Column(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(left: 8.0),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              "Empty",
-                                              style: Styling.textFormText,
-                                            ),
-
-                                          ],
-                                        ),
-                                      ),
-                                      Card(
-                                        elevation: 5,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
-                                        child:
                                         Column(
                                           children: [
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(12),
-                                                  topRight: Radius.circular(12),
-                                                ),
-                                              ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(8.0),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-                                                    Expanded(
-                                                      flex:1,
-                                                      child: Text(
-                                                        '',
-                                                        style: TextStyle(
-                                                          fontWeight: FontWeight.bold,
-                                                          color: Colors.black,
-                                                          fontSize: 14,
-                                                        ),
-                                                        textAlign: TextAlign.center,
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex:1,
-                                                      child: Text(
-                                                        'CRD',
-                                                        style: TextStyle(
-                                                          fontWeight: FontWeight.bold,
-                                                          color: Colors.black,
-                                                          fontSize: 14,
-                                                        ),
-                                                        textAlign: TextAlign.center,
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex:1,
-                                                      child: Text(
-                                                        'Defective',
-                                                        style: TextStyle(
-                                                          fontWeight: FontWeight.bold,
-                                                          color: Colors.black,
-                                                          fontSize: 14,
-                                                        ),
-                                                        textAlign: TextAlign.center,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(left: 8.0),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    "Empty (TV)",
+                                                    style: Styling.textFormText,
+                                                  ),
+
+                                                ],
                                               ),
                                             ),
-                                            getCurrentStockDetailManager.isNotEmpty?
-                                            ListView.builder(
-                                              shrinkWrap: true,
-                                              physics: NeverScrollableScrollPhysics(),
-                                              itemCount: getCurrentStockDetailManager.length,
-                                              itemBuilder: (context, index) {
-                                                final items = getCurrentStockDetailManager[index];
-
-                                                return
-                                                  Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child:
-                                                    Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      children: [
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                          children: [
-                                                            Expanded(
-                                                              flex:1,
-                                                              child: Text(
-                                                                items.itemName.toString(),
-                                                                style:Styling.textFormText,
-                                                                textAlign: TextAlign.center,
-                                                              ),
-                                                            ),
-                                                            Expanded(
-                                                              flex:1,
-                                                              child: Text(
-                                                                items.emptyCRDCnt.toString(),
-                                                                style:Styling.textFormText,
-                                                                textAlign: TextAlign.center,
-                                                              ),
-                                                            ),
-
-                                                            Expanded(
-                                                              flex:1,
-                                                              child: Text(
-                                                                items.emptyDefectivCnt.toString(),
-                                                                style:Styling.textFormText,
-                                                                textAlign: TextAlign.center,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ],
+                                            Card(
+                                              elevation: 5,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(12),
+                                              ),
+                                              child:
+                                              Column(
+                                                children: [
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.only(
+                                                        topLeft: Radius.circular(12),
+                                                        topRight: Radius.circular(12),
+                                                      ),
                                                     ),
-                                                  );
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.all(8.0),
+                                                      child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [
+                                                          Expanded(
+                                                            flex:1,
+                                                            child: Text(
+                                                              '',
+                                                              style: TextStyle(
+                                                                fontWeight: FontWeight.bold,
+                                                                color: Colors.black,
+                                                                fontSize: 14,
+                                                              ),
+                                                              textAlign: TextAlign.center,
+                                                            ),
+                                                          ),
+                                                          Expanded(
+                                                            flex:1,
+                                                            child: Text(
+                                                              'TV',
+                                                              style: TextStyle(
+                                                                fontWeight: FontWeight.bold,
+                                                                color: Colors.black,
+                                                                fontSize: 14,
+                                                              ),
+                                                              textAlign: TextAlign.center,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  getCurrentStockDetailManager.isNotEmpty?
+                                                  ListView.builder(
+                                                    shrinkWrap: true,
+                                                    physics: NeverScrollableScrollPhysics(),
+                                                    // itemCount: getCurrentStockDetailManager.length,
+                                                    itemCount: getCurrentStockDetailManager
+                                                        .where((item) => item.emptyTVCnt! > 0 ) // Filter items with defectivCnt > 0
+                                                        .length,
+                                                    itemBuilder: (context, index) {
+                                                      final items = getCurrentStockDetailManager[index];
+
+                                                      return
+                                                        Padding(
+                                                          padding: const EdgeInsets.all(8.0),
+                                                          child:
+                                                          Column(
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            children: [
+                                                              Row(
+                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                children: [
+                                                                  Expanded(
+                                                                    flex:1,
+                                                                    child: Text(
+                                                                      items.itemName.toString(),
+                                                                      style:Styling.textFormText,
+                                                                      textAlign: TextAlign.center,
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex:1,
+                                                                    child: Text(
+                                                                      items.emptyTVCnt.toString(),
+                                                                      style:Styling.textFormText,
+                                                                      textAlign: TextAlign.center,
+                                                                    ),
+                                                                  ),
+
+                                                                ],
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        );
 
 
-                                              },
-                                            ):
-                                            Container(
-                                              child: Text("No Data Available"),
+                                                    },
+                                                  ):
+                                                  Container(
+                                                    child: Text("No Data Available"),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
+                                            SizedBox(height: 15,),
                                           ],
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                  SizedBox(height: 15,),
-                                  Column(
-                                    children: [
-                                      Column(
+                                  // SizedBox(height: 15,),
+                                  // Check if any item has a non-null, non-zero defectivCnt
+                                  Visibility(
+                                    visible: getCurrentStockDetailManager.any((item) => item.defectivCnt! > 0), // Condition to check visibility
+                                    child: Container(
+                                      child: Column(
                                         children: [
                                           Padding(
                                             padding: const EdgeInsets.only(left: 8.0),
@@ -1144,7 +851,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: [
                                                 Text(
-                                                  "Refill Sale",
+                                                  "Defective",
                                                   style: Styling.textFormText,
                                                 ),
 
@@ -1186,7 +893,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                         Expanded(
                                                           flex:1,
                                                           child: Text(
-                                                            'SV',
+                                                            'Defective',
                                                             style: TextStyle(
                                                               fontWeight: FontWeight.bold,
                                                               color: Colors.black,
@@ -1198,7 +905,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                         Expanded(
                                                           flex:1,
                                                           child: Text(
-                                                            'Refill Sale',
+                                                            'Since',
                                                             style: TextStyle(
                                                               fontWeight: FontWeight.bold,
                                                               color: Colors.black,
@@ -1215,49 +922,55 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                 ListView.builder(
                                                   shrinkWrap: true,
                                                   physics: NeverScrollableScrollPhysics(),
-                                                  itemCount: getCurrentStockDetailManager.length,
+                                                  // itemCount: getCurrentStockDetailManager.length,
+                                                  itemCount: getCurrentStockDetailManager
+                                                      .where((item) => item.defectivCnt! > 0) // Filter items with defectivCnt > 0
+                                                      .length,
                                                   itemBuilder: (context, index) {
                                                     final items = getCurrentStockDetailManager[index];
 
                                                     return
-                                                      Padding(
-                                                        padding: const EdgeInsets.all(8.0),
-                                                        child:
-                                                        Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment: MainAxisAlignment.center,
-                                                              children: [
-                                                                Expanded(
-                                                                  flex:1,
-                                                                  child: Text(
-                                                                    items.itemName.toString(),
-                                                                    style:Styling.textFormText,
-                                                                    textAlign: TextAlign.center,
+
+                                                        Padding(
+                                                          padding: const EdgeInsets.all(8.0),
+                                                          child:
+                                                          Column(
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            children: [
+                                                              Row(
+                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                children: [
+                                                                  Expanded(
+                                                                    flex:1,
+                                                                    child: Text(
+                                                                      items.itemName.toString(),
+                                                                      style:Styling.textFormText,
+                                                                      textAlign: TextAlign.center,
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                                Expanded(
-                                                                  flex:1,
-                                                                  child: Text(
-                                                                    items.sVQty.toString(),
-                                                                    style:Styling.textFormText,
-                                                                    textAlign: TextAlign.center,
+                                                                  Expanded(
+                                                                    flex:1,
+                                                                    child: Text(
+                                                                      items.defectivCnt.toString(),
+                                                                      style:Styling.textFormText,
+                                                                      textAlign: TextAlign.center,
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                                Expanded(
-                                                                  flex:1,
-                                                                  child: Text(
-                                                                    items.refillSaleCnt.toString(),
-                                                                    style:Styling.textFormText,
-                                                                    textAlign: TextAlign.center,
+
+                                                                  Expanded(
+                                                                    flex:1,
+                                                                    child: Text(
+                                                                      DateFormat('dd-MM-yyyy').format(DateTime.parse(items.defectivFromDate.toString() ?? '')),
+                                                                      style:Styling.textFormText,
+                                                                      textAlign: TextAlign.center,
+                                                                    ),
                                                                   ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      );
+                                                                ],
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        );
+
 
                                                   },
                                                 ):
@@ -1269,121 +982,448 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                           ),
                                         ],
                                       ),
-                                    ],
+                                    ),
                                   ),
-                                  SizedBox(height: 15,),
-                                  Column(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(left: 8.0),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              "Imbalance",
-                                              style: Styling.textFormText,
-                                            ),
-
-                                          ],
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                          ],
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment:
+                            MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Outward",style:Styling.bodyTitleWithBlueHight,),
+                            ],
+                          ),
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Title for Cylinder Categories Table
+                            Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text("Current Outward Stock",style:Styling.bodyTitleBig,),
+                                      ],
+                                    ),
+                                  ),
+                                  Visibility(
+                                    visible: getCurrentStockDetailManager.any((item) => item.emptyCRDCnt! > 0 || item.emptyDefectivCnt! > 0), // Condition to check visibility
+                                    child: Column(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(left: 8.0),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                "Empty",
+                                                style: Styling.textFormText,
+                                              ),
+                                    
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      Card(
-                                        elevation: 5,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
+                                        Card(
+                                          elevation: 5,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child:
+                                          Column(
+                                            children: [
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.only(
+                                                    topLeft: Radius.circular(12),
+                                                    topRight: Radius.circular(12),
+                                                  ),
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      Expanded(
+                                                        flex:1,
+                                                        child: Text(
+                                                          '',
+                                                          style: TextStyle(
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.black,
+                                                            fontSize: 14,
+                                                          ),
+                                                          textAlign: TextAlign.center,
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        flex:1,
+                                                        child: Text(
+                                                          'CRD',
+                                                          style: TextStyle(
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.black,
+                                                            fontSize: 14,
+                                                          ),
+                                                          textAlign: TextAlign.center,
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        flex:1,
+                                                        child: Text(
+                                                          'Defective',
+                                                          style: TextStyle(
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.black,
+                                                            fontSize: 14,
+                                                          ),
+                                                          textAlign: TextAlign.center,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              getCurrentStockDetailManager.isNotEmpty?
+                                              ListView.builder(
+                                                shrinkWrap: true,
+                                                physics: NeverScrollableScrollPhysics(),
+                                                // itemCount: getCurrentStockDetailManager.length,
+                                                itemCount: getCurrentStockDetailManager
+                                                    .where((item) => item.emptyCRDCnt! > 0 || item.emptyDefectivCnt! > 0) // Filter items with defectivCnt > 0
+                                                    .length,
+                                                itemBuilder: (context, index) {
+                                                  final items = getCurrentStockDetailManager[index];
+                                    
+                                                  return
+                                                    Padding(
+                                                      padding: const EdgeInsets.all(8.0),
+                                                      child:
+                                                      Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            children: [
+                                                              Expanded(
+                                                                flex:1,
+                                                                child: Text(
+                                                                  items.itemName.toString(),
+                                                                  style:Styling.textFormText,
+                                                                  textAlign: TextAlign.center,
+                                                                ),
+                                                              ),
+                                                              Expanded(
+                                                                flex:1,
+                                                                child: Text(
+                                                                  items.emptyCRDCnt.toString(),
+                                                                  style:Styling.textFormText,
+                                                                  textAlign: TextAlign.center,
+                                                                ),
+                                                              ),
+                                    
+                                                              Expanded(
+                                                                flex:1,
+                                                                child: Text(
+                                                                  items.emptyDefectivCnt.toString(),
+                                                                  style:Styling.textFormText,
+                                                                  textAlign: TextAlign.center,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                    
+                                    
+                                                },
+                                              ):
+                                              Container(
+                                                child: Text("No Data Available"),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                        child:
+                                        SizedBox(height: 15,),
+                                      ],
+                                    ),
+                                  ),
+                                  // SizedBox(height: 15,),
+                                  Visibility(
+                                    visible: getCurrentStockDetailManager.any((item) => item.sVQty! > 0 || item.refillSaleCnt! > 0), // Condition to check visibility
+                                    child: Column(
+                                      children: [
                                         Column(
                                           children: [
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.only(
-                                                  topLeft: Radius.circular(12),
-                                                  topRight: Radius.circular(12),
-                                                ),
-                                              ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(8.0),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-                                                    Expanded(
-                                                      flex:1,
-                                                      child: Text(
-                                                        '',
-                                                        style: TextStyle(
-                                                          fontWeight: FontWeight.bold,
-                                                          color: Colors.black,
-                                                          fontSize: 14,
-                                                        ),
-                                                        textAlign: TextAlign.center,
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex:1,
-                                                      child: Text(
-                                                        'Imbalance',
-                                                        style: TextStyle(
-                                                          fontWeight: FontWeight.bold,
-                                                          color: Colors.black,
-                                                          fontSize: 14,
-                                                        ),
-                                                        textAlign: TextAlign.center,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(left: 8.0),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    "Refill Sale",
+                                                    style: Styling.textFormText,
+                                                  ),
+
+                                                ],
                                               ),
                                             ),
-                                            getCurrentStockDetailManager.isNotEmpty?
-                                            ListView.builder(
-                                              shrinkWrap: true,
-                                              physics: NeverScrollableScrollPhysics(),
-                                              itemCount: getCurrentStockDetailManager.length,
-                                              itemBuilder: (context, index) {
-                                                final items = getCurrentStockDetailManager[index];
-
-                                                return
-
-                                                  Padding(
-                                                    padding: const EdgeInsets.all(8.0),
-                                                    child:
-                                                    Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      children: [
-                                                        Row(
-                                                          mainAxisAlignment: MainAxisAlignment.center,
-                                                          children: [
-                                                            Expanded(
-                                                              flex:1,
-                                                              child: Text(
-                                                                items.itemName.toString(),
-                                                                style:Styling.textFormText,
-                                                                textAlign: TextAlign.center,
-                                                              ),
-                                                            ),
-                                                            Expanded(
-                                                              flex:1,
-                                                              child: Text(
-                                                                items.imbalanceCnt.toString(),
-                                                                style:Styling.textFormText,
-                                                                textAlign: TextAlign.center,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ],
+                                            Card(
+                                              elevation: 5,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(12),
+                                              ),
+                                              child:
+                                              Column(
+                                                children: [
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius: BorderRadius.only(
+                                                        topLeft: Radius.circular(12),
+                                                        topRight: Radius.circular(12),
+                                                      ),
                                                     ),
-                                                  );
-                                              },
-                                            ):
-                                            Container(
-                                              child: Text("No Data Available"),
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.all(8.0),
+                                                      child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [
+                                                          Expanded(
+                                                            flex:1,
+                                                            child: Text(
+                                                              '',
+                                                              style: TextStyle(
+                                                                fontWeight: FontWeight.bold,
+                                                                color: Colors.black,
+                                                                fontSize: 14,
+                                                              ),
+                                                              textAlign: TextAlign.center,
+                                                            ),
+                                                          ),
+                                                          Expanded(
+                                                            flex:1,
+                                                            child: Text(
+                                                              'SV',
+                                                              style: TextStyle(
+                                                                fontWeight: FontWeight.bold,
+                                                                color: Colors.black,
+                                                                fontSize: 14,
+                                                              ),
+                                                              textAlign: TextAlign.center,
+                                                            ),
+                                                          ),
+                                                          Expanded(
+                                                            flex:1,
+                                                            child: Text(
+                                                              'Refill Sale',
+                                                              style: TextStyle(
+                                                                fontWeight: FontWeight.bold,
+                                                                color: Colors.black,
+                                                                fontSize: 14,
+                                                              ),
+                                                              textAlign: TextAlign.center,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  getCurrentStockDetailManager.isNotEmpty?
+                                                  ListView.builder(
+                                                    shrinkWrap: true,
+                                                    physics: NeverScrollableScrollPhysics(),
+                                                    // itemCount: getCurrentStockDetailManager.length,
+                                                    itemCount: getCurrentStockDetailManager
+                                                        .where((item) => item.sVQty! > 0 || item.refillSaleCnt! > 0) // Filter items with defectivCnt > 0
+                                                        .length,
+                                                    itemBuilder: (context, index) {
+                                                      final items = getCurrentStockDetailManager[index];
+                                                      return
+                                                        Padding(
+                                                          padding: const EdgeInsets.all(8.0),
+                                                          child:
+                                                          Column(
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            children: [
+                                                              Row(
+                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                children: [
+                                                                  Expanded(
+                                                                    flex:1,
+                                                                    child: Text(
+                                                                      items.itemName.toString(),
+                                                                      style:Styling.textFormText,
+                                                                      textAlign: TextAlign.center,
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex:1,
+                                                                    child: Text(
+                                                                      items.sVQty.toString(),
+                                                                      style:Styling.textFormText,
+                                                                      textAlign: TextAlign.center,
+                                                                    ),
+                                                                  ),
+                                                                  Expanded(
+                                                                    flex:1,
+                                                                    child: Text(
+                                                                      items.refillSaleCnt.toString(),
+                                                                      style:Styling.textFormText,
+                                                                      textAlign: TextAlign.center,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        );
+
+                                                    },
+                                                  ):
+                                                  Container(
+                                                    child: Text("No Data Available"),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ],
                                         ),
-                                      ),
-                                    ],
+                                        SizedBox(height: 15,),
+                                      ],
+                                    ),
+                                  ),
+                                  // SizedBox(height: 15,),
+                                  Visibility(
+                                      visible: getCurrentStockDetailManager.any((item) => item.imbalanceCnt! > 0), // Condition to check visibility
+                                    child: Column(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.only(left: 8.0),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                "Imbalance",
+                                                style: Styling.textFormText,
+                                              ),
+
+                                            ],
+                                          ),
+                                        ),
+                                        Card(
+                                          elevation: 5,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child:
+                                          Column(
+                                            children: [
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  borderRadius: BorderRadius.only(
+                                                    topLeft: Radius.circular(12),
+                                                    topRight: Radius.circular(12),
+                                                  ),
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Row(
+                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                    children: [
+                                                      Expanded(
+                                                        flex:1,
+                                                        child: Text(
+                                                          '',
+                                                          style: TextStyle(
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.black,
+                                                            fontSize: 14,
+                                                          ),
+                                                          textAlign: TextAlign.center,
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        flex:1,
+                                                        child: Text(
+                                                          'Imbalance',
+                                                          style: TextStyle(
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.black,
+                                                            fontSize: 14,
+                                                          ),
+                                                          textAlign: TextAlign.center,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              getCurrentStockDetailManager.isNotEmpty?
+                                              ListView.builder(
+                                                shrinkWrap: true,
+                                                physics: NeverScrollableScrollPhysics(),
+                                                // itemCount: getCurrentStockDetailManager.length,
+                                                itemCount: getCurrentStockDetailManager
+                                                    .where((item) => item.imbalanceCnt! > 0) // Filter items with defectivCnt > 0
+                                                    .length,
+                                                itemBuilder: (context, index) {
+                                                  final items = getCurrentStockDetailManager[index];
+
+                                                  return
+
+                                                    Padding(
+                                                      padding: const EdgeInsets.all(8.0),
+                                                      child:
+                                                      Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment: MainAxisAlignment.center,
+                                                            children: [
+                                                              Expanded(
+                                                                flex:1,
+                                                                child: Text(
+                                                                  items.itemName.toString(),
+                                                                  style:Styling.textFormText,
+                                                                  textAlign: TextAlign.center,
+                                                                ),
+                                                              ),
+                                                              Expanded(
+                                                                flex:1,
+                                                                child: Text(
+                                                                  items.imbalanceCnt.toString(),
+                                                                  style:Styling.textFormText,
+                                                                  textAlign: TextAlign.center,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                },
+                                              ):
+                                              Container(
+                                                child: Text("No Data Available"),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),
@@ -1520,8 +1560,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
             EasyLoading.dismiss();
           });
           refreshTokens();
-          showFlushBar(context, "Fail",
-              'Unable To Load Data At This Time. Please Try Again');
+          showFlushBar(context, Constants.listGettingFail);
         }
       } catch (e) {
         setState(() {
@@ -1533,12 +1572,11 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
         // ScaffoldMessenger.of(context).showSnackBar(
         //   SnackBar(content: Text('Error: $e')),
         // );
-        showFlushBar(context, "Fail",
-            'Unable To Load Data At This Time. Please Try Again');
+        showFlushBar(context,  Constants.listGettingFail);
       }
     }else{
       EasyLoading.dismiss();
-      showFlushBar(context,Constants.connectionTitle,
+      showFlushBar(context,
           Constants.connectionMessage);
     }
 
@@ -1586,8 +1624,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
             EasyLoading.dismiss();
           });
           refreshTokens();
-          showFlushBar(context, "Fail",
-              'Unable To Load Data At This Time. Please Try Again');
+          showFlushBar(context, Constants.listGettingFail);
         }
       } catch (e) {
 
@@ -1600,12 +1637,11 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
         //   SnackBar(content: Text('Error: $e')),
         // );
         refreshTokens();
-        showFlushBar(context, "Fail",
-            'Unable To Load Data At This Time. Please Try Again');
+        showFlushBar(context, Constants.listGettingFail);
       }
     }else{
       EasyLoading.dismiss();
-      showFlushBar(context,Constants.connectionTitle,
+      showFlushBar(context,
           Constants.connectionMessage);
     }
 

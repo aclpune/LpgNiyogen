@@ -368,7 +368,7 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
     Constants.isNetworkAvailable = await InternetConnectionChecker().hasConnection;
 
     if (!Constants.isNetworkAvailable) {
-      showFlushBar(context, Constants.connectionTitle, Constants.connectionMessage);
+      showFlushBar(context, Constants.connectionMessage);
       isLoading = false;
       return null;  // Returning null if there's no connection
     } else {

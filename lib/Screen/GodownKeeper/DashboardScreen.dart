@@ -15,6 +15,7 @@ import '../DashboardModel/PhysicalStockImbalanceDataModel.dart';
 import '../DashboardModel/TodaysOpeningStockDataModel.dart';
 import '../User/Login/provider/LoginProvider.dart';
 import '../User/splashscreen/page/splash_screen.dart';
+import '../Utils/CustomeAlertDialog.dart';
 import '../Utils/CustomeDrawer.dart';
 import '../Utils/Styling.dart';
 import '../Utils/UpdateService.dart';
@@ -23,6 +24,7 @@ import '../Utils/app_url.dart';
 import '../Utils/constants.dart';
 import '../Utils/shared_preference.dart';
 import 'DelBoyStockReturn/StockTransferToGodownScreen.dart';
+import 'DeliveryBoyModel/GetStockTransferListModel.dart';
 import 'DeliveryBoyModel/StockSubmitToManagerListModel.dart';
 import 'package:http/http.dart' as http;
 
@@ -46,6 +48,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   List<PhysicalStockImbalanceDataModel> receiptList = [];
   List<TodaysOpeningStockDataModel> todaysOpeningStock = [];
   List<GetCurrentStcOfGodownKeeperModel> getCurrentStcOfGodownKeeper = [];
+  List<GetStockTransferListModel> _stockTransferList = [];
   bool isLoading = true;
   String? mobileNo;
   @override
@@ -64,6 +67,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     _fetchTodaysOpeningStockData();
     fetchCurrentStock();
     checkAndSaveDayEndData();
+    fetchTransactionList();
   }
   // Function to handle pull-to-refresh action
   Future<void> _onRefresh() async {
@@ -72,8 +76,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     _fetchTodaysOpeningStockData();
     fetchCurrentStock();
     checkAndSaveDayEndData();// Fetch the data again
+    fetchTransactionList();
   }
   bool saveFlag = false;
+  bool stockTransferFlag = false;
   @override
   Widget build(BuildContext context) {
 
@@ -719,19 +725,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                                   child: GestureDetector(
                                                                     onTap: (){
                                                                       if(saveFlag){
-
+                                                                        showFlushBar(context,
+                                                                            Constants.dayEndCompleted);
                                                                       }else{
-                                                                        Navigator.pushNamed(
-                                                                            context,
-                                                                            StockTransferTOGodownScreen
-                                                                                .screenName,
-                                                                            arguments: {
-                                                                              "itemName": items.itemName,
-                                                                              "itemID" : items.itemId,
-                                                                              "filledStock" :items.currentStkFilled,
-                                                                              "emptyStock" :items.currentStkEmpty,
-                                                                              "defectiveStock" :items.currentStkDefective,
-                                                                            });
+                                                                        // if(stockTransferFlag){
+                                                                          Navigator.pushNamed(
+                                                                              context,
+                                                                              StockTransferTOGodownScreen
+                                                                                  .screenName,
+                                                                              arguments: {
+                                                                                "itemName": items.itemName,
+                                                                                "itemID" : items.itemId,
+                                                                                "filledStock" :items.currentStkFilled,
+                                                                                "emptyStock" :items.currentStkEmpty,
+                                                                                "defectiveStock" :items.currentStkDefective,
+                                                                              });
+                                                                        // }else{
+                                                                        //   CustomAlertDialog.showCustomAlert(context, Constants.stockNotAccepted);
+                                                                        // }
+
                                                                       }
 
                                                                     },
@@ -771,47 +783,63 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                 ),
               ),
-              Container(
-                padding: const EdgeInsets.all(10.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(
-                      height: 40,
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          Navigator.pushReplacementNamed(context, '/deliveryMenListShowScreen');
-                          // Navigator.pushReplacementNamed(context, '/stockReturnFromDelBoy');
-                        },
-                        icon: Icon(Icons.update, size: 20), // Add icon
-                        label: Text("Daily Sale"),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50),
+              Positioned(
+                left: 0,
+                right: 0,
+                bottom: MediaQuery.of(context).viewInsets.bottom > 0
+                    ? MediaQuery.of(context).viewInsets.bottom
+                    : 0, // This ensures the buttons stay above the keyboard or system bar if visible
+                child: Container(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      SizedBox(
+                        height: 40,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            if(stockTransferFlag){
+                              Navigator.pushReplacementNamed(context, '/deliveryMenListShowScreen');
+                            }else{
+                              CustomAlertDialog.showCustomAlert(context, Constants.stockNotAccepted);
+                            }
+                            // Navigator.pushReplacementNamed(context, '/stockReturnFromDelBoy');
+                          },
+                          icon: Icon(Icons.update, size: 20), // Add icon
+                          label: Text("Daily Sale"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:stockTransferFlag? Colors.blue:Colors.grey,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 40,
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          Navigator.pushReplacementNamed(context, '/stockSubmitToManager');
-                        },
-                        icon: Icon(Icons.list_alt, size: 20), // Add icon
-                        label: Text("Today's Summary"),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50),
+                      SizedBox(
+                        height: 40,
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                              if(stockTransferFlag){
+                                Navigator.pushReplacementNamed(context, '/stockSubmitToManager');
+
+                              }else{
+                                CustomAlertDialog.showCustomAlert(context,Constants.stockNotAccepted);
+                              }
+                          },
+                          icon: Icon(Icons.list_alt, size: 20), // Add icon
+                          label: Text("Today's Summary"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:stockTransferFlag? Colors.blue:Colors.grey,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ],
@@ -903,7 +931,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         debugPrint("Error during API call: $e");
       }
     }else{
-      showFlushBar(context,Constants.connectionTitle,
+      showFlushBar(context,
           Constants.connectionMessage);
     }
 
@@ -947,8 +975,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             isLoading = false;
             refreshTokens();
           });
-          showFlushBar(context, "Fail",
-              'Unable To Load Data At This Time. Please Try Again');
+          showFlushBar(context, Constants.listGettingFail);
         }
       } catch (e) {
         setState(() {
@@ -957,13 +984,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
           refreshTokens();
         });
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: Failed to fetch data')),
+          SnackBar(content: Text(Constants.listGettingFail)),
         );
       }
     } else {
       refreshTokens();
       EasyLoading.dismiss();
-      showFlushBar(context, Constants.connectionTitle, Constants.connectionMessage);
+      showFlushBar(context,Constants.connectionMessage);
     }
   }
 
@@ -1005,8 +1032,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             EasyLoading.dismiss();
             refreshTokens();
           });
-          showFlushBar(context, "Fail",
-              'Unable To Load Data At This Time. Please Try Again');
+          showFlushBar(context,
+              Constants.listGettingFail);
         }
       } catch (e) {
         setState(() {
@@ -1014,13 +1041,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
           isLoading = false;
           refreshTokens();
         });
-    showFlushBar(context, "Fail",
-    'Unable To Load Data At This Time. Please Try Again');
+    showFlushBar(context,
+        Constants.listGettingFail);
       }
     } else {
       EasyLoading.dismiss();
       refreshTokens();
-      showFlushBar(context, Constants.connectionTitle, Constants.connectionMessage);
+      showFlushBar(context, Constants.connectionMessage);
     }
   }
 
@@ -1066,8 +1093,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             EasyLoading.dismiss();
             refreshTokens();
           });
-          showFlushBar(context, "Fail",
-              'Unable To Load Data At This Time. Please Try Again');
+          showFlushBar(context,
+              Constants.listGettingFail);
         }
       } catch (e) {
         setState(() {
@@ -1079,16 +1106,74 @@ class _DashboardScreenState extends State<DashboardScreen> {
         //   SnackBar(content: Text('Error: $e')),
         // );
 
-        showFlushBar(context, "Fail",
-            'Unable To Load Data At This Time. Please Try Again');
+        showFlushBar(context,
+            Constants.listGettingFail);
       }
     }else{
       EasyLoading.dismiss();
       refreshTokens();
-      showFlushBar(context,Constants.connectionTitle,
+      showFlushBar(context,
           Constants.connectionMessage);
     }
 
+  }
+
+  Future<void> fetchTransactionList() async {
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+    if (Constants.isNetworkAvailable) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? distributorId = prefs.getString('DistributorId');
+      String? godownId = prefs.getString('godownId');
+      String? bearerToken = prefs.getString('token'); // Assuming the token is stored here
+      int dId = int.parse(distributorId!);
+      int gId = int.parse(godownId!);
+      if (bearerToken == null) {
+        throw Exception('Bearer token is missing');
+      }
+
+      final response = await http.get(
+        Uri.parse('${AppUrl.GetStockTransferDtls}/$dId/$gId'),
+        headers: {
+          'Authorization': 'Bearer $bearerToken', // Add Bearer token here
+        },
+      );
+      debugPrint(
+          "GetStockTransferDtls" + '${AppUrl.GetStockTransferDtls}/$distributorId/1/2');
+      debugPrint("GetStockTransferDtls" + response.body);
+      if (response.statusCode == 200) {
+        // Parse the response
+        List<dynamic> data = json.decode(response.body);
+        setState(() {
+          _stockTransferList = data.map((json) => GetStockTransferListModel.fromJson(json)).toList();
+          bool hasZeroStkTrans = false;
+          for (int i = 0; i < _stockTransferList.length; i++) {
+            if (_stockTransferList[i].isStkTrans == 0) {
+              hasZeroStkTrans = true;
+              debugPrint("Found item with isStkTrans = 0");
+              break; // No need to continue checking once we find an item with isStkTrans = 0
+            }
+          }
+          if (hasZeroStkTrans) {
+            stockTransferFlag = false; // Disable the button
+            // showFlushBar(
+            //     context, "Action Restricted", "Cannot perform the action as one or more items have isStkTrans = 0");
+          } else {
+            stockTransferFlag = true; // Enable the button
+          }
+        });
+        isLoading = false;
+      } else {
+        refreshTokens();
+        isLoading = false;
+        throw Exception(Constants.listGettingFail);
+      }
+    } else {
+      refreshTokens();
+      isLoading = false;
+      showFlushBar(
+          context, Constants.connectionMessage);
+    }
   }
 
   Future<void> refreshTokens() async {
@@ -1110,12 +1195,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
             _fetchTodaysOpeningStockData();
             fetchCurrentStock();
             checkAndSaveDayEndData();
+            fetchTransactionList();
           } else if (response['message'] == "UnSuccessful") {
             debugPrint('RefreshTokenExc401 - true');
-
             showDialogToExpireSession(context);
           } else {
             debugPrint('RefreshTokenStatus - false');
+
           }
         }).catchError((error) {
           EasyLoading.dismiss();

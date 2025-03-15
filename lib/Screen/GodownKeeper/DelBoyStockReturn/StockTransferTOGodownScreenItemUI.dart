@@ -1,25 +1,33 @@
 import 'dart:convert';
 import 'dart:ffi';
+import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 import 'package:lpgsalesandinventory/Screen/Utils/Styling.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../ConstantScreen/widgets.dart';
+import '../../User/Login/provider/LoginProvider.dart';
+import '../../User/splashscreen/page/splash_screen.dart';
+import '../../Utils/CustomeAlertDialog.dart';
 import '../../Utils/Widget.dart';
 import 'package:http/http.dart' as http;
 
 import '../../Utils/app_url.dart';
 import '../../Utils/constants.dart';
+import '../../Utils/shared_preference.dart';
 import '../DeliveryBoyModel/DeliveryMenSaleListModel.dart';
 import '../DeliveryBoyModel/GetStockTransferListModel.dart';
+import '../ItemReceipt/CylItemList/GetCurrentStcOfGodownKeeperModel.dart';
 import 'StockReturnFromDelBoy.dart';
 
 class StockTransferTOGodownScreenItemUI extends StatefulWidget {
   GetStockTransferListModel _listModel;
-
 
   StockTransferTOGodownScreenItemUI(this._listModel,{Key? key}) : super(key: key);
 
@@ -31,6 +39,8 @@ class _StockTransferTOGodownScreenItemUIState extends State<StockTransferTOGodow
   bool isListViewVisible = false; // Tracks if ListView is visible
   bool isLoading = true;
   List<GetStockTransferListModel> _stockTransferList = [];
+  String? mobileNo;
+  List<GetCurrentStcOfGodownKeeperModel> getCurrentStcOfGodownKeeper = [];
   @override
   void initState() {
     // TODO: implement initState
@@ -138,7 +148,7 @@ class _StockTransferTOGodownScreenItemUIState extends State<StockTransferTOGodow
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             // Add your action here
                             int tGID = (value.toGodownId ?? 0).toInt();
                             int fGID = (value.fromGodownId ?? 0).toInt();
@@ -147,7 +157,18 @@ class _StockTransferTOGodownScreenItemUIState extends State<StockTransferTOGodow
                             int defQ = (value.defectiveStk ?? 0).toInt();
                             int itemIDs = (value.itemId ?? 0).toInt();
                             String remark = value.remark ?? '';
-                            submitStockToApi(tGID,fGID,itemIDs,fillQ,emptyQ,defQ,remark);
+
+                            bool isStockValid = await fetchCurrentStock(fGID, fillQ, emptyQ, defQ, itemIDs);
+
+                            if (isStockValid) {
+                              submitStockToApi(tGID,fGID,itemIDs,fillQ,emptyQ,defQ,remark);
+                            } else {
+                              CustomAlertDialog.showCustomAlert(context, Constants.countShouldNotBeGreater);
+
+                              // If stock is invalid (i.e., item quantity exceeds the available stock), show an error
+                              // showFlushBar(context, "Invalid Quantity", "The item quantities exceed the available stock.");
+                            }
+
                           },
                           child: Text(
                             "Accept",
@@ -264,7 +285,285 @@ class _StockTransferTOGodownScreenItemUIState extends State<StockTransferTOGodow
     } else {
       isLoading = false;
       showFlushBar(
-          context, Constants.connectionTitle, Constants.connectionMessage);
+          context, Constants.connectionMessage);
     }
   }
+
+  // Future<void> fetchCurrentStock(int fromgodownId) async {
+  //   EasyLoading.show();
+  //   Constants.isNetworkAvailable =
+  //   await InternetConnectionChecker().hasConnection;
+  //   if(Constants.isNetworkAvailable){
+  //     SharedPreferences prefs = await SharedPreferences.getInstance();
+  //     String? distributorId = prefs.getString('DistributorId');
+  //     String? godownId = prefs.getString('godownId');
+  //     String? addedBy = prefs.getString('StaffId');
+  //     String? godownKeeperId = prefs.getString('godownKeeperId');
+  //     String? token = prefs.getString('token'); // This is your bearer token
+  //
+  //     try {
+  //       final response = await http.get(
+  //         Uri.parse('${AppUrl.ItemCurrentStkList}/$distributorId/$fromgodownId'),
+  //         headers: {
+  //           'Authorization': 'Bearer $token',  // Add the Bearer token here
+  //           // Any other headers you need can go here
+  //         },
+  //       );
+  //       // Print the URL and the headers (including the Bearer token)
+  //       print("Request URL ItemCurrentStkList: ${response.request}");
+  //       print("Request Headers: {'Authorization': 'Bearer $token'}");
+  //       // Print the raw response for debugging
+  //       print("API Response Status ItemCurrentStkList: ${response.statusCode}");
+  //       print("API Response ItemCurrentStkList: ${response.body}");
+  //       if (response.statusCode == 200) {
+  //         final List<dynamic> data = json.decode(response.body);
+  //         setState(() {
+  //           getCurrentStcOfGodownKeeper = data.map((json) => GetCurrentStcOfGodownKeeperModel.fromJson(json)).toList();
+  //           isLoading = false;
+  //           EasyLoading.dismiss();
+  //
+  //         });
+  //       } else {
+  //         // Handle non-200 responses
+  //
+  //         setState(() {
+  //           isLoading = false;
+  //           EasyLoading.dismiss();
+  //           refreshTokens();
+  //         });
+  //         showFlushBar(context, "Fail",
+  //             'Unable To Load Data At This Time. Please Try Again');
+  //       }
+  //     } catch (e) {
+  //       setState(() {
+  //         EasyLoading.dismiss();
+  //         isLoading = false;
+  //         refreshTokens();
+  //       });
+  //       // ScaffoldMessenger.of(context).showSnackBar(
+  //       //   SnackBar(content: Text('Error: $e')),
+  //       // );
+  //
+  //       showFlushBar(context, "Fail",
+  //           'Unable To Load Data At This Time. Please Try Again');
+  //     }
+  //   }else{
+  //     EasyLoading.dismiss();
+  //     refreshTokens();
+  //     showFlushBar(context,Constants.connectionTitle,
+  //         Constants.connectionMessage);
+  //   }
+  //
+  // }
+
+  Future<void> refreshTokens() async {
+    LoginProvider auth = Provider.of<LoginProvider>(context, listen: false);
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      mobileNo = preferences.getString('MobileNo').toString();
+
+      final Future<Map<String, dynamic>> respose =
+      auth.refreshToken(mobileNo!, context);
+
+      try {
+        respose.then((response) {
+          EasyLoading.dismiss();
+          if (response['status']) {
+            debugPrint('RefreshTokenStatus - True');
+
+          } else if (response['message'] == "UnSuccessful") {
+            debugPrint('RefreshTokenExc401 - true');
+
+            showDialogToExpireSession(context);
+          } else {
+            debugPrint('RefreshTokenStatus - false');
+          }
+        }).catchError((error) {
+          EasyLoading.dismiss();
+          debugPrint('RefreshTokenError1: $error');
+        });
+      } on HttpException catch (error) {
+        EasyLoading.dismiss();
+        debugPrint('RefreshTokenHttpExc: $error');
+      } catch (error) {
+        EasyLoading.dismiss();
+        debugPrint('RefreshTokenError2: $error');
+      }
+    } catch (error) {
+      EasyLoading.dismiss();
+      debugPrint('RefreshTokenError3: $error');
+    }
+  }
+
+  showDialogToExpireSession(BuildContext context) async {
+    await showDialog<String>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        String title = "Expired";
+        String message = "Your session is expire. Click ok to login again.";
+        String btnLabel = "Ok";
+        return Platform.isIOS
+            ? WillPopScope(
+          onWillPop: () async {
+            SystemNavigator.pop();
+            return true;
+          },
+          child: CupertinoAlertDialog(
+            title: Text(
+              title,
+              style: Styling.bodyTitle,
+            ),
+            content: Text(
+              message,
+              style: Styling.bodyTitle,
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text(
+                  btnLabel,
+                  style: Styling.blueClrText,
+                ),
+                onPressed: () {},
+              ),
+            ],
+          ),
+        )
+            : WillPopScope(
+          child: AlertDialog(
+            title: Text(title),
+            content: Text(message),
+            actions: <Widget>[
+              TextButton(
+                child: Text(btnLabel),
+                onPressed: () => logoutUser(context),
+              ),
+            ],
+          ),
+          onWillPop: () async {
+            SystemNavigator.pop();
+            return true;
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> logoutUser(BuildContext context) async {
+    ///Save data before logout logic
+    EasyLoading.show(status: 'Loading...');
+
+    try {
+      SharedPref().removeUser();
+
+      // try {
+      //   if (Platform.isAndroid) {
+      //     await FirebaseMessaging.instance
+      //         .deleteToken()
+      //         .whenComplete(() => debugPrint("Android FCM Token Deleted"));
+      //   } else if (Platform.isIOS) {
+      //     await FirebaseMessaging.instance
+      //         .deleteToken()
+      //         .whenComplete(() => debugPrint("iOS FCM Token Deleted"));
+      //   }
+      // } on PlatformException {
+      //   debugPrint('###PlatformExc');
+      // }
+
+      EasyLoading.dismiss();
+
+      Navigator.pushNamedAndRemoveUntil(
+          context, SplashScreen.screenName, (r) => false);
+
+      debugPrint("Logout Successful");
+    } catch (error) {
+      EasyLoading.dismiss();
+      debugPrint("LogoutPrefEcx: $error");
+    }
+  }
+
+  Future<bool> fetchCurrentStock(int fromGodownId, int fillQ, int emptyQ, int defQ, int itemIDs) async {
+    EasyLoading.show();
+    Constants.isNetworkAvailable = await InternetConnectionChecker().hasConnection;
+
+    if (Constants.isNetworkAvailable) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? distributorId = prefs.getString('DistributorId');
+      String? godownId = prefs.getString('godownId');
+      String? addedBy = prefs.getString('StaffId');
+      String? godownKeeperId = prefs.getString('godownKeeperId');
+      String? token = prefs.getString('token'); // This is your bearer token
+
+      try {
+        final response = await http.get(
+          Uri.parse('${AppUrl.ItemCurrentStkList}/$distributorId/$fromGodownId'),
+          headers: {
+            'Authorization': 'Bearer $token',  // Add the Bearer token here
+          },
+        );
+
+        print("Request URL ItemCurrentStkList: ${response.request}");
+        print("Request Headers: {'Authorization': 'Bearer $token'}");
+        print("API Response Status ItemCurrentStkList: ${response.statusCode}");
+        print("API Response ItemCurrentStkList: ${response.body}");
+
+        if (response.statusCode == 200) {
+          final List<dynamic> data = json.decode(response.body);
+          setState(() {
+            getCurrentStcOfGodownKeeper = data.map((json) => GetCurrentStcOfGodownKeeperModel.fromJson(json)).toList();
+            isLoading = false;
+            EasyLoading.dismiss();
+          });
+
+          // Now check if the item quantities exceed the current stock
+          for (var stockItem in getCurrentStcOfGodownKeeper) {
+            if (stockItem.itemId == itemIDs) {  // Match the item ID
+              // Compare the filled stock with current stock
+              if (fillQ > (stockItem.currentStkFilled ?? 0)) {
+                // If filled quantity exceeds available stock
+                return false; // Invalid stock condition
+              }
+
+              // Compare the defective stock with current stock
+              if (defQ > (stockItem.currentStkDefective ?? 0)) {
+                // If defective quantity exceeds available stock
+                return false; // Invalid stock condition
+              }
+
+              // Compare the empty stock with current stock
+              if (emptyQ > (stockItem.currentStkEmpty ?? 0)) {
+                // If empty quantity exceeds available stock
+                return false; // Invalid stock condition
+              }
+            }
+          }
+          // If no issues found, return true (valid stock)
+          return true;
+        } else {
+          setState(() {
+            isLoading = false;
+            EasyLoading.dismiss();
+            refreshTokens();
+          });
+          showFlushBar(context, Constants.listGettingFail);
+          return false;
+        }
+      } catch (e) {
+        setState(() {
+          EasyLoading.dismiss();
+          isLoading = false;
+          refreshTokens();
+        });
+
+        showFlushBar(context, Constants.listGettingFail);
+        return false;
+      }
+    } else {
+      EasyLoading.dismiss();
+      refreshTokens();
+      showFlushBar(context, Constants.connectionMessage);
+      return false;
+    }
+  }
+
 }

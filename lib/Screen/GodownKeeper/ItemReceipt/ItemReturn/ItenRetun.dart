@@ -124,6 +124,7 @@ class _ItemReturnScreenState extends State<ItemReturnScreen> {
       ),
     );
   }
+
   Future<void> fetchItemReceipts() async {
     Constants.isNetworkAvailable =
     await InternetConnectionChecker().hasConnection;
@@ -161,8 +162,7 @@ class _ItemReturnScreenState extends State<ItemReturnScreen> {
           setState(() {
             isLoading = false;
           });
-          showFlushBar(context, "Fail",
-              'Unable To Load Data At This Time. Please Try Again');
+          showFlushBar(context, Constants.listGettingFail);
         }
       } catch (e) {
         setState(() {
@@ -171,11 +171,10 @@ class _ItemReturnScreenState extends State<ItemReturnScreen> {
         // ScaffoldMessenger.of(context).showSnackBar(
         //   SnackBar(content: Text('Error: $e')),
         // );
-        showFlushBar(context, "Fail",
-            'Unable To Load Data At This Time. Please Try Again');
+        showFlushBar(context, Constants.listGettingFail);
       }
     }else{
-      showFlushBar(context,Constants.connectionTitle,
+      showFlushBar(context,
           Constants.connectionMessage);
     }
 

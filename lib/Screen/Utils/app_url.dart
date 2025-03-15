@@ -28,6 +28,9 @@ class AppUrl {
   static const String GetGodownMasterList = '$baseUrl/Masters/GetGodownMasterList';
   static const String SaveGodownStockTransferDtls = '$baseUrl/GodownKeeper/SaveGodownStockTransferDtls';
   static const String GetStockTransferDtls = '$baseUrl/GodownKeeper/GetStockTransferDtls';
+  static const String ItemRetEXMIAddEdit = '$baseUrl/GodownKeeper/ItemRetEXMIAddEdit';
+  static const String ItemReceiptEXMIAddEdit = '$baseUrl/GodownKeeper/ItemReceiptEXMIAddEdit';
+  static const String GetItemEXMIDetailList = '$baseUrl/GodownKeeper/GetItemEXMIDetailList';
 
   ///maager
   static const String GetDailySaleSummaryListDMWiseForMob = '$baseUrl/DailyStockCash/GetDailySaleSummaryListDMWiseForMob';
