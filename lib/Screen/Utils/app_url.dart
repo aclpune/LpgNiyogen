@@ -55,5 +55,4 @@ class AppUrl {
   static const String SaveAllDSRDataFromMob = '$baseUrl/Reports/SaveAllDSRDataFromMob';
   static const String DSRCheckSavedornot = '$baseUrl/Reports/DSRCheckSavedornot';
   static const String CheckDayEndConfirmation = '$baseUrl/Masters/CheckDayEndConfirmation';
-
 }
