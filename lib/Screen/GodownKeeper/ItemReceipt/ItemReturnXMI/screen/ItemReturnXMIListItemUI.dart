@@ -113,7 +113,7 @@ class _ItemReturnXMIListItemUIState extends State<ItemReturnXMIListItemUI> {
                                   children: [
                                     Text("Current stock : ",
                                         style: Styling.itemGreyTextBig),
-                                    Text("${stockInfo.currentStkEmpty ?? 0}",
+                                    Text("${stockInfo.currentStkFilled ?? 0}",
                                         style: Styling.itemBlackTestBigs),
                                   ],
                                 ),
