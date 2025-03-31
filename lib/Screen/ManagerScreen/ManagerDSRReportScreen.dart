@@ -3383,5 +3383,4 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
 
     return formattedAmount;
   }
-
 }
