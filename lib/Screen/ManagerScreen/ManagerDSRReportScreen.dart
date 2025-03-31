@@ -28,7 +28,7 @@ import 'ManagerModelClass/ManagerDSRReportCashHandOverModel.dart';
 import 'ManagerModelClass/ManagerDSRReportExpenseDetailListModel.dart';
 import 'ManagerModelClass/ManagerDSRReportIncomeSalesModel.dart';
 import 'ManagerModelClass/ManagerDSRReportSavedDataFetchModel.dart';
-import 'package:pdf/widgets.dart' as pw;
+
 import 'dart:typed_data';
 
 import 'ManagerModelClass/ManagerDsrReoprtCashFlowSummaryMode.dart';  // Correct import for ByteData
@@ -3372,88 +3372,6 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
       print("Exception: $e");
     }
   }
-
-  // Method to capture the widget
-  Future<Uint8List> captureWidget() async {
-    try {
-      RenderRepaintBoundary boundary =
-      _globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
-      var image = await boundary.toImage(pixelRatio: 3.0);
-      ByteData? byteData = await image.toByteData(format: ImageByteFormat.png);
-
-      // Cast ByteData? to the correct type
-      return byteData!.buffer.asUint8List(); // Use the correct `ByteData` buffer
-    } catch (e) {
-      print("Error capturing widget: $e");
-      return Uint8List(0); // Return empty data in case of error
-    }
-  }
-
-  // Method to create PDF
-  Future<void> createPdf() async {
-    setState(() {
-      isGenerating = true; // Set progress indicator to true
-    });
-
-    final pdf = pw.Document();
-
-    // Capture the screen of the current visible tab
-    final imageData = await captureWidget();
-
-    if (imageData.isNotEmpty) {
-      // Add the captured image to the PDF
-      pdf.addPage(
-        pw.Page(
-          build: (pw.Context context) {
-            return pw.Center(
-              child: pw.Image(
-                pw.MemoryImage(imageData), // Insert the captured image
-              ),
-            );
-          },
-        ),
-      );
-      debugPrint("PDF added to document");
-    } else {
-      debugPrint("Empty image data");
-    }
-
-    // Saving the PDF to a file
-    final output = await getTemporaryDirectory();
-    final file = File('${output.path}/lpgNiyojan.pdf');
-    await file.writeAsBytes(await pdf.save());
-
-    // After the PDF is saved, change the state and open the PDF
-    setState(() {
-      isGenerating = false; // Hide progress indicator
-    });
-
-    // Optionally, you can open the PDF using any method, e.g., a PDF viewer or app-specific logic.
-    print("PDF created at: ${file.path}");
-
-    // Open the PDF file
-    // await _openPdf(file);
-  }
-
-  // // Method to open the PDF file
-  // Future<void> _openPdf(File file) async {
-  //   final url = 'file://${file.path}';
-  //   if (await canLaunch(url)) {
-  //     await launch(url);
-  //   } else {
-  //     throw 'Could not open PDF file at $url';
-  //   }
-  // }
-
-  // String formatCurrency(double amount) {
-  //   if (amount == 0) {
-  //     return '0.00'; // Return "0.00" if the amount is zero
-  //   }
-  //   final format =
-  //   NumberFormat('#,##,###.00', 'en_IN'); // Indian locale without symbol
-  //
-  //   return format.format(amount);
-  // }
 
   String formatCurrency(double amount) {
     if (amount == 0) {
