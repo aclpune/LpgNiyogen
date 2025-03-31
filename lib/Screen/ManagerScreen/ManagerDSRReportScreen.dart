@@ -118,12 +118,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
     // _fetchData("Y");
     checkIfSavedOrNot(selectedDate);
     checkAndSaveDayEndData();
-    // // Initialize the controllers for each item in the list
-    // for (int i = 0; i < cdcmsListData.length; i++) {
-    //   filledCDControllers.add(TextEditingController());
-    //   emptyCDControllers.add(TextEditingController());
-    //   defectiveCDControllers.add(TextEditingController());
-    // }
+
   }
 
   @override
@@ -140,7 +135,6 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
     }
     super.dispose();
   }
-
   late bool isDateValid;
   @override
   Widget build(BuildContext context) {
