@@ -15,6 +15,7 @@ import 'Screen/GodownKeeper/ItemReceipt/AddItem/ItemReceiptScreen.dart';
 import 'Screen/GodownKeeper/ItemReceipt/ItemReturn/ItenRetun.dart';
 import 'Screen/GodownKeeper/ItemReceipt/ItemReturnXMI/screen/AddReturnItemXMIScreen.dart';
 import 'Screen/GodownKeeper/ItemReceipt/ItemReturnXMI/screen/ItemReturnXMIListScreen.dart';
+import 'Screen/GodownKeeper/MarkDefective/MarkDefectiveItemScreen.dart';
 import 'Screen/ManagerScreen/CashDepositToBankScreen.dart';
 import 'Screen/ManagerScreen/CashHandoverScreen.dart';
 import 'Screen/ManagerScreen/DeliveryBoyWiseListShow.dart';
@@ -142,6 +143,7 @@ class MyApp extends StatelessWidget {
             StockTransferTOGodownScreen.screenName: (context) => StockTransferTOGodownScreen(),
             AddReturnItemXMIScreen.screenName: (context) => AddReturnItemXMIScreen(),
             ItemReturnXMIListScreen.screenName: (context) => ItemReturnXMIListScreen(),
+            MarkDefectiveItemScreen.screenName: (context) => MarkDefectiveItemScreen(),
 
             ///Manager
             CashHandoverScreen.screenName: (context) => CashHandoverScreen(),

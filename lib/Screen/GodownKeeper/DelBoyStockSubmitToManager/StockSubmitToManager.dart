@@ -556,11 +556,9 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
                   }
                   return 0; // Keep original order if both are the same
                 });
-
                 if (!isSearchActive) {
                   filteredData = stockSubmitData!;
                 }
-
                 return
                   Column(
                   children: [
@@ -761,7 +759,6 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
                         ),
                       ),
                     ),
-
                     Padding(
                       padding: const EdgeInsets.all(5.0),
                       child: Card(
@@ -928,7 +925,8 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
                               padding: const EdgeInsets.all(5.0),
                               child:
                               Card(
-                                color: Colors.white,shape: BeveledRectangleBorder(),
+                                color:sale.dailySaleStatus == 3 || sale.dailySaleStatus == 1? Colors.white:Colors.white70,
+                                shape: BeveledRectangleBorder(),
                                 child: Padding(
                                   padding: const EdgeInsets.all(0.0),
                                   child: Column(

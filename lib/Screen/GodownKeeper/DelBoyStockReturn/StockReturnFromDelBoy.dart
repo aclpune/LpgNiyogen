@@ -99,6 +99,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
   List<TodaysOpeningStockDataModel> todaysOpeningStock = [];
   List<GetCurrentStcOfGodownKeeperModel> getCurrentStcOfGodownKeeper = [];
   num? filledStock = 0;
+  num? editFilledStock ;
   String? formattedDate;
   var argValue;
   String? delBoyNameName;
@@ -443,6 +444,10 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
       _lessEmptyController.text = item.lessEmptyQty.toString();
       _remarkController.text = item.remark.toString();
       vehicleNo = v.vehicleNo.toString();
+      if (editFilledStock == null) {
+        editFilledStock = item.filledSaleQty;
+      }
+
       // Ensure selectedDelBoyName is not null and handles empty value gracefully
       selectedDelBoyName =
           v.staffName?.isNotEmpty == true ? v.staffName : 'Unknown';
@@ -1866,243 +1871,124 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                         DateFormat('yyyy-MM-dd').format(now);
                         if (_editingItemId != null) {
                           if(flagEditMode == "editMode"){
-                            if (filledValue >= lessEmptyValue) {
-                              if (filledValue >= svValue) {
-                                // if (filledValue > tvValue) {
+                            if (filledValue <= (filledStock ?? 0) + (editFilledStock ?? 0)){
+                              if (filledValue >= lessEmptyValue) {
+                                if (filledValue >= svValue) {
+                                  // if (filledValue > tvValue) {
                                   if (filledValue >= defectiveValue) {
                                     if (emptyValue >= 0) {
-                                      if(_svController.text.isNotEmpty){
+                                      if (_svController.text.isNotEmpty) {
                                         int currentCount = remarksList
-                                            .map((remark) => remark.split(',').length)
+                                            .map((remark) =>
+                                        remark
+                                            .split(',')
+                                            .length)
                                             .fold(0, (a, b) => a + b);
-                                        int svQty = int.parse(_svController.text);
+                                        int svQty = int.parse(
+                                            _svController.text);
                                         // Check if we can add more consumers
                                         if (currentCount > svQty) {
-                                          showFlushBar(context,  Constants.svConsumerCountExceed);
-                                        }else {
-                                          if(_tvController.text.isNotEmpty){
+                                          showFlushBar(context,
+                                              Constants.svConsumerCountExceed);
+                                        } else {
+                                          if (_tvController.text.isNotEmpty) {
                                             int currentCountTV = tvConsumerList
-                                                .map((remark) => remark.split(',').length)
-                                                .fold(0, (a, b) => a + b);
-                                            int tvQty = int.parse(_tvController.text);
-                                            if(currentCountTV > tvQty){
-                                              showFlushBar(context,Constants.tvConsumerCountExceed);
-                                            }else{
-                                              _updateItem();
-                                            }
-                                          }else{
-                                            _updateItem();
-                                          }
-                                        }
-                                      }else{
-                                        if(_tvController.text.isNotEmpty){
-                                          int currentCountTV = tvConsumerList
-                                              .map((remark) => remark.split(',').length)
-                                              .fold(0, (a, b) => a + b);
-                                          int tvQty = int.parse(_tvController.text);
-                                          if(currentCountTV > tvQty){
-                                            showFlushBar(context,Constants.tvConsumerCountExceed);
-                                          }else{
-                                            _updateItem();
-                                          }
-                                        }else{
-                                          _updateItem();
-                                        }
-                                      }
-                                    } else {
-                                      showFlushBar(context,Constants.countShouldNotBeGreater);
-                                    }
-                                  } else {
-                                    showFlushBar(context, Constants.countShouldNotBeGreater);
-                                  }
-                                // } else {
-                                //   showFlushBar(context, "Cylinder Count",
-                                //       'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
-                                // }
-                              } else {
-                                showFlushBar(context, Constants.countShouldNotBeGreater);
-                              }
-                            } else {
-                              showFlushBar(context,Constants.countShouldNotBeGreater);
-                            }
-                          }else{
-                            if(_dataGetFromDBDelBoy.isNotEmpty) {
-                              // if(filledValue > 0) {
-                                if (filledValue >= lessEmptyValue) {
-                                  if (filledValue >= svValue) {
-                                    // if (filledValue > tvValue) {
-                                      if (filledValue > defectiveValue) {
-                                        if (emptyValue >= 0) {
-                                          if(_svController.text.isNotEmpty){
-                                            int currentCount = remarksList
                                                 .map((remark) =>
                                             remark
                                                 .split(',')
                                                 .length)
                                                 .fold(0, (a, b) => a + b);
-                                            int svQty = int.parse(
-                                                _svController.text);
-                                            // Check if we can add more consumers
-                                            if (currentCount > svQty) {
-                                              showFlushBar(context,Constants.svConsumerCountExceed);
+                                            int tvQty = int.parse(
+                                                _tvController.text);
+                                            if (currentCountTV > tvQty) {
+                                              showFlushBar(context, Constants
+                                                  .tvConsumerCountExceed);
                                             } else {
-                                              if(_tvController.text.isNotEmpty){
-                                                int currentCountTV = tvConsumerList
-                                                    .map((remark) => remark.split(',').length)
-                                                    .fold(0, (a, b) => a + b);
-                                                int tvQty = int.parse(_tvController.text);
-                                                if(currentCountTV > tvQty){
-                                                  showFlushBar(context,Constants.tvConsumerCountExceed);
-                                                }else{
-                                                  final isUpdated =
-                                                  await updateRefillSale
-                                                      ?.updateRowByColID(
-                                                    _editingItemId!,
-                                                    ItemData(
-                                                      date:
-                                                      deliveryDateController
-                                                          .text,
-                                                      deliveryBoyName:
-                                                      selectedDelBoyName
-                                                          .toString(),
-                                                      delBoyId:
-                                                      selectedDelBoyId
-                                                          .toString(),
-                                                      vehicleNo:
-                                                      vehicleNo.toString(),
-                                                      itemName:
-                                                      _selectedItem.toString(),
-                                                      itemID:
-                                                      selectedItemId.toString(),
-                                                      filled: _filledController
-                                                          .text,
-                                                      sv: _svController.text,
-                                                      tv: _tvController.text,
-                                                      empty: _emptyController
-                                                          .text,
-                                                      defective:
-                                                      _defectiveController.text,
-                                                      lessEmpty:
-                                                      _lessEmptyController.text,
-                                                      remark: _remarkController
-                                                          .text,
-                                                      svRemark: remarksList.join(', '),
-                                                      tvConsumerNo: tvConsumerList.join(', '),
-                                                      updateFlag: 'pending',
-                                                      itemAddedDate: formattedDate,
-                                                    ),
-                                                  );
-
-                                                  if (isUpdated == true) {
-                                                    EasyLoading.showToast(Constants.dataDeleted,
-                                                        duration: const Duration(milliseconds: 3000));
-
-                                                    fetchData(
-                                                        selectedDelBoyId
-                                                            .toString(),
-                                                        deliveryDateController
-                                                            .text);
-
-                                                    setState(() {
-                                                      _editingItemId = null;
-                                                      _filledController.clear();
-                                                      _svController.clear();
-                                                      _tvController.clear();
-                                                      _emptyController.clear();
-                                                      _defectiveController
-                                                          .clear();
-                                                      _lessEmptyController
-                                                          .clear();
-                                                      _remarkController.clear();
-                                                      remarksList.clear();
-                                                      tvConsumerList.clear();
-                                                      _selectedItemModel = null;
-                                                      _selectedItem = '';
-                                                    });
-                                                  } else {
-                                                    showFlushBar(context, Constants.recordAlreadyExist);
-                                                  }
-                                                }
-                                              }else{
-                                                final isUpdated =
-                                                await updateRefillSale
-                                                    ?.updateRowByColID(
-                                                  _editingItemId!,
-                                                  ItemData(
-                                                    date:
-                                                    deliveryDateController
-                                                        .text,
-                                                    deliveryBoyName:
-                                                    selectedDelBoyName
-                                                        .toString(),
-                                                    delBoyId:
-                                                    selectedDelBoyId
-                                                        .toString(),
-                                                    vehicleNo:
-                                                    vehicleNo.toString(),
-                                                    itemName:
-                                                    _selectedItem.toString(),
-                                                    itemID:
-                                                    selectedItemId.toString(),
-                                                    filled: _filledController
-                                                        .text,
-                                                    sv: _svController.text,
-                                                    tv: _tvController.text,
-                                                    empty: _emptyController
-                                                        .text,
-                                                    defective:
-                                                    _defectiveController.text,
-                                                    lessEmpty:
-                                                    _lessEmptyController.text,
-                                                    remark: _remarkController
-                                                        .text,
-                                                    svRemark: remarksList.join(', '),
-                                                    tvConsumerNo: tvConsumerList.join(', '),
-                                                    updateFlag: 'pending',
-                                                    itemAddedDate: formattedDate,
-                                                  ),
-                                                );
-
-                                                if (isUpdated == true) {
-                                                  EasyLoading.showToast(Constants.dataUpdated,
-                                                      duration: const Duration(milliseconds: 3000));
-
-                                                  fetchData(
-                                                      selectedDelBoyId
-                                                          .toString(),
-                                                      deliveryDateController
-                                                          .text);
-
-                                                  setState(() {
-                                                    _editingItemId = null;
-                                                    _filledController.clear();
-                                                    _svController.clear();
-                                                    _tvController.clear();
-                                                    _emptyController.clear();
-                                                    _defectiveController
-                                                        .clear();
-                                                    _lessEmptyController
-                                                        .clear();
-                                                    _remarkController.clear();
-                                                    remarksList.clear();
-                                                    tvConsumerList.clear();
-                                                    _selectedItemModel = null;
-                                                    _selectedItem = '';
-                                                  });
-                                                } else {
-                                                  showFlushBar(context, Constants.recordAlreadyExist);
-                                                }
-                                              }
+                                              _updateItem();
                                             }
-                                          }else{
-                                            if(_tvController.text.isNotEmpty){
+                                          } else {
+                                            _updateItem();
+                                          }
+                                        }
+                                      } else {
+                                        if (_tvController.text.isNotEmpty) {
+                                          int currentCountTV = tvConsumerList
+                                              .map((remark) =>
+                                          remark
+                                              .split(',')
+                                              .length)
+                                              .fold(0, (a, b) => a + b);
+                                          int tvQty = int.parse(
+                                              _tvController.text);
+                                          if (currentCountTV > tvQty) {
+                                            showFlushBar(context, Constants
+                                                .tvConsumerCountExceed);
+                                          } else {
+                                            _updateItem();
+                                          }
+                                        } else {
+                                          _updateItem();
+                                        }
+                                      }
+                                    } else {
+                                      showFlushBar(context,
+                                          Constants.countShouldNotBeGreater);
+                                    }
+                                  } else {
+                                    showFlushBar(context,
+                                        Constants.countShouldNotBeGreater);
+                                  }
+                                  // } else {
+                                  //   showFlushBar(context, "Cylinder Count",
+                                  //       'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
+                                  // }
+                                } else {
+                                  showFlushBar(context,
+                                      Constants.countShouldNotBeGreater);
+                                }
+                              } else {
+                                showFlushBar(
+                                    context, Constants.countShouldNotBeGreater);
+                              }
+                            }else{
+                              showFlushBar(context, Constants.totalSaleQtyDailySale);
+                            }
+                          }else{
+                            if(_dataGetFromDBDelBoy.isNotEmpty) {
+                              // if(filledValue > 0) {
+                              if (filledValue <= (filledStock ?? 0)) {
+                                if (filledValue >= lessEmptyValue) {
+                                  if (filledValue >= svValue) {
+                                    // if (filledValue > tvValue) {
+                                    if (filledValue > defectiveValue) {
+                                      if (emptyValue >= 0) {
+                                        if (_svController.text.isNotEmpty) {
+                                          int currentCount = remarksList
+                                              .map((remark) =>
+                                          remark
+                                              .split(',')
+                                              .length)
+                                              .fold(0, (a, b) => a + b);
+                                          int svQty = int.parse(
+                                              _svController.text);
+                                          // Check if we can add more consumers
+                                          if (currentCount > svQty) {
+                                            showFlushBar(context, Constants
+                                                .svConsumerCountExceed);
+                                          } else {
+                                            if (_tvController.text.isNotEmpty) {
                                               int currentCountTV = tvConsumerList
-                                                  .map((remark) => remark.split(',').length)
+                                                  .map((remark) =>
+                                              remark
+                                                  .split(',')
+                                                  .length)
                                                   .fold(0, (a, b) => a + b);
-                                              int tvQty = int.parse(_tvController.text);
-                                              if(currentCountTV > tvQty){
-                                                showFlushBar(context,Constants.tvConsumerCountExceed);
-                                              }else{
+                                              int tvQty = int.parse(
+                                                  _tvController.text);
+                                              if (currentCountTV > tvQty) {
+                                                showFlushBar(context, Constants
+                                                    .tvConsumerCountExceed);
+                                              } else {
                                                 final isUpdated =
                                                 await updateRefillSale
                                                     ?.updateRowByColID(
@@ -2135,16 +2021,20 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                     _lessEmptyController.text,
                                                     remark: _remarkController
                                                         .text,
-                                                    svRemark:remarksList.join(', '),
-                                                    tvConsumerNo:tvConsumerList.join(', '),
+                                                    svRemark: remarksList.join(
+                                                        ', '),
+                                                    tvConsumerNo: tvConsumerList
+                                                        .join(', '),
                                                     updateFlag: 'pending',
                                                     itemAddedDate: formattedDate,
                                                   ),
                                                 );
 
                                                 if (isUpdated == true) {
-                                                  EasyLoading.showToast(Constants.dataUpdated,
-                                                      duration: const Duration(milliseconds: 3000));
+                                                  EasyLoading.showToast(
+                                                      Constants.dataDeleted,
+                                                      duration: const Duration(
+                                                          milliseconds: 3000));
 
                                                   fetchData(
                                                       selectedDelBoyId
@@ -2169,10 +2059,12 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                     _selectedItem = '';
                                                   });
                                                 } else {
-                                                  showFlushBar(context, Constants.recordAlreadyExist);
+                                                  showFlushBar(context,
+                                                      Constants
+                                                          .recordAlreadyExist);
                                                 }
                                               }
-                                            }else{
+                                            } else {
                                               final isUpdated =
                                               await updateRefillSale
                                                   ?.updateRowByColID(
@@ -2205,16 +2097,20 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                   _lessEmptyController.text,
                                                   remark: _remarkController
                                                       .text,
-                                                  svRemark:remarksList.join(', '),
-                                                  tvConsumerNo:tvConsumerList.join(', '),
+                                                  svRemark: remarksList.join(
+                                                      ', '),
+                                                  tvConsumerNo: tvConsumerList
+                                                      .join(', '),
                                                   updateFlag: 'pending',
                                                   itemAddedDate: formattedDate,
                                                 ),
                                               );
 
                                               if (isUpdated == true) {
-                                                EasyLoading.showToast(Constants.dataUpdated,
-                                                    duration: const Duration(milliseconds: 3000));
+                                                EasyLoading.showToast(
+                                                    Constants.dataUpdated,
+                                                    duration: const Duration(
+                                                        milliseconds: 3000));
 
                                                 fetchData(
                                                     selectedDelBoyId
@@ -2239,28 +2135,199 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                   _selectedItem = '';
                                                 });
                                               } else {
-                                                showFlushBar(context, Constants.recordAlreadyExist);
+                                                showFlushBar(context, Constants
+                                                    .recordAlreadyExist);
                                               }
                                             }
                                           }
                                         } else {
-                                          showFlushBar(context,Constants.countShouldNotBeGreater);
+                                          if (_tvController.text.isNotEmpty) {
+                                            int currentCountTV = tvConsumerList
+                                                .map((remark) =>
+                                            remark
+                                                .split(',')
+                                                .length)
+                                                .fold(0, (a, b) => a + b);
+                                            int tvQty = int.parse(
+                                                _tvController.text);
+                                            if (currentCountTV > tvQty) {
+                                              showFlushBar(context, Constants
+                                                  .tvConsumerCountExceed);
+                                            } else {
+                                              final isUpdated =
+                                              await updateRefillSale
+                                                  ?.updateRowByColID(
+                                                _editingItemId!,
+                                                ItemData(
+                                                  date:
+                                                  deliveryDateController
+                                                      .text,
+                                                  deliveryBoyName:
+                                                  selectedDelBoyName
+                                                      .toString(),
+                                                  delBoyId:
+                                                  selectedDelBoyId
+                                                      .toString(),
+                                                  vehicleNo:
+                                                  vehicleNo.toString(),
+                                                  itemName:
+                                                  _selectedItem.toString(),
+                                                  itemID:
+                                                  selectedItemId.toString(),
+                                                  filled: _filledController
+                                                      .text,
+                                                  sv: _svController.text,
+                                                  tv: _tvController.text,
+                                                  empty: _emptyController
+                                                      .text,
+                                                  defective:
+                                                  _defectiveController.text,
+                                                  lessEmpty:
+                                                  _lessEmptyController.text,
+                                                  remark: _remarkController
+                                                      .text,
+                                                  svRemark: remarksList.join(
+                                                      ', '),
+                                                  tvConsumerNo: tvConsumerList
+                                                      .join(', '),
+                                                  updateFlag: 'pending',
+                                                  itemAddedDate: formattedDate,
+                                                ),
+                                              );
+
+                                              if (isUpdated == true) {
+                                                EasyLoading.showToast(
+                                                    Constants.dataUpdated,
+                                                    duration: const Duration(
+                                                        milliseconds: 3000));
+
+                                                fetchData(
+                                                    selectedDelBoyId
+                                                        .toString(),
+                                                    deliveryDateController
+                                                        .text);
+
+                                                setState(() {
+                                                  _editingItemId = null;
+                                                  _filledController.clear();
+                                                  _svController.clear();
+                                                  _tvController.clear();
+                                                  _emptyController.clear();
+                                                  _defectiveController
+                                                      .clear();
+                                                  _lessEmptyController
+                                                      .clear();
+                                                  _remarkController.clear();
+                                                  remarksList.clear();
+                                                  tvConsumerList.clear();
+                                                  _selectedItemModel = null;
+                                                  _selectedItem = '';
+                                                });
+                                              } else {
+                                                showFlushBar(context, Constants
+                                                    .recordAlreadyExist);
+                                              }
+                                            }
+                                          } else {
+                                            final isUpdated =
+                                            await updateRefillSale
+                                                ?.updateRowByColID(
+                                              _editingItemId!,
+                                              ItemData(
+                                                date:
+                                                deliveryDateController
+                                                    .text,
+                                                deliveryBoyName:
+                                                selectedDelBoyName
+                                                    .toString(),
+                                                delBoyId:
+                                                selectedDelBoyId
+                                                    .toString(),
+                                                vehicleNo:
+                                                vehicleNo.toString(),
+                                                itemName:
+                                                _selectedItem.toString(),
+                                                itemID:
+                                                selectedItemId.toString(),
+                                                filled: _filledController
+                                                    .text,
+                                                sv: _svController.text,
+                                                tv: _tvController.text,
+                                                empty: _emptyController
+                                                    .text,
+                                                defective:
+                                                _defectiveController.text,
+                                                lessEmpty:
+                                                _lessEmptyController.text,
+                                                remark: _remarkController
+                                                    .text,
+                                                svRemark: remarksList.join(
+                                                    ', '),
+                                                tvConsumerNo: tvConsumerList
+                                                    .join(', '),
+                                                updateFlag: 'pending',
+                                                itemAddedDate: formattedDate,
+                                              ),
+                                            );
+
+                                            if (isUpdated == true) {
+                                              EasyLoading.showToast(
+                                                  Constants.dataUpdated,
+                                                  duration: const Duration(
+                                                      milliseconds: 3000));
+
+                                              fetchData(
+                                                  selectedDelBoyId
+                                                      .toString(),
+                                                  deliveryDateController
+                                                      .text);
+
+                                              setState(() {
+                                                _editingItemId = null;
+                                                _filledController.clear();
+                                                _svController.clear();
+                                                _tvController.clear();
+                                                _emptyController.clear();
+                                                _defectiveController
+                                                    .clear();
+                                                _lessEmptyController
+                                                    .clear();
+                                                _remarkController.clear();
+                                                remarksList.clear();
+                                                tvConsumerList.clear();
+                                                _selectedItemModel = null;
+                                                _selectedItem = '';
+                                              });
+                                            } else {
+                                              showFlushBar(context,
+                                                  Constants.recordAlreadyExist);
+                                            }
+                                          }
                                         }
                                       } else {
-                                        showFlushBar(context, Constants.countShouldNotBeGreater);
+                                        showFlushBar(context,
+                                            Constants.countShouldNotBeGreater);
                                       }
+                                    } else {
+                                      showFlushBar(context,
+                                          Constants.countShouldNotBeGreater);
+                                    }
                                     // } else {
                                     //   showFlushBar(context, "Cylinder Count",
                                     //       'The Total Cylinder Count Must Be Greater Than All Other Quantities!');
                                     // }
                                   } else {
-                                    showFlushBar(context, Constants.countShouldNotBeGreater);
+                                    showFlushBar(context,
+                                        Constants.countShouldNotBeGreater);
                                   }
                                 } else {
-                                  showFlushBar(context,Constants.countShouldNotBeGreater);
+                                  showFlushBar(context,
+                                      Constants.countShouldNotBeGreater);
                                 }
-                              // }
-
+                                // }
+                              }else{
+                                showFlushBar(context, Constants.totalSaleQtyDailySale);
+                              }
                             }else{
 
                             }

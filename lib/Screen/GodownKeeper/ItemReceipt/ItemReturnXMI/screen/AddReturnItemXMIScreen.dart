@@ -44,6 +44,7 @@ class _AddReturnItemXMIScreenState extends State<AddReturnItemXMIScreen> {
   int? receiptIds;
   List<GetCurrentStcOfGodownKeeperModel> getCurrentStcOfGodownKeeper = [];
   bool isLoading = true;
+  Map<int, double> _previousInvoiceQuantities = {};
   // Function to check if items are available for selection
   bool get _isAddNewItemEnabled {
     // Check if there are any available items that haven't been selected yet
@@ -562,6 +563,8 @@ class _AddReturnItemXMIScreenState extends State<AddReturnItemXMIScreen> {
         // Directly assign the selected item name for this index in _selectedItems map
         _selectedItems[items.length - 1] = item.itemName ??
             ''; // Ensure this is added correctly for each index
+        // Store the previous invoice quantity as a double for validation
+        _previousInvoiceQuantities[items.length - 1] = (item.eXMIQty ?? 0).toDouble();
       }
 
       // Debugging step to check the number of items
@@ -931,6 +934,8 @@ class _AddReturnItemXMIScreenState extends State<AddReturnItemXMIScreen> {
           String? filledQty = items[i]['receivedQty']?.text ?? '';
           String? emrQty = items[i]['emr']?.text ?? '';
           String? selectedItemName = _selectedItems[i];
+          double previousInvoiceQuantity = _previousInvoiceQuantities[i] ?? 0;
+
 
           // Check if the selected item is valid (not empty)
           if (selectedItemName == null || selectedItemName.isEmpty) {
@@ -974,11 +979,24 @@ class _AddReturnItemXMIScreenState extends State<AddReturnItemXMIScreen> {
             return; // Stop the submission process
           }
 
+          // Calculate the stock available for the item in edit mode
+          num availableStock = currentStock.currentStkEmpty ?? 0;
           // Compare the invoiceQty with the current stock available
           double invoiceQuantity = double.tryParse(invoiceQty) ?? 0;
-          if (invoiceQuantity > (currentStock.currentStkEmpty ?? 0)) {
-            // Add the item to the list of items exceeding the stock limit
-            itemsExceedingLimit.add(selectedItem.itemName!);
+// If in edit mode, add the previous invoice quantity (already invoiced quantity)
+          if (modes == "Edit") {
+            if (invoiceQuantity > ((currentStock.currentStkEmpty ?? 0) + previousInvoiceQuantity)) {
+              // Add the item to the list of items exceeding the stock limit
+              itemsExceedingLimit.add(selectedItem.itemName!);
+              debugPrint("edit ${(currentStock.currentStkEmpty ?? 0) + previousInvoiceQuantity }");
+              debugPrint("edit s${previousInvoiceQuantity }");
+            }
+          }else{
+            if (invoiceQuantity > (currentStock.currentStkEmpty ?? 0)) {
+              // Add the item to the list of items exceeding the stock limit
+              itemsExceedingLimit.add(selectedItem.itemName!);
+              debugPrint("editcheck ${(currentStock.currentStkEmpty ?? 0)}");
+            }
           }
         }
 
