@@ -233,8 +233,8 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("Item name: ${item.itemName}",style: TextStyle(fontWeight:FontWeight.bold,fontSize: 14)),
-                              Text("Current stock: ${stockInfo.currentStkEmpty ?? 0}",style: TextStyle(fontWeight:FontWeight.bold,fontSize: 14)),
+                              Text("Item name: ${item.itemName}",style: TextStyle(fontWeight:FontWeight.bold)),
+                              Text("Current stock: ${stockInfo.currentStkEmpty ?? 0}",style: TextStyle(fontWeight:FontWeight.bold)),
                             ],
                           ),
                         ),
@@ -285,9 +285,8 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("Item name: ${item.itemName}",style: TextStyle(fontWeight:FontWeight.bold,fontSize: 12)),
-                              SizedBox(width: 5,),
-                              Text("Current stock: ${stockInfo.currentStkEmpty}",style: TextStyle(fontWeight:FontWeight.bold,fontSize: 12)),
+                              Text("Item name: ${item.itemName}",style: TextStyle(fontWeight:FontWeight.bold)),
+                              Text("Current stock: ${stockInfo.currentStkEmpty}",style: TextStyle(fontWeight:FontWeight.bold)),
                             ],
                           ),
                         ),
@@ -625,7 +624,6 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                     } else {
                       // Send the data to the API if validation is successful
                       await sendItemDetailsToApi(updatedItemDetails, receiptId);
-
                       // Close the dialog
                       Navigator.of(context).pop();
                     }
