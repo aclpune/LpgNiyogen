@@ -233,8 +233,8 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("Item name: ${item.itemName}",style: TextStyle(fontWeight:FontWeight.bold)),
-                              Text("Current stock: ${stockInfo.currentStkEmpty ?? 0}",style: TextStyle(fontWeight:FontWeight.bold)),
+                              Text("Item name: ${item.itemName}",style: TextStyle(fontWeight:FontWeight.bold,fontSize: 14)),
+                              Text("Current stock: ${stockInfo.currentStkEmpty ?? 0}",style: TextStyle(fontWeight:FontWeight.bold,fontSize: 14)),
                             ],
                           ),
                         ),
@@ -285,8 +285,9 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("Item name: ${item.itemName}",style: TextStyle(fontWeight:FontWeight.bold)),
-                              Text("Current stock: ${stockInfo.currentStkEmpty}",style: TextStyle(fontWeight:FontWeight.bold)),
+                              Text("Item name: ${item.itemName}",style: TextStyle(fontWeight:FontWeight.bold,fontSize: 12)),
+                              SizedBox(width: 5,),
+                              Text("Current stock: ${stockInfo.currentStkEmpty}",style: TextStyle(fontWeight:FontWeight.bold,fontSize: 12)),
                             ],
                           ),
                         ),
@@ -574,12 +575,28 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                 // Gather the updated item details, including ItemId, EmptyReturnQty, and DefectiveQty
                 List<Map<String, dynamic>> updatedItemDetails = [];
                 bool isValid = true;
+                bool isValidDefStock =  true;
                 String errorMessage = "";
 
                 for (int i = 0; i < items.length; i++) {
                   int returnQty = int.tryParse(returnQtyControllers[i].text) ?? 0;
                   int defectiveQty = int.tryParse(defectiveQtyControllers[i].text) ?? 0;
                   num? filledQty = items[i].filledQty;
+
+                  // Find the current stock for the item (using the itemId)
+                  GetCurrentStcOfGodownKeeperModel? currentStock = getCurrentStcOfGodownKeeper.firstWhere(
+                          (stock) => stock.itemId == items[i].itemId,
+                      orElse: () => GetCurrentStcOfGodownKeeperModel()
+                  );
+
+                  // Check if returnQty + emrQty exceeds the current stock (currentStkEmpty)
+                  num currentStkDef = currentStock.currentStkDefective ?? 0;
+
+                  if (defectiveQty> currentStkDef) {
+                    isValidDefStock = false;
+                    errorMessage = "Return quantity and EMR quantity cannot exceed the current stock for ${items[i].itemName}.";
+                    break;
+                  }
 
                   // Check if the sum of returnQty and defectiveQty exceeds the filledQty
                   if (returnQty + defectiveQty > filledQty!) {
@@ -598,18 +615,22 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                     "DefectiveQty": defectiveQty,
                   });
                 }
+                  if(!isValidDefStock){
+                    showFlushBar(context, Constants.defectiveSaleQtyDailySale);
+                  }else{
+                    // If validation fails, show an error message
+                    if (!isValid) {
+                      // Display the error message as a SnackBar
+                      showFlushBar(context, Constants.defectiveQtyItemReturn);
+                    } else {
+                      // Send the data to the API if validation is successful
+                      await sendItemDetailsToApi(updatedItemDetails, receiptId);
 
-                // If validation fails, show an error message
-                if (!isValid) {
-                  // Display the error message as a SnackBar
-                  showFlushBar(context, Constants.defectiveQtyItemReturn);
-                } else {
-                  // Send the data to the API if validation is successful
-                  await sendItemDetailsToApi(updatedItemDetails, receiptId);
+                      // Close the dialog
+                      Navigator.of(context).pop();
+                    }
+                  }
 
-                  // Close the dialog
-                  Navigator.of(context).pop();
-                }
               },
               child: Text("Out",style: TextStyle(color: Colors.white,fontSize: 14,),),
               style: ElevatedButton.styleFrom(

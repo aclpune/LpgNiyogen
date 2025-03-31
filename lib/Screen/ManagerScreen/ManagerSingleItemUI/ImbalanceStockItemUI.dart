@@ -20,9 +20,9 @@ import '../ManagerUpdateSaleCashUpdation.dart';
 
 class ImbalanceStockItemUI extends StatefulWidget {
   GetManagerDashboarDetailModel filteredSales;
+  final bool isLastItem;
 
-
-  ImbalanceStockItemUI(this.filteredSales,{Key? key}) : super(key: key);
+  ImbalanceStockItemUI(this.filteredSales,{Key? key,required this.isLastItem}) : super(key: key);
 
   @override
   State<ImbalanceStockItemUI> createState() => _ImbalanceStockItemUIState();
@@ -34,52 +34,57 @@ class _ImbalanceStockItemUIState extends State<ImbalanceStockItemUI> {
   Widget build(BuildContext context) {
     var sale = widget.filteredSales;
     return
-      Container(
-        width: 110,
-        height: 90,
-        child:
-        Card(
-          margin: EdgeInsets.symmetric(vertical: 7),
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child:
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      Row(
+        children: [
+          Expanded(
+            child: Container(
+              // The content will take up the remaining available space
+              width: double.infinity,  // This ensures the container stretches to available space
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      sale.todayImbQty.toString(), // Replace this with your dynamic data
-                      style: Styling.countNumber,
-                      textAlign: TextAlign.center,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(
+                          sale.todayImbQty.toString(), // Replace this with your dynamic data
+                          style: Styling.countNumber,
+                          textAlign: TextAlign.center,
+                        ),
+                        verticalDividerSmallest(),
+                        Text(
+                          sale.asOfDateImbQty.toString(), // Replace this with your dynamic data
+                          style: Styling.countNumber,
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
                     ),
-                    verticalDividerSmallest(),
-                    Text(
-                      sale.asOfDateImbQty.toString(), // Replace this with your dynamic data
-                      style: Styling.countNumber,
-                      textAlign: TextAlign.center,
+                    SizedBox(height: 15),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          sale.itemName.toString(),
+                          style: Styling.textFormText,
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
                     ),
                   ],
                 ),
-                SizedBox(height: 10,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(sale.itemName.toString(),
-                      style: Styling.textFormText,
-                      textAlign: TextAlign.center,)
-                  ],
-                )
-              ],
+              ),
             ),
           ),
-        ),
+          if (!widget.isLastItem)
+            Container(
+              width: 2,
+              height: 70,
+              color: Colors.grey,
+            ),
+        ],
       );
   }
 }

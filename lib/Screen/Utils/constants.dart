@@ -81,12 +81,10 @@ BranchAdminAH	cnf@1234*/
   static String gretaerItemQty = "The following items have a quantity greater than the available stock.";
   static String dayEndCompleted = "This action is not permitted as today's day end operation has already been completed.";
   static String totalSaleQtyDailySale = "Refill sale qty exceeds current filled stock for this item, kindly check the qty entered or add filled stock using item receipt menu.";
-
-
+  static String defectiveSaleQtyDailySale = "Defective qty exceeds current defective stock for this item, kindly check the qty entered or add defective stock.";
 
   static String roleIdGodown = "3";
   static String roleIdManager= "1";
-
   static String roleIdOwner = "11";
 
   //TextSizes

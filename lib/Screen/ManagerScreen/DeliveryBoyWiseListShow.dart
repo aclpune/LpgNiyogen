@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:lpgsalesandinventory/Screen/Utils/CustomAppBarManager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../ConstantScreen/widgets.dart';
@@ -38,10 +39,10 @@ class _DeliveryBoyWiseListShowState extends State<DeliveryBoyWiseListShow> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-      CustomAppBar(
-        title: 'Daily Sale Summary', // Title or hint text for the text field
-      ),
+      // appBar:
+      // CustomAppBarManager(
+      //   title: 'Daily Sale Summary', // Title or hint text for the text field
+      // ),
       body:
       Scaffold(
         body:isLoading?Center(child: CircularProgressIndicator()):

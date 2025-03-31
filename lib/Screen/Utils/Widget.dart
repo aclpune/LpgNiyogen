@@ -264,3 +264,122 @@ InputDecoration buildInputWithSmallUnderline(BuildContext context) {
     ),
   );
 }
+
+Widget itemSubLineWithDDs(String greyText, bool isOutwardStockListViewVisible) {
+  return
+    Container(
+      child:  Padding(
+        padding: const EdgeInsets.all(10.0),
+        child:
+        Row(
+          mainAxisAlignment:
+          MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              greyText,
+              style: Styling.bodyTitleWithBlueHightSmallWithoutBold,
+            ),
+            Icon(
+              isOutwardStockListViewVisible
+                  ? Icons.arrow_drop_up
+                  : Icons.arrow_drop_down,
+              size: 30, // Bigger icon for a more clickable feel
+              color:Color(0xff1280b3),
+            ),
+          ],
+        ),
+      ),
+    );
+
+}
+
+Widget itemSubLineWithDDss(String greyText, bool isImbalanceStockListViewVisible) {
+  return
+    Container(
+      child:    Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Row(
+          mainAxisAlignment:
+          MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              greyText,
+              style: Styling.bodyTitleBig,
+            ),
+            Icon(
+              isImbalanceStockListViewVisible
+                  ? Icons.arrow_drop_up
+                  : Icons.arrow_drop_down,
+              size: 30, // Bigger icon for a more clickable feel
+              color:Color(0xff1280b3),
+            ),
+          ],
+        ),
+      ),
+    );
+
+}
+
+Widget itemSubLineWithDDsss(String greyText,String textData, bool isImbalanceStockListViewVisible) {
+  return
+    Container(
+      child:    Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Row(
+          mainAxisAlignment:
+          MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              mainAxisAlignment:
+              MainAxisAlignment.start,
+              children: [
+                Text(
+                  greyText,
+                  style: Styling.bodyTitleBig,
+                ),
+                Text(
+                  textData,
+                  style: Styling.textFormText,
+                ),
+              ],
+            ),
+            Icon(
+              isImbalanceStockListViewVisible
+                  ? Icons.arrow_drop_up
+                  : Icons.arrow_drop_down,
+              size: 30, // Bigger icon for a more clickable feel
+              color:Color(0xff1280b3),
+            ),
+          ],
+        ),
+      ),
+    );
+
+}
+
+Widget itemSubLineSubMenu(String greyText, bool isImbalanceStockListViewVisible) {
+  return
+    Container(
+      child:    Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: Row(
+          mainAxisAlignment:
+          MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              greyText,
+              style: Styling.bodyTitleBig,
+            ),
+            Icon(
+              isImbalanceStockListViewVisible
+                  ? Icons.keyboard_arrow_up_outlined
+                  : Icons.keyboard_arrow_down_outlined,
+              size: 24, // Bigger icon for a more clickable feel
+              color:Color(0xff0d0e0e),
+            ),
+          ],
+        ),
+      ),
+    );
+
+}

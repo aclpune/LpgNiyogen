@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../GodownKeeper/ItemReceipt/CylItemList/CylItemListModel.dart';
 import '../Utils/CustomAppBar.dart';
+import '../Utils/CustomAppBarManager.dart';
 import '../Utils/Widget.dart';
 import '../Utils/app_url.dart';
 class CashDepositToBankScreen extends StatefulWidget {
@@ -355,7 +356,7 @@ class _CashDepositToBankScreenState extends State<CashDepositToBankScreen> {
       },
     ];
     return Scaffold(
-      appBar:CustomAppBar(
+      appBar:CustomAppBarManager(
         title: 'Cash Deposit To Bank Screen', // Title or hint text for the text field
       ),
       body:

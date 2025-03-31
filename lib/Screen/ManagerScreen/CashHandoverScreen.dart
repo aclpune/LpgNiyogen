@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../GodownKeeper/ItemReceipt/CylItemList/CylItemListModel.dart';
 import '../Utils/CustomAppBar.dart';
+import '../Utils/CustomAppBarManager.dart';
 import '../Utils/Widget.dart';
 import '../Utils/app_url.dart';
 import 'package:http/http.dart' as http;
@@ -341,7 +342,7 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
     ];
 
     return Scaffold(
-      appBar:CustomAppBar(
+      appBar:CustomAppBarManager(
         title: 'Cash Handover Screen', // Title or hint text for the text field
       ),
       body:

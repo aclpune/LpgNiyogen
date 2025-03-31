@@ -959,7 +959,8 @@ class _ManagerUpdateSaleCashUpdationState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar:
+      AppBar(
         backgroundColor: Colors.blue, // You can change the color as needed
         automaticallyImplyLeading: false, // Disable default back button
         title: Padding(
@@ -1032,7 +1033,7 @@ class _ManagerUpdateSaleCashUpdationState
                                       children: [
                                         SizedBox(
                                             width: 60,
-                                            child: Text('Refill:',
+                                            child: Text('Sale:',
                                                 style:
                                                     Styling.itemGreyTextSmall)),
                                         Text(saleQty.toString(),
@@ -1046,10 +1047,10 @@ class _ManagerUpdateSaleCashUpdationState
                                       children: [
                                         SizedBox(
                                             width: 60,
-                                            child: Text('TV:',
+                                            child: Text('Sale Amt.:',
                                                 style:
-                                                    Styling.itemGreyTextSmall)),
-                                        Text(tvQty.toString(),
+                                                Styling.itemGreyTextSmall)),
+                                        Text(amountTotal.toString(),
                                             style: Styling.itemBlackTestSmall),
                                       ],
                                     ),
@@ -1062,7 +1063,7 @@ class _ManagerUpdateSaleCashUpdationState
                                     Row(
                                       children: [
                                         SizedBox(
-                                            width: 70,
+                                            width: 60,
                                             child: Text('SV:',
                                                 style:
                                                     Styling.itemGreyTextSmall)),
@@ -1076,10 +1077,40 @@ class _ManagerUpdateSaleCashUpdationState
                                     Row(
                                       children: [
                                         SizedBox(
-                                            width: 70,
-                                            child: Text('Amount:',
+                                            width: 60,
+                                            child: Text('Exp.Amt.:',
                                                 style:
                                                     Styling.itemGreyTextSmall)),
+                                        Text(amountTotal.toString(),
+                                            style: Styling.itemBlackTestSmall),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                            width: 60,
+                                            child: Text('TV:',
+                                                style:
+                                                Styling.itemGreyTextSmall)),
+                                        Text(tvQty.toString(),
+                                            style: Styling.itemBlackTestSmall),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 5,
+                                    ),
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                            width: 60,
+                                            child: Text('DM Amt.:',
+                                                style:
+                                                Styling.itemGreyTextSmall)),
                                         Text(amountTotal.toString(),
                                             style: Styling.itemBlackTestSmall),
                                       ],
@@ -1151,6 +1182,20 @@ class _ManagerUpdateSaleCashUpdationState
                 ),
               ),
             ),
+          ],
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Add Expense action
+          // _showExpenseDialog(context,delBoyNameName!,vehicleNos!);
+        },
+        backgroundColor: Color(0xff1280b3),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text("Exp",style: TextStyle(color: Colors.white,fontSize: 14),),
+            Icon(Icons.add, color: Colors.white),
           ],
         ),
       ),
@@ -1226,7 +1271,7 @@ class _ManagerUpdateSaleCashUpdationState
                             prepaidQty = int.tryParse(value) ?? 0;
                           });
                           _calculateCylinderAmountPrepaid();
-                          _validateQuantities();
+                          _validateQuantities("Prepaid");
                         },
                       ),
                     ),
@@ -1311,7 +1356,7 @@ class _ManagerUpdateSaleCashUpdationState
                       style: ButtonStyle(
                         backgroundColor:
                         MaterialStateProperty.all<Color>(
-                            (_qtyControllerPrepaid.text.isNotEmpty)?
+                            (_qtyControllerPrepaid.text.isNotEmpty && _consumerController.text.isNotEmpty)?
                             Color(0xff1280b3):Color(0xff666666),
                         )
                       ),
@@ -1586,7 +1631,11 @@ class _ManagerUpdateSaleCashUpdationState
                         textAlign: TextAlign.center,
                         style: Styling.itemBlackTest,
                         onChanged: (value) {
+                          setState(() {
+                            postpaidQty = int.tryParse(value) ?? 0;
+                          });
                           _calculateCylinderAmountPostpaid();
+                          _validateQuantities("Postpaid");
                         },
                       ),
                     ),
@@ -1653,11 +1702,12 @@ class _ManagerUpdateSaleCashUpdationState
               children: [
                 SizedBox(
                   width: 150,
-                  child: textWidgetBlueColorWithStar("Time:", "*"),
-                  // Text(
-                  //   'Time:',
-                  //     style: Styling.blueClrText
-                  // ),
+                  child:
+                  // textWidgetBlueColorWithStar("Time:", "*"),
+                  Text(
+                    'Time:',
+                      style: Styling.blueClrText
+                  ),
                 ),
                 SizedBox(width: 10),
                 Container(
@@ -1765,7 +1815,17 @@ class _ManagerUpdateSaleCashUpdationState
               ],
             ),
             const SizedBox(height: 16),
-
+            Row(
+              children: [
+                Expanded(flex: 3, child: Center(child: Text("Trans. Code", style: TextStyle(fontWeight: FontWeight.bold)))),
+                verticalDividerVerySmall(),
+                Expanded(flex: 2, child: Center(child: Text("Time", style: TextStyle(fontWeight: FontWeight.bold)))),
+                verticalDividerVerySmall(),
+                Expanded(flex: 3, child: Center(child: Text("Remark", style: TextStyle(fontWeight: FontWeight.bold)))),
+                verticalDividerVerySmall(),
+                Expanded(flex: 2, child: Center(child: Text("Actions", style: TextStyle(fontWeight: FontWeight.bold)))),
+              ],
+            ),
             ListView.builder(
               shrinkWrap: true,
               // Ensures the list takes only the required height
@@ -1774,26 +1834,50 @@ class _ManagerUpdateSaleCashUpdationState
               itemCount: _transactionList.length,
               itemBuilder: (context, index) {
                 final transaction = _transactionList[index];
-                return Card(
-                  child: ListTile(
-                    title: Text(
-                        'Transaction Code: ${transaction.transactionCode}'),
-                    subtitle: Text(
-                        'Time: ${transaction.transTime}\nRemark: ${transaction.remark}'),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () {
-                            _deleteTransaction(
-                                index); // Calling delete function on button press
-                          },
+                return
+                  Row(
+                    children: [
+                      // Column 1: Item Name
+                      Expanded(
+                        flex: 2,
+                        child: Padding(
+                          padding:EdgeInsets.only(left: 5.0),
+                          child: Text(
+                            transaction.transactionCode.toString(),
+                            style: TextStyle(fontSize: 14, color: Colors.black54),
+                          ),
                         ),
-                      ],
-                    ),
-                  ),
-                );
+                      ),
+                      verticalDividerVerySmall(),
+                      // Column 2: Filled
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          transaction.transTime.toString(),
+                          style: TextStyle(fontSize: 14, color: Colors.black54),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      verticalDividerVerySmall(),
+                      // Column 3: SV
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          transaction.remark.toString(),
+                          style: TextStyle(fontSize: 14, color: Colors.black54),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      verticalDividerVerySmall(),
+                      // Column 4: TV
+                      Expanded(
+                        flex: 2,
+                        child: Icon(
+                          Icons.delete
+                        ),
+                      ),
+                    ],
+                  );
               },
             )
           ],
@@ -1841,7 +1925,11 @@ class _ManagerUpdateSaleCashUpdationState
                           LengthLimitingTextInputFormatter(3),
                         ],
                         onChanged: (value) {
+                          setState(() {
+                            creditQty = int.tryParse(value) ?? 0;
+                          });
                           _calculateCylinderAmountCredit();
+                          _validateQuantities("Credit");
                         },
                       ),
                     ),
@@ -2027,7 +2115,6 @@ class _ManagerUpdateSaleCashUpdationState
                 ),
               ],
             ),
-
             SizedBox(height: 16),
 
             // Remark Section
@@ -2200,8 +2287,12 @@ class _ManagerUpdateSaleCashUpdationState
                           LengthLimitingTextInputFormatter(3),
                         ],
                         onChanged: (value) {
+                          setState(() {
+                            cashQty = int.tryParse(value) ?? 0;
+                          });
                           _calculateCylinderAmountCasht();
                           calculateBalanceAmountForReceiveAmountCash();
+                          _validateQuantities("Cash");
                         },
                       ),
                     ),
@@ -4164,14 +4255,14 @@ class _ManagerUpdateSaleCashUpdationState
   }
 
   // Validate the sum of all quantities
-  void _validateQuantities() {
+  void _validateQuantities(String payMode) {
     int totalQty = prepaidQty + postpaidQty + creditQty + cashQty;
 
     // Check if the total of all entered quantities exceeds the saleQty
     if (totalQty > saleQty!) {
       // If it exceeds, show an error message or reset the value
       showErrorDialog('Total quantity cannot exceed sale quantity.');
-      _clearExcessQuantity();
+      _clearExcessQuantity(payMode);
     } else {
       // Do something, if necessary (like saving or updating state)
       setState(() {
@@ -4201,31 +4292,35 @@ class _ManagerUpdateSaleCashUpdationState
   }
 
   // Function to clear the excess quantity in the last modified field
-  void _clearExcessQuantity() {
+  void _clearExcessQuantity(String payModes) {
     if (prepaidQty + postpaidQty + creditQty + cashQty > saleQty!) {
       // You can check which controller exceeds the limit and clear it.
       if (prepaidQty + postpaidQty + creditQty + cashQty > saleQty!) {
         // Check which field to clear
-        if (prepaidQty > 0 &&
+        if (payModes == "Prepaid" && prepaidQty > 0 &&
             prepaidQty + postpaidQty + creditQty + cashQty > saleQty!) {
           _qtyControllerPrepaid.clear();
           amountPrepaidCylinder = 0;
           prepaidQty = 0; // Reset the value
-        } else if (postpaidQty > 0 &&
+          debugPrint("prepaid");
+        } else if (payModes == "Postpaid" && postpaidQty > 0 &&
             prepaidQty + postpaidQty + creditQty + cashQty > saleQty!) {
           _qtyControllerPostpaid.clear();
           amountPostpaidCylinder = 0;
           postpaidQty = 0;
-        } else if (creditQty > 0 &&
+          debugPrint("postpaid");
+        } else if (payModes == "Credit" && creditQty > 0 &&
             prepaidQty + postpaidQty + creditQty + cashQty > saleQty!) {
           _qtyControllerCredit.clear();
           amountCreditCylinder = 0;
           creditQty = 0;
-        } else if (cashQty > 0 &&
+          debugPrint("credit");
+        } else if (payModes == "Cash" && cashQty > 0 &&
             prepaidQty + postpaidQty + creditQty + cashQty > saleQty!) {
           _qtyControllerCash.clear();
           amountCashCylinder = 0;
           cashQty = 0;
+          debugPrint("Cash");
         }
       }
     }

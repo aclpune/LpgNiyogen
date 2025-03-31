@@ -560,3 +560,82 @@ TotalDtls copyWith({  num? dSRId,
   }
 
 }
+
+/// DistributorId : 0
+/// StaffId : 0
+/// BankId : 0
+/// HeaderNameStr : "Cash In Hand"
+/// TotalAmt : 461291.00
+/// StaffName : "LPG Gas Dealer"
+/// MappingId : 0
+
+class CashflowDtls {
+  CashflowDtls({
+    num? distributorId,
+    num? staffId,
+    num? bankId,
+    String? headerNameStr,
+    num? totalAmt,
+    String? staffName,
+    num? mappingId,}){
+    _distributorId = distributorId;
+    _staffId = staffId;
+    _bankId = bankId;
+    _headerNameStr = headerNameStr;
+    _totalAmt = totalAmt;
+    _staffName = staffName;
+    _mappingId = mappingId;
+  }
+
+  CashflowDtls.fromJson(dynamic json) {
+    _distributorId = json['DistributorId'];
+    _staffId = json['StaffId'];
+    _bankId = json['BankId'];
+    _headerNameStr = json['HeaderNameStr'];
+    _totalAmt = json['TotalAmt'];
+    _staffName = json['StaffName'];
+    _mappingId = json['MappingId'];
+  }
+  num? _distributorId;
+  num? _staffId;
+  num? _bankId;
+  String? _headerNameStr;
+  num? _totalAmt;
+  String? _staffName;
+  num? _mappingId;
+  CashflowDtls copyWith({  num? distributorId,
+    num? staffId,
+    num? bankId,
+    String? headerNameStr,
+    num? totalAmt,
+    String? staffName,
+    num? mappingId,
+  }) => CashflowDtls(  distributorId: distributorId ?? _distributorId,
+    staffId: staffId ?? _staffId,
+    bankId: bankId ?? _bankId,
+    headerNameStr: headerNameStr ?? _headerNameStr,
+    totalAmt: totalAmt ?? _totalAmt,
+    staffName: staffName ?? _staffName,
+    mappingId: mappingId ?? _mappingId,
+  );
+  num? get distributorId => _distributorId;
+  num? get staffId => _staffId;
+  num? get bankId => _bankId;
+  String? get headerNameStr => _headerNameStr;
+  num? get totalAmt => _totalAmt;
+  String? get staffName => _staffName;
+  num? get mappingId => _mappingId;
+
+  Map<String, dynamic> toJson() {
+    final map = <String, dynamic>{};
+    map['DistributorId'] = _distributorId;
+    map['StaffId'] = _staffId;
+    map['BankId'] = _bankId;
+    map['HeaderNameStr'] = _headerNameStr;
+    map['TotalAmt'] = _totalAmt;
+    map['StaffName'] = _staffName;
+    map['MappingId'] = _mappingId;
+    return map;
+  }
+
+}

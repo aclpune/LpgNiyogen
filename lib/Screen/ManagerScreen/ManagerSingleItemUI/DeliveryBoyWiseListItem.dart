@@ -3,6 +3,7 @@ import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:lpgsalesandinventory/Screen/Utils/Styling.dart';
 import 'package:lpgsalesandinventory/Screen/Utils/app_url.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -51,10 +52,12 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                               ),
                               Row(
                                 children: [
-                                  Icon(Icons.currency_rupee, size: 16,
-                                      color: Colors.grey),
+                                  // Icon(Icons.currency_rupee, size: 16,
+                                  //     color: Colors.grey),
+                                  Text('Status :', style: TextStyle(
+                                      fontSize: 14,fontFamily: 'OpenSans',color:  Color(0xff1280b3))),
                                   SizedBox(width: 5),
-                                  Text('${sale.totalAmt ?? 0}',
+                                  Text('${sale.statusStr ?? 0}',
                                       style: TextStyle(fontSize: 14,
                                           fontFamily: 'OpenSans',color: Colors.black)),
                                 ],
@@ -88,6 +91,28 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                                       style: TextStyle(fontSize: 14,fontFamily: 'OpenSans')),
                                 ],
                               ),
+                            ],
+                          ),
+                          SizedBox(height: 5),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Text('Total Amt.: ', style: TextStyle(
+                                      fontSize: 14,fontFamily: 'OpenSans',color: Colors.grey[700])),
+                                  Text('${sale.totalAmt ?? 0}',
+                                      style: TextStyle(fontSize: 14,fontFamily: 'OpenSans')),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Text('Recieved Amt.', style: TextStyle(fontSize: 14,fontFamily: 'OpenSans',color: Colors.grey[700])),
+                                  Text('${sale.totalAmt ?? 0}',
+                                      style: TextStyle(fontSize: 14,fontFamily: 'OpenSans')),
+                                ],
+                              ),
+
                             ],
                           ),
                           // Expandable section
@@ -234,34 +259,83 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                                   ],
                                 ),
                               ),
-                              ElevatedButton(onPressed: (){
-                                // Navigator.pushReplacementNamed(context, '/managerUpdateSaleScreen');
-
-                                Navigator.pushNamed(
-                                    context,
-                                    ManagerUpdateSaleScreen
-                                        .screenName,
-                                    arguments: {
-                                      "delBoyName": sale.staffName,
-                                      "receiptNo": "",
-                                      "receiptDate" : sale.delDate,
-                                      "delBoyId" : sale.dMId,
-                                       "saledgkID" : sale.saleGKId,
-                                      "vehicleNo": sale.vehicleNo,
-                                      "vehicleID" : sale.vehicleId,
-                                    });
-
-                              }, child: Text("Update",style: TextStyle(
-                                color: Colors.white,
-                                fontFamily: 'OpenSans',
-                                fontSize: 12, // Size = 14-- [14/8.66] = 1.6
-                              )),
-                                style: ButtonStyle(
-                                  backgroundColor:
-                                  MaterialStateProperty.all<Color>(const Color(0xff1280b3)),
-
-                                ),
-                              )
+                              // ElevatedButton(onPressed: (){
+                              //   // Navigator.pushReplacementNamed(context, '/managerUpdateSaleScreen');
+                              //
+                              //   Navigator.pushNamed(
+                              //       context,
+                              //       ManagerUpdateSaleScreen
+                              //           .screenName,
+                              //       arguments: {
+                              //         "delBoyName": sale.staffName,
+                              //         "receiptNo": "",
+                              //         "receiptDate" : sale.delDate,
+                              //         "delBoyId" : sale.dMId,
+                              //          "saledgkID" : sale.saleGKId,
+                              //         "vehicleNo": sale.vehicleNo,
+                              //         "vehicleID" : sale.vehicleId,
+                              //       });
+                              //
+                              // }, child: Text("Update",style: TextStyle(
+                              //   color: Colors.white,
+                              //   fontFamily: 'OpenSans',
+                              //   fontSize: 12, // Size = 14-- [14/8.66] = 1.6
+                              // )),
+                              //   style: ButtonStyle(
+                              //     backgroundColor:
+                              //     MaterialStateProperty.all<Color>(const Color(0xff1280b3)),
+                              //
+                              //   ),
+                              // ),
+                              Row(
+                                children: [
+                                  GestureDetector(
+                                    onTap:() {
+                                        Navigator.pushNamed(
+                                            context,
+                                            ManagerUpdateSaleScreen
+                                                .screenName,
+                                            arguments: {
+                                              "delBoyName": sale.staffName,
+                                              "receiptNo": "",
+                                              "receiptDate" : sale.delDate,
+                                              "delBoyId" : sale.dMId,
+                                               "saledgkID" : sale.saleGKId,
+                                              "vehicleNo": sale.vehicleNo,
+                                              "vehicleID" : sale.vehicleId,
+                                            });
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 8.0),
+                                      child: Text("Update",style: Styling.blueClrTextWithUnderline
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 20,),
+                                  GestureDetector(
+                                    onTap:() {
+                                      // Navigator.pushNamed(
+                                      //     context,
+                                      //     ManagerUpdateSaleScreen
+                                      //         .screenName,
+                                      //     arguments: {
+                                      //       "delBoyName": sale.staffName,
+                                      //       "receiptNo": "",
+                                      //       "receiptDate" : sale.delDate,
+                                      //       "delBoyId" : sale.dMId,
+                                      //       "saledgkID" : sale.saleGKId,
+                                      //       "vehicleNo": sale.vehicleNo,
+                                      //       "vehicleID" : sale.vehicleId,
+                                      //     });
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 8.0),
+                                      child: Text("Correction",style: Styling.blueClrTextWithUnderline
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
                         ],

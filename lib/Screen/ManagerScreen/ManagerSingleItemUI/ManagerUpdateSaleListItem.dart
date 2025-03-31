@@ -56,6 +56,12 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
                           style: Styling.itemTitle,),
                     ],
                   ),
+                  Row(
+                    children: [
+                      Text('${sale.userName ?? ''}',
+                        style: Styling.itemTitle,),
+                    ],
+                  ),
                 ],
               ),
               SizedBox(height: 5,),
@@ -70,16 +76,38 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
                       Row(
                         children: [
                           SizedBox(width: 65,
-                              child: Text('Refill:', style: Styling.itemGreyTextSmall)),
+                              child: Text('Sale:', style: Styling.itemGreyTextSmall)),
                           Text('${sale.gDFilledSale ?? 0}', style: Styling.itemBlackTestSmall),
-
                         ],
                       ),
+
                       Row(
                         children: [
                           SizedBox(width: 65,
                               child: Text('TV:', style: Styling.itemGreyTextSmall)),
                           Text('${sale.tVQty ?? 0}', style: Styling.itemBlackTestSmall),
+
+                        ],
+                      ),
+                    ],
+                  ),
+
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          SizedBox(width: 65,
+                              child: Text('Act.Sale:', style: Styling.itemGreyTextSmall)),
+                          Text('${sale.gDFilledSale ?? 0}', style: Styling.itemBlackTestSmall),
+                        ],
+                      ),
+
+                      Row(
+                        children: [
+                          SizedBox(width: 65,
+                              child: Text('Def.:', style: Styling.itemGreyTextSmall)),
+                          Text('${sale.deffQty ?? 0}', style: Styling.itemBlackTestSmall),
 
                         ],
                       ),
@@ -228,6 +256,16 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
                         ),
                       ],
                     ),
+                    // SizedBox(height: 5),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.end,
+                    //   children: [
+                    //     SizedBox(
+                    //         child: Text('Received Amt.:', style: Styling.itemGreyTextSmall)),
+                    //     Text('${sale.amount ?? 0}',style: Styling.itemBlackTestSmall),
+                    //
+                    //   ],
+                    // ),
                   ],
                 ),
               ),
@@ -235,6 +273,15 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      SizedBox(
+                          child: Text('Received Amt.:', style: Styling.itemGreyTextSmall)),
+                      Text('${sale.amount ?? 0}',style: Styling.itemBlackTestSmall),
+
+                    ],
+                  ),
                   // Arrow icon placed on the left
                   GestureDetector(
                     onTap: (){
@@ -258,50 +305,94 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
                       ],
                     ),
                   ),
-                  ElevatedButton(
-                    // style: ElevatedButton.styleFrom(
-                    //   // Button color
-                    //     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                    //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                    //     backgroundColor: Colors.blueAccent
-                    // ),
-                    style: ButtonStyle(
-                      backgroundColor:
-                      MaterialStateProperty.all<Color>(
-                          const Color(0xff1280b3)),
-                    ),
-                    onPressed: () async {
-                      // Handle update action
-                      // Navigator.pushReplacementNamed(context, '/managerUpdateSaleCashUpdation');
-                      int? itemIds = sale.itemId?.toInt();
-                      int itemId = sale.itemId?.toInt() ?? 0;  // Get itemId and convert to int
+                  // ElevatedButton(
+                  //   // style: ElevatedButton.styleFrom(
+                  //   //   // Button color
+                  //   //     padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                  //   //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  //   //     backgroundColor: Colors.blueAccent
+                  //   // ),
+                  //   style: ButtonStyle(
+                  //     backgroundColor:
+                  //     MaterialStateProperty.all<Color>(
+                  //         const Color(0xff1280b3)),
+                  //   ),
+                  //   onPressed: () async {
+                  //     // Handle update action
+                  //     // Navigator.pushReplacementNamed(context, '/managerUpdateSaleCashUpdation');
+                  //     int? itemIds = sale.itemId?.toInt();
+                  //     int itemId = sale.itemId?.toInt() ?? 0;  // Get itemId and convert to int
+                  //
+                  //     // Fetch item rate from the API
+                  //     double? itemRate = await fetchItemRate(itemId);
+                  //     debugPrint("${itemRate}");
+                  //     Navigator.pushNamed(
+                  //         context,
+                  //         ManagerUpdateSaleCashUpdation
+                  //             .screenName,
+                  //         arguments: {
+                  //           "delBoyName": sale.staffName,
+                  //           "itemName": sale.itemName,
+                  //           "saleQty" : sale.gDFilledSale,
+                  //           "svQty" : sale.sVQty,
+                  //           "tvQty" : sale.tVQty,
+                  //           "amountTotal" : sale.amount,
+                  //           "expAmount" : "",
+                  //           "dmBal" : "",
+                  //           "itemRate" :itemRate,
+                  //           "delBoyID" : sale.staffId,
+                  //           "itemID":sale.itemId,
+                  //           "salesGkId" : sale.saleGKId,
+                  //           "sakesGKItemID" : sale.saleGKItemId,
+                  //           "vehicleID" :widget.vehicleIDs,
+                  //
+                  //         });
+                  //   },
+                  //   child: Text('Update', style: TextStyle(color: Colors.white, fontSize: 16)),
+                  // ),
 
-                      // Fetch item rate from the API
-                      double? itemRate = await fetchItemRate(itemId);
-                      debugPrint("${itemRate}");
-                      Navigator.pushNamed(
-                          context,
-                          ManagerUpdateSaleCashUpdation
-                              .screenName,
-                          arguments: {
-                            "delBoyName": sale.staffName,
-                            "itemName": sale.itemName,
-                            "saleQty" : sale.gDFilledSale,
-                            "svQty" : sale.sVQty,
-                            "tvQty" : sale.tVQty,
-                            "amountTotal" : sale.amount,
-                            "expAmount" : "",
-                            "dmBal" : "",
-                            "itemRate" :itemRate,
-                            "delBoyID" : sale.staffId,
-                            "itemID":sale.itemId,
-                            "salesGkId" : sale.saleGKId,
-                            "sakesGKItemID" : sale.saleGKItemId,
-                            "vehicleID" :widget.vehicleIDs,
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap:() async {
+                          // Handle update action
+                          // Navigator.pushReplacementNamed(context, '/managerUpdateSaleCashUpdation');
+                          int? itemIds = sale.itemId?.toInt();
+                          int itemId = sale.itemId?.toInt() ?? 0;  // Get itemId and convert to int
 
-                          });
-                    },
-                    child: Text('Update', style: TextStyle(color: Colors.white, fontSize: 16)),
+                          // Fetch item rate from the API
+                          double? itemRate = await fetchItemRate(itemId);
+                          debugPrint("${itemRate}");
+                          Navigator.pushNamed(
+                              context,
+                              ManagerUpdateSaleCashUpdation
+                                  .screenName,
+                              arguments: {
+                                "delBoyName": sale.staffName,
+                                "itemName": sale.itemName,
+                                "saleQty" : sale.gDFilledSale,
+                                "svQty" : sale.sVQty,
+                                "tvQty" : sale.tVQty,
+                                "amountTotal" : sale.amount,
+                                "expAmount" : "",
+                                "dmBal" : "",
+                                "itemRate" :itemRate,
+                                "delBoyID" : sale.staffId,
+                                "itemID":sale.itemId,
+                                "salesGkId" : sale.saleGKId,
+                                "sakesGKItemID" : sale.saleGKItemId,
+                                "vehicleID" :widget.vehicleIDs,
+
+                              });
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text("Update",style: Styling.blueClrTextWithUnderline
+                          ),
+                        ),
+                      ),
+
+                    ],
                   ),
                 ],
               ),

@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../ConstantScreen/widgets.dart';
 import '../Utils/CustomAppBar.dart';
+import '../Utils/CustomAppBarManager.dart';
 import '../Utils/app_url.dart';
 import '../Utils/constants.dart';
 import 'ManagerModelClass/DilySaleSummaryDeliveryBoyWiseListModel.dart';
@@ -29,9 +30,9 @@ class ManagerUpdateSaleScreen extends StatefulWidget {
 
 class _ManagerUpdateSaleScreenState extends State<ManagerUpdateSaleScreen> {
   TextEditingController searchController = TextEditingController();
-  TextEditingController deliveryBoyNameController = TextEditingController();
-  TextEditingController receiptDataController = TextEditingController();
-  TextEditingController receiptNoController = TextEditingController();
+  // TextEditingController deliveryBoyNameController = TextEditingController();
+  // TextEditingController receiptDataController = TextEditingController();
+  // TextEditingController receiptNoController = TextEditingController();
   List<DilySaleSummaryDeliveryBoyWiseListModel> dailySales = [];
 
   final TextEditingController _amountController = TextEditingController();
@@ -45,8 +46,9 @@ class _ManagerUpdateSaleScreenState extends State<ManagerUpdateSaleScreen> {
   bool _isExpanded = false;
   bool isLoading = true;
   var argValue;
-  String? delBoyNameName,receiptDate,receiptNo,vehicleNos;
+  String? delBoyNameName,receiptDate,receiptNoText,vehicleNos;
   int? delBoyId,salesGKId,vehicleIDs,expenseAmtTotal;
+  String? formattedDate;
   @override
   void initState() {
 
@@ -61,15 +63,15 @@ class _ManagerUpdateSaleScreenState extends State<ManagerUpdateSaleScreen> {
         vehicleIDs = argValue["vehicleID"];
         DateTime dateTime = DateTime.parse(receiptDate!);
         // Format the DateTime object to a string in the desired format (yyyy-MM-dd)
-        String formattedDate = "${dateTime.year.toString().padLeft(4, '0')}-${(dateTime.month).toString().padLeft(2, '0')}-${(dateTime.day).toString().padLeft(2, '0')}";
+        formattedDate = "${dateTime.year.toString().padLeft(4, '0')}-${(dateTime.month).toString().padLeft(2, '0')}-${(dateTime.day).toString().padLeft(2, '0')}";
         debugPrint("customerHoldingData :- ${delBoyNameName.toString()}");
         debugPrint("roleValue :- $receiptDate");
         debugPrint("roleValue :- $delBoyId");
         debugPrint("roleValue :- $salesGKId");
-        fetchDailySales(delBoyId!,formattedDate,salesGKId!);
+        fetchDailySales(delBoyId!,formattedDate!,salesGKId!);
         fetchAndInitialize();
-        deliveryBoyNameController.text = delBoyNameName!;
-        receiptDataController.text = formattedDate;
+        // deliveryBoyNameController.text = delBoyNameName!;
+        // receiptDataController.text = formattedDate!;
         fetchExpenseHeaderDetails();
         fetchExpenseDetailList();
       });
@@ -80,10 +82,48 @@ class _ManagerUpdateSaleScreenState extends State<ManagerUpdateSaleScreen> {
   Widget build(BuildContext context) {
     return
       Scaffold(
-      appBar:
-      CustomAppBar(
-        title: 'Update Sale', // Title or hint text for the text field
+      appBar:AppBar(
+        backgroundColor: Colors.blue, // You can change the color as needed
+        automaticallyImplyLeading: false, // Disable default back button
+        title: Padding(
+          padding: const EdgeInsets.only(left: 0),
+          child: Row(
+            children: [
+              // Back Arrow Button
+              IconButton(
+                icon: Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () {
+                  // Navigator.pushReplacementNamed(context, '/managerUpdateSaleScreen');
+                  // Navigator.pushNamed(
+                  //     context,
+                  //     ManagerUpdateSaleScreen
+                  //         .screenName);
+                  Navigator.pop(context);
+                },
+              ),
+              // Text Field
+              SizedBox(
+                width: 10,
+              ),
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Update Sales Summary",
+                      style: TextStyle(color: Colors.white, fontSize: 16),
+                    ),
+
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
+      // CustomAppBarManager(
+      //   title: 'Update Sale', // Title or hint text for the text field
+      // ),
     //   AppBar(
     //   backgroundColor: Colors.blue, // You can change the color as needed
     //   automaticallyImplyLeading: false, // Disable default back button
@@ -140,7 +180,7 @@ class _ManagerUpdateSaleScreenState extends State<ManagerUpdateSaleScreen> {
                 color: Colors.blue[50],
                 child: 
                 Padding(
-                  padding: const EdgeInsets.only(left: 15.0),
+                  padding: const EdgeInsets.only(left: 15.0,top: 5,bottom: 5),
                   child:
                   Column(
                     children: [
@@ -148,59 +188,69 @@ class _ManagerUpdateSaleScreenState extends State<ManagerUpdateSaleScreen> {
                         children: [
                           SizedBox(width : 140,
                             child: Text(
-                              'Delivery Men : ',
+                              'Receipt No',
+                              style: Styling.itemGreyText,
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              ":  $receiptNoText",
+                              style: Styling.textFormText,
+
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 5,),
+                      Row(
+                        children: [
+                          SizedBox(width : 140,
+                            child: Text(
+                              'Receipt Date',
+                              style: Styling.itemGreyText,
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                             ":  $formattedDate",
+                              style: Styling.textFormText,
+
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 5,),
+                      Row(
+                        children: [
+                          SizedBox(width : 140,
+                            child: Text(
+                              'Delivery Men',
                               // style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               style: Styling.itemGreyText,
                             ),
                           ),
                           Expanded(
-                            child: TextField(
-                              controller: deliveryBoyNameController,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,  // Remove underline
-                              ),
-                              style: Styling.textFormText,
-                              enabled: false,
+                            child: Text(
+                              ":  $delBoyNameName",
+
                             ),
                           ),
                         ],
                       ),
+                      SizedBox(height: 5,),
                       Row(
                         children: [
                           SizedBox(width : 140,
                             child: Text(
-                              'Receipt No : ',
+                              'Vehicle No.',
+                              // style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               style: Styling.itemGreyText,
                             ),
                           ),
                           Expanded(
-                            child: TextField(
-                              controller: receiptNoController,
-                              style: Styling.textFormText,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,  // Remove underline
-                              ),
-                              enabled: false,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(width : 140,
                             child: Text(
-                              'Receipt Date : ',
-                              style: Styling.itemGreyText,
-                            ),
-                          ),
-                          Expanded(
-                            child: TextField(
-                              controller: receiptDataController,
-                              style: Styling.textFormText,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,  // Remove underline
-                              ),
-                              enabled: false,
+                              ":  $vehicleNos",
+
                             ),
                           ),
                         ],
@@ -553,7 +603,6 @@ class _ManagerUpdateSaleScreenState extends State<ManagerUpdateSaleScreen> {
     }
   }
 
-
   Future<void> fetchAndInitialize() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -577,7 +626,8 @@ class _ManagerUpdateSaleScreenState extends State<ManagerUpdateSaleScreen> {
         String receiptNo = response.body.trim();  // Remove any leading/trailing spaces
         receiptNo = receiptNo.replaceAll('"', '');
         setState(() {
-          receiptNoController.text = receiptNo;
+          // receiptNoController.text = receiptNo;
+          receiptNoText = receiptNo;
         });
       } else {
         print('Failed to load data: ${response.statusCode}');
@@ -586,7 +636,6 @@ class _ManagerUpdateSaleScreenState extends State<ManagerUpdateSaleScreen> {
       print('Error: $e');
     }
   }
-
 
   void _showExpenseDialog(BuildContext context,String deliveryBoyName,String VehicleNo) {
     showDialog(
@@ -597,8 +646,8 @@ class _ManagerUpdateSaleScreenState extends State<ManagerUpdateSaleScreen> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text("Delivery Men: Pradip Patil"),
-              const Text("Vehicle No.: MH14DD4567"),
+               Text("Delivery Men: ${deliveryBoyName}"),
+                 Text("Vehicle No.: ${VehicleNo}"),
               const SizedBox(height: 10),
               DropdownButtonFormField<GetExpenceHeadAmountListModel>(
                 decoration: InputDecoration(
@@ -861,5 +910,6 @@ class _ManagerUpdateSaleScreenState extends State<ManagerUpdateSaleScreen> {
       }
     }
   }
+
 }
 
