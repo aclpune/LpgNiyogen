@@ -91,20 +91,14 @@ class CustomeDrawerManager extends StatelessWidget {
                   Navigator.pushReplacementNamed(context, '/editItemReceiptPage');
                 },
               ),*/
-              // ListTile(
-              //   leading: Icon(Icons.update_outlined),
-              //   title: Text('Update Sale'),
-              //   onTap: () {
-              //     Navigator.pushReplacementNamed(context, '/stockReturnFromDelBoy');
-              //   },
-              // ),
-              // ListTile(
-              //   leading: Icon(Icons.update_outlined),
-              //   title: Text('Del Update Sale'),
-              //   onTap: () {
-              //     Navigator.pushReplacementNamed(context, '/stockSubmitToManager');
-              //   },
-              // ),
+
+              ListTile(
+                leading: Icon(Icons.sell),
+                title: Text('Refill Sale'),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/deliveryBoyWiseListShow');
+                },
+              ),
               ListTile(
                 leading: Icon(Icons.logout),
                 title: Text('Logout'),

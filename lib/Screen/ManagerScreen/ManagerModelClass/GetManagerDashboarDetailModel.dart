@@ -1,17 +1,23 @@
 /// DistributorId : 8118
 /// ItemId : 1
 /// ItemName : "14.2 kg"
-/// FilledDiff : 2148
-/// EmptyDiff : 914
-/// DefectiveDiff : 193
+/// FilledDiff : 7348
+/// EmptyDiff : 5826
+/// DefectiveDiff : 374
 /// TodayImbQty : 0
-/// AsOfDateImbQty : 5
-/// DMCount : 3
-/// TotalAmount : 202500.00
-/// TotalIncome : 2000.00
-/// TotalExp : 1000.00
-/// StaffOnAccToday : 0.00
-/// StaffOnAccAsOf : 7001.09
+/// AsOfDateImbQty : 19
+/// DMCount : 7
+/// TotalAmount : 150982.00
+/// TotalIncome : 124805.00
+/// TotalExp : 5000.00
+/// StaffOnAccToday : 632.00
+/// StaffOnAccAsOf : 13543.10
+/// cDCMSPunPend : 2318
+/// NiyoJanPunPend : 6
+/// PaymtDoneBtDelPend : 1098
+/// DelDoneBtPaymtPend : 9
+/// NiyojanPun : 0
+/// NiyojanDuplicate : 0
 
 class GetManagerDashboarDetailModel {
   GetManagerDashboarDetailModel({
@@ -28,7 +34,13 @@ class GetManagerDashboarDetailModel {
       num? totalIncome, 
       num? totalExp, 
       num? staffOnAccToday, 
-      num? staffOnAccAsOf,}){
+      num? staffOnAccAsOf, 
+      num? cDCMSPunPend, 
+      num? niyoJanPunPend, 
+      num? paymtDoneBtDelPend, 
+      num? delDoneBtPaymtPend, 
+      num? niyojanPun, 
+      num? niyojanDuplicate,}){
     _distributorId = distributorId;
     _itemId = itemId;
     _itemName = itemName;
@@ -43,6 +55,12 @@ class GetManagerDashboarDetailModel {
     _totalExp = totalExp;
     _staffOnAccToday = staffOnAccToday;
     _staffOnAccAsOf = staffOnAccAsOf;
+    _cDCMSPunPend = cDCMSPunPend;
+    _niyoJanPunPend = niyoJanPunPend;
+    _paymtDoneBtDelPend = paymtDoneBtDelPend;
+    _delDoneBtPaymtPend = delDoneBtPaymtPend;
+    _niyojanPun = niyojanPun;
+    _niyojanDuplicate = niyojanDuplicate;
 }
 
   GetManagerDashboarDetailModel.fromJson(dynamic json) {
@@ -60,6 +78,12 @@ class GetManagerDashboarDetailModel {
     _totalExp = json['TotalExp'];
     _staffOnAccToday = json['StaffOnAccToday'];
     _staffOnAccAsOf = json['StaffOnAccAsOf'];
+    _cDCMSPunPend = json['cDCMSPunPend'];
+    _niyoJanPunPend = json['NiyoJanPunPend'];
+    _paymtDoneBtDelPend = json['PaymtDoneBtDelPend'];
+    _delDoneBtPaymtPend = json['DelDoneBtPaymtPend'];
+    _niyojanPun = json['NiyojanPun'];
+    _niyojanDuplicate = json['NiyojanDuplicate'];
   }
   num? _distributorId;
   num? _itemId;
@@ -75,6 +99,12 @@ class GetManagerDashboarDetailModel {
   num? _totalExp;
   num? _staffOnAccToday;
   num? _staffOnAccAsOf;
+  num? _cDCMSPunPend;
+  num? _niyoJanPunPend;
+  num? _paymtDoneBtDelPend;
+  num? _delDoneBtPaymtPend;
+  num? _niyojanPun;
+  num? _niyojanDuplicate;
 GetManagerDashboarDetailModel copyWith({  num? distributorId,
   num? itemId,
   String? itemName,
@@ -89,6 +119,12 @@ GetManagerDashboarDetailModel copyWith({  num? distributorId,
   num? totalExp,
   num? staffOnAccToday,
   num? staffOnAccAsOf,
+  num? cDCMSPunPend,
+  num? niyoJanPunPend,
+  num? paymtDoneBtDelPend,
+  num? delDoneBtPaymtPend,
+  num? niyojanPun,
+  num? niyojanDuplicate,
 }) => GetManagerDashboarDetailModel(  distributorId: distributorId ?? _distributorId,
   itemId: itemId ?? _itemId,
   itemName: itemName ?? _itemName,
@@ -103,6 +139,12 @@ GetManagerDashboarDetailModel copyWith({  num? distributorId,
   totalExp: totalExp ?? _totalExp,
   staffOnAccToday: staffOnAccToday ?? _staffOnAccToday,
   staffOnAccAsOf: staffOnAccAsOf ?? _staffOnAccAsOf,
+  cDCMSPunPend: cDCMSPunPend ?? _cDCMSPunPend,
+  niyoJanPunPend: niyoJanPunPend ?? _niyoJanPunPend,
+  paymtDoneBtDelPend: paymtDoneBtDelPend ?? _paymtDoneBtDelPend,
+  delDoneBtPaymtPend: delDoneBtPaymtPend ?? _delDoneBtPaymtPend,
+  niyojanPun: niyojanPun ?? _niyojanPun,
+  niyojanDuplicate: niyojanDuplicate ?? _niyojanDuplicate,
 );
   num? get distributorId => _distributorId;
   num? get itemId => _itemId;
@@ -118,6 +160,12 @@ GetManagerDashboarDetailModel copyWith({  num? distributorId,
   num? get totalExp => _totalExp;
   num? get staffOnAccToday => _staffOnAccToday;
   num? get staffOnAccAsOf => _staffOnAccAsOf;
+  num? get cDCMSPunPend => _cDCMSPunPend;
+  num? get niyoJanPunPend => _niyoJanPunPend;
+  num? get paymtDoneBtDelPend => _paymtDoneBtDelPend;
+  num? get delDoneBtPaymtPend => _delDoneBtPaymtPend;
+  num? get niyojanPun => _niyojanPun;
+  num? get niyojanDuplicate => _niyojanDuplicate;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -135,6 +183,12 @@ GetManagerDashboarDetailModel copyWith({  num? distributorId,
     map['TotalExp'] = _totalExp;
     map['StaffOnAccToday'] = _staffOnAccToday;
     map['StaffOnAccAsOf'] = _staffOnAccAsOf;
+    map['cDCMSPunPend'] = _cDCMSPunPend;
+    map['NiyoJanPunPend'] = _niyoJanPunPend;
+    map['PaymtDoneBtDelPend'] = _paymtDoneBtDelPend;
+    map['DelDoneBtPaymtPend'] = _delDoneBtPaymtPend;
+    map['NiyojanPun'] = _niyojanPun;
+    map['NiyojanDuplicate'] = _niyojanDuplicate;
     return map;
   }
 

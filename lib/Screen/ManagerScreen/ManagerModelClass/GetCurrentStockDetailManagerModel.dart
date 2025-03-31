@@ -1,25 +1,31 @@
 /// DistributorId : 0
 /// ItemId : 1
-/// ItemName : "14.2 kg"
+/// ItemName : "14.2 KG"
 /// CurrentStkFilled : 0
 /// CurrentStkEmpty : 0
-/// FilledCnt : 0
-/// TotalInvoiceCnt : 0
+/// FilledCnt : 324
+/// TotalInvoiceCnt : 324
 /// FilledEMRCnt : 0
 /// EmptyTVCnt : 0
-/// DefectivCnt : 7
-/// DefectivFromDate : "2025-02-06T00:00:00"
-/// EmptyCRDCnt : 0
+/// DefectivCnt : 101
+/// DefectivFromDate : "2025-03-24T00:00:00"
+/// EmptyCRDCnt : 324
 /// EmptyDefectivCnt : 0
 /// NCCnt : 0
 /// DBCCnt : 0
 /// RCCnt : 0
-/// RefillSaleCnt : 0
+/// RefillSaleCnt : 826
 /// ImbalanceCnt : 0
 /// EmptyCnt : 0
 /// TVQty : 0
-/// SVQty : 0
-/// DeffQty : 7
+/// SVQty : 6
+/// DeffQty : 101
+/// FilledOpeningStk : 2000
+/// EmptyOpeningStk : 1200
+/// DeffOpeningStk : 0
+/// FilledCurrentStk : 2112
+/// EmptyCurrentStk : 2676
+/// DeffCurrentStk : 101
 
 class GetCurrentStockDetailManagerModel {
   GetCurrentStockDetailManagerModel({
@@ -44,7 +50,13 @@ class GetCurrentStockDetailManagerModel {
       num? emptyCnt, 
       num? tVQty, 
       num? sVQty, 
-      num? deffQty,}){
+      num? deffQty, 
+      num? filledOpeningStk, 
+      num? emptyOpeningStk, 
+      num? deffOpeningStk, 
+      num? filledCurrentStk, 
+      num? emptyCurrentStk, 
+      num? deffCurrentStk,}){
     _distributorId = distributorId;
     _itemId = itemId;
     _itemName = itemName;
@@ -67,6 +79,12 @@ class GetCurrentStockDetailManagerModel {
     _tVQty = tVQty;
     _sVQty = sVQty;
     _deffQty = deffQty;
+    _filledOpeningStk = filledOpeningStk;
+    _emptyOpeningStk = emptyOpeningStk;
+    _deffOpeningStk = deffOpeningStk;
+    _filledCurrentStk = filledCurrentStk;
+    _emptyCurrentStk = emptyCurrentStk;
+    _deffCurrentStk = deffCurrentStk;
 }
 
   GetCurrentStockDetailManagerModel.fromJson(dynamic json) {
@@ -92,6 +110,12 @@ class GetCurrentStockDetailManagerModel {
     _tVQty = json['TVQty'];
     _sVQty = json['SVQty'];
     _deffQty = json['DeffQty'];
+    _filledOpeningStk = json['FilledOpeningStk'];
+    _emptyOpeningStk = json['EmptyOpeningStk'];
+    _deffOpeningStk = json['DeffOpeningStk'];
+    _filledCurrentStk = json['FilledCurrentStk'];
+    _emptyCurrentStk = json['EmptyCurrentStk'];
+    _deffCurrentStk = json['DeffCurrentStk'];
   }
   num? _distributorId;
   num? _itemId;
@@ -115,6 +139,12 @@ class GetCurrentStockDetailManagerModel {
   num? _tVQty;
   num? _sVQty;
   num? _deffQty;
+  num? _filledOpeningStk;
+  num? _emptyOpeningStk;
+  num? _deffOpeningStk;
+  num? _filledCurrentStk;
+  num? _emptyCurrentStk;
+  num? _deffCurrentStk;
 GetCurrentStockDetailManagerModel copyWith({  num? distributorId,
   num? itemId,
   String? itemName,
@@ -137,6 +167,12 @@ GetCurrentStockDetailManagerModel copyWith({  num? distributorId,
   num? tVQty,
   num? sVQty,
   num? deffQty,
+  num? filledOpeningStk,
+  num? emptyOpeningStk,
+  num? deffOpeningStk,
+  num? filledCurrentStk,
+  num? emptyCurrentStk,
+  num? deffCurrentStk,
 }) => GetCurrentStockDetailManagerModel(  distributorId: distributorId ?? _distributorId,
   itemId: itemId ?? _itemId,
   itemName: itemName ?? _itemName,
@@ -159,6 +195,12 @@ GetCurrentStockDetailManagerModel copyWith({  num? distributorId,
   tVQty: tVQty ?? _tVQty,
   sVQty: sVQty ?? _sVQty,
   deffQty: deffQty ?? _deffQty,
+  filledOpeningStk: filledOpeningStk ?? _filledOpeningStk,
+  emptyOpeningStk: emptyOpeningStk ?? _emptyOpeningStk,
+  deffOpeningStk: deffOpeningStk ?? _deffOpeningStk,
+  filledCurrentStk: filledCurrentStk ?? _filledCurrentStk,
+  emptyCurrentStk: emptyCurrentStk ?? _emptyCurrentStk,
+  deffCurrentStk: deffCurrentStk ?? _deffCurrentStk,
 );
   num? get distributorId => _distributorId;
   num? get itemId => _itemId;
@@ -182,6 +224,12 @@ GetCurrentStockDetailManagerModel copyWith({  num? distributorId,
   num? get tVQty => _tVQty;
   num? get sVQty => _sVQty;
   num? get deffQty => _deffQty;
+  num? get filledOpeningStk => _filledOpeningStk;
+  num? get emptyOpeningStk => _emptyOpeningStk;
+  num? get deffOpeningStk => _deffOpeningStk;
+  num? get filledCurrentStk => _filledCurrentStk;
+  num? get emptyCurrentStk => _emptyCurrentStk;
+  num? get deffCurrentStk => _deffCurrentStk;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -207,6 +255,12 @@ GetCurrentStockDetailManagerModel copyWith({  num? distributorId,
     map['TVQty'] = _tVQty;
     map['SVQty'] = _sVQty;
     map['DeffQty'] = _deffQty;
+    map['FilledOpeningStk'] = _filledOpeningStk;
+    map['EmptyOpeningStk'] = _emptyOpeningStk;
+    map['DeffOpeningStk'] = _deffOpeningStk;
+    map['FilledCurrentStk'] = _filledCurrentStk;
+    map['EmptyCurrentStk'] = _emptyCurrentStk;
+    map['DeffCurrentStk'] = _deffCurrentStk;
     return map;
   }
 

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../GodownKeeper/DashboardScreen.dart';
+import '../../../ManagerScreen/BootomNavigatinBarManager.dart';
 import '../../../ManagerScreen/ManagerDashboard.dart';
 import '../../../Utils/constants.dart';
 import '../../../Utils/shared_preference.dart';
@@ -134,7 +135,7 @@ class _VerifyOtpState extends State<VerifyOtp> {
           Navigator.pushReplacementNamed(context, DashboardScreen.screenName,
               arguments: "checkVersion");
         }else if(roleId == Constants.roleIdManager){
-          Navigator.pushReplacementNamed(context, ManagerDashboardScreen.screenName,
+          Navigator.pushReplacementNamed(context, BottomNavBarExample.screenName,
               arguments: "checkVersion");
         }else{
           Navigator.pushReplacementNamed(context, MyLogin.screenName);

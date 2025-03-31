@@ -65,10 +65,14 @@ class Styling {
   static final TextStyle bodyTitleBig = TextStyle(
       fontSize:
       2.15 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
-
-      fontWeight: FontWeight.bold,
+      fontWeight: FontWeight.normal,
       color: Colors.black);
 
+  static final TextStyle bodyTitleBigBold = TextStyle(
+      fontSize:
+      2.15 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
+      fontWeight: FontWeight.bold,
+      color: Colors.black);
 
   static final TextStyle redStar = TextStyle(
       fontSize:
@@ -90,11 +94,25 @@ class Styling {
       fontFamily: 'OpenSans',
       color: Colors.blue);
 
+  static final TextStyle bodyTitleWithBlueHightSmall = TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize:
+      2.2* SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
+      fontFamily: 'OpenSans',
+      color: Colors.blue);
+
+  static final TextStyle bodyTitleWithBlueHightSmallWithoutBold = TextStyle(
+      fontSize:
+      2.4* SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
+      fontFamily: 'OpenSans',
+      color: Colors.blue);
+
   static final TextStyle countNumber = TextStyle(
       fontSize:
-          2.07 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
+          2.4 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
       fontFamily: 'OpenSans',
-      color: Colors.black);
+      color: Colors.black,
+        );
 
   static final TextStyle countNumberReds = TextStyle(
       fontSize:
@@ -130,6 +148,12 @@ class Styling {
     color: Colors.black,
     fontFamily: 'OpenSans',
     fontSize: 1.8 * SizeConfig.textMultiplier!, // Size = 16-- [14/8.66] = 1.8
+  );
+
+  static final TextStyle textFormTextSmall = TextStyle(
+    color: Colors.black,
+    fontFamily: 'OpenSans',
+    fontSize: 2 * SizeConfig.textMultiplier!, // Size = 16-- [14/8.66] = 1.8
   );
 
   static final TextStyle textFormTextWithUnderline = TextStyle(
@@ -240,6 +264,11 @@ class Styling {
       fontFamily: 'OpenSans',
       color: const Color(0xff666666));
 
+  static final TextStyle itemGreyTextSmallReport = TextStyle(
+      fontSize: 1.8 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
+      fontFamily: 'OpenSans',
+      color: const Color(0xff666666));
+
   static final TextStyle itemBlackTestSmall = TextStyle(
     fontSize: 1.6 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
     fontFamily: 'OpenSans',
@@ -261,12 +290,12 @@ class Styling {
     color: Colors.black,);
 
   static final TextStyle itemBlackTestSmallReport = TextStyle(
-    fontSize: 1.6 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
+    fontSize: 1.8 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
     fontFamily: 'OpenSans',
     color: Colors.black,);
 
   static final TextStyle itemBlackTestSmallReportBold = TextStyle(
-    fontSize: 1.6 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
+    fontSize: 1.8 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
     fontFamily: 'OpenSans',
     fontWeight: FontWeight.bold,
     color: Colors.black,);
@@ -281,7 +310,16 @@ class Styling {
     fontFamily: 'OpenSans',
     color: Colors.black,);
 
+  static final TextStyle itemBlackTestMore = TextStyle(
+    fontSize: 2.2 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
+    fontFamily: 'OpenSans',
+    color: Colors.black,);
 
+  static final TextStyle itemGreyTextBigMore = TextStyle(
+      fontSize: 2.5 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
+      fontFamily: 'OpenSans',
+      fontWeight: FontWeight.bold,
+      color: Colors.grey[700]);
 
   /* static final TextStyle selectedTabLight = TextStyle(
     color: Colors.black,

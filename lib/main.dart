@@ -15,12 +15,14 @@ import 'Screen/GodownKeeper/ItemReceipt/AddItem/ItemReceiptScreen.dart';
 import 'Screen/GodownKeeper/ItemReceipt/ItemReturn/ItenRetun.dart';
 import 'Screen/GodownKeeper/ItemReceipt/ItemReturnXMI/screen/AddReturnItemXMIScreen.dart';
 import 'Screen/GodownKeeper/ItemReceipt/ItemReturnXMI/screen/ItemReturnXMIListScreen.dart';
+import 'Screen/ManagerScreen/BootomNavigatinBarManager.dart';
 import 'Screen/GodownKeeper/MarkDefective/MarkDefectiveItemScreen.dart';
 import 'Screen/ManagerScreen/CashDepositToBankScreen.dart';
 import 'Screen/ManagerScreen/CashHandoverScreen.dart';
 import 'Screen/ManagerScreen/DeliveryBoyWiseListShow.dart';
 import 'Screen/ManagerScreen/ManagerDSRReportScreen.dart';
 import 'Screen/ManagerScreen/ManagerDashboard.dart';
+import 'Screen/ManagerScreen/ManagerMoreScreen.dart';
 import 'Screen/ManagerScreen/ManagerUpdateSaleCashUpdation.dart';
 import 'Screen/ManagerScreen/ManagerUpdateSaleScreen.dart';
 import 'Screen/User/Login/Screen/MyLogin.dart';
@@ -132,6 +134,7 @@ class MyApp extends StatelessWidget {
             SplashScreen.screenName: (context) => SplashScreen(),
             MyLogin.screenName: (context) => MyLogin(),
 
+
             ///GK
             DashboardScreen.screenName: (context) => DashboardScreen(),
             ItemReceiptScreen.screenName: (context) => ItemReceiptScreen(),
@@ -153,6 +156,9 @@ class MyApp extends StatelessWidget {
             DeliveryBoyWiseListShow.screenName: (context) => DeliveryBoyWiseListShow(),
             ManagerDashboardScreen.screenName: (context) => ManagerDashboardScreen(),
             ManagerDSRReportScreen.screenName: (context) => ManagerDSRReportScreen(),
+            BottomNavBarExample.screenName: (context) => BottomNavBarExample(),
+            ManagerMoreScree.screenName: (context) => ManagerMoreScree(),
+
           },
         ),
       );

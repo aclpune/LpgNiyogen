@@ -761,12 +761,15 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
                     ),
                     Padding(
                       padding: const EdgeInsets.all(5.0),
-                      child: Card(
+                      child:
+                      Card(
                         color: Colors.white,
                         shape: BeveledRectangleBorder(),
-                        child: Container(
+                        child:
+                        Container(
                           decoration: BoxDecoration(border: Border.all(width: 0.5)),
-                          child: Column(
+                          child:
+                          Column(
                             children: [
                               // Header row with column titles
                               Row(
@@ -805,13 +808,15 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
                                     return SizedBox.shrink(); // Return an empty widget if stock is null
                                   }
 
-                                  return Container(
+                                  return
+                                    Container(
                                     padding: EdgeInsets.symmetric(vertical: 0.0), // Remove unnecessary vertical padding
                                     child: Column(
                                       children: [
                                         Container(
                                           padding: EdgeInsets.symmetric(horizontal: 0.0), // Remove horizontal padding
-                                          child: Row(
+                                          child:
+                                          Row(
                                             children: [
                                               // Column 1: Item Name
                                               Expanded(
