@@ -172,15 +172,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
         //   ]),
         // ),
         body:
-        RefreshIndicator(
-          onRefresh: _onRefresh,
-          child:
           Column(
             children: [
               Expanded(
                 child: SingleChildScrollView(
                   // Ensures the content is scrollable
-                  child: Padding(
+                  child:
+                  Padding(
                     padding: const EdgeInsets.only(
                         left: 5.0, right: 5.0, bottom: 5.0, top: 20.0),
                     child: Column(
@@ -783,13 +781,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                 ),
               ),
-              Positioned(
-                left: 0,
-                right: 0,
-                bottom: MediaQuery.of(context).viewInsets.bottom > 0
-                    ? MediaQuery.of(context).viewInsets.bottom
-                    : 0, // This ensures the buttons stay above the keyboard or system bar if visible
-                child: Container(
+
+                Container(
                   padding: const EdgeInsets.all(10.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -841,10 +834,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ],
                   ),
                 ),
-              ),
+
             ],
           ),
-        ),
 
         floatingActionButton: FloatingActionButton(
           backgroundColor: Colors.blue,

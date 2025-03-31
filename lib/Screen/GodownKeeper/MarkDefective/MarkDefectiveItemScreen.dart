@@ -13,6 +13,7 @@ import '../../Utils/Styling.dart';
 import '../../Utils/Widget.dart';
 import '../../Utils/app_url.dart';
 import '../../Utils/constants.dart';
+import '../DeliveryBoyModel/GetDefectiveStockListModel.dart';
 import '../ItemReceipt/CylItemList/CylItemListModel.dart';
 import 'package:http/http.dart' as http;
 
@@ -34,7 +35,7 @@ class _MarkDefectiveItemScreenState extends State<MarkDefectiveItemScreen> {
   final TextEditingController _defectiveController = TextEditingController();
   final TextEditingController _remarkController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
-
+  List<GetDefectiveStockListModel> _defectiveStockList = [];
   @override
   void initState() {
     // TODO: implement initState
@@ -43,6 +44,7 @@ class _MarkDefectiveItemScreenState extends State<MarkDefectiveItemScreen> {
     formattedDate = DateFormat('yyyy-MM-dd').format(now);
     _dateController.text = formattedDate!;
     fetchItems();
+    _fetchDefectiveData();
   }
 
   @override
@@ -188,19 +190,17 @@ class _MarkDefectiveItemScreenState extends State<MarkDefectiveItemScreen> {
                           // Add 10px margin on left and right
                           child: ElevatedButton(
                             onPressed: () {
-                              // if (flagEditMode == "editMode") {
-                              //   ((stockDataFuture != null))
-                              //       ? sendEditedDataToApi(context)
-                              //       : null;
-                              // } else {
-                              //   ((_dataGetFromDBDelBoy.isNotEmpty) &&
-                              //       (selectedDelBoyName != null &&
-                              //           selectedDelBoyName!.isNotEmpty))
-                              //       ? sendDataToApi(selectedDelBoyId.toString()!,
-                              //       deliveryDateController.text)
-                              //       : null;
-                              // }
+                              int defctiveQty = int.parse(_defectiveController.text);
 
+                              if(_defectiveController.text.isNotEmpty){
+                                if(defctiveQty > 0 ){
+                                  submitDefectiveToApi();
+                                }else{
+                                  showFlushBar(context,Constants.validCountEnter);
+                                }
+                              }else{
+                                showFlushBar(context,Constants.validCountEnter);
+                              }
                             },
                             child: Padding(
                               padding: const EdgeInsets.only(left: 25.0,right: 25,top: 12,bottom: 12),
@@ -246,27 +246,31 @@ class _MarkDefectiveItemScreenState extends State<MarkDefectiveItemScreen> {
                               children: [
                                 Expanded(
                                     flex: 2,
-                                    child: Text(
-                                          "Date",
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: Color(0xff1280b3),
-                                                fontFamily: 'OpenSans',
-                                            )
-                                        )
+                                    child: Center(
+                                      child: Text(
+                                            "Date",
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color(0xff1280b3),
+                                                  fontFamily: 'OpenSans',
+                                              )
+                                          ),
+                                    )
 
                                 ),
                                 Expanded(
                                     flex: 2,
-                                    child:  Text(
-                                          "Item",
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: Color(0xff1280b3),
-                                                fontFamily: 'OpenSans')
-                                        )
+                                    child:  Center(
+                                      child: Text(
+                                            "Item",
+                                              style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color(0xff1280b3),
+                                                  fontFamily: 'OpenSans')
+                                          ),
+                                    )
 
                                 ),
                                 Expanded(
@@ -306,9 +310,9 @@ class _MarkDefectiveItemScreenState extends State<MarkDefectiveItemScreen> {
                             child: ListView.builder(
                               shrinkWrap: true,
                               physics: BouncingScrollPhysics(),
-                              itemCount: 10,
+                              itemCount: _defectiveStockList.length,
                               itemBuilder: (context, index) {
-                                return MarkdefectiveItemUI();
+                                return MarkdefectiveItemUI(_defectiveStockList[index]);
                               },
                             ),
                           ),
@@ -371,4 +375,133 @@ class _MarkDefectiveItemScreenState extends State<MarkDefectiveItemScreen> {
     }
   }
 
+  Future<void> submitDefectiveToApi() async {
+    // Construct the request payload
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? distributorId = prefs.getString('DistributorId');
+    String? godownId = prefs.getString('godownId');
+    String? addedBy = prefs.getString('StaffId');
+    String? godownKeeperId = prefs.getString('godownKeeperId');
+    String? token = prefs.getString('token'); // This is your bearer token
+
+    int dId = int.parse(distributorId!);
+    int gId = int.parse(godownId!);
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd HH:mm').format(now);
+
+    // Add checks for empty or invalid inputs
+    int defectiveC = 0;
+
+
+    try {
+      defectiveC = int.tryParse(_defectiveController.text) ?? 0;
+
+    } catch (e) {
+      // Handle any error parsing the quantities
+      print("Error parsing quantities: $e");
+      EasyLoading.showToast("Invalid input for quantities");
+      return; // Early exit to prevent the API call with invalid values
+    }
+
+    String remarks = _remarkController.text;
+
+    Map<String, dynamic> requestBody = {
+      "DefId":0,
+      "DistributorId":dId,
+      "DefDate":formattedDate,
+      "GodownId":gId,
+      "ItemId":selectedItemId,
+      "DefQty":defectiveC,
+      "Remark":remarks,
+      "Action":"ADD",
+      "AddedBy":addedBy
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse('${AppUrl.DefectiveMasterAdd_Mob}'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(requestBody), // Encode the request body as JSON
+      );
+
+      // Print the raw response for debugging
+      print("API Response Status Code DefectiveMasterAdd_Mob: ${response.statusCode}");
+      print("API Response Body DefectiveMasterAdd_Mob: ${response.body}");
+      print("API Response request DefectiveMasterAdd_Mob: ${response.request} ${requestBody}");
+
+      if (response.statusCode == 200) {
+        // Handle success
+        print("DefectiveMasterAdd_Mob quantity added successfully!");
+        EasyLoading.showToast(Constants.dataUpdated, duration: const Duration(milliseconds: 3000));
+        _defectiveController.clear();
+        _remarkController.clear();
+        _selectedItem = null;
+        selectedItemId = null;
+        _selectedItem = null;
+        _selectedItemModel =
+        null;
+        _fetchDefectiveData();
+      } else {
+        // Handle error response
+        print("Failed to add imbalance quantity: ${response.statusCode}");
+      }
+    } catch (e) {
+      // Handle any exceptions
+      print("Error occurred: $e");
+    }
+  }
+
+  Future<void> _fetchDefectiveData() async {
+    EasyLoading.show();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? distributorId = prefs.getString('DistributorId');
+    String? godownId = prefs.getString('godownId');
+    String? addedBy = prefs.getString('StaffId');
+    String? godownKeeperId = prefs.getString('godownKeeperId');
+    String? token = prefs.getString('token');
+    int dId = int.parse(distributorId!);
+    int gId = int.parse(godownId!);// This is your bearer token
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd').format(now); // Format selectedDate
+    // String formattedDate = "2025-03-20"; // Format selectedDate
+
+    try {
+      final response = await http.post(
+        Uri.parse(AppUrl.GetDefectiveList_Mob),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+          // Adding token to the Authorization header
+        },
+        body: jsonEncode(
+            {
+              "DistributorId":dId,
+              "DefDate":formattedDate,
+              "GodownId":gId,
+            }
+        ),
+      );
+
+      debugPrint('jsonRequestBodyGetDsrIncomeReportListForMobGetDefectiveList_Mob: ${response.request}');
+      debugPrint('responseGetDsrIncomeReportListForMobGetDefectiveList_Mob: ${response.body}');
+
+      if (response.statusCode == 200) {
+        // Parse the response
+        List<dynamic> data = json.decode(response.body);
+        setState(() {
+          _defectiveStockList = data.map((json) => GetDefectiveStockListModel.fromJson(json)).toList();
+          EasyLoading.dismiss();
+        });
+
+
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
 }

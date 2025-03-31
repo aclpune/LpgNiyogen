@@ -13,16 +13,21 @@ import '../../Utils/app_url.dart';
 import '../../Utils/constants.dart';
 import 'package:http/http.dart' as http;
 
-class MarkdefectiveItemUI extends StatefulWidget {
-  const MarkdefectiveItemUI({super.key});
+import '../DeliveryBoyModel/GetDefectiveStockListModel.dart';
 
+class MarkdefectiveItemUI extends StatefulWidget {
+  GetDefectiveStockListModel _listModel;
+
+  MarkdefectiveItemUI(this._listModel,{Key? key}) : super(key: key);
   @override
   State<MarkdefectiveItemUI> createState() => _MarkdefectiveItemUIState();
 }
 
 class _MarkdefectiveItemUIState extends State<MarkdefectiveItemUI> {
+  List<GetDefectiveStockListModel> _defectiveStockList = [];
   @override
   Widget build(BuildContext context) {
+    var value = widget._listModel;
     return
             Padding(
               padding: const EdgeInsets.symmetric(
@@ -33,28 +38,31 @@ class _MarkdefectiveItemUIState extends State<MarkdefectiveItemUI> {
                     children: [
                       Expanded(
                           flex: 2,
-                          child:  Text(
-                                "29-09-2024",
-                                style: Styling.itemBlackTestSmall,
-                              )
-
+                          child:Center(
+                            child: Text(DateFormat('dd-MM-yyyy').format(DateTime.parse(value.defDate ?? '')),
+                              style: Styling.itemBlackTestSmall,
+                            ),
+                          )
                       ),
                       Expanded(
                           flex: 2,
                           child:
-                               Text(
-                                "14.2 kg",
-                                style: Styling.itemBlackTestSmall,
-                              )
-
-    ),
+                               Center(
+                                 child: Text(
+                                 value.itemName.toString(),
+                                  style: Styling.itemBlackTestSmall,
+                                                               ),
+                               )
+                      ),
                       Expanded(
                           flex: 2,
                           child: Center(
                               child: Text(
-                                "4",
+                                value.defQty.toString(),
                                 style: Styling.itemBlackTestSmall,
-                              ))),
+                              )
+                          )
+                      ),
                       Expanded(
                           flex: 1,
                           child: Center(
@@ -76,7 +84,7 @@ class _MarkdefectiveItemUIState extends State<MarkdefectiveItemUI> {
                                           TextButton(
                                             onPressed: () async {
                                               Navigator.of(context).pop(); // Close dialog
-                                              // await deleteDataToApi(sale.saleGKId!.toInt());
+                                               deleteDefectiveToApi(value.defId!.toInt());
                                             },
                                             child: Text("Yes"),
                                           ),
@@ -98,71 +106,112 @@ class _MarkdefectiveItemUIState extends State<MarkdefectiveItemUI> {
             );
   }
 
-  Future<void> deleteDataToApi(int salesGKID) async {
-    Constants.isNetworkAvailable =
-    await InternetConnectionChecker().hasConnection;
-    if (Constants.isNetworkAvailable) {
-      try {
-        // Get shared preferences for distributorId and bearerToken
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        String? distributorId = prefs.getString('DistributorId');
-        String? bearerToken = prefs.getString('token');
-        String? godownKeeperID = prefs.getString('godownKeeperId');
-        String? addedBy = prefs.getString('StaffId');
-        String? godownID = prefs.getString('godownId');
+  Future<void> deleteDefectiveToApi(int defectiveId) async {
+    // Construct the request payload
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? distributorId = prefs.getString('DistributorId');
+    String? godownId = prefs.getString('godownId');
+    String? addedBy = prefs.getString('StaffId');
+    String? godownKeeperId = prefs.getString('godownKeeperId');
+    String? token = prefs.getString('token'); // This is your bearer token
 
-        if (distributorId == null || bearerToken == null) {
-          print('DistributorId or BearerToken is missing');
-          return;
-        }
+    int dId = int.parse(distributorId!);
+    int gId = int.parse(godownId!);
+    DateTime now = DateTime.now();
+    // String formattedDate = DateFormat('yyyy-MM-dd HH:mm').format(now);
+    String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss.SSS').format(now);
 
-        // // Prepare the entire data structure for the API
-        // Map<String, dynamic> apiData = {
-        //   "SaleGKId": salesGKID, // Assuming this is always 0 for the new sale
-        //   "DistributorId": distributorId,
-        //   "GodownId": godownID,
-        //   "Action": "DELETE"
-        // };
-        //
-        // // Convert data to JSON and send it to the API
-        // String jsonRequestBody = jsonEncode(apiData);
-        // debugPrint("jsonRequestBody$jsonRequestBody");
-        // if (salesGKID != null && salesGKID != 0) {
-        //   // Send the API request
-        //   final response = await http.post(
-        //     Uri.parse('${AppUrl.UpdateDailyRefillSale}'), // Your actual API URL
-        //     headers: {
-        //       'Content-Type': 'application/json',
-        //       'Authorization': 'Bearer $bearerToken',
-        //       // Authorization header with Bearer token
-        //     },
-        //     body: jsonRequestBody, // The body of the request
-        //   );
-        //   print('response ${response.body}');
-        //   print('response ${response}');
-        //   // Check response status
-        //   if (response.statusCode == 200) {
-        //     print('Data sent successfully');
-        //     EasyLoading.showToast(Constants.dataDeleted,
-        //         duration: const Duration(milliseconds: 3000));
-        //     setState(() {
-        //
-        //     });
-        //   } else {
-        //     print('Failed to send data: ${response.statusCode}');
-        //     showFlushBar(context, Constants.dataDeletedFail);
-        //   }
-        // } else {
-        //   // ScaffoldMessenger.of(context).showSnackBar(
-        //   //   SnackBar(content: Text('Enter record for that delivery boy..!')),
-        //   // );
-        // }
-      } catch (e) {
-        print('Error sending data to API: $e');
+    Map<String, dynamic> requestBody = {
+        "DefId":defectiveId,
+        "DistributorId":dId,
+        "DefDate":formattedDate,
+        "GodownId":gId,
+        "ItemId":0,
+        "DefQty":0,
+        "Remark":"",
+        "Action":"DELETE",
+        "AddedBy":0
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse('${AppUrl.DefectiveMasterAdd_Mob}'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(requestBody), // Encode the request body as JSON
+      );
+
+      // Print the raw response for debugging
+      print("API Response Status Code DefectiveMasterAdd_Mob: ${response.statusCode}");
+      print("API Response Body DefectiveMasterAdd_Mob: ${response.body}");
+      print("API Response request DefectiveMasterAdd_Mob: ${response.request} ${requestBody}");
+
+      if (response.statusCode == 200) {
+        // Handle success
+        print("DefectiveMasterAdd_Mob quantity added successfully!");
+        Navigator.pushReplacementNamed(context, '/markDefectiveItemScreen');
+        EasyLoading.showToast(Constants.dataDeleted, duration: const Duration(milliseconds: 3000));
+        _fetchDefectiveData();
+      } else {
+        // Handle error response
+        print("Failed to add imbalance quantity: ${response.statusCode}");
       }
-    } else {
-      showFlushBar(
-          context, Constants.connectionMessage);
+    } catch (e) {
+      // Handle any exceptions
+      print("Error occurred: $e");
+    }
+  }
+
+  Future<void> _fetchDefectiveData() async {
+    EasyLoading.show();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? distributorId = prefs.getString('DistributorId');
+    String? godownId = prefs.getString('godownId');
+    String? addedBy = prefs.getString('StaffId');
+    String? godownKeeperId = prefs.getString('godownKeeperId');
+    String? token = prefs.getString('token');
+    int dId = int.parse(distributorId!);
+    int gId = int.parse(godownId!);// This is your bearer token
+    DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd').format(now); // Format selectedDate
+    // String formattedDate = "2025-03-20"; // Format selectedDate
+
+    try {
+      final response = await http.post(
+        Uri.parse(AppUrl.GetDefectiveList_Mob),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+          // Adding token to the Authorization header
+        },
+        body: jsonEncode(
+            {
+              "DistributorId":dId,
+              "DefDate":formattedDate,
+              "GodownId":gId,
+            }
+        ),
+      );
+
+      debugPrint('jsonRequestBodyGetDsrIncomeReportListForMobGetDefectiveList_Mob: ${response.request}');
+      debugPrint('responseGetDsrIncomeReportListForMobGetDefectiveList_Mob: ${response.body}');
+
+      if (response.statusCode == 200) {
+        // Parse the response
+        List<dynamic> data = json.decode(response.body);
+        setState(() {
+          _defectiveStockList = data.map((json) => GetDefectiveStockListModel.fromJson(json)).toList();
+          EasyLoading.dismiss();
+        });
+
+
+      } else {
+        throw Exception('Failed to load data');
+      }
+    } catch (e) {
+      print('Error: $e');
     }
   }
 }
