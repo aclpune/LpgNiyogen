@@ -68,7 +68,7 @@ class CustomAppBarManager extends StatelessWidget implements PreferredSizeWidget
                 IconButton(
                   icon: Icon(Icons.arrow_back, color: Colors.white),
                   onPressed: () {
-                    Navigator.pushReplacementNamed(context, '/managerDashboardScreen'); // Go back on click
+                    Navigator.pushReplacementNamed(context, '/bottomNavBarExample'); // Go back on click
                   },
                 ),
 

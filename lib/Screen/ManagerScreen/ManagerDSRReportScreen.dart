@@ -77,6 +77,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
   double totalSettledAmountCashFlow = 0.0;
   double totalExpenseAmountCashFlow = 0.0;
   double totalCahFlowSummaryAmountCashFlow = 0.0;
+  double totalCashInHandAmountCashFlow = 0.0;
 
   Future<void> _selectDate(BuildContext context) async {
     showDatePicker(
@@ -317,7 +318,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                           "Date Submitted: ${selectedDate.toLocal()}");
                                     },
                                     child: Text(
-                                      'Show DSR',
+                                      'Get DSR',
                                       style: TextStyle(color: Colors.white),
                                     ),
                                     style: ButtonStyle(
@@ -564,8 +565,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                       flex: 2,
                                       child: Text(
                                         item is ManagerDsrReportIncomeSalesModel
-                                            ? item.itemName
-                                            : item.itemName,
+                                            ? item.itemName ?? ''
+                                            : item.itemName ?? '',
                                         style: Styling.itemBlackTestSmallReport,
                                         textAlign: TextAlign.left,
                                       ),
@@ -777,8 +778,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                       flex: 4,
                                       child: Text(
                                         item is ManagerDsrReportIncomeSalesModel
-                                            ? item.itemName
-                                            : item.itemName,
+                                            ? item.itemName ?? ''
+                                            : item.itemName ?? '',
                                         style: Styling.itemBlackTestSmallReport,
                                         textAlign: TextAlign.left,
                                       ),
@@ -992,8 +993,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                       flex: 4,
                                       child: Text(
                                         item is ManagerDsrReportIncomeSalesModel
-                                            ? item.itemName
-                                            : item.itemName,
+                                            ? item.itemName ?? ''
+                                            : item.itemName ?? '',
                                         style: Styling.itemBlackTestSmallReport,
                                         textAlign: TextAlign.left,
                                       ),
@@ -1207,8 +1208,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                       flex: 4,
                                       child: Text(
                                         item is ManagerDsrReportIncomeSalesModel
-                                            ? item.itemName
-                                            : item.itemName,
+                                            ? item.itemName ?? ''
+                                            : item.itemName ?? '',
                                         style: Styling.itemBlackTestSmallReport,
                                         textAlign: TextAlign.left,
                                       ),
@@ -1701,163 +1702,6 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
   // }
 
 
-
-  // Widget _buildCDCMSStockTab() {
-  //   return SingleChildScrollView(
-  //     child: Padding(
-  //       padding: const EdgeInsets.only(left: 16, right: 16, bottom: 10),
-  //       child: Container(
-  //         child: SingleChildScrollView(
-  //           child: Column(
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: [
-  //               Padding(
-  //                 padding: const EdgeInsets.only(bottom: 8.0),
-  //                 child: Row(
-  //                   children: [
-  //                     Align(
-  //                         alignment: Alignment.centerLeft,
-  //                         child: Text("Stock Updated On : ", style: Styling.bodyTitleBigBold)),
-  //                     Text(startOnDate.toString(), style: Styling.bodyTitleBigBold)
-  //                   ],
-  //                 ),
-  //               ),
-  //               cdcmsListData.isNotEmpty
-  //                   ? ListView.builder(
-  //                 shrinkWrap: true,
-  //                 physics: BouncingScrollPhysics(),
-  //                 itemCount: cdcmsListData.length,
-  //                 itemBuilder: (context, index) {
-  //                   // Ensure that the lists have valid lengths before accessing them
-  //                   if (index < filledCDControllers.length &&
-  //                       index < emptyCDControllers.length &&
-  //                       index < defectiveCDControllers.length) {
-  //                     ManagerDsrReportCdcmsListModel data = cdcmsListData[index];
-  //
-  //                     return Padding(
-  //                       padding: const EdgeInsets.all(8.0),
-  //                       child: Column(
-  //                         children: [
-  //                           Row(
-  //                             mainAxisAlignment: MainAxisAlignment.center,
-  //                             children: [
-  //                               Expanded(flex: 3, child: Text(data.itemName ?? 'Item Name', style: TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.left)),
-  //                               Expanded(flex: 2, child: Text("Filled", style: TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.center)),
-  //                               Expanded(flex: 2, child: Text("Empty", style: TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.center)),
-  //                               Expanded(flex: 2, child: Text("Def", style: TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.center)),
-  //                             ],
-  //                           ),
-  //                           Row(
-  //                             mainAxisAlignment: MainAxisAlignment.center,
-  //                             children: [
-  //                               Expanded(flex: 3, child: Text("Current Stock", style: TextStyle(fontSize: 12), textAlign: TextAlign.left)),
-  //                               Expanded(flex: 2, child: Text(data.currentStkFilled?.toString() ?? '0', style: TextStyle(fontSize: 12), textAlign: TextAlign.center)),
-  //                               Expanded(flex: 2, child: Text(data.currentStkEmpty?.toString() ?? '0', style: TextStyle(fontSize: 12), textAlign: TextAlign.center)),
-  //                               Expanded(flex: 2, child: Text(data.currentStkDefective?.toString() ?? '0', style: TextStyle(fontSize: 12), textAlign: TextAlign.center)),
-  //                             ],
-  //                           ),
-  //                           // TextFields for editing CDCMS values
-  //                           Row(
-  //                             mainAxisAlignment: MainAxisAlignment.center,
-  //                             children: [
-  //                               Expanded(
-  //                                 flex: 2,
-  //                                 child: TextField(
-  //                                   controller: filledCDControllers[index],
-  //                                   decoration: buildInputWithSmallUnderline(context),
-  //                                   style: TextStyle(fontSize: 12),
-  //                                   textAlign: TextAlign.center,
-  //                                   keyboardType: TextInputType.number,
-  //                                   onChanged: (value) {
-  //                                     double newValue = double.tryParse(value) ?? 0.0;
-  //                                     setState(() {
-  //                                       filledDiffList[index] = (data.currentStkFilled?.toDouble() ?? 0.0) - newValue;
-  //                                       totalDiffList[index] = filledDiffList[index] + emptyDiffList[index] + defectiveDiffList[index];
-  //                                     });
-  //                                   },
-  //                                 ),
-  //                               ),
-  //                               SizedBox(width: 7),
-  //                               Expanded(
-  //                                 flex: 2,
-  //                                 child: TextField(
-  //                                   controller: emptyCDControllers[index],
-  //                                   decoration: buildInputWithSmallUnderline(context),
-  //                                   style: TextStyle(fontSize: 12),
-  //                                   textAlign: TextAlign.center,
-  //                                   keyboardType: TextInputType.number,
-  //                                   onChanged: (value) {
-  //                                     double newValue = double.tryParse(value) ?? 0.0;
-  //                                     setState(() {
-  //                                       emptyDiffList[index] = (data.currentStkEmpty?.toDouble() ?? 0.0) - newValue;
-  //                                       totalDiffList[index] = filledDiffList[index] + emptyDiffList[index] + defectiveDiffList[index];
-  //                                     });
-  //                                   },
-  //                                 ),
-  //                               ),
-  //                               SizedBox(width: 7),
-  //                               Expanded(
-  //                                 flex: 2,
-  //                                 child: TextField(
-  //                                   controller: defectiveCDControllers[index],
-  //                                   decoration: buildInputWithSmallUnderline(context),
-  //                                   style: TextStyle(fontSize: 12),
-  //                                   textAlign: TextAlign.center,
-  //                                   keyboardType: TextInputType.number,
-  //                                   onChanged: (value) {
-  //                                     double newValue = double.tryParse(value) ?? 0.0;
-  //                                     setState(() {
-  //                                       defectiveDiffList[index] = (data.currentStkDefective?.toDouble() ?? 0.0) - newValue;
-  //                                       totalDiffList[index] = filledDiffList[index] + emptyDiffList[index] + defectiveDiffList[index];
-  //                                     });
-  //                                   },
-  //                                 ),
-  //                               ),
-  //                             ],
-  //                           ),
-  //                           // Displaying calculated differences
-  //                           Row(
-  //                             mainAxisAlignment: MainAxisAlignment.center,
-  //                             children: [
-  //                               Expanded(flex: 3, child: Text("Difference", style: TextStyle(fontSize: 12), textAlign: TextAlign.left)),
-  //                               Expanded(flex: 2, child: Text(filledDiffList[index].toStringAsFixed(2), style: TextStyle(fontSize: 12, color: filledDiffList[index] < 0 ? Colors.red : Colors.black), textAlign: TextAlign.center)),
-  //                               Expanded(flex: 2, child: Text(emptyDiffList[index].toStringAsFixed(2), style: TextStyle(fontSize: 12, color: emptyDiffList[index] < 0 ? Colors.red : Colors.black), textAlign: TextAlign.center)),
-  //                               Expanded(flex: 2, child: Text(defectiveDiffList[index].toStringAsFixed(2), style: TextStyle(fontSize: 12, color: defectiveDiffList[index] < 0 ? Colors.red : Colors.black), textAlign: TextAlign.center)),
-  //                             ],
-  //                           ),
-  //                           // Displaying total difference
-  //                           Row(
-  //                             mainAxisAlignment: MainAxisAlignment.start,
-  //                             children: [
-  //                               Expanded(flex: 0, child: Text("Total : ", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold), textAlign: TextAlign.left)),
-  //                               Expanded(flex: 0, child: Text(totalDiffList[index].toStringAsFixed(2), style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: totalDiffList[index] < 0 ? Colors.red : Colors.black), textAlign: TextAlign.center)),
-  //                             ],
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     );
-  //                   } else {
-  //                     return SizedBox.shrink();  // Return an empty widget if index is out of bounds
-  //                   }
-  //                 },
-  //               )
-  //                   : Padding(
-  //                 padding: const EdgeInsets.all(16.0),
-  //                 child: Center(
-  //                   child: Text(
-  //                     'No CDCMS Data Available',
-  //                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-  //                   ),
-  //                 ),
-  //               ),
-  //               // Additional widgets...
-  //             ],
-  //           ),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
   Widget _buildCDCMSStockTab() {
     return SingleChildScrollView(
       child: Padding(
@@ -1990,9 +1834,9 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Expanded(flex: 3, child: Text("Difference", style: TextStyle(fontSize: 12), textAlign: TextAlign.left)),
-                                Expanded(flex: 2, child: Text(filledDiffList[index].toStringAsFixed(2), style: TextStyle(fontSize: 12, color: filledDiffList[index] < 0 ? Colors.red : Colors.black), textAlign: TextAlign.center)),
-                                Expanded(flex: 2, child: Text(emptyDiffList[index].toStringAsFixed(2), style: TextStyle(fontSize: 12, color: emptyDiffList[index] < 0 ? Colors.red : Colors.black), textAlign: TextAlign.center)),
-                                Expanded(flex: 2, child: Text(defectiveDiffList[index].toStringAsFixed(2), style: TextStyle(fontSize: 12, color: defectiveDiffList[index] < 0 ? Colors.red : Colors.black), textAlign: TextAlign.center)),
+                                Expanded(flex: 2, child: Text(filledDiffList[index].toStringAsFixed(0), style: TextStyle(fontSize: 12, color: filledDiffList[index] < 0 ? Colors.red : Colors.black), textAlign: TextAlign.center)),
+                                Expanded(flex: 2, child: Text(emptyDiffList[index].toStringAsFixed(0), style: TextStyle(fontSize: 12, color: emptyDiffList[index] < 0 ? Colors.red : Colors.black), textAlign: TextAlign.center)),
+                                Expanded(flex: 2, child: Text(defectiveDiffList[index].toStringAsFixed(0), style: TextStyle(fontSize: 12, color: defectiveDiffList[index] < 0 ? Colors.red : Colors.black), textAlign: TextAlign.center)),
                               ],
                             ),
                             // Display total difference
@@ -2000,7 +1844,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Expanded(flex: 0, child: Text("Total : ", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold), textAlign: TextAlign.left)),
-                                Expanded(flex: 0, child: Text(totalDiffList[index].toStringAsFixed(2), style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: totalDiffList[index] < 0 ? Colors.red : Colors.black), textAlign: TextAlign.center)),
+                                Expanded(flex: 0, child: Text(totalDiffList[index].toStringAsFixed(0), style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: totalDiffList[index] < 0 ? Colors.red : Colors.black), textAlign: TextAlign.center)),
                               ],
                             ),
                           ],
@@ -2020,6 +1864,32 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                     ),
                   ),
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: isDateValid ? (){
+                        if(saveFlag){
+                          debugPrint("Save data$saveFlag");
+                          showFlushBar(context,
+                              Constants.dayEndCompleted);
+                        }else{
+                          saveCDCMSDataMob();
+                          debugPrint("Save data$saveFlag");
+                        }
+
+                      }:null,
+                      child: Text("Save CDCMS Data"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:isDateValid? saveFlag ? Colors.grey : Colors.blue:Colors.grey,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
           ),
@@ -2084,7 +1954,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                       itemBuilder: (context, index) {
                         var data = dataCashInHandList[index];
                         return Padding(
-                          padding: const EdgeInsets.only(bottom:0.0),
+                          padding: const EdgeInsets.only(bottom:10.0),
                           child: Column(
                             children: [
                               Row(
@@ -2123,35 +1993,39 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                           textAlign: TextAlign.center)),
                                 ],
                               ),
-                              SizedBox(height: 15,),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                      flex: 0,
-                                      child: Text("Total Cash In Hand : ",
-                                          style: Styling.itemBlackTestBold,
-                                          textAlign: TextAlign.left)),
-                                  Expanded(
-                                      flex: 0,
-                                      child: Text(
-                                        data is ManagerDsrReportCashHandOverModel
-                                            ? formatCurrency((data.totalAmt ?? 0.0).toDouble())
-                                            : formatCurrency((data.totalAmt ?? 0.0).toDouble()),
-                                          style: Styling.itemBlackTestBold,
-                                          )),
-                                ],
-                              ),
-
                             ],
                           ),
                         );
                       },
                     ),
+                    SizedBox(height: 15,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                            flex: 0,
+                            child: Text("Total Cash In Hand : ",
+                                style: Styling.itemBlackTestBold,
+                                textAlign: TextAlign.left)),
+                        Expanded(
+                            flex: 0,
+                            child: Text(
+                              formatCurrency(totalCashInHandAmountCashFlow),
+                              style: Styling.itemBlackTestBold,
+                            )
+                        ),
+                      ],
+                    ),
+
                   ],
                 ),
               ),
-              SizedBox(height: 20,),
+              SizedBox(height: 15,),
+              Container(
+                height: 0.5,
+                color: Colors.grey,
+              ),
+              SizedBox(height: 15,),
               Container(
                 child: Column(
                   children: [
@@ -2254,7 +2128,12 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                   ],
                 ),
               ),
-              SizedBox(height: 20,),
+              SizedBox(height: 15,),
+              Container(
+                height: 0.5,
+                color: Colors.grey,
+              ),
+              SizedBox(height:15,),
               Container(
                 child:
                 Column(
@@ -2944,6 +2823,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
         double totalSettledAmount = 0.0;
         double totalExpenseAmount = 0.0;
         double totalCahFlowSummaryAmount = 0.0;
+        double totalCahInHandAmount = 0.0;
 // Iterate through each item in your data
         for (var incomeData in dataIncomeTotalAmountList) {
           // Debugging each item to see Mode and Amount
@@ -3003,6 +2883,15 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
 
         totalCahFlowSummaryAmountCashFlow = totalCahFlowSummaryAmount;
         debugPrint("Total CahFlowSummary Amount: $totalCahFlowSummaryAmount");
+
+
+        for (var cashInHand in dataCashInHandList) {
+          totalCahInHandAmount +=
+              cashInHand.totalAmt ?? 0.0; // Add the amount to the cash total
+        }
+
+        totalCashInHandAmountCashFlow = totalCahInHandAmount;
+        debugPrint("Total totalCahInHandAmount Amount: $totalCahInHandAmount");
 
         if (mounted) {
           EasyLoading.dismiss();

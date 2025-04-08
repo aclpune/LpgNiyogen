@@ -99,13 +99,13 @@ class CustomeDrawer extends StatelessWidget {
                   Navigator.pushReplacementNamed(context, '/itemReturnXMIListScreen');
                 },
               ),
-              // ListTile(
-              //   leading: Icon(Icons.edit),
-              //   title: Text('Mark Defective'),
-              //   onTap: () {
-              //     Navigator.pushReplacementNamed(context, '/markDefectiveItemScreen');
-              //   },
-              // ),
+              ListTile(
+                leading: Icon(Icons.edit),
+                title: Text('Mark Defective'),
+                onTap: () {
+                  Navigator.pushReplacementNamed(context, '/markDefectiveItemScreen');
+                },
+              ),
               // ListTile(
               //   leading: Icon(Icons.update_outlined),
               //   title: Text('Update Sale'),
