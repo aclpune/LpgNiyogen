@@ -82,6 +82,7 @@ BranchAdminAH	cnf@1234*/
   static String dayEndCompleted = "This action is not permitted as today's day end operation has already been completed.";
   static String totalSaleQtyDailySale = "Refill sale qty exceeds current filled stock for this item, kindly check the qty entered or add filled stock using item receipt menu.";
   static String defectiveSaleQtyDailySale = "Defective qty exceeds current defective stock for this item, kindly check the qty entered or add defective stock.";
+  static String svTvConsumerSelectFromDD = "Please select valid consumer number from list.";
 
   static String roleIdGodown = "3";
   static String roleIdManager= "1";

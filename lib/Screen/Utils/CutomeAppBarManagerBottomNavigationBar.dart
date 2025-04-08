@@ -31,6 +31,7 @@ class _AppBarCustomState extends State<AppBarCustom> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+        automaticallyImplyLeading: false,
         title: Column(children: <Widget>[
           Row(
             mainAxisSize: MainAxisSize.max,
@@ -51,7 +52,7 @@ class _AppBarCustomState extends State<AppBarCustom> {
                         style: Styling.appBarTitle,
                       ),
                       Text(
-                        "Distributor Name",
+                        "",
                         textAlign: TextAlign.start,
                         style: Styling.appBarDesc,
                       ),
@@ -68,7 +69,7 @@ class _AppBarCustomState extends State<AppBarCustom> {
                         textAlign: TextAlign.right,
                       ),
                   Text(
-                    "Roll" ?? ' ',
+                    "" ?? ' ',
                     style: const TextStyle(fontSize: 10),
                     textAlign: TextAlign.right,
                   ),

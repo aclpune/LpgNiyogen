@@ -136,41 +136,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ),
         ),
-
-        // AppBar(
-        //   title: Column(children: <Widget>[
-        //     Row(
-        //       mainAxisSize: MainAxisSize.max,
-        //       mainAxisAlignment: MainAxisAlignment.center,
-        //       children: [
-        //         Image.asset(
-        //           'assets/icononlytransparentnobuffer.png',
-        //           // Replace with the path to your logo image
-        //           height: 30, // Adjust the height as needed
-        //         ),
-        //         Flexible(
-        //           flex: 9,
-        //           fit: FlexFit.tight,
-        //           child: Text(
-        //             Constants.AppBarTitle,
-        //             textAlign: TextAlign.start,
-        //           ),
-        //         ),
-        //       ],
-        //     ),
-        //     Row(
-        //       mainAxisSize: MainAxisSize.max,
-        //       mainAxisAlignment: MainAxisAlignment.end,
-        //       children: [
-        //         Text(
-        //           "userName",
-        //           style: TextStyle(fontSize: 10),
-        //           textAlign: TextAlign.right,
-        //         ),
-        //       ],
-        //     )
-        //   ]),
-        // ),
         body:
           Column(
             children: [

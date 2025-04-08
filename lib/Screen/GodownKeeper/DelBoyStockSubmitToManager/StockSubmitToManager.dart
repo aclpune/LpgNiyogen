@@ -49,6 +49,7 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
   bool isSearchActive = false;
   bool saveFlag = false;
   @override
+
   void initState() {
     super.initState();
     updateRefillSale = UpdateRefillSale();
@@ -79,6 +80,7 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
     );
     return shouldExit;
   }
+
   Future<void> _refresh() async {
     // Simulate a network call or data refresh.
     await Future.delayed(Duration(seconds: 2));
@@ -86,187 +88,10 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
     // Update the data and refresh the UI.
     setState(() {
       stockDataFuture = updateRefillSale!.getDataFromDatabase();
-      debugPrint("stockDataFuture: $stockDataFuture");    });
+      debugPrint("stockDataFuture: $stockDataFuture");
+    });
+    insertDelBoyStockList();
   }
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Scaffold(
-  //     appBar: CustomAppBar(
-  //       title: 'Submit stock to manager', // Title or hint text for the text field
-  //     ),
-  //     body:
-  //     ListView.builder(
-  //       itemCount: stockSubmitData?.length ?? 0,
-  //       itemBuilder: (context, index) {
-  //         final sale = stockSubmitData?[index];
-  //         return Padding(
-  //           padding: const EdgeInsets.all(5.0),
-  //           child: Card(color: Colors.white,
-  //             child:
-  //             Padding(
-  //               padding: const EdgeInsets.all(8.0),
-  //               child: Column(
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: [
-  //                   ListTile(
-  //                     title: Text('Delivery Boy Name: ${sale?.staffName}'),
-  //                     subtitle: Text('Delivery Boy Id: ${sale?.dMId}'),
-  //                   ),
-  //                   // Display items list (items in `ItemList`)
-  //                   Container(
-  //                     decoration: BoxDecoration(border: Border.all(width: 0.5)),
-  //                     child: Column(
-  //                       children: [
-  //                         // Header Row with equal width for all columns using Expanded
-  //                         Row(
-  //                           children: [
-  //                             Expanded(child: Center(child: Text("Item",style: TextStyle(fontWeight: FontWeight.bold),))),
-  //                             verticalDividerVerySmall(),
-  //                             Expanded(child: Center(child: Text("Filled",style: TextStyle(fontWeight: FontWeight.bold),))),
-  //                             verticalDividerVerySmall(),
-  //                             Expanded(child: Center(child: Text("SV",style: TextStyle(fontWeight: FontWeight.bold),))),
-  //                             verticalDividerVerySmall(),
-  //                             Expanded(child: Center(child: Text("TV",style: TextStyle(fontWeight: FontWeight.bold),))),
-  //                             verticalDividerVerySmall(),
-  //                             Expanded(child: Center(child: Text("Empty",style: TextStyle(fontWeight: FontWeight.bold),))),
-  //                             verticalDividerVerySmall(),
-  //                             Expanded(child: Center(child: Text("Def.",style: TextStyle(fontWeight: FontWeight.bold),))),
-  //                             verticalDividerVerySmall(),
-  //                             Expanded(child: Center(child: Text("<Empty",style: TextStyle(fontWeight: FontWeight.bold),))),
-  //                           ],
-  //                         ),
-  //
-  //                         // Divider between header and data rows
-  //                         Container(
-  //                           color: const Color(0xff1280B3),
-  //                           height: 1,
-  //                           width: MediaQuery.of(context).size.width,
-  //                         ),
-  //
-  //                         // ListView to display the data
-  //                         Container(
-  //                           child: sale!.itemList!.isNotEmpty
-  //                               ?
-  //                           ListView.builder(
-  //                             physics: const BouncingScrollPhysics(),
-  //                             itemCount: sale!.itemList!.length,
-  //                             shrinkWrap: true,
-  //                             itemBuilder: (BuildContext context, int index) {
-  //                               ItemList item = sale!.itemList![index];
-  //                                // Get the item at the current index
-  //                               // You can access the columns in your database result like this:
-  //                               String itemId = item.itemId.toString();
-  //                               String itemName = item.itemName.toString();
-  //                               String filledSaleQty = item.filledSaleQty.toString();
-  //                               String svQty = item.sVQty.toString();
-  //                               String tvQty = item.tVQty.toString();
-  //                               String emptyRetQty = item.emptyRetQty.toString();
-  //                               String deffQty = item.deffQty.toString();
-  //                               String lessEmptyQty = item.lessEmptyQty.toString();
-  //                               String remark = item.remark.toString();
-  //                               return Column(
-  //                                 children: [
-  //                                   Container(
-  //                                     child: Row(
-  //                                       children: [
-  //                                         // Column 1: Item Name
-  //                                         Expanded(
-  //                                             child:
-  //                                             Padding(
-  //                                               padding: const EdgeInsets.only(left: 5.0),
-  //                                               child: Text(itemName,style: TextStyle(fontSize: 14, color: Colors.black54)),
-  //                                             )),
-  //                                         verticalDividerVerySmall(),
-  //                                         // Column 2: Filled
-  //                                         Expanded(child: Text(filledSaleQty, style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center)),
-  //                                         verticalDividerVerySmall(),
-  //                                         // Column 3: Empty
-  //                                         Expanded(child: Text(svQty, style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center)),
-  //                                         verticalDividerVerySmall(),
-  //                                         // Column 4: Defective
-  //                                         Expanded(child: Text(tvQty, style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center)),
-  //                                         verticalDividerVerySmall(),
-  //                                         Expanded(child: Text(emptyRetQty, style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center)),
-  //                                         verticalDividerVerySmall(),
-  //                                         Expanded(child: Text(deffQty, style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center)),
-  //                                         verticalDividerVerySmall(),
-  //                                         Expanded(child: Text(lessEmptyQty, style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center)),
-  //                                       ],
-  //                                     ),
-  //                                   ),
-  //                                   Container(
-  //                                     color: Colors.grey,
-  //                                     height: 1,
-  //                                   ),
-  //                                 ],
-  //                               );
-  //                             },
-  //                           )
-  //                               : Container(
-  //                             padding: EdgeInsets.all(5),
-  //                             child: const Center(child: Text("No pending data..!")),
-  //                           ),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                   ),
-  //                   SizedBox(height: 10,),
-  //                   Row(
-  //                     mainAxisAlignment: MainAxisAlignment.end,
-  //                     children: [
-  //                       ElevatedButton(
-  //                         onPressed: () {
-  //                           num? dmId = sale?.dMId;
-  //                           // Finalize and close the dialog after the user finishes adding remarks
-  //                           submitDelBoyStockList(dmId.toString());
-  //                         },
-  //                         style: ElevatedButton.styleFrom(
-  //                           backgroundColor: Colors.blue,
-  //                           // Button expands to fill available width// Text color of the button
-  //                           shape: RoundedRectangleBorder(
-  //                             // Optional: Set rounded corners
-  //                             borderRadius: BorderRadius.circular(50),
-  //                           ),
-  //                         ),
-  //                         child: const Text(
-  //                           "Submit",
-  //                           style: TextStyle(color: Colors.white),
-  //                         ),
-  //                       ),
-  //                       SizedBox(width: 20,),
-  //                       ElevatedButton(
-  //                         onPressed: () {
-  //                           Navigator.push(
-  //                             context,
-  //                             MaterialPageRoute(
-  //                                 builder: (context) => EditSaleScreen(sale: sale!),
-  //                             ),
-  //                           );
-  //                         },
-  //                         style: ElevatedButton.styleFrom(
-  //                           backgroundColor: Colors.blue,
-  //                           // Button expands to fill available width// Text color of the button
-  //                           shape: RoundedRectangleBorder(
-  //                             // Optional: Set rounded corners
-  //                             borderRadius: BorderRadius.circular(50),
-  //                           ),
-  //                         ),
-  //                         child: const Text(
-  //                           "Edit",
-  //                           style: TextStyle(color: Colors.white),
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ),
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
   @override
   Widget build(BuildContext context) {
     var argLRAdd = ModalRoute.of(context)?.settings.arguments;
@@ -289,248 +114,6 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
           title: 'Submitted Stock', // Title or hint text for the text field
         ),
         body:
-        // FutureBuilder<List<StockSubmitToManagerListModel>>(
-        //   future: stockDataFuture,  // Future to get the data
-        //   builder: (context, snapshot) {
-        //     if (snapshot.connectionState == ConnectionState.waiting) {
-        //       return Center(child: CircularProgressIndicator());  // Show loading while waiting
-        //     } else if (snapshot.hasError) {
-        //       return Center(child: Text('Error: ${snapshot.error}'));  // Show error message if any error occurs
-        //     } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-        //       return Center(child: Text('No data found.'));
-        //     } else {
-        //       // If the data is available
-        //       List<StockSubmitToManagerListModel> stockSubmitData = snapshot.data!;
-        //
-        //       return
-        //         ListView.builder(
-        //         itemCount: stockSubmitData.length,
-        //         itemBuilder: (context, index) {
-        //           final sale = stockSubmitData[index];
-        //           return Padding(
-        //             padding: const EdgeInsets.all(5.0),
-        //             child: Card(
-        //               color: Colors.white,
-        //               child: Padding(
-        //                 padding: const EdgeInsets.all(8.0),
-        //                 child: Column(
-        //                   crossAxisAlignment: CrossAxisAlignment.start,
-        //                   children: [
-        //                     ListTile(
-        //                       title:Text('Delivery Men Name: ${capitalizeFirstLetter(sale.staffName.toString())}'),
-        //                     ),
-        //                     Container(
-        //                       decoration: BoxDecoration(border: Border.all(width: 0.5)),
-        //                       child: Column(
-        //                         children: [
-        //                           // Header Row with equal width for all columns using Expanded
-        //                           Row(
-        //                             children: [
-        //                               Expanded(
-        //                                   flex:2,child: Center(child: Text("Item",style: TextStyle(fontWeight: FontWeight.bold)))),
-        //                               verticalDividerVerySmall(),
-        //                               Expanded(flex:2,child: Center(child: Text("Filled",style: TextStyle(fontWeight: FontWeight.bold)))),
-        //                               verticalDividerVerySmall(),
-        //                               Expanded(flex:2,child: Center(child: Text("SV",style: TextStyle(fontWeight: FontWeight.bold)))),
-        //                               verticalDividerVerySmall(),
-        //                               Expanded(flex:2,child: Center(child: Text("TV",style: TextStyle(fontWeight: FontWeight.bold)))),
-        //                               verticalDividerVerySmall(),
-        //                               Expanded(flex:3,child: Center(child: Text("Empty",style: TextStyle(fontWeight: FontWeight.bold)))),
-        //                               verticalDividerVerySmall(),
-        //                               Expanded(flex:2,child: Center(child: Text("Def.",style: TextStyle(fontWeight: FontWeight.bold)))),
-        //                               verticalDividerVerySmall(),
-        //                               Expanded(flex:3,child: Center(child: Text("Less\nEmpty",style: TextStyle(fontWeight: FontWeight.bold)))),
-        //                             ],
-        //                           ),
-        //                           // Divider between header and data rows
-        //                           Container(
-        //                             color: const Color(0xff1280B3),
-        //                             height: 1,
-        //                             width: MediaQuery.of(context).size.width,
-        //                           ),
-        //                           // ListView to display the data
-        //                           sale.itemList!.isNotEmpty
-        //                               ? ListView.builder(
-        //                             physics: const BouncingScrollPhysics(),
-        //                             itemCount: sale.itemList!.length,
-        //                             shrinkWrap: true,
-        //                             itemBuilder: (BuildContext context, int index) {
-        //                               ItemList item = sale.itemList![index];
-        //                               bool isFlagPending = item.FlagColumnUpdate == 'Pending';
-        //                               debugPrint("flagUpdate${isFlagPending}");
-        //                               debugPrint("flagUpdate${item.FlagColumnUpdate}");
-        //                               // Get the item at the current index
-        //                               return Column(
-        //                                 children: [
-        //                                   Container(
-        //                                     child: Row(
-        //                                       children: [
-        //                                         // Column 1: Item Name
-        //                                         Expanded(flex:2,
-        //                                           child: Padding(
-        //                                             padding: const EdgeInsets.only(left: 5.0),
-        //
-        //                                             child: Text(item.itemName ?? 'N/A', style: TextStyle(fontSize: 14, color: Colors.black54)),
-        //                                           ),
-        //                                         ),
-        //                                         verticalDividerVerySmall(),
-        //                                         // Column 2: Filled
-        //                                         Expanded(flex:2,
-        //                                           child: Text(item.filledSaleQty.toString(), style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center),
-        //                                         ),
-        //                                         verticalDividerVerySmall(),
-        //                                         // Column 3: SV
-        //                                         Expanded(flex:2,
-        //                                           child: Text(item.sVQty.toString(), style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center),
-        //                                         ),
-        //                                         verticalDividerVerySmall(),
-        //                                         // Column 4: TV
-        //                                         Expanded(flex:2,
-        //                                           child: Text(item.tVQty.toString(), style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center),
-        //                                         ),
-        //                                         verticalDividerVerySmall(),
-        //                                         // Column 5: Empty
-        //                                         Expanded(flex:3,
-        //                                           child: Text(item.emptyRetQty.toString(), style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center),
-        //                                         ),
-        //                                         verticalDividerVerySmall(),
-        //                                         // Column 6: Def
-        //                                         Expanded(flex:2,
-        //                                           child: Text(item.deffQty.toString(), style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center),
-        //                                         ),
-        //                                         verticalDividerVerySmall(),
-        //                                         // Column 7: Less Empty
-        //                                         Expanded(flex:3,
-        //                                           child: Text(item.lessEmptyQty.toString(), style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center),
-        //                                         ),
-        //                                       ],
-        //                                     ),
-        //                                   ),
-        //                                   Container(
-        //                                     color:Colors.black12,
-        //                                     height: 1,
-        //                                     width: MediaQuery.of(context).size.width,
-        //                                   ),
-        //                                   // Container(
-        //                                   //   color: Colors.grey,
-        //                                   //   height: 1,
-        //                                   // ),
-        //                                   // SizedBox(height: 10),
-        //                                   // isFlagPending?
-        //                                   // Row(
-        //                                   //   mainAxisAlignment: MainAxisAlignment.end,
-        //                                   //   children: [
-        //                                   //     ElevatedButton(
-        //                                   //       onPressed: () {
-        //                                   //         num? dmId = sale.dMId;
-        //                                   //         num? gkId = sale.saleGKId;
-        //                                   //         // Finalize and close the dialog after the user finishes adding remarks
-        //                                   //         submitDelBoyStockList(dmId.toString(),gkId.toString());
-        //                                   //       },
-        //                                   //       style: ElevatedButton.styleFrom(
-        //                                   //         backgroundColor: Colors.blue,
-        //                                   //         shape: RoundedRectangleBorder(
-        //                                   //           borderRadius: BorderRadius.circular(50),
-        //                                   //         ),
-        //                                   //       ),
-        //                                   //       child: const Text(
-        //                                   //         "Submit",
-        //                                   //         style: TextStyle(color: Colors.white),
-        //                                   //       ),
-        //                                   //     ),
-        //                                   //     SizedBox(width: 20),
-        //                                   //     ElevatedButton(
-        //                                   //       onPressed: () {
-        //                                   //         Navigator.push(
-        //                                   //           context,
-        //                                   //           MaterialPageRoute(
-        //                                   //             builder: (context) => EditSaleScreen(sale: sale),
-        //                                   //           ),
-        //                                   //         );
-        //                                   //       },
-        //                                   //       style: ElevatedButton.styleFrom(
-        //                                   //         backgroundColor: Colors.blue,
-        //                                   //         shape: RoundedRectangleBorder(
-        //                                   //           borderRadius: BorderRadius.circular(50),
-        //                                   //         ),
-        //                                   //       ),
-        //                                   //       child: const Text(
-        //                                   //         "Edit",
-        //                                   //         style: TextStyle(color: Colors.white),
-        //                                   //       ),
-        //                                   //     ),
-        //                                   //   ],
-        //                                   // ):
-        //                                   //     Container(),
-        //                                 ],
-        //                               );
-        //                             },
-        //                           )
-        //                               : Container(
-        //                             padding: EdgeInsets.all(5),
-        //                             child: const Center(child: Text("No pending data..!")),
-        //                           ),
-        //                         ],
-        //                       ),
-        //                     ),
-        //                     // sale.dailySaleStatus != 3 && sale.dailySaleStatus != 2?
-        //                     Row(
-        //                       mainAxisAlignment: MainAxisAlignment.end,
-        //                       children: [
-        //                         // ElevatedButton(
-        //                         //   onPressed: () {
-        //                         //     num? dmId = sale.dMId;
-        //                         //     num? gkSalesId = sale.saleGKId;
-        //                         //     // Finalize and close the dialog after the user finishes adding remarks
-        //                         //     submitDelBoyStockList(dmId.toString(),gkSalesId.toString());
-        //                         //   },
-        //                         //   style: ElevatedButton.styleFrom(
-        //                         //     backgroundColor: Colors.blue,
-        //                         //     shape: RoundedRectangleBorder(
-        //                         //       borderRadius: BorderRadius.circular(50),
-        //                         //     ),
-        //                         //   ),
-        //                         //   child: const Text(
-        //                         //     "Submit",
-        //                         //     style: TextStyle(color: Colors.white),
-        //                         //   ),
-        //                         // ),
-        //                         // SizedBox(width: 20),
-        //                         ElevatedButton(
-        //                           onPressed: () {
-        //                             Navigator.push(
-        //                               context,
-        //                               MaterialPageRoute(
-        //                                 // builder: (context) => EditSaleScreen(sale: sale, saleGKId: sale.saleGKId.toString(),),
-        //                                 // builder: (context) => EditSaleScreenNew(sale: sale, saleGKId:sale.saleGKId,dMId:sale.dMId),
-        //                                 builder: (context) => EditSaleLocalDatabase(sale: sale, saleGKId:sale.saleGKId,dMId:sale.dMId),
-        //                               ),
-        //                             );
-        //                           },
-        //                           style: ElevatedButton.styleFrom(
-        //                             backgroundColor: Colors.blue,
-        //                             shape: RoundedRectangleBorder(
-        //                               borderRadius: BorderRadius.circular(50),
-        //                             ),
-        //                           ),
-        //                           child: const Text(
-        //                             "Edit",
-        //                             style: TextStyle(color: Colors.white),
-        //                           ),
-        //                         ),
-        //                       ],
-        //                     ),
-        //                         // Container(),
-        //                   ],
-        //                 ),
-        //               ),
-        //             ),
-        //           );
-        //         },
-        //       );
-        //     }
-        //   },
-        // ),
         RefreshIndicator(
           onRefresh: _refresh,
           child:
@@ -1262,136 +845,10 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
             },
           ),
         ),
-        // floatingActionButton: FloatingActionButton(
-        //   onPressed: () {
-        //     showDialog(
-        //       context: context,
-        //       builder: (BuildContext context) {
-        //         return AlertDialog(
-        //           title: Text("Confirm Refresh"),
-        //           content: Text("Do You Want To Refresh Data?"),
-        //           actions: [
-        //             TextButton(
-        //               onPressed: () {
-        //                 Navigator.of(context).pop(); // Close the dialog without action
-        //               },
-        //               child: Text("No"),
-        //             ),
-        //             TextButton(
-        //               onPressed: () {
-        //                 Navigator.of(context).pop(); // Close the dialog
-        //                 setState(() {
-        //                   // Refresh the data by reassigning the future
-        //                   stockDataFuture = updateRefillSale!.getDataFromDatabase();
-        //                   // refreshData();
-        //                 });
-        //               },
-        //               child: Text("Yes"),
-        //             ),
-        //           ],
-        //         );
-        //       },
-        //     );
-        //   },
-        //   backgroundColor: Colors.blue,
-        //   child: Icon(Icons.refresh, color: Colors.white),
-        // ),
       ),
     );
   }
-  // Future<void> insertDelBoyStockList() async {
-  //   try {
-  //     SharedPreferences prefs = await SharedPreferences.getInstance();
-  //     String? distributorId = prefs.getString('DistributorId');
-  //     String? bearerToken = prefs.getString('token');
-  //
-  //     if (bearerToken == null) {
-  //       throw Exception('Bearer token is missing');
-  //     }
-  //
-  //     final response = await http.get(
-  //       Uri.parse('${AppUrl.UpdateDailyRefillSaleList}/$distributorId/0'),
-  //       headers: {
-  //         'Authorization': 'Bearer $bearerToken', // Add Bearer token here
-  //       },
-  //     );
-  //     debugPrint("UpdateDailyRefillSaleList"+'${AppUrl.UpdateDailyRefillSaleList}/$distributorId/0');
-  //     debugPrint("UpdateDailyRefillSaleList"+response.body);
-  //
-  //     if (response.statusCode == 200) {
-  //       // try {
-  //         var data = json.decode(response.body);
-  //         // Parse the JSON into StockSubmitToManagerListModel
-  //         StockSubmitToManagerListModel result = StockSubmitToManagerListModel
-  //             .fromJson(data);
-  //         stockSubmitData = result;
-  //         // Insert the data into the combined table in the database
-  //         // await updateRefillSale?.insertDataToDatabase(result);
-  //       // } catch (e) {
-  //       //   debugPrint("Error parsing data: $e");
-  //       // }
-  //     } else {
-  //       debugPrint("Failed to fetch data from API: ${response.statusCode}");
-  //     }
-  //   } catch (e) {
-  //     debugPrint("Error during API call: $e");
-  //   }
-  // }
 
-  // Future<void> insertDelBoyStockList() async {
-  //   Constants.isNetworkAvailable =
-  //   await InternetConnectionChecker().hasConnection;
-  //   if(Constants.isNetworkAvailable){
-  //     try {
-  //       SharedPreferences prefs = await SharedPreferences.getInstance();
-  //       String? distributorId = prefs.getString('DistributorId');
-  //       String? bearerToken = prefs.getString('token');
-  //
-  //       if (bearerToken == null) {
-  //         throw Exception('Bearer token is missing');
-  //       }
-  //
-  //       final response = await http.get(
-  //         Uri.parse('${AppUrl.UpdateDailyRefillSaleList}/$distributorId/0'),
-  //         headers: {
-  //           'Authorization': 'Bearer $bearerToken',
-  //         },
-  //       );
-  //
-  //       debugPrint("Response body: ${response.body}");
-  //       debugPrint("request body DailySaleByGK_StatusUpdate: ${response.request}");
-  //       debugPrint("Response body DailySaleByGK_StatusUpdate: ${response.body}");
-  //       if (response.statusCode == 200) {
-  //         var data = json.decode(response.body);
-  //
-  //         // Parse the JSON response into a list of StockSubmitToManagerListModel
-  //         List<StockSubmitToManagerListModel> result =
-  //         List<StockSubmitToManagerListModel>.from(data
-  //             .map((item) => StockSubmitToManagerListModel.fromJson(item)));
-  //
-  //         setState(() {
-  //           // stockSubmitData = result;
-  //           updateRefillSale?.insertDataToDatabase(result,"Pending","Edit");
-  //           stockDataFuture = updateRefillSale!.getDataFromDatabase();
-  //           debugPrint("stockDataFuture: $stockDataFuture");
-  //
-  //         });
-  //         // stockDataFuture = updateRefillSale!.getDataFromDatabase();
-  //         // debugPrint("stockDataFuture: $stockDataFuture");
-  //       } else {
-  //         refreshTokens();
-  //         debugPrint("Failed to fetch data from API: ${response.statusCode}");
-  //       }
-  //     } catch (e) {
-  //       refreshTokens();
-  //       debugPrint("Error during API call: $e");
-  //     }
-  //   }else{
-  //     showFlushBar(context,Constants.connectionTitle,
-  //         Constants.connectionMessage);
-  //   }
-  //
-  // }
   Future<void> insertDelBoyStockList() async {
     EasyLoading.show();
     Constants.isNetworkAvailable = await InternetConnectionChecker().hasConnection;
@@ -1635,21 +1092,6 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
       debugPrint("LogoutPrefEcx: $error");
     }
   }
-  // void filterSearchResults(String query) {
-  //   if (query.isEmpty) {
-  //     setState(() {
-  //       filteredData = stockSubmitData!;
-  //     });
-  //   } else {
-  //     setState(() {
-  //       filteredData = stockSubmitData
-  //           !.where((sale) => sale.staffName
-  //           !.toLowerCase()
-  //           .contains(query.toLowerCase()))
-  //           .toList();
-  //     });
-  //   }
-  // }
 
   void filterSearchResults(String query) {
     if (query.isEmpty) {
@@ -1714,16 +1156,6 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
           return;
         }
 
-        // Fetch the data for the deliveryBoyId
-        // var getUpdateRefillSale =
-        // await updateRefillSale?.getUpdateRefillSaleData2(
-        //     deliveryBoyId.toString(), delDate.toString());
-        //
-        // if (getUpdateRefillSale == null) {
-        //   print('No data found for this deliveryBoyId');
-        //   return;
-        // }
-
         List<ItemData> itemList = [];
 
         // Convert the fetched data into ItemData objects
@@ -1733,7 +1165,7 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
 
         // Prepare the entire data structure for the API
         Map<String, dynamic> apiData = {
-          "SaleGKId": salesGKID, // Assuming this is always 0 for the new sale
+          "SaleGKId": salesGKID,
           "DistributorId": distributorId,
           "GodownId": godownID,
           "Action": "DELETE"
@@ -1753,8 +1185,8 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
             },
             body: jsonRequestBody, // The body of the request
           );
-          print('response ${response.body}');
-          print('response ${response}');
+          print('response  delete${response.body}');
+          print('response delete ${response}');
           // Check response status
           if (response.statusCode == 200) {
             print('Data sent successfully');
@@ -1964,126 +1396,6 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
     // Convert the map values to a list and return
     return groupedDataMap.values.toList();
   }
-
-
-  // List<StockSubmitToManagerListModel> _groupAndSumItems(List<StockSubmitToManagerListModel> result) {
-  //   Map<num, StockSubmitToManagerListModel> groupedDataMap = {};
-  //
-  //   // Loop through each StockSubmitToManagerListModel in the filtered result
-  //   for (var stock in result) {
-  //     for (var item in stock.itemList!) {
-  //       num itemId = item.itemId!;
-  //
-  //       // If itemId already exists in the map, sum the quantities
-  //       if (groupedDataMap.containsKey(itemId)) {
-  //         StockSubmitToManagerListModel existingStock = groupedDataMap[itemId]!;
-  //
-  //         // Find the corresponding ItemList in the existing stock
-  //         ItemList existingItem = existingStock.itemList!.firstWhere((i) => i.itemId == itemId);
-  //
-  //         // Create a new ItemList with summed quantities
-  //         ItemList updatedItem = existingItem.copyWith(
-  //           filledSaleQty: (existingItem.filledSaleQty ?? 0) + (item.filledSaleQty ?? 0),
-  //           sVQty: (existingItem.sVQty ?? 0) + (item.sVQty ?? 0),
-  //           tVQty: (existingItem.tVQty ?? 0) + (item.tVQty ?? 0),
-  //           emptyRetQty: (existingItem.emptyRetQty ?? 0) + (item.emptyRetQty ?? 0),
-  //           deffQty: (existingItem.deffQty ?? 0) + (item.deffQty ?? 0),
-  //           lessEmptyQty: (existingItem.lessEmptyQty ?? 0) + (item.lessEmptyQty ?? 0),
-  //         );
-  //
-  //         // Update the itemList with the new summed item
-  //         List<ItemList> updatedItemList = [
-  //           ...existingStock.itemList!.where((i) => i.itemId != itemId), // Remove the old item
-  //           updatedItem, // Add the updated item
-  //         ];
-  //
-  //         // Update the StockSubmitToManagerListModel with the new itemList
-  //         StockSubmitToManagerListModel updatedStock = existingStock.copyWith(
-  //           itemList: updatedItemList,
-  //         );
-  //
-  //         // Update the map with the modified StockSubmitToManagerListModel
-  //         groupedDataMap[itemId] = updatedStock;
-  //       } else {
-  //         // If itemId doesn't exist in the map, create a new entry
-  //         groupedDataMap[itemId] = StockSubmitToManagerListModel(
-  //           saleGKId: stock.saleGKId,
-  //           distributorId: stock.distributorId,
-  //           deliveryDate: stock.deliveryDate,
-  //           dMId: stock.dMId,
-  //           vehicleId: stock.vehicleId,
-  //           dailySaleStatus: stock.dailySaleStatus,
-  //           staffNo: stock.staffNo,
-  //           staffName: stock.staffName,
-  //           vehicleNo: stock.vehicleNo,
-  //           statusStr: stock.statusStr,
-  //           addedOn: stock.addedOn,
-  //           addedByNo: stock.addedByNo,
-  //           addedByName: stock.addedByName,
-  //           addedBy: stock.addedBy,
-  //           action: stock.action,
-  //           itemList: [
-  //             ItemList(
-  //               itemId: item.itemId,
-  //               itemName: item.itemName,
-  //               filledSaleQty: item.filledSaleQty,
-  //               sVQty: item.sVQty,
-  //               tVQty: item.tVQty,
-  //               emptyRetQty: item.emptyRetQty,
-  //               deffQty: item.deffQty,
-  //               lessEmptyQty: item.lessEmptyQty,
-  //               remark: item.remark,
-  //               closingFilled: item.closingFilled,
-  //               closingEmpty: item.closingEmpty,
-  //               closingDef: item.closingDef,
-  //               sVConsStr: item.sVConsStr,
-  //               TVConsStr: item.TVConsStr,
-  //               FlagColumnUpdate: item.FlagColumnUpdate,
-  //             )
-  //           ],
-  //         );
-  //       }
-  //     }
-  //   }
-  //
-  //   // Convert the map values to a list and return
-  //   return groupedDataMap.values.toList();
-  // }
-  // void filterSearchResults(String query) {
-  //   if (query.isEmpty) {
-  //     setState(() {
-  //       isSearchActive = false;
-  //       filteredData = stockSubmitData!;  // Reset to original data when query is empty
-  //       // After resetting, perform grouping and summing
-  //       groupedData = _groupAndSumItems(filteredData);
-  //     });
-  //   } else {
-  //     setState(() {
-  //       isSearchActive = true;
-  //       filteredData = stockSubmitData!
-  //           .where((sale) {
-  //         final staffNameMatches = sale.staffName != null &&
-  //             sale.staffName!.toLowerCase().contains(query.toLowerCase());
-  //         final itemNameMatches = sale.itemList != null &&
-  //             sale.itemList!.any((item) =>
-  //             item.itemName != null &&
-  //                 item.itemName!.toLowerCase().contains(query.toLowerCase()));
-  //         return staffNameMatches || itemNameMatches;
-  //       })
-  //           .toList();
-  //
-  //       // Check if no results are found
-  //       if (filteredData.isEmpty) {
-  //         print('No matching data found');
-  //         filteredData = [];
-  //       }
-  //
-  //       // Now call _groupAndSumItems with the filtered data
-  //       groupedData = _groupAndSumItems(filteredData);
-  //     });
-  //   }
-  // }
-
 
 }
 

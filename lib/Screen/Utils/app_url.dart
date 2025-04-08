@@ -33,6 +33,7 @@ class AppUrl {
   static const String GetItemEXMIDetailList = '$baseUrl/GodownKeeper/GetItemEXMIDetailList';
   static const String DefectiveMasterAdd_Mob = '$baseUrl/GodownKeeper/DefectiveMasterAdd_Mob';
   static const String GetDefectiveList_Mob = '$baseUrl/GodownKeeper/GetDefectiveList_Mob';
+  static const String GetDailySaleSVTVConsumerDtls_Mob = '$baseUrl/DailyStockCash/GetDailySaleSVTVConsumerDtls_Mob';
 
   ///maager
   static const String GetDailySaleSummaryListDMWiseForMob = '$baseUrl/DailyStockCash/GetDailySaleSummaryListDMWiseForMob';
