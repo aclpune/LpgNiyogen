@@ -426,55 +426,6 @@ class _StockTransferTOGodownScreenState extends State<StockTransferTOGodownScree
     }
   }
 
-  // Future<void> fetchTransactionList() async {
-  //   EasyLoading.show();
-  //   Constants.isNetworkAvailable =
-  //   await InternetConnectionChecker().hasConnection;
-  //   if (Constants.isNetworkAvailable) {
-  //     SharedPreferences prefs = await SharedPreferences.getInstance();
-  //     String? distributorId = prefs.getString('DistributorId');
-  //     String? godownId = prefs.getString('godownId');
-  //     String? bearerToken = prefs.getString('token'); // Assuming the token is stored here
-  //     int dId = int.parse(distributorId!);
-  //     int gId = int.parse(godownId!);
-  //     if (bearerToken == null) {
-  //       throw Exception('Bearer token is missing');
-  //     }
-  //
-  //     final response = await http.get(
-  //       Uri.parse('${AppUrl.GetStockTransferDtls}/$dId/$gId'),
-  //       headers: {
-  //         'Authorization': 'Bearer $bearerToken', // Add Bearer token here
-  //       },
-  //     );
-  //     debugPrint(
-  //         "GetStockTransferDtls" + '${AppUrl.GetStockTransferDtls}/$distributorId/1/2');
-  //     debugPrint("GetStockTransferDtls" + response.body);
-  //     if (response.statusCode == 200) {
-  //       // Parse the response
-  //       List<dynamic> data = json.decode(response.body);
-  //       setState(() {
-  //         _stockTransferList =
-  //             data.map((json) => GetStockTransferListModel.fromJson(json)).toList();
-  //
-  //       });
-  //       EasyLoading.dismiss();
-  //       isLoading = false;
-  //     } else {
-  //       refreshTokens();
-  //       isLoading = false;
-  //       EasyLoading.dismiss();
-  //
-  //       throw Exception(Constants.listGettingFail);
-  //     }
-  //   } else {
-  //     isLoading = false;
-  //     EasyLoading.dismiss();
-  //     showFlushBar(
-  //         context, Constants.connectionMessage);
-  //   }
-  // }
-
   Future<void> refreshTokens() async {
     LoginProvider auth = Provider.of<LoginProvider>(context, listen: false);
     try {

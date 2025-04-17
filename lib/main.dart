@@ -30,6 +30,7 @@ import 'Screen/ManagerScreen/ManagerDashboard.dart';
 import 'Screen/ManagerScreen/ManagerMoreScreen.dart';
 import 'Screen/ManagerScreen/ManagerUpdateSaleCashUpdation.dart';
 import 'Screen/ManagerScreen/ManagerUpdateSaleScreen.dart';
+import 'Screen/ManagerScreen/RegulatorItemReceiptScreen.dart';
 import 'Screen/User/Login/Screen/MyLogin.dart';
 import 'Screen/User/Login/Screen/VerifyOTP.dart';
 import 'Screen/User/Login/provider/LoginProvider.dart';
@@ -171,6 +172,7 @@ class MyApp extends StatelessWidget {
             //ManagerCashInHandScreenDetails.screenName: (context) => ManagerCashInHandScreenDetails(),
 
 
+            RegulatorItemReceiptScreen.screenName: (context) => RegulatorItemReceiptScreen(),
 
           },
         ),
