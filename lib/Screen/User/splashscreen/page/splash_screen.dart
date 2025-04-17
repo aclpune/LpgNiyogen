@@ -47,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen> {
             children: [
               // Image.asset('assets/login.png'),
               Image.asset(
-                'assets/icononlytransparentnobuffer.png',  // Path to your image
+                'assets/logonew.png',  // Path to your image
                 height: 250, // Adjust the height as needed
                 width: 250,  // Adjust the width as needed
               ),

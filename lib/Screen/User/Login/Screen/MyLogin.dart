@@ -70,23 +70,14 @@ class _MyLoginState extends State<MyLogin> {
         SingleChildScrollView(
               child:
               Container(
-                margin: EdgeInsets.only(left: 40,right: 40,top: 60),
+                margin: EdgeInsets.only(left: 40,right: 40,top: 70),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset(
                       'assets/icononlytransparentnobuffer.png',  // Path to your image
                       height: 150, // Adjust the height as needed
                       width: 150,  // Adjust the width as needed
-                    ),
-                    SizedBox(height: 20),
-                    // Large LOGIN Text
-                    Text(
-                      'LPG Niyojan',
-                      style: TextStyle(
-                        fontSize: 18, // Large font size for LOGIN
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
                     ),
                     SizedBox(height: 50),
                     TextField(

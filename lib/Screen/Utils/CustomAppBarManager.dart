@@ -80,10 +80,18 @@ class CustomAppBarManager extends StatelessWidget implements PreferredSizeWidget
                     Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Image.asset(
-                          'assets/playstore.png', // Your logo image path
-                          height: 40, // Adjust the height as needed
-                          width: 40,  // Adjust the width as needed
+                        Card(
+                          color: Colors.white,
+                          elevation: 5,
+                          shadowColor: Colors.blue,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4.0),
+                          ),
+                          child: Image.asset(
+                            'assets/playstore.png', // Your logo image path
+                            height: 40, // Adjust the height as needed
+                            width: 40,  // Adjust the width as needed
+                          ),
                         ),
                       ],
                     ),
