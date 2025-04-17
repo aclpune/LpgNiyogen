@@ -45,6 +45,12 @@ class Styling {
   // At first we took screen size by using "SizeConfig" class by which we got
   // ScreenWidth: 4.114285714285715 and ScreenHeight: 8.662857142857144
   // Using this we will make text size now...
+
+  // static TextStyle itemBlueTextWithUnderline = const TextStyle(
+  //   fontSize: 14,  // You can adjust the font size as needed
+  //   color: Colors.blue, // Set color to blue to make it look like a link
+  //   decoration: TextDecoration.underline, // Add underline decoration
+  // );
   static final TextStyle appBarTitle = TextStyle(
     color: Colors.white,
     fontSize: 2.9 * SizeConfig.textMultiplier!,
