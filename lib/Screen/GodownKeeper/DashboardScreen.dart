@@ -115,19 +115,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     // App Logo
-                    Image.asset(
-                      'assets/playstore.png', // Path to your logo image
-                      height: 40, // Adjust the height as needed
+                    Card(
+                      color: Colors.white,
+                      elevation: 5,
+                      shadowColor: Colors.blue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4.0),
+                      ),
+                      child: Image.asset(
+                        'assets/playstore.png', // Path to your logo image
+                        height: 40, // Adjust the height as needed
+                      ),
                     ),
                     SizedBox(width: 8), // Add some space between the logo and the app name
                     // App Name (Replace 'App Name' with your constant or dynamic value)
                     Text(
                       Constants.AppBarTitle, // Your app name constant or dynamic value
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Styling.appBarTitle,
                     ),
                   ],
                 ),
@@ -1153,12 +1157,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
             fetchCurrentStock();
             checkAndSaveDayEndData();
             fetchTransactionList();
-          } else if (response['message'] == "UnSuccessful") {
+          } else if (response['message'] == "401 Unauthorized") {
             debugPrint('RefreshTokenExc401 - true');
             showDialogToExpireSession(context);
-          } else {
+          } else if(response['status'] == "401 Unauthorized"){
+            debugPrint('RefreshTokenExc401 - true');
+            showDialogToExpireSession(context);
+          }else{
             debugPrint('RefreshTokenStatus - false');
-
           }
         }).catchError((error) {
           EasyLoading.dismiss();

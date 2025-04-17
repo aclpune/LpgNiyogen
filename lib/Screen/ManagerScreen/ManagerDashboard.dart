@@ -20,7 +20,6 @@ import '../GodownKeeper/ItemReceipt/CylItemList/GetCurrentStcOfGodownKeeperModel
 import '../User/Login/provider/LoginProvider.dart';
 import '../User/splashscreen/page/splash_screen.dart';
 import '../Utils/CustomeDrawer.dart';
-import '../Utils/CustomeDrawerManager.dart';
 import '../Utils/Styling.dart';
 import '../Utils/UpdateService.dart';
 import '../Utils/Widget.dart';
@@ -888,7 +887,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                 padding: const EdgeInsets.all(0.0),
                                 child: Column(
                                   children: [
-                                    itemSubLineWithDDsss("Prepaid Punching Status","(Data ref by cDCMS)",isPrepaidSettlementStatusListViewVisible),
+                                    itemSubLineWithDDsss("Prepaid Settlement Status","(Data ref by cDCMS)",isPrepaidSettlementStatusListViewVisible),
                                     Visibility(
                                         visible:isPrepaidSettlementStatusListViewVisible ,
                                       child: Column(
@@ -1238,7 +1237,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                           ),
                         ),
                       ),
-                        GestureDetector(
+                      GestureDetector(
                             onTap: () {
                             setState(() {
                               isInwardStockListViewVisible =
@@ -2448,7 +2447,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                           ),
                         ),
                       ),
-                        GestureDetector(
+                      GestureDetector(
                         onTap: () {
                           setState(() {
                             isCurrentStockListViewVisible =
@@ -2943,10 +2942,13 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
             debugPrint('RefreshTokenStatus - True');
             fetchCurrentStock();
             fetchDashboarDetail();
-          } else if (response['message'] == "UnSuccessful") {
+          } else if (response['message'] == "401 Unauthorized") {
             debugPrint('RefreshTokenExc401 - true');
             showDialogToExpireSession(context);
-          } else {
+          } else if(response['status'] == "401 Unauthorized"){
+            debugPrint('RefreshTokenExc401 - true');
+            showDialogToExpireSession(context);
+          }else{
             debugPrint('RefreshTokenStatus - false');
           }
         }).catchError((error) {

@@ -45,16 +45,7 @@ class _VerifyOtpState extends State<VerifyOtp> {
                     height: 150, // Adjust the height as needed
                     width: 150,  // Adjust the width as needed
                   ),
-                  SizedBox(height: 20),
-                  // Large LOGIN Text
-                  Text(
-                    'Verify OTP',
-                    style: TextStyle(
-                      fontSize:18, // Large font size for LOGIN
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
+
                   SizedBox(height: 40),
                   TextField(
                     controller: _otpController,
