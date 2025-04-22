@@ -26,15 +26,19 @@ import '../DeliveryBoyModel/GetStockTransferListModel.dart';
 import '../ItemReceipt/CylItemList/CylItemListModel.dart';
 import 'StockTransferTOGodownScreenItemUI.dart';
 import 'package:http/http.dart' as http;
+
 class StockTransferTOGodownScreen extends StatefulWidget {
   static const screenName = '/stockTransferTOGodownScreen';
+
   const StockTransferTOGodownScreen({super.key});
 
   @override
-  State<StockTransferTOGodownScreen> createState() => _StockTransferTOGodownScreenState();
+  State<StockTransferTOGodownScreen> createState() =>
+      _StockTransferTOGodownScreenState();
 }
 
-class _StockTransferTOGodownScreenState extends State<StockTransferTOGodownScreen> {
+class _StockTransferTOGodownScreenState
+    extends State<StockTransferTOGodownScreen> {
   final TextEditingController _filledQtyController = TextEditingController();
   final TextEditingController _emptyQtyController = TextEditingController();
   final TextEditingController _defectiveQtyController = TextEditingController();
@@ -47,7 +51,7 @@ class _StockTransferTOGodownScreenState extends State<StockTransferTOGodownScree
   int? selectedGodownId;
   var argValue;
   String? itemNames;
-  int? itemIds,filledCount, emptyCount, defectiveCount;
+  int? itemIds, filledCount, emptyCount, defectiveCount;
   String? mobileNo;
   bool stockTransferFlag = false;
 
@@ -63,7 +67,6 @@ class _StockTransferTOGodownScreenState extends State<StockTransferTOGodownScree
         filledCount = argValue["filledStock"] ?? 0;
         emptyCount = argValue["emptyStock"] ?? 0;
         defectiveCount = argValue["defectiveStock"] ?? 0;
-
       });
     });
     fetchGodownInfo();
@@ -73,242 +76,275 @@ class _StockTransferTOGodownScreenState extends State<StockTransferTOGodownScree
   @override
   Widget build(BuildContext context) {
     var argLRAdd = ModalRoute.of(context)?.settings.arguments;
-    return
-      WillPopScope(
-        onWillPop: () async {
-          if (argLRAdd == "fromDrawer") {
-            Navigator.pop(context);
-            return false;
-          } else {
-            Navigator.pop(context);
-            return false;
-          }
-        },
-        child: Scaffold(
-          appBar: CustomAppBar(
-            title: 'Stock Transfer',
-          ),
-          body: SingleChildScrollView(  // Wrap the entire body with SingleChildScrollView
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(child: itemSubLineLeftBig("Item", itemNames!)),
-                      Flexible(child: itemSubLineLeftBig("Filled", filledCount.toString())),
-                    ],
-                  ),
-                  SizedBox(height: 5),
+    return WillPopScope(
+      onWillPop: () async {
+        if (argLRAdd == "fromDrawer") {
+          Navigator.pop(context);
+          return false;
+        } else {
+          Navigator.pop(context);
+          return false;
+        }
+      },
+      child: Scaffold(
+        appBar: CustomAppBar(
+          title: 'Stock Transfer',
+        ),
+        body: SingleChildScrollView(
+          // Wrap the entire body with SingleChildScrollView
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(child: itemSubLineLeftBig("Item", itemNames!)),
+                    Flexible(
+                        child: itemSubLineLeftBig(
+                            "Filled", filledCount.toString())),
+                  ],
+                ),
+                SizedBox(height: 5),
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Flexible(child: itemSubLineLeftBig("Empty", emptyCount.toString())),
-                      Flexible(child: itemSubLineLeftBig("Defective", defectiveCount.toString())),
-                    ],
-                  ),
-                  SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Flexible(
+                        child:
+                            itemSubLineLeftBig("Empty", emptyCount.toString())),
+                    Flexible(
+                        child: itemSubLineLeftBig(
+                            "Defective", defectiveCount.toString())),
+                  ],
+                ),
+                SizedBox(height: 5),
 
-                  Divider(),
+                Divider(),
 
-                  Row(
-                    children: [
-                      Expanded(child: textWidgetBlueColorWithoutStar("Filled Qty")),
-                      Flexible(
-                        flex: 1,
-                        child: TextField(
-                          controller: _filledQtyController,
-                          decoration: buildInputBorderUpdateStatus("Enter Filled Qty", context),
-                          style: Styling.textFormText,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.digitsOnly,
-                            LengthLimitingTextInputFormatter(3),
-                          ],
-                          onChanged: (value) {
-                            setState(() {
-                              int filledQty = int.tryParse(value) ?? 0;
-                              if (filledQty > (filledCount ?? 0)) {
-                                showFlushBar(context, Constants.stockTransferValidation);
-                                _filledQtyController.clear();
-                              }
-                            });
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(child: textWidgetBlueColorWithoutStar("Empty Qty")),
-                      Flexible(
-                        flex: 1,
-                        child: TextField(
-                          controller: _emptyQtyController,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: <TextInputFormatter>[
-                            FilteringTextInputFormatter.digitsOnly,
-                            LengthLimitingTextInputFormatter(3),
-                          ],
-                          decoration: buildInputBorderUpdateStatus("Enter Empty Qty", context),
-                          style: Styling.textFormText,
-                          onChanged: (value) {
-                            setState(() {
-                              int emptyQtys = int.tryParse(value) ?? 0;
-                              if (emptyQtys > (emptyCount ?? 0)) {
-                                showFlushBar(context, Constants.stockTransferValidation);
-                                _emptyQtyController.clear();
-                              }
-                            });
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(child: textWidgetBlueColorWithoutStar("Defective Qty")),
-                      Flexible(
-                        flex: 1,
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: _defectiveQtyController,
-                                keyboardType: TextInputType.number,
-                                inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.digitsOnly,
-                                  LengthLimitingTextInputFormatter(3),
-                                ],
-                                decoration: buildInputBorderUpdateStatus("Enter Defective Qty", context),
-                                style: Styling.textFormText,
-                                onChanged: (value) {
-                                  setState(() {
-                                    int defectiveQtys = int.tryParse(value) ?? 0;
-                                    if (defectiveQtys > (defectiveCount ?? 0)) {
-                                      showFlushBar(context, Constants.stockTransferValidation);
-                                      _defectiveQtyController.clear();
-                                    }
-                                  });
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(child: textWidgetBlueColorWithStar("Select Godown", "*")),
-                      Flexible(
-                        flex: 1,
-                        child: DropdownButtonFormField<GetGodownListModel>(
-                          decoration: buildInputBorderUpdateStatus("Select Godown", context),
-                          value: _selectedGodownModel,
-                          style: Styling.textFormText,
-                          items: _godownItems.map((GetGodownListModel item) {
-                            return DropdownMenuItem<GetGodownListModel>(
-                              value: item,
-                              child: Text(
-                                item.godownNo ?? 'Unknown',
-                                style: Styling.textFormText,
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: (GetGodownListModel? selectedItem) {
-                            if (selectedItem != null) {
-                              setState(() {
-                                _selectedGodownName = selectedItem.godownNo;
-                                selectedGodownId = selectedItem.godownId!.toInt();
-                                _selectedGodownModel = selectedItem;
-                              });
+                Row(
+                  children: [
+                    Expanded(
+                        child: textWidgetBlueColorWithoutStar("Filled Qty")),
+                    Flexible(
+                      flex: 1,
+                      child: TextField(
+                        controller: _filledQtyController,
+                        decoration: buildInputBorderUpdateStatus(
+                            "Enter Filled Qty", context),
+                        style: Styling.textFormText,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(3),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            int filledQty = int.tryParse(value) ?? 0;
+                            if (filledQty > (filledCount ?? 0)) {
+                              showFlushBar(
+                                  context, Constants.stockTransferValidation);
+                              _filledQtyController.clear();
                             }
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Expanded(child: Text("Remark", style: Styling.blueClrText)),
-                      Flexible(
-                        flex: 1,
-                        child: TextField(
-                          controller: _remarkController,
-                          maxLength: 250,
-                          decoration: buildInputBorderUpdateStatus("Enter Remark", context),
-                          style: Styling.textFormText,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 10),
-                      child: ElevatedButton(
-                        onPressed: () {
-    if(stockTransferFlag){
-      submitStockToApi();
-    }else{
-      CustomAlertDialog.showCustomAlert(context, Constants.stockNotAccepted);
-
-    }
-
+                          });
                         },
-                        child: Text("Submit", style: TextStyle(color: Colors.white)),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: stockTransferFlag?Colors.blue:Colors.grey,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                        child: textWidgetBlueColorWithoutStar("Empty Qty")),
+                    Flexible(
+                      flex: 1,
+                      child: TextField(
+                        controller: _emptyQtyController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(3),
+                        ],
+                        decoration: buildInputBorderUpdateStatus(
+                            "Enter Empty Qty", context),
+                        style: Styling.textFormText,
+                        onChanged: (value) {
+                          setState(() {
+                            int emptyQtys = int.tryParse(value) ?? 0;
+                            if (emptyQtys > (emptyCount ?? 0)) {
+                              showFlushBar(
+                                  context, Constants.stockTransferValidation);
+                              _emptyQtyController.clear();
+                            }
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                        child: textWidgetBlueColorWithoutStar("Defective Qty")),
+                    Flexible(
+                      flex: 1,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: _defectiveQtyController,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: <TextInputFormatter>[
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(3),
+                              ],
+                              decoration: buildInputBorderUpdateStatus(
+                                  "Enter Defective Qty", context),
+                              style: Styling.textFormText,
+                              onChanged: (value) {
+                                setState(() {
+                                  int defectiveQtys = int.tryParse(value) ?? 0;
+                                  if (defectiveQtys > (defectiveCount ?? 0)) {
+                                    showFlushBar(context,
+                                        Constants.stockTransferValidation);
+                                    _defectiveQtyController.clear();
+                                  }
+                                });
+                              },
+                            ),
                           ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                        child:
+                            textWidgetBlueColorWithStar("Select Godown", "*")),
+                    Flexible(
+                      flex: 1,
+                      child: DropdownButtonFormField<GetGodownListModel>(
+                        decoration: buildInputBorderUpdateStatus(
+                            "Select Godown", context),
+                        value: _selectedGodownModel,
+                        style: Styling.textFormText,
+                        items: _godownItems.map((GetGodownListModel item) {
+                          return DropdownMenuItem<GetGodownListModel>(
+                            value: item,
+                            child: Text(
+                              item.godownNo ?? 'Unknown',
+                              style: Styling.textFormText,
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (GetGodownListModel? selectedItem) {
+                          if (selectedItem != null) {
+                            setState(() {
+                              _selectedGodownName = selectedItem.godownNo;
+                              selectedGodownId = selectedItem.godownId!.toInt();
+                              _selectedGodownModel = selectedItem;
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Expanded(child: Text("Remark", style: Styling.blueClrText)),
+                    Flexible(
+                      flex: 1,
+                      child: TextField(
+                        controller: _remarkController,
+                        maxLength: 250,
+                        decoration: buildInputBorderUpdateStatus(
+                            "Enter Remark", context),
+                        style: Styling.textFormText,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 10),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (_selectedGodownName != null) {
+                          if (_filledQtyController.text.isNotEmpty ||
+                              _emptyQtyController.text.isNotEmpty ||
+                              _defectiveQtyController.text.isNotEmpty) {
+                            if (stockTransferFlag) {
+                              submitStockToApi();
+                            } else {
+                              CustomAlertDialog.showCustomAlert(
+                                  context, Constants.stockNotAccepted);
+                            }
+                          } else {
+                            showFlushBar(context, Constants.validCountEnter);
+                          }
+                        } else {
+                          showFlushBar(context, "Select godown.");
+                        }
+                      },
+                      child:
+                          Text("Submit", style: TextStyle(color: Colors.white)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            stockTransferFlag ? Colors.blue : Colors.grey,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: Text("Stock Transfer History", style: Styling.bodyTitleWithBlue),
-                  ),
-                  SizedBox(height: 10),
+                ),
+                SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Text("Stock Transfer History",
+                      style: Styling.bodyTitleWithBlue),
+                ),
+                SizedBox(height: 10),
 
-                  // Use ListView.builder here
-                  SizedBox(
-                    height: 200, // Set a fixed height for the ListView
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: AlwaysScrollableScrollPhysics(),
-                      itemCount: _stockTransferList.length,
-                      itemBuilder: (context, index) {
-                        return StockTransferTOGodownScreenItemUI(_stockTransferList[index]);
-                      },
-                    ),
+                // Use ListView.builder here
+                SizedBox(
+                  height: 200, // Set a fixed height for the ListView
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    physics: AlwaysScrollableScrollPhysics(),
+                    itemCount: _stockTransferList.length,
+                    itemBuilder: (context, index) {
+                      return StockTransferTOGodownScreenItemUI(
+                          _stockTransferList[index]);
+                    },
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
-      );
+      ),
+    );
   }
 
   // Fetch data from API Item
   Future<void> fetchGodownInfo() async {
     Constants.isNetworkAvailable =
-    await InternetConnectionChecker().hasConnection;
+        await InternetConnectionChecker().hasConnection;
     if (Constants.isNetworkAvailable) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? distributorId = prefs.getString('DistributorId');
       String? godownId = prefs.getString('godownId');
       int gId = int.parse(godownId!);
-      String? bearerToken = prefs.getString('token'); // Assuming the token is stored here
+      String? bearerToken =
+          prefs.getString('token'); // Assuming the token is stored here
 
       if (bearerToken == null) {
         throw Exception('Bearer token is missing');
@@ -327,7 +363,8 @@ class _StockTransferTOGodownScreenState extends State<StockTransferTOGodownScree
         // Parse the response
         List<dynamic> data = json.decode(response.body);
         setState(() {
-          _godownItems = data.map((json) => GetGodownListModel.fromJson(json)).toList();
+          _godownItems =
+              data.map((json) => GetGodownListModel.fromJson(json)).toList();
           // Exclude the godownId from the list if it exists in the list
           _godownItems = _godownItems
               .where((item) => item.godownId != gId) // Exclude the godownId
@@ -338,8 +375,7 @@ class _StockTransferTOGodownScreenState extends State<StockTransferTOGodownScree
         throw Exception('Failed To Load Items');
       }
     } else {
-      showFlushBar(
-          context, Constants.connectionMessage);
+      showFlushBar(context, Constants.connectionMessage);
     }
   }
 
@@ -400,14 +436,17 @@ class _StockTransferTOGodownScreenState extends State<StockTransferTOGodownScree
       );
 
       // Print the raw response for debugging
-      print("API Response Status Code SaveGodownStockTransferDtls: ${response.statusCode}");
+      print(
+          "API Response Status Code SaveGodownStockTransferDtls: ${response.statusCode}");
       print("API Response Body SaveGodownStockTransferDtls: ${response.body}");
-      print("API Response request SaveGodownStockTransferDtls: ${response.request} ${requestBody}");
+      print(
+          "API Response request SaveGodownStockTransferDtls: ${response.request} ${requestBody}");
 
       if (response.statusCode == 200) {
         // Handle success
         print("SaveGodownStockTransferDtls quantity added successfully!");
-        EasyLoading.showToast("Data Sent Successfully..", duration: const Duration(milliseconds: 3000));
+        EasyLoading.showToast("Data Sent Successfully..",
+            duration: const Duration(milliseconds: 3000));
         fetchTransactionList();
         _filledQtyController.clear();
         _emptyQtyController.clear();
@@ -433,7 +472,7 @@ class _StockTransferTOGodownScreenState extends State<StockTransferTOGodownScree
       mobileNo = preferences.getString('MobileNo').toString();
 
       final Future<Map<String, dynamic>> respose =
-      auth.refreshToken(mobileNo!, context);
+          auth.refreshToken(mobileNo!, context);
 
       try {
         respose.then((response) {
@@ -476,46 +515,46 @@ class _StockTransferTOGodownScreenState extends State<StockTransferTOGodownScree
         String btnLabel = "Ok";
         return Platform.isIOS
             ? WillPopScope(
-          onWillPop: () async {
-            SystemNavigator.pop();
-            return true;
-          },
-          child: CupertinoAlertDialog(
-            title: Text(
-              title,
-              style: Styling.bodyTitle,
-            ),
-            content: Text(
-              message,
-              style: Styling.bodyTitle,
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: Text(
-                  btnLabel,
-                  style: Styling.blueClrText,
+                onWillPop: () async {
+                  SystemNavigator.pop();
+                  return true;
+                },
+                child: CupertinoAlertDialog(
+                  title: Text(
+                    title,
+                    style: Styling.bodyTitle,
+                  ),
+                  content: Text(
+                    message,
+                    style: Styling.bodyTitle,
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text(
+                        btnLabel,
+                        style: Styling.blueClrText,
+                      ),
+                      onPressed: () {},
+                    ),
+                  ],
                 ),
-                onPressed: () {},
-              ),
-            ],
-          ),
-        )
+              )
             : WillPopScope(
-          child: AlertDialog(
-            title: Text(title),
-            content: Text(message),
-            actions: <Widget>[
-              TextButton(
-                child: Text(btnLabel),
-                onPressed: () => logoutUser(context),
-              ),
-            ],
-          ),
-          onWillPop: () async {
-            SystemNavigator.pop();
-            return true;
-          },
-        );
+                child: AlertDialog(
+                  title: Text(title),
+                  content: Text(message),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text(btnLabel),
+                      onPressed: () => logoutUser(context),
+                    ),
+                  ],
+                ),
+                onWillPop: () async {
+                  SystemNavigator.pop();
+                  return true;
+                },
+              );
       },
     );
   }
@@ -556,12 +595,13 @@ class _StockTransferTOGodownScreenState extends State<StockTransferTOGodownScree
   Future<void> fetchTransactionList() async {
     EasyLoading.show();
     Constants.isNetworkAvailable =
-    await InternetConnectionChecker().hasConnection;
+        await InternetConnectionChecker().hasConnection;
     if (Constants.isNetworkAvailable) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? distributorId = prefs.getString('DistributorId');
       String? godownId = prefs.getString('godownId');
-      String? bearerToken = prefs.getString('token'); // Assuming the token is stored here
+      String? bearerToken =
+          prefs.getString('token'); // Assuming the token is stored here
       int dId = int.parse(distributorId!);
       int gId = int.parse(godownId!);
       if (bearerToken == null) {
@@ -574,14 +614,16 @@ class _StockTransferTOGodownScreenState extends State<StockTransferTOGodownScree
           'Authorization': 'Bearer $bearerToken', // Add Bearer token here
         },
       );
-      debugPrint(
-          "GetStockTransferDtls" + '${AppUrl.GetStockTransferDtls}/$distributorId/1/2');
+      debugPrint("GetStockTransferDtls" +
+          '${AppUrl.GetStockTransferDtls}/$distributorId/1/2');
       debugPrint("GetStockTransferDtls" + response.body);
       if (response.statusCode == 200) {
         // Parse the response
         List<dynamic> data = json.decode(response.body);
         setState(() {
-          _stockTransferList = data.map((json) => GetStockTransferListModel.fromJson(json)).toList();
+          _stockTransferList = data
+              .map((json) => GetStockTransferListModel.fromJson(json))
+              .toList();
           bool hasZeroStkTrans = false;
           for (int i = 0; i < _stockTransferList.length; i++) {
             if (_stockTransferList[i].isStkTrans == 0) {
@@ -611,9 +653,7 @@ class _StockTransferTOGodownScreenState extends State<StockTransferTOGodownScree
       EasyLoading.dismiss();
       refreshTokens();
       isLoading = false;
-      showFlushBar(
-          context, Constants.connectionMessage);
+      showFlushBar(context, Constants.connectionMessage);
     }
   }
-
 }

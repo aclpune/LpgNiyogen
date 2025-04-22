@@ -34,40 +34,6 @@ class _ItemReturnScreenState extends State<ItemReturnScreen> {
   Future<void> _refresh() async {
     await fetchItemReceipts();  // Call fetchItemReceipts to get updated data
   }
-  void showDetailsDialog(BuildContext context, Map<String, dynamic> item) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Details for ${item['vehicleNo']}'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text("14.2 Kg Empty Return: 200"),
-              Text("14.2 Kg Defective: --"),
-              Text("19 Kg Empty Return: 50"),
-              Text("19 Kg Defective: --"),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text("Close"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                // Handle the "Out" action
-                Navigator.of(context).pop();
-              },
-              child: Text("Out"),
-            ),
-          ],
-        );
-      },
-    );
-  }
   @override
   Widget build(BuildContext context) {
     var argLRAdd = ModalRoute.of(context)?.settings.arguments;
