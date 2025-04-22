@@ -60,11 +60,13 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
   bool isOutwardStockImbalanceListViewVisible = false;
   bool isOpeningStockListViewVisible = false;
   bool isCurrentStockListViewVisible = false;
+  bool isPostpaidVerificationStatusListViewVisible = false;
+  bool isStockPendingStatusListViewVisible = false;
   List<GetManagerDashboarDetailModel> getManagerDashboarDetail = [];
   List<GetCurrentStockDetailManagerModel> getCurrentStockDetailManager = [];
   bool isLoading = true;
   String? mobileNo;
-  int? deliveryMenCount,todaysPunchingInNiyojanC,pendingInNiyojanC,pendingInCdcmsC,todaysIncorrectPunchingC,settlPayReceiveDelPendC,settlDelPayPendC;
+  int? deliveryMenCount,todaysPunchingInNiyojanC,pendingInNiyojanC,pendingInCdcmsC,todaysIncorrectPunchingC,settlPayReceiveDelPendC,settlDelPayPendC,oldBkgPendNewBkgRecv,delDonNiyoJanPunPend,niyoJanPunDelPend, postPaidVerifPend, sVPendingStk, tVPendingStk;
   double? totalAmount,
       totalIncome,
       totalExpense,
@@ -694,168 +696,332 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                 child: Column(
                                   children: [
                                     itemSubLineWithDDss("Prepaid Punching Status",isPrepaidPunchingStatusListViewVisible),
+                                    // Visibility(
+                                    //     visible: isPrepaidPunchingStatusListViewVisible,
+                                    //   child: Column(
+                                    //     children: [
+                                    //       getManagerDashboarDetail.isNotEmpty
+                                    //           ? Column(
+                                    //               children: [
+                                    //                 Container(
+                                    //                   child:
+                                    //                     Row(
+                                    //                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                    //                       children: [
+                                    //                         Padding(
+                                    //                             padding:
+                                    //                                 const EdgeInsets
+                                    //                                     .all(0.0),
+                                    //                             child: Column(
+                                    //                               crossAxisAlignment:
+                                    //                                   CrossAxisAlignment
+                                    //                                       .center,
+                                    //                               mainAxisAlignment:
+                                    //                                   MainAxisAlignment
+                                    //                                       .center,
+                                    //                               children: [
+                                    //                                 Column(
+                                    //                                   mainAxisAlignment:
+                                    //                                       MainAxisAlignment
+                                    //                                           .center,
+                                    //                                   children: [
+                                    //                                     Column(
+                                    //                                       children: [
+                                    //                                         Text(
+                                    //                                           todaysPunchingInNiyojanC.toString(),
+                                    //                                           // Replace this with your dynamic data
+                                    //                                           style: Styling
+                                    //                                               .countNumber,
+                                    //                                           textAlign:
+                                    //                                               TextAlign.center,
+                                    //                                         ),
+                                    //                                         SizedBox(
+                                    //                                             height:
+                                    //                                                 4),
+                                    //                                         // Space between count and label
+                                    //                                         Text(
+                                    //                                           "Today's Niyojan \n Punched",
+                                    //                                           // Label for filledDiff
+                                    //                                           style: Styling
+                                    //                                               .textFormText,
+                                    //                                           textAlign:
+                                    //                                               TextAlign.center,
+                                    //                                         ),
+                                    //                                       ],
+                                    //                                     ),
+                                    //                                     SizedBox(height:20),
+                                    //                                     Column(
+                                    //                                       children: [
+                                    //                                         Text(
+                                    //                                           pendingInCdcmsC.toString(),
+                                    //                                           // Replace this with your dynamic data
+                                    //                                           style: Styling
+                                    //                                               .countNumber,
+                                    //                                           textAlign:
+                                    //                                               TextAlign.center,
+                                    //                                         ),
+                                    //                                         SizedBox(
+                                    //                                             height:
+                                    //                                                 4),
+                                    //                                         // Space between count and label
+                                    //                                         Text(
+                                    //                                           'Pending in\nCDCMS',
+                                    //                                           // Label for emptyDiff
+                                    //                                           style: Styling
+                                    //                                               .textFormText,
+                                    //                                           textAlign:
+                                    //                                               TextAlign.center,
+                                    //                                         ),
+                                    //                                       ],
+                                    //                                     ),
+                                    //                                   ],
+                                    //                                 ),
+                                    //                               ],
+                                    //                             )),
+                                    //                         Padding(
+                                    //                             padding:
+                                    //                             const EdgeInsets
+                                    //                                 .all(8.0),
+                                    //                             child: Column(
+                                    //                               crossAxisAlignment:
+                                    //                               CrossAxisAlignment
+                                    //                                   .center,
+                                    //                               mainAxisAlignment:
+                                    //                               MainAxisAlignment
+                                    //                                   .center,
+                                    //                               children: [
+                                    //                                 Column(
+                                    //                                   mainAxisAlignment:
+                                    //                                   MainAxisAlignment
+                                    //                                       .center,
+                                    //                                   children: [
+                                    //
+                                    //                                     Column(
+                                    //                                       children: [
+                                    //                                         Text(
+                                    //                                           todaysIncorrectPunchingC.toString(),
+                                    //                                           // Replace this with your dynamic data
+                                    //                                           style: Styling
+                                    //                                               .countNumber,
+                                    //                                           textAlign:
+                                    //                                           TextAlign.center,
+                                    //                                         ),
+                                    //                                         SizedBox(
+                                    //                                             height:
+                                    //                                             4),
+                                    //                                         // Space between count and label
+                                    //                                         Text(
+                                    //                                           "Today's incorrect \n",
+                                    //                                           // Label for emptyDiff
+                                    //                                           style: Styling
+                                    //                                               .textFormText,
+                                    //                                           textAlign:
+                                    //                                           TextAlign.center,
+                                    //                                         ),
+                                    //                                       ],
+                                    //                                     ),
+                                    //                                     SizedBox(height:20),
+                                    //                                     Column(
+                                    //                                       children: [
+                                    //                                         Text(
+                                    //                                           pendingInNiyojanC.toString(),
+                                    //                                           // Replace this with your dynamic data
+                                    //                                           style: Styling
+                                    //                                               .countNumber,
+                                    //                                           textAlign:
+                                    //                                           TextAlign.center,
+                                    //                                         ),
+                                    //                                         SizedBox(
+                                    //                                             height:
+                                    //                                             4),
+                                    //                                         // Space between count and label
+                                    //                                         Text(
+                                    //                                           'Old punching pending \n in Niyojan but new \n booking is received',
+                                    //                                           // Label for emptyDiff
+                                    //                                           style: Styling
+                                    //                                               .textFormText,
+                                    //                                           textAlign:
+                                    //                                           TextAlign.center,
+                                    //                                         ),
+                                    //                                       ],
+                                    //                                     ),
+                                    //
+                                    //                                   ],
+                                    //                                 ),
+                                    //                               ],
+                                    //                             )),
+                                    //                       ],
+                                    //                     ),
+                                    //                   // ),
+                                    //                 ),
+                                    //                 // Show a message when no items meet the condition
+                                    //               ],
+                                    //             )
+                                    //           : Container(
+                                    //               child: Text("No Data Available"),
+                                    //             ),
+                                    //     ],
+                                    //   ),
+                                    // ),
+
                                     Visibility(
-                                        visible: isPrepaidPunchingStatusListViewVisible,
+                                      visible: isPrepaidPunchingStatusListViewVisible,
                                       child: Column(
                                         children: [
                                           getManagerDashboarDetail.isNotEmpty
                                               ? Column(
+                                            children: [
+                                              Container(
+                                                child: Column( // This column contains two rows
                                                   children: [
-                                                    Container(
-                                                      child:
-                                                        Row(
-                                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                          children: [
-                                                            Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .all(0.0),
-                                                                child: Column(
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .center,
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    Column(
-                                                                      mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .center,
-                                                                      children: [
-                                                                        Column(
-                                                                          children: [
-                                                                            Text(
-                                                                              todaysPunchingInNiyojanC.toString(),
-                                                                              // Replace this with your dynamic data
-                                                                              style: Styling
-                                                                                  .countNumber,
-                                                                              textAlign:
-                                                                                  TextAlign.center,
-                                                                            ),
-                                                                            SizedBox(
-                                                                                height:
-                                                                                    4),
-                                                                            // Space between count and label
-                                                                            Text(
-                                                                              "Today's punching\nin Niyojan",
-                                                                              // Label for filledDiff
-                                                                              style: Styling
-                                                                                  .textFormText,
-                                                                              textAlign:
-                                                                                  TextAlign.center,
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                        SizedBox(height:20),
-                                                                        Column(
-                                                                          children: [
-                                                                            Text(
-                                                                              pendingInCdcmsC.toString(),
-                                                                              // Replace this with your dynamic data
-                                                                              style: Styling
-                                                                                  .countNumber,
-                                                                              textAlign:
-                                                                                  TextAlign.center,
-                                                                            ),
-                                                                            SizedBox(
-                                                                                height:
-                                                                                    4),
-                                                                            // Space between count and label
-                                                                            Text(
-                                                                              'Pending in\nCDCMS',
-                                                                              // Label for emptyDiff
-                                                                              style: Styling
-                                                                                  .textFormText,
-                                                                              textAlign:
-                                                                                  TextAlign.center,
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ],
-                                                                )),
-                                                            Padding(
-                                                                padding:
-                                                                const EdgeInsets
-                                                                    .all(8.0),
-                                                                child: Column(
-                                                                  crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .center,
-                                                                  mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                                  children: [
-                                                                    Column(
-                                                                      mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                      children: [
-                                                                        Column(
-                                                                          children: [
-                                                                            Text(
-                                                                              pendingInNiyojanC.toString(),
-                                                                              // Replace this with your dynamic data
-                                                                              style: Styling
-                                                                                  .countNumber,
-                                                                              textAlign:
-                                                                              TextAlign.center,
-                                                                            ),
-                                                                            SizedBox(
-                                                                                height:
-                                                                                4),
-                                                                            // Space between count and label
-                                                                            Text(
-                                                                              'Pending in\nNiyojan',
-                                                                              // Label for emptyDiff
-                                                                              style: Styling
-                                                                                  .textFormText,
-                                                                              textAlign:
-                                                                              TextAlign.center,
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                        SizedBox(height:20),
-                                                                        Column(
-                                                                          children: [
-                                                                            Text(
-                                                                              todaysIncorrectPunchingC.toString(),
-                                                                              // Replace this with your dynamic data
-                                                                              style: Styling
-                                                                                  .countNumber,
-                                                                              textAlign:
-                                                                              TextAlign.center,
-                                                                            ),
-                                                                            SizedBox(
-                                                                                height:
-                                                                                4),
-                                                                            // Space between count and label
-                                                                            Text(
-                                                                              "Today's incorrect\npunching",
-                                                                              // Label for emptyDiff
-                                                                              style: Styling
-                                                                                  .textFormText,
-                                                                              textAlign:
-                                                                              TextAlign.center,
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ],
-                                                                )),
-                                                          ],
+                                                    // First row (items 1 and 2)
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                      children: [
+                                                        // First item
+                                                        Padding(
+                                                          padding: const EdgeInsets.all(8.0),
+                                                          child: Column(
+                                                            children: [
+                                                              Text(
+                                                                  todaysPunchingInNiyojanC.toString(),
+                                                                style: Styling.countNumber,
+                                                                textAlign: TextAlign.center,
+                                                                ),
+                                                              
+                                                              SizedBox(height: 4),
+                                                              Text(
+                                                                "Today's Niyojan\nPunched",
+                                                                style: Styling.textFormText,
+                                                                textAlign: TextAlign.center,
+                                                              ),
+                                                            ],
+                                                          ),
                                                         ),
-                                                      // ),
+                                                        // SizedBox(width: 2), // Space between the two items
+                                                        // Second item
+                                                        Padding(
+                                                          padding: const EdgeInsets.all(8.0),
+                                                          child: Column(
+                                                            children: [
+                                                               Text(
+                                                                  todaysIncorrectPunchingC.toString(),
+                                                                 style: Styling.countNumber,
+                                                                  textAlign: TextAlign.center,
+                                                                ),
+                                                              
+                                                              //SizedBox(height: 1),
+                                                              Text(
+                                                                "Today's incorrect\n",
+                                                                style: Styling.textFormText,
+                                                                textAlign: TextAlign.center,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
-                                                    // Show a message when no items meet the condition
+                                                    // Second row (items 3 and 4)
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                      children: [
+                                                        // Third item
+                                                        Padding(
+                                                          padding: const EdgeInsets.all(8.0),
+                                                          child: Column(
+                                                            children: [
+                                                               Text(
+                                                                  pendingInCdcmsC.toString(),
+                                                                 style: Styling.countNumber,
+                                                                  textAlign: TextAlign.center,
+                                                                ),
+                                                              
+                                                              SizedBox(height: 4),
+                                                              Text(
+                                                                "Pending in cDCMS\n\n",
+                                                                style: Styling.textFormText,
+                                                                textAlign: TextAlign.center,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        // SizedBox(width: 5), // Space between the two items
+                                                        // Fourth item
+                                                        Padding(
+                                                          padding: const EdgeInsets.all(8.0),
+                                                          child: Column(
+                                                            children: [
+                                                               Text(
+                                                                  oldBkgPendNewBkgRecv.toString(),
+                                                                 style: Styling.countNumber,
+                                                                  textAlign: TextAlign.center,
+                                                                ),
+                                                              
+                                                              SizedBox(height: 8),
+                                                              Text(
+                                                                "Old punching pending\n in Niyojan but new\n booking is received",
+                                                                style: Styling.textFormText,
+                                                                textAlign: TextAlign.center,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                      children: [
+                                                        // Third item
+                                                        Padding(
+                                                          padding: const EdgeInsets.all(8.0),
+                                                          child: Column(
+                                                            children: [
+                                                              Text(
+                                                                  delDonNiyoJanPunPend.toString(),
+                                                                style: Styling.countNumber,
+                                                                  textAlign: TextAlign.center,
+                                                                ),
+                                                              
+                                                              SizedBox(height: 4),
+                                                              Text(
+                                                                "Punched in cDCMS,\npending in Niyojan",
+                                                                style: Styling.textFormText,
+                                                                textAlign: TextAlign.center,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        // SizedBox(width: 5), // Space between the two items
+                                                        // Fourth item
+                                                        Padding(
+                                                          padding: const EdgeInsets.all(8.0),
+                                                          child: Column(
+                                                            children: [
+                                                             Text(
+                                                                  niyoJanPunDelPend.toString(),
+                                                               style: Styling.countNumber,
+                                                                  textAlign: TextAlign.center,
+                                                                ),
+                                                              
+                                                              SizedBox(height: 4),
+                                                              Text(
+                                                                "Punched in Niyojan,\npending in cDCMS",
+                                                                style: Styling.textFormText,
+                                                                textAlign: TextAlign.center,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ],
-                                                )
-                                              : Container(
-                                                  child: Text("No Data Available"),
                                                 ),
+                                              ),
+                                            ],
+                                          )
+                                              : Container(
+                                            child: Text("No Data Available"),
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -931,7 +1097,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                                           4),
                                                                       // Space between count and label
                                                                       Text(
-                                                                        'Payment received,\ndelivery pending',
+                                                                        'Payment done,\ndelivery pending',
                                                                         // Label for filledDiff
                                                                         style: Styling
                                                                             .textFormText,
@@ -990,6 +1156,233 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                           ),
                         ),
                       ),
+
+
+
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isPostpaidVerificationStatusListViewVisible =
+                            !isPostpaidVerificationStatusListViewVisible; // Toggle ListView visibility
+                          });
+                        },
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          elevation: 1,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Title for Cylinder Categories Table
+                              Padding(
+                                padding: const EdgeInsets.all(0.0),
+                                child: Column(
+                                  children: [
+                                    itemSubLineWithDDss("Postpaid Verification Status",isPrepaidPunchingStatusListViewVisible),
+                                    Visibility(
+                                      visible:isPostpaidVerificationStatusListViewVisible ,
+                                      child: Column(
+                                        children: [
+                                          getManagerDashboarDetail.isNotEmpty
+                                              ? Column(
+                                            children: [
+                                              Container(
+                                                child:
+                                                Column(
+                                                  children: [
+                                                    Padding(
+                                                        padding:
+                                                        const EdgeInsets
+                                                            .all(8.0),
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                          children: [
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceEvenly,
+                                                              children: [
+                                                                Column(
+                                                                  children: [
+                                                                    Text(
+                                                                        postPaidVerifPend.toString(),
+                                                                        // Replace this with your dynamic data
+                                                                      style: Styling
+                                                                          .countNumber,
+                                                                        textAlign:
+                                                                        TextAlign.center,
+                                                                      ),
+
+                                                                    SizedBox(
+                                                                        height:
+                                                                        4),
+                                                                    // Space between count and label
+                                                                    Text(
+                                                                      'Postpaid verification pending',
+                                                                      // Label for filledDiff
+                                                                      style: Styling
+                                                                          .textFormText,
+                                                                      textAlign:
+                                                                      TextAlign.center,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        )),
+                                                  ],
+                                                ),
+                                                // ),
+                                              ),
+                                              // Show a message when no items meet the condition
+                                            ],
+                                          )
+                                              : Container(
+                                            child: Text("No Data Available"),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            isStockPendingStatusListViewVisible =
+                            !isStockPendingStatusListViewVisible; // Toggle ListView visibility
+                          });
+                        },
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          elevation: 1,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Title for Cylinder Categories Table
+                              Padding(
+                                padding: const EdgeInsets.all(0.0),
+                                child: Column(
+                                  children: [
+                                    itemSubLineWithDDss("Stock Pending Status",isStockPendingStatusListViewVisible),
+                                    Visibility(
+                                      visible:isStockPendingStatusListViewVisible ,
+                                      child: Column(
+                                        children: [
+                                          getManagerDashboarDetail.isNotEmpty
+                                              ? Column(
+                                            children: [
+                                              Container(
+                                                child:
+                                                Column(
+                                                  children: [
+                                                    Padding(
+                                                        padding:
+                                                        const EdgeInsets
+                                                            .all(8.0),
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                          mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                          children: [
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceEvenly,
+                                                              children: [
+                                                                Column(
+                                                                  children: [
+                                                                    Text(
+                                                                        sVPendingStk.toString(),
+                                                                        // Replace this with your dynamic data
+                                                                      style: Styling
+                                                                          .countNumber,
+                                                                        textAlign:
+                                                                        TextAlign.center,
+                                                                      ),
+
+                                                                    SizedBox(
+                                                                        height:
+                                                                        4),
+                                                                    // Space between count and label
+                                                                    Text(
+                                                                      'SV',
+                                                                      // Label for filledDiff
+                                                                      style: Styling
+                                                                          .textFormText,
+                                                                      textAlign:
+                                                                      TextAlign.center,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                Column(
+                                                                  children: [
+                                                                     Text(
+                                                                        tVPendingStk.toString(),
+                                                                        // Replace this with your dynamic data
+                                                                       style: Styling
+                                                                           .countNumber,
+                                                                        textAlign:
+                                                                        TextAlign.center,
+                                                                      ),
+
+                                                                    SizedBox(
+                                                                        height: 4),
+                                                                    // Space between count and label
+                                                                    Text(
+                                                                      'TV',
+                                                                      // Label for emptyDiff
+                                                                      style: Styling
+                                                                          .textFormText,
+                                                                      textAlign:
+                                                                      TextAlign.center,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        )),
+                                                  ],
+                                                ),
+                                                // ),
+                                              ),
+                                              // Show a message when no items meet the condition
+                                            ],
+                                          )
+                                              : Container(
+                                            child: Text("No Data Available"),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 10),
+                            ],
+                          ),
+                        ),
+                      ),
+
                       GestureDetector(
                         onTap: () {
                           setState(() {
@@ -2821,12 +3214,17 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
               onAccountAsOfDate = getManagerDashboarDetail[0].staffOnAccAsOf?.toDouble();
 
               todaysPunchingInNiyojanC = getManagerDashboarDetail[0].niyojanPun?.toInt()??0;
-              pendingInNiyojanC = getManagerDashboarDetail[0].niyoJanPunPend?.toInt()??0;
+              pendingInNiyojanC = getManagerDashboarDetail[0].OldBkgPendNewBkgRecv?.toInt()??0;
               pendingInCdcmsC = getManagerDashboarDetail[0].cDCMSPunPend?.toInt()??0;
               todaysIncorrectPunchingC = getManagerDashboarDetail[0].niyojanDuplicate?.toInt()??0;
               settlPayReceiveDelPendC = getManagerDashboarDetail[0].paymtDoneBtDelPend?.toInt()??0;
               settlDelPayPendC = getManagerDashboarDetail[0].delDoneBtPaymtPend?.toInt()??0;
-
+              oldBkgPendNewBkgRecv = getManagerDashboarDetail[0].OldBkgPendNewBkgRecv?.toInt()??0;
+              delDonNiyoJanPunPend = getManagerDashboarDetail[0].DelDonNiyoJanPunPend?.toInt()??0;
+              niyoJanPunDelPend = getManagerDashboarDetail[0].NiyoJanPunDelPend?.toInt()??0;
+              postPaidVerifPend = getManagerDashboarDetail[0].PostPaidVerifPend?.toInt()??0;
+              sVPendingStk = getManagerDashboarDetail[0].SVPendingStk?.toInt()??0;
+              tVPendingStk = getManagerDashboarDetail[0].TVPendingStk?.toInt()??0;
             }
           });
         } else {
@@ -2942,13 +3340,10 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
             debugPrint('RefreshTokenStatus - True');
             fetchCurrentStock();
             fetchDashboarDetail();
-          } else if (response['message'] == "401 Unauthorized") {
+          } else if (response['message'] == "Token Expired") {
             debugPrint('RefreshTokenExc401 - true');
             showDialogToExpireSession(context);
-          } else if(response['status'] == "401 Unauthorized"){
-            debugPrint('RefreshTokenExc401 - true');
-            showDialogToExpireSession(context);
-          }else{
+          } else{
             debugPrint('RefreshTokenStatus - false');
           }
         }).catchError((error) {

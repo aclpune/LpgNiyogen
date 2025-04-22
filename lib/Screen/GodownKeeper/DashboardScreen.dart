@@ -92,7 +92,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           preferredSize: Size.fromHeight(120), // Custom height for the AppBar
           child: Container(
             color: Colors.blueAccent, // Custom background color
-            padding: EdgeInsets.only(top: 40, left: 5, right: 16), // Padding for top & sides
+            padding: EdgeInsets.only(top: 30, left: 5, right: 16), // Padding for top & sides
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start, // Align items to the start
               children: [
@@ -1157,13 +1157,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
             fetchCurrentStock();
             checkAndSaveDayEndData();
             fetchTransactionList();
-          } else if (response['message'] == "401 Unauthorized") {
+          } else if (response['message'] == "Token Expired") {
             debugPrint('RefreshTokenExc401 - true');
             showDialogToExpireSession(context);
-          } else if(response['status'] == "401 Unauthorized"){
-            debugPrint('RefreshTokenExc401 - true');
-            showDialogToExpireSession(context);
-          }else{
+          } else{
             debugPrint('RefreshTokenStatus - false');
           }
         }).catchError((error) {

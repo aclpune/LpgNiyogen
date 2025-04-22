@@ -185,7 +185,7 @@ class _ManagerCashInHandScreenDeails extends State<ManagerCashInHandScreenDeails
                   Align(
                   alignment: Alignment.centerRight, // Ensures the content inside is aligned right
                   child: Text(
-                        'Total: ${getTotalCash().toStringAsFixed(2)}',
+                        'Total: ${formatCurrency(getTotalCash())}',
                         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                   ),
@@ -213,5 +213,21 @@ class _ManagerCashInHandScreenDeails extends State<ManagerCashInHandScreenDeails
      }
 
     return totalAmount;
+  }
+  String formatCurrency(double amount) {
+    if (amount == 0) {
+      return '0.00'; // Return "0.00" if the amount is zero
+    }
+    final format = NumberFormat('#,##,###.00', 'en_IN'); // Indian locale with comma separator
+
+    // Ensure the result always shows a leading zero before the decimal point
+    String formattedAmount = format.format(amount);
+
+    // If there's no integer part, it ensures that a leading zero is added before decimal
+    if (amount < 1 && formattedAmount.startsWith('.')) {
+      formattedAmount = '0' + formattedAmount;
+    }
+
+    return formattedAmount;
   }
 }

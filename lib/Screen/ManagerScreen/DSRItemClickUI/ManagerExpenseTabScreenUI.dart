@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import '../ClickModelClass/GetexpensepopupListModel.dart';
 
@@ -42,15 +43,15 @@ class _ManagerExpenseTabScreenUI extends State<ManagerExpenseTabScreenUI>{
                   ),
                   Expanded(
                     flex: 2,
-                    child: Text(
-                      sale.staffName.toString(),
+                    child: Text(sale.staffName == null ? '':
+                      sale.staffName.toString() ?? '',
                       style: TextStyle(fontSize: 16),
                     ),
                   ),
                   Expanded(
                     flex: 2,
                     child: Text(
-                      sale.cash!.toStringAsFixed(2),
+                        formatCurrency(sale.cash!.toDouble()),
                       style: TextStyle(fontSize: 16),
                     ),
                   ),
@@ -59,7 +60,7 @@ class _ManagerExpenseTabScreenUI extends State<ManagerExpenseTabScreenUI>{
                     child: Expanded(
                       flex: 2,
                       child: Text(
-                        sale.bank!.toStringAsFixed(2),
+                          formatCurrency(sale.bank!.toDouble()),
                         style: TextStyle(fontSize: 16),
                       ),
                     ),
@@ -71,5 +72,20 @@ class _ManagerExpenseTabScreenUI extends State<ManagerExpenseTabScreenUI>{
           ),
        );
   }
+  String formatCurrency(double amount) {
+    if (amount == 0) {
+      return '0.00'; // Return "0.00" if the amount is zero
+    }
+    final format = NumberFormat('#,##,###.00', 'en_IN'); // Indian locale with comma separator
 
+    // Ensure the result always shows a leading zero before the decimal point
+    String formattedAmount = format.format(amount);
+
+    // If there's no integer part, it ensures that a leading zero is added before decimal
+    if (amount < 1 && formattedAmount.startsWith('.')) {
+      formattedAmount = '0' + formattedAmount;
+    }
+
+    return formattedAmount;
+  }
 }

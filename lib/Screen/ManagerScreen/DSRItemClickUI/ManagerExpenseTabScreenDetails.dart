@@ -221,7 +221,7 @@ class _ManagerExpenseTabScreenDetailsState extends State<ManagerExpenseTabScreen
                   Align(
                     alignment: Alignment.center, // Ensures the content inside is aligned right
                     child: Text(
-                      'Total Cash: ${getCashTotal().toStringAsFixed(2)}',
+                      'Total Cash: ${formatCurrency(getCashTotal())}',
                       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                   ),
@@ -230,7 +230,7 @@ class _ManagerExpenseTabScreenDetailsState extends State<ManagerExpenseTabScreen
                   Align(
                     alignment: Alignment.centerRight, // Ensures the content inside is aligned right
                     child: Text(
-                      'Total Bank: ${getBankTotal().toStringAsFixed(2)}',
+                      'Total Bank: ${formatCurrency(getBankTotal())}',
                       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                   ),
@@ -277,6 +277,21 @@ class _ManagerExpenseTabScreenDetailsState extends State<ManagerExpenseTabScreen
 
     return totalCashAmount;
   }
+  String formatCurrency(double amount) {
+    if (amount == 0) {
+      return '0.00'; // Return "0.00" if the amount is zero
+    }
+    final format = NumberFormat('#,##,###.00', 'en_IN'); // Indian locale with comma separator
 
+    // Ensure the result always shows a leading zero before the decimal point
+    String formattedAmount = format.format(amount);
+
+    // If there's no integer part, it ensures that a leading zero is added before decimal
+    if (amount < 1 && formattedAmount.startsWith('.')) {
+      formattedAmount = '0' + formattedAmount;
+    }
+
+    return formattedAmount;
+  }
 }
 

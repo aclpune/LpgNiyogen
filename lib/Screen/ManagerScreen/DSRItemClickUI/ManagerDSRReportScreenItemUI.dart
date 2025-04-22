@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:lpgsalesandinventory/Screen/ManagerScreen/ClickModelClass/DSRReportExpenseModel.dart';
 
 import '../ClickModelClass/DSRReportScreenDetailModel.dart';
@@ -72,10 +73,10 @@ class _ManagerDSRReportScreenItemUI extends State<ManagerDSRReportScreenItemUI> 
              flex: mode == 'Credit' ? 3: 2,
              child: Text(
                mode == 'Bank'
-                   ? (sale.bankAmt!.toStringAsFixed(2))  // Show bankAmt for Bank mode if >= 0
+                   ? (formatCurrency(sale.bankAmt!.toDouble()))  // Show bankAmt for Bank mode if >= 0
                    : mode == 'Credit'
-                   ? (sale.creditAmt!.toStringAsFixed(2))  // Show creditAmt if >= 0 for Credit mode
-                   : (sale.cashAmt!.toStringAsFixed(2)),  // Show cashAmt if >= 0 for Cash mode
+                   ? (formatCurrency(sale.creditAmt!.toDouble()))  // Show creditAmt if >= 0 for Credit mode
+                   : (formatCurrency(sale.cashAmt!.toDouble())),  // Show cashAmt if >= 0 for Cash mode
                style: TextStyle(fontSize: 16),
              ),
            ),
@@ -88,8 +89,21 @@ class _ManagerDSRReportScreenItemUI extends State<ManagerDSRReportScreenItemUI> 
        ),
 
      );
-
-
   }
+  String formatCurrency(double amount) {
+    if (amount == 0) {
+      return '0.00'; // Return "0.00" if the amount is zero
+    }
+    final format = NumberFormat('#,##,###.00', 'en_IN'); // Indian locale with comma separator
 
+    // Ensure the result always shows a leading zero before the decimal point
+    String formattedAmount = format.format(amount);
+
+    // If there's no integer part, it ensures that a leading zero is added before decimal
+    if (amount < 1 && formattedAmount.startsWith('.')) {
+      formattedAmount = '0' + formattedAmount;
+    }
+
+    return formattedAmount;
+  }
 }

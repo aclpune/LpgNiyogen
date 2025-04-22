@@ -1713,6 +1713,32 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                     ),
                   ),
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: isDateValid ? (){
+                        if(saveFlag){
+                          debugPrint("Save data$saveFlag");
+                          showFlushBar(context,
+                              Constants.dayEndCompleted);
+                        }else{
+                          saveCDCMSDataMob();
+                          debugPrint("Save data$saveFlag");
+                        }
+
+                      }:null,
+                      child: Text("Save CDCMS Data"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:isDateValid? saveFlag ? Colors.grey : Colors.blue:Colors.grey,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
           ),

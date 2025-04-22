@@ -40,7 +40,14 @@ class GetManagerDashboarDetailModel {
       num? paymtDoneBtDelPend, 
       num? delDoneBtPaymtPend, 
       num? niyojanPun, 
-      num? niyojanDuplicate,}){
+      num? niyojanDuplicate,
+      num? DelDonNiyoJanPunPend,
+      num? NiyoJanPunDelPend,
+      num? OldBkgPendNewBkgRecv,
+      num? PostPaidVerifPend,
+      num? SVPendingStk,
+      num? TVPendingStk,
+  }){
     _distributorId = distributorId;
     _itemId = itemId;
     _itemName = itemName;
@@ -61,6 +68,12 @@ class GetManagerDashboarDetailModel {
     _delDoneBtPaymtPend = delDoneBtPaymtPend;
     _niyojanPun = niyojanPun;
     _niyojanDuplicate = niyojanDuplicate;
+    _DelDonNiyoJanPunPend = DelDonNiyoJanPunPend;
+    _NiyoJanPunDelPend = NiyoJanPunDelPend;
+    _OldBkgPendNewBkgRecv = OldBkgPendNewBkgRecv;
+    _PostPaidVerifPend = PostPaidVerifPend;
+    _SVPendingStk = SVPendingStk;
+    _TVPendingStk = TVPendingStk;
 }
 
   GetManagerDashboarDetailModel.fromJson(dynamic json) {
@@ -84,6 +97,12 @@ class GetManagerDashboarDetailModel {
     _delDoneBtPaymtPend = json['DelDoneBtPaymtPend'];
     _niyojanPun = json['NiyojanPun'];
     _niyojanDuplicate = json['NiyojanDuplicate'];
+    _DelDonNiyoJanPunPend = json['DelDonNiyoJanPunPend'];
+    _NiyoJanPunDelPend = json['NiyoJanPunDelPend'];
+    _OldBkgPendNewBkgRecv = json['OldBkgPendNewBkgRecv'];
+    _PostPaidVerifPend = json['PostPaidVerifPend'];
+    _SVPendingStk = json['SVPendingStk'];
+    _TVPendingStk = json['TVPendingStk'];
   }
   num? _distributorId;
   num? _itemId;
@@ -105,6 +124,12 @@ class GetManagerDashboarDetailModel {
   num? _delDoneBtPaymtPend;
   num? _niyojanPun;
   num? _niyojanDuplicate;
+  num? _DelDonNiyoJanPunPend;
+  num? _NiyoJanPunDelPend;
+  num? _OldBkgPendNewBkgRecv;
+  num? _PostPaidVerifPend;
+  num? _SVPendingStk;
+  num? _TVPendingStk;
 GetManagerDashboarDetailModel copyWith({  num? distributorId,
   num? itemId,
   String? itemName,
@@ -125,6 +150,12 @@ GetManagerDashboarDetailModel copyWith({  num? distributorId,
   num? delDoneBtPaymtPend,
   num? niyojanPun,
   num? niyojanDuplicate,
+  num? DelDonNiyoJanPunPend,
+  num? NiyoJanPunDelPend,
+  num? OldBkgPendNewBkgRecv,
+  num? PostPaidVerifPend,
+  num? SVPendingStk,
+  num? TVPendingStk,
 }) => GetManagerDashboarDetailModel(  distributorId: distributorId ?? _distributorId,
   itemId: itemId ?? _itemId,
   itemName: itemName ?? _itemName,
@@ -145,6 +176,12 @@ GetManagerDashboarDetailModel copyWith({  num? distributorId,
   delDoneBtPaymtPend: delDoneBtPaymtPend ?? _delDoneBtPaymtPend,
   niyojanPun: niyojanPun ?? _niyojanPun,
   niyojanDuplicate: niyojanDuplicate ?? _niyojanDuplicate,
+  DelDonNiyoJanPunPend: DelDonNiyoJanPunPend ?? _DelDonNiyoJanPunPend,
+  NiyoJanPunDelPend: NiyoJanPunDelPend ?? _NiyoJanPunDelPend,
+  OldBkgPendNewBkgRecv: OldBkgPendNewBkgRecv ?? _OldBkgPendNewBkgRecv,
+  PostPaidVerifPend: PostPaidVerifPend ?? _PostPaidVerifPend,
+  SVPendingStk: SVPendingStk ?? _SVPendingStk,
+  TVPendingStk: TVPendingStk ?? _TVPendingStk,
 );
   num? get distributorId => _distributorId;
   num? get itemId => _itemId;
@@ -166,6 +203,12 @@ GetManagerDashboarDetailModel copyWith({  num? distributorId,
   num? get delDoneBtPaymtPend => _delDoneBtPaymtPend;
   num? get niyojanPun => _niyojanPun;
   num? get niyojanDuplicate => _niyojanDuplicate;
+  num? get DelDonNiyoJanPunPend => _DelDonNiyoJanPunPend;
+  num? get NiyoJanPunDelPend => _NiyoJanPunDelPend;
+  num? get OldBkgPendNewBkgRecv => _OldBkgPendNewBkgRecv;
+  num? get PostPaidVerifPend => _PostPaidVerifPend;
+  num? get SVPendingStk => _SVPendingStk;
+  num? get TVPendingStk => _TVPendingStk;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -189,6 +232,12 @@ GetManagerDashboarDetailModel copyWith({  num? distributorId,
     map['DelDoneBtPaymtPend'] = _delDoneBtPaymtPend;
     map['NiyojanPun'] = _niyojanPun;
     map['NiyojanDuplicate'] = _niyojanDuplicate;
+    map['DelDonNiyoJanPunPend'] = _DelDonNiyoJanPunPend;
+    map['NiyoJanPunDelPend'] = _NiyoJanPunDelPend;
+    map['OldBkgPendNewBkgRecv'] = _OldBkgPendNewBkgRecv;
+    map['PostPaidVerifPend'] = _PostPaidVerifPend;
+    map['SVPendingStk'] = _SVPendingStk;
+    map['TVPendingStk'] = _TVPendingStk;
     return map;
   }
 

@@ -1,8 +1,8 @@
 class AppUrl {
   // static const String baseUrl = 'https://192.168.2.27:502'; // Local
   // static const String baseUrl = 'https://20.193.149.194/lpgniyojanapi'; // UAT Client
-  static const String baseUrl = 'https://20.193.149.194/lpgniyojanuatapi'; // UAT New Development
-  // static const String baseUrl = 'https://lpgniyojan.aadyaminfotech.com/lpgniyojanapi'; // Production New
+  // static const String baseUrl = 'https://20.193.149.194/lpgniyojanuatapi'; // UAT New Development
+  static const String baseUrl = 'https://lpgniyojan.aadyaminfotech.com/lpgniyojanapi'; // Production New
 
   ///Log in
   // static const String login = '$baseUrl/Login/LoginUser';
@@ -33,6 +33,7 @@ class AppUrl {
   static const String GetItemEXMIDetailList = '$baseUrl/GodownKeeper/GetItemEXMIDetailList';
   static const String DefectiveMasterAdd_Mob = '$baseUrl/GodownKeeper/DefectiveMasterAdd_Mob';
   static const String GetDefectiveList_Mob = '$baseUrl/GodownKeeper/GetDefectiveList_Mob';
+  static const String GetDailySaleSVTVConsumerDtls_Mob = '$baseUrl/DailyStockCash/GetDailySaleSVTVConsumerDtls_Mob';
 
   ///maager
   static const String GetDailySaleSummaryListDMWiseForMob = '$baseUrl/DailyStockCash/GetDailySaleSummaryListDMWiseForMob';

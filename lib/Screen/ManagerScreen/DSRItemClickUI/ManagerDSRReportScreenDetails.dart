@@ -388,7 +388,7 @@ class _ManagerDSRReportScreenDetailsState extends State<ManagerDSRReportScreenDe
                       alignment: Alignment.centerRight, // Ensures the content inside is aligned right
                       child: Text(
                         screenMode == 'Cash'
-                            ? 'Total: ${getTotalCash().toStringAsFixed(2)}' // Display total cash
+                            ? 'Total: ${formatCurrency(getTotalCash())}' // Display total cash
                             : '',
                         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                       ),
@@ -398,7 +398,7 @@ class _ManagerDSRReportScreenDetailsState extends State<ManagerDSRReportScreenDe
                       alignment: Alignment.centerRight, // Align text to the right
                       child: Text(
                         screenMode == 'Bank'
-                            ? 'Total: ${getTotalBank().toStringAsFixed(2)}' // Display total bank
+                            ? 'Total: ${formatCurrency(getTotalBank())}' // Display total bank
                             : '',
                         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                       ),
@@ -408,7 +408,7 @@ class _ManagerDSRReportScreenDetailsState extends State<ManagerDSRReportScreenDe
                       alignment: Alignment.centerRight, // Align text to the right
                       child: Text(
                         screenMode == 'Credit'
-                            ? 'Total: ${getTotalCredit().toStringAsFixed(2)}' // Display total credit
+                            ? 'Total: ${formatCurrency(getTotalCredit())}' // Display total credit
                             : '',
                         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                       ),
@@ -424,7 +424,7 @@ class _ManagerDSRReportScreenDetailsState extends State<ManagerDSRReportScreenDe
                             Align(
                               alignment: Alignment.center,
                               child: Text(
-                                'Total Cash Amt.- ${getExpenseCashAmount().toStringAsFixed(2)}',
+                                'Total Cash Amt.- ${formatCurrency(getExpenseCashAmount())}',
                                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                             ),
@@ -434,7 +434,7 @@ class _ManagerDSRReportScreenDetailsState extends State<ManagerDSRReportScreenDe
                             Align(
                               alignment: Alignment.center,
                               child: Text(
-                                'Total Bank Amt.- ${getExpenseBankAmount().toStringAsFixed(2)}',
+                                'Total Bank Amt.- ${formatCurrency(getExpenseBankAmount())}',
                                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                             ),
@@ -448,6 +448,23 @@ class _ManagerDSRReportScreenDetailsState extends State<ManagerDSRReportScreenDe
         ),
       ),// Empty container when no data is available
      );
+  }
+
+  String formatCurrency(double amount) {
+    if (amount == 0) {
+      return '0.00'; // Return "0.00" if the amount is zero
+    }
+    final format = NumberFormat('#,##,###.00', 'en_IN'); // Indian locale with comma separator
+
+    // Ensure the result always shows a leading zero before the decimal point
+    String formattedAmount = format.format(amount);
+
+    // If there's no integer part, it ensures that a leading zero is added before decimal
+    if (amount < 1 && formattedAmount.startsWith('.')) {
+      formattedAmount = '0' + formattedAmount;
+    }
+
+    return formattedAmount;
   }
 }
 

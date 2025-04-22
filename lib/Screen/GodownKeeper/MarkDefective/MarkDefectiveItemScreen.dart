@@ -190,16 +190,28 @@ class _MarkDefectiveItemScreenState extends State<MarkDefectiveItemScreen> {
                           // Add 10px margin on left and right
                           child: ElevatedButton(
                             onPressed: () {
-                              int defctiveQty = int.parse(_defectiveController.text);
-
-                              if(_defectiveController.text.isNotEmpty){
-                                if(defctiveQty > 0 ){
-                                  submitDefectiveToApi();
-                                }else{
-                                  showFlushBar(context,Constants.validCountEnter);
+                              if(_defectiveController.text.isNotEmpty) {
+                                int defctiveQty = int.parse(
+                                    _defectiveController.text);
+                                if (_defectiveController.text.isNotEmpty) {
+                                  if (_selectedItem != null) {
+                                    if (defctiveQty > 0) {
+                                      submitDefectiveToApi();
+                                    } else {
+                                      showFlushBar(
+                                          context, Constants.validCountEnter);
+                                    }
+                                  } else {
+                                    showFlushBar(context,
+                                        Constants.selectValidItemReceipt);
+                                  }
+                                } else {
+                                  showFlushBar(
+                                      context, Constants.validCountEnter);
                                 }
                               }else{
-                                showFlushBar(context,Constants.validCountEnter);
+                                showFlushBar(
+                                    context, Constants.validCountEnter);
                               }
                             },
                             child: Padding(
