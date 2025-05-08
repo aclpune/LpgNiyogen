@@ -22,8 +22,10 @@ import '../../Utils/app_url.dart';
 import '../../Utils/constants.dart';
 import '../../Utils/shared_preference.dart';
 import '../../Utils/size_config.dart';
+import '../BottomNavigationForGodownKeeper.dart';
 import '../DashboardScreen.dart';
 import '../DeliveryBoyModel/DeliveryBoyInfoModel.dart';
+import '../DeliveryBoyModel/GetSVTVConsumerListModel.dart';
 import '../DeliveryBoyModel/ItemData.dart';
 import '../DeliveryBoyModel/StockSubmitToManagerListModel.dart';
 import '../DeliveryBoyModel/VehicleNumberGetModel.dart';
@@ -60,6 +62,23 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
 
   // Map<int, String?> _selectedItems = {};
   List<ImabalanceEmptyListModel> receiptList = [];
+
+  ///sv consumer
+  List<GetSvtvConsumerListModel> getSvtvConsumerList = [];
+  List<String> consumerNumbers = []; // This will hold the consumer numbers
+  List<String> selectedConsumerNumbers = []; // This will store selected consumer numbers
+  TextEditingController consumerController = TextEditingController();
+  double totalCylinderQty = 0;
+  List<int> selectedCylinderQuantities = [];
+
+  ///tv consumer
+  List<GetSvtvConsumerListModel> getSvtvConsumerListTV = [];
+  List<String> consumerNumbersTV = [];
+  List<String> selectedConsumerNumbersTV = []; // This will store selected consumer numbers
+  TextEditingController consumerControllerTV = TextEditingController();
+  double totalCylinderQtyTV = 0;
+  List<int> selectedCylinderQuantitiesTV = [];
+
   bool isLoading = true;
   List<ItemData> data = []; // List to hold rows for the DataTable
   List<ItemData> newList = [];
@@ -68,6 +87,8 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
   CylItemListModel? _selectedItemModel;
   bool isPhysicalStockListViewVisible = false;
   int? imbalaceSum = 0;
+  List<String> selectedConsumers =['Consumer 1', 'Consumer 2', 'Consumer 3', 'Consumer 4', 'Consumer 5'];
+
 
   // Controllers for each text field
   final TextEditingController _itemController = TextEditingController();
@@ -110,6 +131,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
     String formattedDateNew = DateFormat('yyyy-MM-dd').format(now) + 'T00:00:00';
     // Validate input for the empty cylinder count
+
     if (_emptyController.text.isEmpty) {
 
       showFlushBar(context,
@@ -162,16 +184,27 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                           TextButton(
                             onPressed: () {
                               setState(() {
-                                String remarksString =
-                                remarksList.isEmpty ? '' : remarksList.join(
-                                    ', ');
+                                List<String> consumerNumberss = getConsumerNumbers();
+                                List<int> cylinderQuantities = getCylinderQuantities();
+                                print("Consumer Numbers: $consumerNumberss");
+                                print("Cylinder Quantities: $cylinderQuantities");
+                                String remarksString = consumerNumberss.isEmpty ? '' : consumerNumberss.join(', ');
                                 print('Sending remarks to API: $remarksString');
 
-                                String tvConsumerNoString =
-                                tvConsumerList.isEmpty ? '' : tvConsumerList
-                                    .join(', ');
-                                print(
-                                    'Sending tvConsumerNoString to API: $tvConsumerNoString');
+                                String svCounts = cylinderQuantities.isEmpty ? '' : cylinderQuantities.join(', ');
+                                print('Sending remarks to API: $svCounts');
+
+                                // String tvConsumerNoString = tvConsumerList.isEmpty ? '' : tvConsumerList.join(', ');
+                                // print('Sending tvConsumerNoString to API: $tvConsumerNoString');
+                                List<String> consumerNumberssTV = getConsumerNumbersTV();
+                                List<int> cylinderQuantitiesTV = getCylinderQuantitiesTV();
+
+                                String tvConsumerNoString = consumerNumberssTV.isEmpty ? '' : consumerNumberssTV.join(', ');
+                                print('Sending tvConsumerNoString to API: $tvConsumerNoString');
+
+                                String tvCount = cylinderQuantitiesTV.isEmpty ? '' : cylinderQuantitiesTV.join(', ');
+                                print('Sending tvConsumerNoString to API: $tvConsumerNoString');
+
 
                                 // Ensure that all fields have valid values
                                 String filledValue = _filledController.text
@@ -220,7 +253,9 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                   lessEmpty: lessEmptyValue,
                                   remark: remarkValue,
                                   svRemark: remarksString,
+                                  svCount: svCounts,
                                   tvConsumerNo: tvConsumerNoString,
+                                  tvCount: tvCount,
                                   updateFlag: 'pending',
                                   itemAddedDate: formattedDate,
                                 );
@@ -249,6 +284,12 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                 _svRemarkController.clear();
                                 remarksList.clear();
                                 tvConsumerList.clear();
+                                selectedConsumerNumbers.clear();
+                                selectedCylinderQuantities.clear();
+                                totalCylinderQty = 0;
+                                selectedConsumerNumbersTV.clear();
+                                selectedCylinderQuantitiesTV.clear();
+                                totalCylinderQtyTV = 0;
                               }
                               );
                               Navigator.of(context).pop(
@@ -263,14 +304,28 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                 }
                 else {
                   setState(() {
-                    String remarksString =
-                    remarksList.isEmpty ? '' : remarksList.join(', ');
+
+                    List<String> consumerNumberss = getConsumerNumbers();
+                    List<int> cylinderQuantities = getCylinderQuantities();
+
+                    print("Consumer Numbers: $consumerNumberss");
+                    print("Cylinder Quantities: $cylinderQuantities");
+
+                    String remarksString = consumerNumberss.isEmpty ? '' : consumerNumberss.join(', ');
                     print('Sending remarks to API: $remarksString');
 
-                    String tvConsumerNoString =
-                    tvConsumerList.isEmpty ? '' : tvConsumerList.join(', ');
-                    print(
-                        'Sending tvConsumerNoString to API: $tvConsumerNoString');
+                    String svCounts = cylinderQuantities.isEmpty ? '' : cylinderQuantities.join(', ');
+                    print('Sending remarks to API: $svCounts');
+
+                    ///tv
+                    List<String> consumerNumberssTV = getConsumerNumbersTV();
+                    List<int> cylinderQuantitiesTV = getCylinderQuantitiesTV();
+
+                    String tvConsumerNoString = consumerNumberssTV.isEmpty ? '' : consumerNumberssTV.join(', ');
+                    print('Sending tvConsumerNoString to API: $tvConsumerNoString');
+
+                    String tvCount = cylinderQuantitiesTV.isEmpty ? '' : cylinderQuantitiesTV.join(', ');
+                    print('Sending tvConsumerNoString to API: $tvConsumerNoString');
 
                     // Ensure that all fields have valid values
                     String filledValue = _filledController.text.isEmpty
@@ -310,7 +365,9 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                       lessEmpty: lessEmptyValue,
                       remark: remarkValue,
                       svRemark: remarksString,
+                      svCount: svCounts,
                       tvConsumerNo: tvConsumerNoString,
+                      tvCount: tvCount,
                       updateFlag: 'pending',
                       itemAddedDate: formattedDate,
                     );
@@ -338,6 +395,12 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                     _svRemarkController.clear();
                     remarksList.clear();
                     tvConsumerList.clear();
+                    selectedConsumerNumbers.clear();
+                    selectedCylinderQuantities.clear();
+                    totalCylinderQty = 0;
+                    selectedConsumerNumbersTV.clear();
+                    selectedCylinderQuantitiesTV.clear();
+                    totalCylinderQtyTV = 0;
                   }
                   );
                 }
@@ -380,7 +443,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
     itemList = updateRefillSale!.getUpdateRefillSaleData();
     updateRefillSale!.deleteCompletedRefillSales();
     debugPrint("itemList" + itemList.toString());
-
+    _fetchSVConsumerData("SV");
     if (widget.flagAdd != null) {
       if (widget.flagAdd == "editMode") {
         debugPrint("widget.saleGKId " + widget.saleGKId.toString());
@@ -432,6 +495,11 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
   }
 
   void _onEditItem(ItemList item, StockSubmitToManagerListModel v) {
+    selectedConsumerNumbers.clear();
+    selectedCylinderQuantities.clear();
+
+    selectedConsumerNumbersTV.clear();
+    selectedCylinderQuantitiesTV.clear();
     // Populate the fields with the current item data
     setState(() {
       selectedItemId = item.itemId?.toInt();
@@ -453,13 +521,15 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
           v.staffName?.isNotEmpty == true ? v.staffName : 'Unknown';
       selectedDelBoyId = v.dMId?.toInt();
 
-      String? svRemark = item.sVConsStr?.toString();
-      if (svRemark != null &&
-          svRemark.isNotEmpty &&
-          !remarksList.contains(svRemark)) {
-        remarksList.add(svRemark);
-      }
-      debugPrint("svRemark $svRemark");
+      // String? svRemark = item.sVConsStr?.toString();
+      // if (svRemark != null &&
+      //     svRemark.isNotEmpty &&
+      //     !remarksList.contains(svRemark)) {
+      //   remarksList.add(svRemark);
+      // }
+      // debugPrint("svRemark $svRemark");
+
+
 
       String? tvRemark = item.TVConsStr?.toString();
       if (tvRemark != null &&
@@ -467,7 +537,80 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
           !tvConsumerList.contains(tvRemark)) {
         tvConsumerList.add(tvRemark);
       }
+
       debugPrint("TVConsStr $tvRemark");
+
+
+      String? svRemark = item.sVConsStr?.toString();
+      String? svCount = item.SVQtyStr?.toString();
+      debugPrint("svCount $svCount");
+
+      if (svRemark != null && svCount != null && svRemark.isNotEmpty && svCount.isNotEmpty) {
+        // Split the comma-separated consumer numbers and quantities
+        List<String> consumerNumbers = svRemark.split(',').map((e) => e.trim()).toList();
+        List<String> quantities = svCount.split(',').map((e) => e.trim()).toList();
+
+        // Debugging to check values of consumerNumbers and quantities
+        debugPrint("consumerNumbers: $consumerNumbers");
+        debugPrint("quantities: $quantities");
+
+        // Populate the selectedConsumerNumbers and selectedCylinderQuantities lists
+        for (int i = 0; i < consumerNumbers.length; i++) {
+          String consumerNo = consumerNumbers[i];
+          String qtyStr = quantities[i];
+          int cylQty = int.tryParse(qtyStr) ?? 0; // Ensure safe parsing
+
+          // Log the consumerNo and cylQty to check if the values are correct
+          debugPrint("consumerNo: $consumerNo, cylQty: $cylQty");
+
+          // Only add if the consumer number is not already in the list
+          if (!selectedConsumerNumbers.contains(consumerNo)) {
+            selectedConsumerNumbers.add(consumerNo);
+            selectedCylinderQuantities.add(cylQty);
+          }
+        }
+      } else {
+        selectedConsumerNumbers.clear();
+        selectedCylinderQuantities.clear();
+      }
+
+
+      ///tv
+
+      String? svRemarkTV = item.TVConsStr?.toString();
+      String? svCountTV = item.TVQtyStr?.toString();
+      debugPrint("TVQtyStr $svCount");
+
+      if (svRemarkTV != null && svCountTV != null && svRemarkTV.isNotEmpty && svCountTV.isNotEmpty) {
+        // Split the comma-separated consumer numbers and quantities
+        List<String> consumerNumbersTV = svRemarkTV.split(',').map((e) => e.trim()).toList();
+        List<String> quantitiesTV = svCountTV.split(',').map((e) => e.trim()).toList();
+
+        // Debugging to check values of consumerNumbers and quantities
+        debugPrint("consumerNumbers: $consumerNumbersTV");
+        debugPrint("quantities: $quantitiesTV");
+
+        // Populate the selectedConsumerNumbers and selectedCylinderQuantities lists
+        for (int i = 0; i < consumerNumbersTV.length; i++) {
+          String consumerNoTV = consumerNumbersTV[i];
+          String qtyStrTV = quantitiesTV[i];
+          int cylQtyTV = int.tryParse(qtyStrTV) ?? 0; // Ensure safe parsing
+
+          // Log the consumerNo and cylQty to check if the values are correct
+          debugPrint("consumerNo: $consumerNoTV, cylQty: $cylQtyTV");
+
+          // Only add if the consumer number is not already in the list
+          if (!selectedConsumerNumbersTV.contains(consumerNoTV)) {
+            selectedConsumerNumbersTV.add(consumerNoTV);
+            selectedCylinderQuantitiesTV.add(cylQtyTV);
+          }
+        }
+      } else {
+        selectedConsumerNumbersTV.clear();
+        selectedCylinderQuantitiesTV.clear();
+      }
+
+
 
       _selectedItemModel =
           _items.firstWhere((itemModel) => itemModel.itemId == selectedItemId);
@@ -517,6 +660,17 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
     print("Empty Ret Qty: ${_emptyController.text}");
     print("Def Qty: ${_defectiveController.text}");
     print("Less Empty Qty: ${_lessEmptyController.text}");
+    List<String> consumerNumberss = getConsumerNumbers();
+    List<int> cylinderQuantities = getCylinderQuantities();
+
+    List<String> consumerNumberssTV = getConsumerNumbersTV();
+    List<int> cylinderQuantitiesTV = getCylinderQuantitiesTV();
+
+    print("consumerNumberss Qty: ${consumerNumberss}");
+    print("cylinderQuantities Qty: ${cylinderQuantities}");
+    print("consumerNumberssTV Qty: ${consumerNumberssTV}");
+    print("cylinderQuantitiesTV Qty: ${cylinderQuantitiesTV}");
+
 
     await updateRefillSale!.updateItemInDatabase(
       itemId: selectedItemId!.toInt() ?? 0,
@@ -530,8 +684,10 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
       defective: parseToInt(_defectiveController.text),
       lessEmpty: parseToInt(_lessEmptyController.text),
       remark: _remarkController.text.toString() ?? '',
-      svList: remarksList.join(', ') ?? '',
-      tvList: tvConsumerList.join(', ') ?? '',
+      svList: consumerNumberss.join(', ') ?? '',
+      tvList: consumerNumberssTV.join(', ') ?? '',
+      svQtyList: cylinderQuantities.join(', ') ?? '',
+      tvQtyList: cylinderQuantitiesTV.join(', ') ?? '',
     );
 
     // Update state after async operation
@@ -553,649 +709,13 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
       tvConsumerList.clear();
       _selectedItemModel = null;
       _selectedItem = '';
+      selectedConsumerNumbers.clear();
+      selectedCylinderQuantities.clear();
+      totalCylinderQty = 0;
+      selectedConsumerNumbersTV.clear();
+      selectedCylinderQuantitiesTV.clear();
+      totalCylinderQtyTV = 0;
     });
-  }
-
-  ///num
-  void _showPopupDialogs(
-      String title, TextEditingController controller, int svQty) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              contentPadding: EdgeInsets.all(16), // Add padding to the content
-              content: Container(
-                width: 300, // Set the width of the dialog
-                height: 500, // Set the height of the dialog
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Title of the dialog
-                    Text(
-                      "$title Consumers",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 10),
-
-                    // Text field for input
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: controller,
-                            decoration: const InputDecoration(
-                              hintText: "Enter Consumer",
-                            ),
-                            maxLines: 1,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: <TextInputFormatter>[
-                              FilteringTextInputFormatter.digitsOnly,
-                              LengthLimitingTextInputFormatter(6),
-                            ],
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.add), // "Add More" button
-                          onPressed: () {
-                            String input = controller.text.trim();
-                            if (input.isNotEmpty) {
-                              // Count how many individual values are in the remarks list
-                              int currentCount = remarksList
-                                  .map((remark) => remark.split(',').length)
-                                  .fold(0, (a, b) => a + b);
-
-                              // Check if we can add more consumers
-                              if (currentCount >= svQty) {
-                                controller.clear();
-                                showFlushBar(context, Constants.svConsumerCountExceed);
-                              } else {
-                                // Add the input as a string in the remarksList
-                                // setState(() {
-                                //   String input = controller.text.trim();
-                                //   if (input.isNotEmpty) {
-                                //     int currentCount = remarksList
-                                //         .map((remark) => remark.split(',').length)
-                                //         .reduce((a, b) => a + b);
-                                //     if (!remarksList.contains(input)) {
-                                //       setState(() {
-                                //         remarksList.add(
-                                //             input); // Add input to the list
-                                //         controller.clear();
-                                //         // Clear the input field for the next entry
-                                //       });
-                                //     } else {
-                                //       ScaffoldMessenger.of(context)
-                                //           .showSnackBar(
-                                //         SnackBar(
-                                //           content:
-                                //               Text('Consumer already added!'),
-                                //         ),
-                                //       );
-                                //     }
-                                //   }
-                                //   // remarksList.add(input);
-                                //   // controller.clear(); // Clear the input field
-                                // });
-                                setState(() {
-                                  String input = controller.text.trim();
-
-                                  if (input.isNotEmpty) {
-                                    // Count how many individual values are in the remarks list
-                                    int currentCount = remarksList
-                                        .map((remark) =>
-                                            remark.split(',').length)
-                                        .fold(0, (a, b) => a + b);
-
-                                    // Check if the input value already exists in the remarksList or in currentCount (split values)
-                                    bool alreadyExists =
-                                        remarksList.any((remark) {
-                                      // Check if any remark contains the input (case sensitive or case insensitive)
-                                      List<String> remarkList = remark
-                                          .split(',')
-                                          .map((e) => e.trim())
-                                          .toList();
-                                      return remarkList.contains(input);
-                                    });
-
-                                    if (alreadyExists) {
-                                      // Show a SnackBar if the input value already exists
-                                      showFlushBar(context,Constants.consumerExist);
-                                    } else {
-                                      // Add input to the list if it's not already present
-                                      setState(() {
-                                        remarksList.add(
-                                            input); // Add input to the list
-                                        controller
-                                            .clear(); // Clear the input field for the next entry
-                                      });
-                                    }
-                                  }
-                                });
-                              }
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-
-                    // Display the list of added remarks (Consumers)
-                    if (remarksList.isNotEmpty)
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: remarksList.length,
-                          itemBuilder: (context, index) {
-                            String remark = remarksList[index];
-                            // Split the remark string into individual values (if separated by commas)
-                            List<String> remarkList =
-                                remark.split(',').map((e) => e.trim()).toList();
-
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Display each value from the split remark
-                                ...remarkList.map((individualRemark) {
-                                  return Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text('- $individualRemark'),
-                                      IconButton(
-                                        icon: const Icon(Icons.delete),
-                                        onPressed: () {
-                                          setState(() {
-                                            // Remove the specific remark item
-                                            remarkList.remove(individualRemark);
-                                            if (remarkList.isEmpty) {
-                                              remarksList.removeAt(
-                                                  index); // Remove the remark completely if empty
-                                            } else {
-                                              // Update the list with the modified remark
-                                              remarksList[index] =
-                                                  remarkList.join(', ');
-                                            }
-                                          });
-
-                                          EasyLoading.showToast("Data Deleted Successfully.",
-                                              duration: const Duration(milliseconds: 3000));
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                }).toList(),
-                              ],
-                            );
-                          },
-                        ),
-                      ),
-
-                    // Display the warning message if the currentCount exceeds svQty
-                    Builder(
-                      builder: (context) {
-                        // Count how many individual values are in the remarks list
-
-                        int currentCount = remarksList
-                            .map((remark) => remark.split(',').length)
-                            .fold(0, (a, b) => a + b);
-
-                        if (currentCount > svQty) {
-                          return Row(
-                            children: [
-                              Text(
-                                Constants.svConsumerCountExceedTwoLine,
-                                style: TextStyle(color: Colors.red),
-                              ),
-                            ],
-                          );
-                        } else {
-                          return SizedBox
-                              .shrink(); // Empty space if condition not met
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ),
-
-              shape: RoundedRectangleBorder(
-                borderRadius:
-                    BorderRadius.circular(16), // Rounded corners for the dialog
-              ),
-
-              actions: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Cancel Button
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context); // Close the dialog
-                      },
-                      child: const Text(
-                        "CANCEL",
-                        style:TextStyle(fontWeight:FontWeight.bold,fontSize: 14),
-                      ),
-                    ),
-                    // Done Button
-                    ElevatedButton(
-                      onPressed: () {
-                        // Count the total number of values (split by commas)
-                        int currentCount = remarksList
-                            .map((remark) => remark.split(',').length)
-                            .fold(0, (a, b) => a + b);
-
-                        // Check if the number of consumers is less than the allowed quantity (svQty)
-                        if (currentCount > svQty) {
-                          // ScaffoldMessenger.of(context).showSnackBar(
-                          //   SnackBar(
-                          //     content: Text(
-                          //         'You can add only $svQty consumers !'),
-                          //   ),
-                          // );
-
-                          showFlushBar(context,Constants.svConsumerCountExceed);
-
-                          // showDialog(
-                          //   context: context,
-                          //   builder: (context) {
-                          //     return AlertDialog(
-                          //       title: Text('Limit Exceeded'),
-                          //       content: Text(
-                          //         'You can add only $svQty consumers !.',
-                          //       ),
-                          //       actions: [
-                          //         TextButton(
-                          //           onPressed: () {
-                          //             Navigator.pop(context); // Close the alert
-                          //           },
-                          //           child: Text('Cancel'),
-                          //         ),
-                          //         ElevatedButton(
-                          //           onPressed: () {
-                          //             Navigator.pop(context);
-                          //             Navigator.pop(
-                          //                 context); // Close the main dialog// Close the alert
-                          //           },
-                          //           child: Text('OK'),
-                          //         ),
-                          //       ],
-                          //     );
-                          //   },
-                          // );
-                        } else {
-
-                          // Otherwise, proceed to close the dialog
-                          String remark = controller.text.trim();
-                          if (remark.isNotEmpty) {
-                            // Count how many individual values are in the remarks list
-                            int currentCount = remarksList
-                                .map((remark) => remark.split(',').length)
-                                .fold(0, (a, b) => a + b);
-
-                            // Check if adding the new remark will exceed svQty
-                            if (currentCount >= svQty) {
-                              // If the number of items exceeds svQty, show a message to the user
-                              showFlushBar(context, Constants.svConsumerCountExceed);
-                            } else {
-                              // If the current count is within the limit, add the new remark
-                              setState(() {
-                                remarksList.add(
-                                    remark); // Add the new remark to the list
-                                controller.clear();
-                                Navigator.pop(context);// Clear the input field
-                              });
-                            }
-                          }else{
-                            Navigator.pop(context);
-                          }
-                          controller.clear();
-
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                      ),
-                      child: const Text(
-                        "DONE",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-
-  void _showPopupDialogsTVConsumer(
-      String title, TextEditingController controller, int tvQty) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return AlertDialog(
-              contentPadding: EdgeInsets.all(16), // Add padding to the content
-              content: Container(
-                width: 300, // Set the width of the dialog
-                height: 500, // Set the height of the dialog
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Title of the dialog
-                    Text(
-                      "$title Consumers",
-                      style:
-                      TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 10),
-
-                    // Text field for input
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: controller,
-                            decoration: const InputDecoration(
-                              hintText: "Enter Consumer",
-                            ),
-                            maxLines: 1,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: <TextInputFormatter>[
-                              FilteringTextInputFormatter.digitsOnly,
-                              LengthLimitingTextInputFormatter(6),
-                            ],
-                          ),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.add), // "Add More" button
-                          onPressed: () {
-                            String input = controller.text.trim();
-                            if (input.isNotEmpty) {
-                              // Count how many individual values are in the remarks list
-                              int currentCount = tvConsumerList
-                                  .map((remark) => remark.split(',').length)
-                                  .fold(0, (a, b) => a + b);
-
-                              // Check if we can add more consumers
-                              if (currentCount >= tvQty) {
-                                controller.clear();
-                                showFlushBar(context, Constants.tvConsumerCountExceed);
-                              } else {
-                                // Add the input as a string in the remarksList
-                                // setState(() {
-                                //   String input = controller.text.trim();
-                                //   if (input.isNotEmpty) {
-                                //     int currentCount = remarksList
-                                //         .map((remark) => remark.split(',').length)
-                                //         .reduce((a, b) => a + b);
-                                //     if (!remarksList.contains(input)) {
-                                //       setState(() {
-                                //         remarksList.add(
-                                //             input); // Add input to the list
-                                //         controller.clear();
-                                //         // Clear the input field for the next entry
-                                //       });
-                                //     } else {
-                                //       ScaffoldMessenger.of(context)
-                                //           .showSnackBar(
-                                //         SnackBar(
-                                //           content:
-                                //               Text('Consumer already added!'),
-                                //         ),
-                                //       );
-                                //     }
-                                //   }
-                                //   // remarksList.add(input);
-                                //   // controller.clear(); // Clear the input field
-                                // });
-                                setState(() {
-                                  String input = controller.text.trim();
-
-                                  if (input.isNotEmpty) {
-                                    // Count how many individual values are in the remarks list
-                                    int currentCount = tvConsumerList
-                                        .map((remark) =>
-                                    remark.split(',').length)
-                                        .fold(0, (a, b) => a + b);
-
-                                    // Check if the input value already exists in the remarksList or in currentCount (split values)
-                                    bool alreadyExists =
-                                    tvConsumerList.any((remark) {
-                                      // Check if any remark contains the input (case sensitive or case insensitive)
-                                      List<String> tvConsumerLists = remark
-                                          .split(',')
-                                          .map((e) => e.trim())
-                                          .toList();
-                                      return tvConsumerLists.contains(input);
-                                    });
-
-                                    if (alreadyExists) {
-                                      // Show a SnackBar if the input value already exists
-                                      showFlushBar(context, Constants.consumerExist);
-                                    } else {
-                                      // Add input to the list if it's not already present
-                                      setState(() {
-                                        tvConsumerList.add(
-                                            input); // Add input to the list
-                                        controller
-                                            .clear();
-                                        // Clear the input field for the next entry
-                                      });
-                                    }
-                                  }
-                                });
-                              }
-                            }else{
-                              Navigator.pop(context);
-                            }
-                          },
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-
-                    // Display the list of added remarks (Consumers)
-                    if (tvConsumerList.isNotEmpty)
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: tvConsumerList.length,
-                          itemBuilder: (context, index) {
-                            String remark = tvConsumerList[index];
-                            // Split the remark string into individual values (if separated by commas)
-                            List<String> tvConsumerLists =
-                            remark.split(',').map((e) => e.trim()).toList();
-
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Display each value from the split remark
-                                ...tvConsumerLists.map((individualRemark) {
-                                  return Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text('- $individualRemark'),
-                                      IconButton(
-                                        icon: const Icon(Icons.delete),
-                                        onPressed: () {
-                                          setState(() {
-                                            // Remove the specific remark item
-                                            tvConsumerLists.remove(individualRemark);
-                                            if (tvConsumerLists.isEmpty) {
-                                              tvConsumerList.removeAt(
-                                                  index); // Remove the remark completely if empty
-                                            } else {
-                                              // Update the list with the modified remark
-                                              tvConsumerList[index] =
-                                                  tvConsumerLists.join(', ');
-                                            }
-                                          });
-
-                                          EasyLoading.showToast(Constants.dataDeleted,
-                                              duration: const Duration(milliseconds: 3000));
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                }).toList(),
-                              ],
-                            );
-                          },
-                        ),
-                      ),
-
-                    // Display the warning message if the currentCount exceeds svQty
-                    Builder(
-                      builder: (context) {
-                        // Count how many individual values are in the remarks list
-
-                        int currentCount = tvConsumerList
-                            .map((remark) => remark.split(',').length)
-                            .fold(0, (a, b) => a + b);
-
-                        if (currentCount > tvQty) {
-                          return Row(
-                            children: [
-                              Text(
-                                Constants.tvConsumerCountExceedTwoLine,
-                                style: TextStyle(color: Colors.red),
-                              ),
-                            ],
-                          );
-                        } else {
-                          return SizedBox
-                              .shrink(); // Empty space if condition not met
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ),
-
-              shape: RoundedRectangleBorder(
-                borderRadius:
-                BorderRadius.circular(16), // Rounded corners for the dialog
-              ),
-
-              actions: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Cancel Button
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context); // Close the dialog
-                      },
-                      child: const Text(
-                        "CANCEL",
-                        style:TextStyle(fontWeight:FontWeight.bold,fontSize: 14),
-                      ),
-                    ),
-                    // Done Button
-                    ElevatedButton(
-                      onPressed: () {
-                        // Count the total number of values (split by commas)
-                        int currentCount = tvConsumerList
-                            .map((remark) => remark.split(',').length)
-                            .fold(0, (a, b) => a + b);
-
-                        // Check if the number of consumers is less than the allowed quantity (svQty)
-                        if (currentCount > tvQty) {
-                          // ScaffoldMessenger.of(context).showSnackBar(
-                          //   SnackBar(
-                          //     content: Text(
-                          //         'You can add only $svQty consumers !'),
-                          //   ),
-                          // );
-
-                          showFlushBar(context, Constants.tvConsumerCountExceed);
-
-                          // showDialog(
-                          //   context: context,
-                          //   builder: (context) {
-                          //     return AlertDialog(
-                          //       title: Text('Limit Exceeded'),
-                          //       content: Text(
-                          //         'You can add only $svQty consumers !.',
-                          //       ),
-                          //       actions: [
-                          //         TextButton(
-                          //           onPressed: () {
-                          //             Navigator.pop(context); // Close the alert
-                          //           },
-                          //           child: Text('Cancel'),
-                          //         ),
-                          //         ElevatedButton(
-                          //           onPressed: () {
-                          //             Navigator.pop(context);
-                          //             Navigator.pop(
-                          //                 context); // Close the main dialog// Close the alert
-                          //           },
-                          //           child: Text('OK'),
-                          //         ),
-                          //       ],
-                          //     );
-                          //   },
-                          // );
-                        } else {
-                          // Otherwise, proceed to close the dialog
-                          String remark = controller.text.trim();
-                          if (remark.isNotEmpty) {
-                            // Count how many individual values are in the remarks list
-                            int currentCount = tvConsumerList
-                                .map((remark) => remark.split(',').length)
-                                .fold(0, (a, b) => a + b);
-
-                            // Check if adding the new remark will exceed svQty
-                            if (currentCount >= tvQty) {
-                              // If the number of items exceeds svQty, show a message to the user
-                              showFlushBar(context, Constants.tvConsumerCountExceed);
-                            } else {
-                              // If the current count is within the limit, add the new remark
-                              setState(() {
-                                tvConsumerList.add(
-                                    remark); // Add the new remark to the list
-                                controller.clear();
-                                Navigator.pop(context);// Clear the input field
-                              });
-                            }
-                          }else{
-                            Navigator.pop(context);
-                          }
-                          controller.clear();
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                      ),
-                      child: const Text(
-                        "DONE",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
   }
 
   @override
@@ -1229,9 +749,9 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
               // Delivery Date
               itemSubLine("Delivery Date",formattedDate!),
               SizedBox(height: 5,),
-              itemSubLine("Delivery Men",selectedDelBoyName!),
+              itemSubLine("Delivery Men",selectedDelBoyName ?? ''),
               SizedBox(height: 5,),
-              itemSubLine("Vehicle No.",vehicleNo!),
+              itemSubLine("Vehicle No.",vehicleNo ?? ''),
               SizedBox(height: 5,),
               Divider(),
               /// Add New Section Imbalance
@@ -1604,6 +1124,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                             decoration: buildInputBorderUpdateStatus(
                                 "Enter SV-", context),
                             style: Styling.textFormText,
+                            enabled: false,
                             onChanged: (value) {
                               setState(() {
                                 // Recalculate empty quantity
@@ -1639,8 +1160,10 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                           iconSize: 35,
                           onPressed: () {
                             int svQty = int.tryParse(_svController.text) ?? 0;
-                            _showPopupDialogs(
-                                "SV", _svRemarkController, svQty);
+                            // _showPopupDialogs(
+                            //     "SV", _svRemarkController, svQty);
+                            _fetchSVConsumerData("SV");
+                            _showConsumerNumberPopup();
                           },
                           icon: const Icon(Icons.add_circle_outline_sharp),
                         ),
@@ -1671,6 +1194,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                             ],
                             decoration: buildInputBorderUpdateStatus(
                                 "Enter TV+", context),
+                            enabled: false,
                             style: Styling.textFormText,
                             onChanged: (value) {
                               setState(() {
@@ -1707,8 +1231,10 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                           iconSize: 35,
                           onPressed: () {
                             int tvQty = int.tryParse(_tvController.text) ?? 0;
-                            _showPopupDialogsTVConsumer(
-                                "TV", _tvRemarkController, tvQty);
+                            // _showPopupDialogsTVConsumer(
+                            //     "TV", _tvRemarkController, tvQty);
+                            _fetchTVConsumerData("TV");
+                            _showConsumerNumberTVPopup();
                           },
                           icon: const Icon(Icons.add_circle_outline_sharp),
                         ),
@@ -1878,7 +1404,12 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                   if (filledValue >= defectiveValue) {
                                     if (emptyValue >= 0) {
                                       if (_svController.text.isNotEmpty) {
-                                        int currentCount = remarksList
+                                        List<String> consumerNumberss = getConsumerNumbers();
+                                        List<int> cylinderQuantities = getCylinderQuantities();
+
+                                        List<String> consumerNumberssTV = getConsumerNumbersTV();
+                                        List<int> cylinderQuantitiesTV = getCylinderQuantitiesTV();
+                                        int currentCount = consumerNumberss
                                             .map((remark) =>
                                         remark
                                             .split(',')
@@ -1892,7 +1423,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                               Constants.svConsumerCountExceed);
                                         } else {
                                           if (_tvController.text.isNotEmpty) {
-                                            int currentCountTV = tvConsumerList
+                                            int currentCountTV = consumerNumberssTV
                                                 .map((remark) =>
                                             remark
                                                 .split(',')
@@ -1912,7 +1443,9 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                         }
                                       } else {
                                         if (_tvController.text.isNotEmpty) {
-                                          int currentCountTV = tvConsumerList
+                                          List<String> consumerNumberssTV = getConsumerNumbersTV();
+                                          List<int> cylinderQuantitiesTV = getCylinderQuantitiesTV();
+                                          int currentCountTV = consumerNumberssTV
                                               .map((remark) =>
                                           remark
                                               .split(',')
@@ -1963,7 +1496,9 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                     if (filledValue > defectiveValue) {
                                       if (emptyValue >= 0) {
                                         if (_svController.text.isNotEmpty) {
-                                          int currentCount = remarksList
+                                          List<String> consumerNumberss = getConsumerNumbers();
+                                          List<int> cylinderQuantities = getCylinderQuantities();
+                                          int currentCount = consumerNumberss
                                               .map((remark) =>
                                           remark
                                               .split(',')
@@ -1977,7 +1512,9 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                 .svConsumerCountExceed);
                                           } else {
                                             if (_tvController.text.isNotEmpty) {
-                                              int currentCountTV = tvConsumerList
+                                              List<String> consumerNumberssTV = getConsumerNumbersTV();
+                                              List<int> cylinderQuantitiesTV = getCylinderQuantitiesTV();
+                                              int currentCountTV = consumerNumberssTV
                                                   .map((remark) =>
                                               remark
                                                   .split(',')
@@ -1989,6 +1526,11 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                 showFlushBar(context, Constants
                                                     .tvConsumerCountExceed);
                                               } else {
+                                                List<String> consumerNumberss = getConsumerNumbers();
+                                                List<int> cylinderQuantities = getCylinderQuantities();
+
+                                                List<String> consumerNumberssTV = getConsumerNumbersTV();
+                                                List<int> cylinderQuantitiesTV = getCylinderQuantitiesTV();
                                                 final isUpdated =
                                                 await updateRefillSale
                                                     ?.updateRowByColID(
@@ -2021,10 +1563,10 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                     _lessEmptyController.text,
                                                     remark: _remarkController
                                                         .text,
-                                                    svRemark: remarksList.join(
-                                                        ', '),
-                                                    tvConsumerNo: tvConsumerList
-                                                        .join(', '),
+                                                    svRemark: consumerNumberss.join(', '),
+                                                    svCount: cylinderQuantities.join(', '),
+                                                    tvConsumerNo: consumerNumberssTV.join(', '),
+                                                    tvCount: cylinderQuantitiesTV.join(', '),
                                                     updateFlag: 'pending',
                                                     itemAddedDate: formattedDate,
                                                   ),
@@ -2057,6 +1599,12 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                     tvConsumerList.clear();
                                                     _selectedItemModel = null;
                                                     _selectedItem = '';
+                                                    selectedConsumerNumbers.clear();
+                                                    selectedCylinderQuantities.clear();
+                                                    totalCylinderQty = 0;
+                                                    selectedConsumerNumbersTV.clear();
+                                                    selectedCylinderQuantitiesTV.clear();
+                                                    totalCylinderQtyTV = 0;
                                                   });
                                                 } else {
                                                   showFlushBar(context,
@@ -2065,6 +1613,11 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                 }
                                               }
                                             } else {
+                                              List<String> consumerNumberss = getConsumerNumbers();
+                                              List<int> cylinderQuantities = getCylinderQuantities();
+
+                                              List<String> consumerNumberssTV = getConsumerNumbersTV();
+                                              List<int> cylinderQuantitiesTV = getCylinderQuantitiesTV();
                                               final isUpdated =
                                               await updateRefillSale
                                                   ?.updateRowByColID(
@@ -2097,10 +1650,10 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                   _lessEmptyController.text,
                                                   remark: _remarkController
                                                       .text,
-                                                  svRemark: remarksList.join(
-                                                      ', '),
-                                                  tvConsumerNo: tvConsumerList
-                                                      .join(', '),
+                                                  svRemark: consumerNumberss.join(', '),
+                                                  svCount: cylinderQuantities.join(', '),
+                                                  tvConsumerNo: consumerNumberssTV.join(', '),
+                                                  tvCount: cylinderQuantitiesTV.join(', '),
                                                   updateFlag: 'pending',
                                                   itemAddedDate: formattedDate,
                                                 ),
@@ -2133,6 +1686,12 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                   tvConsumerList.clear();
                                                   _selectedItemModel = null;
                                                   _selectedItem = '';
+                                                  selectedConsumerNumbers.clear();
+                                                  selectedCylinderQuantities.clear();
+                                                  totalCylinderQty = 0;
+                                                  selectedConsumerNumbersTV.clear();
+                                                  selectedCylinderQuantitiesTV.clear();
+                                                  totalCylinderQtyTV = 0;
                                                 });
                                               } else {
                                                 showFlushBar(context, Constants
@@ -2142,7 +1701,9 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                           }
                                         } else {
                                           if (_tvController.text.isNotEmpty) {
-                                            int currentCountTV = tvConsumerList
+                                            List<String> consumerNumberssTV = getConsumerNumbersTV();
+                                            List<int> cylinderQuantitiesTV = getCylinderQuantitiesTV();
+                                            int currentCountTV = consumerNumberssTV
                                                 .map((remark) =>
                                             remark
                                                 .split(',')
@@ -2154,6 +1715,11 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                               showFlushBar(context, Constants
                                                   .tvConsumerCountExceed);
                                             } else {
+                                              List<String> consumerNumberss = getConsumerNumbers();
+                                              List<int> cylinderQuantities = getCylinderQuantities();
+
+                                              List<String> consumerNumberssTV = getConsumerNumbersTV();
+                                              List<int> cylinderQuantitiesTV = getCylinderQuantitiesTV();
                                               final isUpdated =
                                               await updateRefillSale
                                                   ?.updateRowByColID(
@@ -2186,10 +1752,10 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                   _lessEmptyController.text,
                                                   remark: _remarkController
                                                       .text,
-                                                  svRemark: remarksList.join(
-                                                      ', '),
-                                                  tvConsumerNo: tvConsumerList
-                                                      .join(', '),
+                                                  svRemark: consumerNumberss.join(', '),
+                                                  svCount: cylinderQuantities.join(', '),
+                                                  tvConsumerNo: consumerNumberssTV.join(', '),
+                                                  tvCount: cylinderQuantitiesTV.join(', '),
                                                   updateFlag: 'pending',
                                                   itemAddedDate: formattedDate,
                                                 ),
@@ -2222,6 +1788,12 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                   tvConsumerList.clear();
                                                   _selectedItemModel = null;
                                                   _selectedItem = '';
+                                                  selectedConsumerNumbers.clear();
+                                                  selectedCylinderQuantities.clear();
+                                                  totalCylinderQty = 0;
+                                                  selectedConsumerNumbersTV.clear();
+                                                  selectedCylinderQuantitiesTV.clear();
+                                                  totalCylinderQtyTV = 0;
                                                 });
                                               } else {
                                                 showFlushBar(context, Constants
@@ -2229,6 +1801,11 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                               }
                                             }
                                           } else {
+                                            List<String> consumerNumberss = getConsumerNumbers();
+                                            List<int> cylinderQuantities = getCylinderQuantities();
+
+                                            List<String> consumerNumberssTV = getConsumerNumbersTV();
+                                            List<int> cylinderQuantitiesTV = getCylinderQuantitiesTV();
                                             final isUpdated =
                                             await updateRefillSale
                                                 ?.updateRowByColID(
@@ -2261,10 +1838,10 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                 _lessEmptyController.text,
                                                 remark: _remarkController
                                                     .text,
-                                                svRemark: remarksList.join(
-                                                    ', '),
-                                                tvConsumerNo: tvConsumerList
-                                                    .join(', '),
+                                                svRemark: consumerNumberss.join(', '),
+                                                svCount: cylinderQuantities.join(', '),
+                                                tvConsumerNo: consumerNumberssTV.join(', '),
+                                                tvCount: cylinderQuantitiesTV.join(', '),
                                                 updateFlag: 'pending',
                                                 itemAddedDate: formattedDate,
                                               ),
@@ -2297,6 +1874,12 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                 tvConsumerList.clear();
                                                 _selectedItemModel = null;
                                                 _selectedItem = '';
+                                                selectedConsumerNumbers.clear();
+                                                selectedCylinderQuantities.clear();
+                                                totalCylinderQty = 0;
+                                                selectedConsumerNumbersTV.clear();
+                                                selectedCylinderQuantitiesTV.clear();
+                                                totalCylinderQtyTV = 0;
                                               });
                                             } else {
                                               showFlushBar(context,
@@ -2381,7 +1964,12 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                             _remarkController.clear();
                             remarksList.clear();
                             tvConsumerList.clear();
-
+                            selectedConsumerNumbers.clear();
+                            selectedCylinderQuantities.clear();
+                            totalCylinderQty = 0;
+                            selectedConsumerNumbersTV.clear();
+                            selectedCylinderQuantitiesTV.clear();
+                            totalCylinderQtyTV = 0;
                           }):
                           setState(() {
                             // _editingItemId = null;
@@ -2394,7 +1982,12 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                             _remarkController.clear();
                             remarksList.clear();
                             tvConsumerList.clear();
-
+                            selectedConsumerNumbers.clear();
+                            selectedCylinderQuantities.clear();
+                            totalCylinderQty = 0;
+                            selectedConsumerNumbersTV.clear();
+                            selectedCylinderQuantitiesTV.clear();
+                            totalCylinderQtyTV = 0;
                           });
                         },
                         child: Text("Clear"))
@@ -2978,7 +2571,6 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                             deliveryDateController.text)
                             : null;
                       }
-
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 25.0,right: 25,top: 12,bottom: 12),
@@ -3224,6 +2816,8 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
             "DailySaleStatus": 1,
             "SVConsStr": item.svRemark ?? "",
             "TVConsStr": item.tvConsumerNo ?? "",
+            "SVQtyStr": item.svCount ?? "",
+            "TVQtyStr": item.tvCount ?? "",
           };
         }).toList();
 
@@ -3264,7 +2858,14 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
             print('Data sent successfully');
             EasyLoading.showToast("Data Sent Successfully.",
                 duration: const Duration(milliseconds: 3000));
-            Navigator.pushReplacementNamed(context, '/deliveryMenListShowScreen');
+            // Navigator.pushReplacementNamed(context, '/deliveryMenListShowScreen');
+            // Navigator.pushReplacementNamed(
+            //   context,
+            //   '/bottomNavigationForGodownKeeper',
+            //   arguments: 1, // Pass the index of the tab you want to show (e.g., Delivery Men tab)
+            // );
+            Navigator.pushReplacementNamed(context, BottomNavigationForGodownKeeper.screenName);
+
             // Safely extract ItemIds (ensure they're integers)
             List<int> itemIds = apiItemList.map<int>((item) {
               // Try to safely parse the ItemId string as an integer
@@ -3376,6 +2977,12 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
   void _populateFieldsForEdit(Map<String, Object?> item) {
     setState(() {
       // Populate text fields with data from the item
+      selectedConsumerNumbers.clear();
+      selectedCylinderQuantities.clear();
+
+      selectedConsumerNumbersTV.clear();
+      selectedCylinderQuantitiesTV.clear();
+
       _filledController.text = item['filled'].toString();
       _svController.text = item['sv'].toString();
       _tvController.text = item['tv'].toString();
@@ -3383,23 +2990,95 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
       _defectiveController.text = item['defective'].toString();
       _lessEmptyController.text = item['lessEmpty'].toString();
       _remarkController.text = item['remark']?.toString() ?? '';
+      // Initialize lists for consumer numbers and their quantities (SV, TV, etc.)
 
       // Set the selected item in the dropdown by finding the item in the list
       _selectedItem = item['itemName'].toString();
       selectedItemId = int.parse(item['itemID'].toString());
 
+      // String? svRemark = item['svRemark']?.toString();
+      // if (svRemark != null &&
+      //     svRemark.isNotEmpty &&
+      //     !selectedConsumerNumbers.contains(svRemark)) {
+      //   selectedConsumerNumbers.add(svRemark);
+      // }
+      // Split the svRemark and svCount values and populate the lists
+
+      //
+      // String? svRemark = item['svRemark']?.toString();
+      // String? svCount = item['svCount']?.toString();
+      //
+      // if (svRemark != null && svCount != null) {
+      //   // Split the comma-separated consumer numbers and quantities
+      //   List<String> consumerNumbers = svRemark.split(',').map((e) => e.trim()).toList();
+      //   List<String> quantities = svCount.split(',').map((e) => e.trim()).toList();
+      //
+      //   // Populate the selectedConsumerNumbers and selectedCylinderQuantities lists
+      //   for (int i = 0; i < consumerNumbers.length; i++) {
+      //     String consumerNo = consumerNumbers[i];
+      //     String qtyStr = quantities[i];
+      //     int cylQty = int.tryParse(qtyStr) ?? 0; // Ensure safe parsing
+      //
+      //     selectedConsumerNumbers.add(consumerNo);
+      //     selectedCylinderQuantities.add(cylQty);
+      //   }
+      // }
+
+      ///sv
+      // Split the svRemark and svCount values and populate the lists
       String? svRemark = item['svRemark']?.toString();
-      if (svRemark != null &&
-          svRemark.isNotEmpty &&
-          !remarksList.contains(svRemark)) {
-        remarksList.add(svRemark);
+      String? svCount = item['svCount']?.toString();
+
+      if (svRemark != null && svCount != null && svRemark.isNotEmpty && svCount.isNotEmpty) {
+
+        // Split the comma-separated consumer numbers and quantities
+        List<String> consumerNumbers = svRemark.split(',').map((e) => e.trim()).toList();
+        List<String> quantities = svCount.split(',').map((e) => e.trim()).toList();
+
+        // Populate the selectedConsumerNumbers and selectedCylinderQuantities lists
+        for (int i = 0; i < consumerNumbers.length; i++) {
+          String consumerNo = consumerNumbers[i];
+          String qtyStr = quantities[i];
+          int cylQty = int.tryParse(qtyStr) ?? 0; // Ensure safe parsing
+
+          // Only add if the consumer number is not already in the list
+          if (!selectedConsumerNumbers.contains(consumerNo)) {
+            selectedConsumerNumbers.add(consumerNo);
+            selectedCylinderQuantities.add(cylQty);
+          }
+        }
+      }else{
+        selectedConsumerNumbers.clear();
+        selectedCylinderQuantities.clear();
+
       }
 
-      String? tvConsumerNo = item['tvConsumerNo']?.toString();
-      if (tvConsumerNo != null &&
-          tvConsumerNo.isNotEmpty &&
-          !tvConsumerList.contains(tvConsumerNo)) {
-        tvConsumerList.add(tvConsumerNo);
+
+      ///
+      String? tvRemark = item['tvConsumerNo']?.toString();
+      String? tvCount = item['tvCount']?.toString();
+
+      if (tvRemark != null && tvCount != null && tvRemark.isNotEmpty && tvCount.isNotEmpty) {
+
+        // Split the comma-separated consumer numbers and quantities
+        List<String> consumerNumbersTV = tvRemark.split(',').map((e) => e.trim()).toList();
+        List<String> quantitiesTV = tvCount.split(',').map((e) => e.trim()).toList();
+
+        // Populate the selectedConsumerNumbers and selectedCylinderQuantities lists
+        for (int i = 0; i < consumerNumbersTV.length; i++) {
+          String consumerNoTV = consumerNumbersTV[i];
+          String qtyStrTV = quantitiesTV[i];
+          int cylQtyTV = int.tryParse(qtyStrTV) ?? 0; // Ensure safe parsing
+
+          // Only add if the consumer number is not already in the list
+          if (!selectedConsumerNumbersTV.contains(consumerNoTV)) {
+            selectedConsumerNumbersTV.add(consumerNoTV);
+            selectedCylinderQuantitiesTV.add(cylQtyTV);
+          }
+        }
+      }else{
+        selectedConsumerNumbersTV.clear();
+        selectedCylinderQuantitiesTV.clear();
       }
 
       // Find the selected item in the list and update _selectedItem
@@ -3816,6 +3495,8 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                 "DailySaleStatus": dailyStatus,
                 "SVConsStr": item.sVConsStr,
                 "TVConsStr": item.TVConsStr,
+                "SVQtyStr": item.SVQtyStr ?? "",
+                "TVQtyStr": item.TVQtyStr ?? "",
               });
             }
           }
@@ -3850,13 +3531,20 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
           },
           body: jsonEncode(apiData),
         );
-        print('jsonEncode(apiData): ${jsonEncode(apiData)}');
-        print('jsonEncode(apiData): ${jsonEncode(apiItemList)}');
+        print('jsonEncode(apiData) Edit: ${jsonEncode(apiData)}');
+        print('jsonEncode(apiData) Edit: ${jsonEncode(apiItemList)}');
         if (response.statusCode == 200) {
           print('Data sent successfully: ${response.body}');
           EasyLoading.showToast("Data Sent Successfully..",
               duration: const Duration(milliseconds: 3000));
-          Navigator.pushReplacementNamed(context, '/godownDashboard');
+          // Navigator.pushReplacementNamed(context, '/deliveryMenListShowScreen');
+          // Navigator.pushReplacementNamed(
+          //   context,
+          //   '/bottomNavigationForGodownKeeper',
+          //   arguments: 1, // Pass the index of the tab you want to show (e.g., Delivery Men tab)
+          // );
+          Navigator.pushReplacementNamed(context, BottomNavigationForGodownKeeper.screenName);
+
           EasyLoading.dismiss();
         } else {
           print('Failed to send data: ${response.statusCode}');
@@ -3996,5 +3684,741 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
     filledStock = selectedItemStock.currentStkFilled; // Save the filled stock value
     EasyLoading.dismiss();
   }
+
+  Future<void> _fetchSVConsumerData(String flag) async {
+    EasyLoading.show();
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+    if (Constants.isNetworkAvailable) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? distributorId = prefs.getString('DistributorId');
+      String? godownId = prefs.getString('godownId');
+      String? addedBy = prefs.getString('StaffId');
+      String? godownKeeperId = prefs.getString('godownKeeperId');
+      String? token = prefs.getString('token'); // This is your bearer token
+      int dId = int.parse(distributorId!);
+
+      try {
+        final response = await http.get(
+          Uri.parse('${AppUrl.GetDailySaleSVTVConsumerDtls_Mob}/$dId/$flag'),
+          headers: {
+            'Authorization': 'Bearer $token', // Add the Bearer token here
+          },
+        );
+        print("GetDailySaleSVTVConsumerDtls_Mob response ${response.body}");
+        print("GetDailySaleSVTVConsumerDtls_Mobrequest ${response.request}");
+        if (response.statusCode == 200) {
+          final List<dynamic> data = json.decode(response.body);
+
+          // setState(() {
+          //   getSvtvConsumerList = data.map((json) => GetSvtvConsumerListModel.fromJson(json)).toList();
+          //   isLoading = false;
+          //   consumerNumbers = getSvtvConsumerList.map((item) => item.consumerNo.toString()).toList();
+          //   EasyLoading.dismiss();
+          //
+          // }
+          // );
+
+          setState(() {
+            getSvtvConsumerList = data
+                .map((json) => GetSvtvConsumerListModel.fromJson(json))
+                .where((item) => item.cylQty != null && item.cylQty! > 0) // Filter consumers with cylQty > 0
+                .toList();
+
+            isLoading = false;
+            consumerNumbers = getSvtvConsumerList
+                .map((item) => item.consumerNo.toString())
+                .toList();
+
+            EasyLoading.dismiss();
+          });
+
+        } else {
+          // Handle non-200 responses
+          setState(() {
+            EasyLoading.dismiss();
+            isLoading = false;
+          });
+          showFlushBar(context, Constants.listGettingFail);
+        }
+      } catch (e) {
+        setState(() {
+          EasyLoading.dismiss();
+          isLoading = false;
+        });
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(content: Text('Error: $e')),
+        // );
+        showFlushBar(context,  Constants.listGettingFail);
+      }
+    } else {
+      EasyLoading.dismiss();
+      showFlushBar(
+          context, Constants.connectionMessage);
+    }
+  }
+
+  Future<void> _fetchTVConsumerData(String flag) async {
+    EasyLoading.show();
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+    if (Constants.isNetworkAvailable) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? distributorId = prefs.getString('DistributorId');
+      String? godownId = prefs.getString('godownId');
+      String? addedBy = prefs.getString('StaffId');
+      String? godownKeeperId = prefs.getString('godownKeeperId');
+      String? token = prefs.getString('token'); // This is your bearer token
+      int dId = int.parse(distributorId!);
+
+      try {
+        final response = await http.get(
+          Uri.parse('${AppUrl.GetDailySaleSVTVConsumerDtls_Mob}/$dId/$flag'),
+          headers: {
+            'Authorization': 'Bearer $token', // Add the Bearer token here
+          },
+        );
+        print("GetDailySaleSVTVConsumerDtls_Mob response ${response.body}");
+        print("GetDailySaleSVTVConsumerDtls_Mobrequest ${response.request}");
+        if (response.statusCode == 200) {
+          final List<dynamic> data = json.decode(response.body);
+
+          // setState(() {
+          //   getSvtvConsumerListTV = data.map((json) => GetSvtvConsumerListModel.fromJson(json)).toList();
+          //   isLoading = false;
+          //   consumerNumbersTV = getSvtvConsumerListTV.map((item) => item.consumerNo.toString()).toList();
+          //   EasyLoading.dismiss();
+          //
+          // });
+
+          setState(() {
+            getSvtvConsumerListTV = data
+                .map((json) => GetSvtvConsumerListModel.fromJson(json))
+                .where((item) => item.cylQty != null && item.cylQty! > 0) // Filter consumers with cylQty > 0
+                .toList();
+
+            isLoading = false;
+            consumerNumbersTV = getSvtvConsumerListTV
+                .map((item) => item.consumerNo.toString())
+                .toList();
+
+            EasyLoading.dismiss();
+          });
+
+        } else {
+          // Handle non-200 responses
+          setState(() {
+            EasyLoading.dismiss();
+            isLoading = false;
+          });
+          showFlushBar(context, Constants.listGettingFail);
+        }
+      } catch (e) {
+        setState(() {
+          EasyLoading.dismiss();
+          isLoading = false;
+        });
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   SnackBar(content: Text('Error: $e')),
+        // );
+        showFlushBar(context,  Constants.listGettingFail);
+      }
+    } else {
+      EasyLoading.dismiss();
+      showFlushBar(
+          context, Constants.connectionMessage);
+    }
+  }
+
+  void _showConsumerNumberPopup() {
+    bool showAddedConsumers = false;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Select Consumer Number'),
+          content: Container(
+            width: double.maxFinite, // Make dialog wide
+            child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                // Defer the state update to after the build phase using addPostFrameCallback
+                WidgetsBinding.instance!.addPostFrameCallback((_) {
+                  // Calculate the sum of the cylQty
+                  double totalCylinderQty = 0;
+                  selectedConsumerNumbers.forEach((consumerNo) {
+                    // Find the corresponding cylinder quantity from the selected list
+                    int? cylQty = selectedCylinderQuantities[selectedConsumerNumbers.indexOf(consumerNo)];
+                    totalCylinderQty += cylQty ?? 0;
+                  });
+                  // Update SV Cylinder and recalculate using the integer value of totalCylinderQty
+                  updateSvCylinderAndRecalculate(totalCylinderQty.toInt());
+                });
+
+                return SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      buildConsumerNumberDropdown(
+                        setState,
+                        selectedConsumerNumbers,
+                            (bool value) {
+                          setState(() {
+                            showAddedConsumers = value;
+                          });
+                        },
+                      ),
+                      SizedBox(height: 10),
+                      // Only show the list of selected consumer numbers after clicking the plus icon
+                      if (selectedConsumerNumbers.isNotEmpty)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Text("Added Consumer Numbers:"),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 0.0),
+                              child: Row(
+                                children: [
+                                  Expanded(flex:2,
+                                    child: Text(
+                                      "Cons No.",
+                                      style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
+                                    ),
+                                  ),
+                                  Expanded(flex:1,
+                                    child: Text(
+                                      "Quantity",
+                                      style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
+                                    ),
+                                  ),
+                                  Expanded(flex:1,
+                                    child: Text(
+                                      "Action",
+                                      style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            ...selectedConsumerNumbers.map((consumerNo) {
+                              // Find the corresponding cylinder quantity from selectedCylinderQuantities list
+                              int cylQty = selectedCylinderQuantities[selectedConsumerNumbers.indexOf(consumerNo)];
+
+                              return Padding(
+                                padding: const EdgeInsets.only(top: 4.0),
+                                child:
+                                Row(
+                                  children: [
+                                    Expanded(flex:2,
+                                      child: Text(
+                                        consumerNo,
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                    ),
+                                    SizedBox(width: 15),
+                                    // Display the cylinder quantity dynamically
+                                    Expanded(flex:1,
+                                      child: Text(
+                                        cylQty.toString(),
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                    ),
+                                    Expanded(flex:1,
+                                      child: IconButton(
+                                        icon: Icon(Icons.delete, color: Colors.black87),
+                                        onPressed: () {
+                                          setState(() {
+                                            // Remove the consumer number and its corresponding cylinder quantity
+                                            int index = selectedConsumerNumbers.indexOf(consumerNo);
+                                            if (index != -1) {
+                                              selectedConsumerNumbers.removeAt(index);
+                                              selectedCylinderQuantities.removeAt(index);
+                                            }
+                                          });
+                                          updateTotalCylinderQty(); // Recalculate total cylinder quantity
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                            // SizedBox(height: 10),
+                            // // Display the total sum of the cylinder quantities
+                            // Text(
+                            //   'Total Cylinder Quantity: ${totalCylinderQty.toStringAsFixed(0)}',
+                            //   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            // ),
+                          ],
+                        ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.blue, // Set the background color here
+                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20), // Optional: Add padding
+              ),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Done',style: TextStyle(color: Colors.white),),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget buildConsumerNumberDropdown(StateSetter setState, List<String> selectedConsumerNumbersInDialog, Function setShowAddedConsumers) {
+    return Row(
+      children: [
+        Expanded(
+          child: Autocomplete<String>(
+            optionsBuilder: (TextEditingValue textEditingValue) {
+              if (textEditingValue.text.isEmpty) {
+                return const Iterable<String>.empty(); // Return empty if no input
+              }
+              return consumerNumbers.where((consumerNo) =>
+                  consumerNo.toLowerCase().contains(textEditingValue.text.toLowerCase()));
+            },
+            onSelected: (String selectedConsumerNo) {
+              consumerController.text = selectedConsumerNo; // Set text when selected from autocomplete
+            },
+            fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
+              return TextField(
+                controller: textEditingController,
+                focusNode: focusNode,
+                onSubmitted: (_) {
+                  String consumerNo = textEditingController.text.trim();
+                  print("Entered consumer number: $consumerNo"); // Print the entered consumer number
+                  print("Available consumer numbers: $consumerNumbers"); // Print available consumer numbers
+
+                  if (consumerNo.isEmpty || !consumerNumbers.contains(consumerNo)) {
+                    print("Consumer number is not valid.");
+                    EasyLoading.showToast(Constants.svTvConsumerSelectFromDD, duration: const Duration(milliseconds: 3000));
+
+                  } else {
+                    print("Consumer number is valid.");
+                    onFieldSubmitted(); // Proceed if valid
+                  }
+                  // onFieldSubmitted();
+                },
+                decoration: InputDecoration(
+                  labelText: 'Consumer Number',
+                  border: OutlineInputBorder(),
+                ),
+              );
+            },
+          ),
+        ),
+        IconButton(
+          icon: Icon(Icons.add_circle_outline_sharp),
+          onPressed: () async {
+    String consumerNo = consumerController.text.trim();
+    print("Entered consumer number: $consumerNo"); // Print the entered consumer number
+    print("Available consumer numbers: $consumerNumbers");
+    if (consumerNo.isEmpty || !consumerNumbers.contains(consumerNo)) {
+      print("Consumer number is not valid.");
+      EasyLoading.showToast(Constants.svTvConsumerSelectFromDD, duration: const Duration(milliseconds: 3000));
+      return;
+    }
+    // Check if consumer number is already in the list
+    if (consumerNo.isNotEmpty) {
+      if (selectedConsumerNumbersInDialog.contains(consumerNo)) {
+        // Show a message that the consumer number is already added
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('This consumer number is already added.')),
+        );
+      } else {
+        bool consumerExists = await updateRefillSale!.checkIfConsumerExistsInDatabaseSV(consumerNo);
+        if (consumerExists) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Consumer number $consumerNo already exists in the database.'))
+          );
+          return; // If the consumer exists, stop further execution
+        }
+                  // setState((){
+                    // Add selected consumer number to the list and show it below the dropdown
+                    if (consumerController.text.isNotEmpty &&
+                        !selectedConsumerNumbersInDialog.contains(consumerController.text)) {
+                      setState(() {
+                        String consumerNo = consumerController.text;
+                        selectedConsumerNumbersInDialog.add(consumerNo); // Add to list
+                        GetSvtvConsumerListModel? consumer = getSvtvConsumerList.firstWhere(
+                              (c) => c.consumerNo == consumerNo,
+                          orElse: () => GetSvtvConsumerListModel(consumerNo: '', cylQty: 0),
+                        );
+                        selectedCylinderQuantities.add(consumer.cylQty?.toInt() ?? 0); // Add cylinder quantity to the corresponding list
+                        consumerController.clear();
+                        // Clear the input field after adding
+                        setShowAddedConsumers(true);
+                        consumerController.text = '';
+                      });
+                      updateTotalCylinderQty(); // Recalculate total cylinder quantity
+                    }
+                  // });
+                  Navigator.of(context).pop();
+                  _showConsumerNumberPopup();
+      }
+    }
+
+          },
+        ),
+      ],
+    );
+  }
+
+// This function can be used to get the separate lists of consumer numbers and cylinder quantities
+  List<String> getConsumerNumbers() {
+    return selectedConsumerNumbers;
+  }
+
+  List<int> getCylinderQuantities() {
+    return selectedCylinderQuantities;
+  }
+
+  // This method calculates the total cylinder quantity based on selected consumers
+  void updateTotalCylinderQty() {
+    totalCylinderQty = 0;  // Reset the total cylinder quantity
+
+    // Loop through all selected consumer numbers
+    selectedConsumerNumbers.forEach((consumerNo) {
+      // Look up the consumer data using the consumer number
+      GetSvtvConsumerListModel? consumer = getSvtvConsumerList.firstWhere(
+            (c) => c.consumerNo == consumerNo,
+        orElse: () => GetSvtvConsumerListModel(consumerNo: '', cylQty: 0), // Return default if not found
+      );
+
+      // Add the consumer's cylinder quantity (cylQty) to the total
+      totalCylinderQty += consumer.cylQty ?? 0;
+      print('Total Cylinder Quantity sv: $totalCylinderQty');
+    });
+  }
+
+
+// Function to update the SV cylinder and trigger the calculation
+  void updateSvCylinderAndRecalculate(int svQty) {
+    // Update the controller with the new SV quantity
+    _svController.text = svQty.toString();
+
+    // Now perform the calculation and update the empty quantity
+    setState(() {
+      // Get the other quantities
+      int filledQty = int.tryParse(_filledController.text) ?? 0;
+      int tvQty = int.tryParse(_tvController.text) ?? 0;
+      int defQty = int.tryParse(_defectiveController.text) ?? 0;
+      int lessEmptyQty = int.tryParse(_lessEmptyController.text) ?? 0;
+
+      // Perform the calculation for the empty quantity
+      int emptyQty = filledQty - svQty + tvQty - defQty - lessEmptyQty;
+
+      // Update the empty quantity in the _emptyController text field
+      _emptyController.text = emptyQty.toString();
+    });
+  }
+
+  ///tv
+  void _showConsumerNumberTVPopup() {
+    bool showAddedConsumers = false;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Select Consumer Number'),
+          content: Container(
+            width: double.maxFinite, // Make dialog wide
+            child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+                // Defer the state update to after the build phase using addPostFrameCallback
+                WidgetsBinding.instance!.addPostFrameCallback((_) {
+                  // Calculate the sum of the cylQty
+                  double totalCylinderQtyTV = 0;
+                  selectedConsumerNumbersTV.forEach((consumerNo) {
+                    // Find the corresponding cylinder quantity from the selected list
+                    int? cylQty = selectedCylinderQuantitiesTV[selectedConsumerNumbersTV.indexOf(consumerNo)];
+                    totalCylinderQtyTV += cylQty ?? 0;
+                  });
+                  // Update SV Cylinder and recalculate using the integer value of totalCylinderQty
+                  updateSvCylinderAndRecalculateTV(totalCylinderQtyTV.toInt());
+                });
+
+                return SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      buildConsumerNumberTVDropdown(
+                        setState,
+                        selectedConsumerNumbersTV,
+                            (bool value) {
+                          setState(() {
+                            showAddedConsumers = value;
+                          });
+                        },
+                      ),
+                      SizedBox(height: 10),
+                      // Only show the list of selected consumer numbers after clicking the plus icon
+                      if (selectedConsumerNumbersTV.isNotEmpty)
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Text("Added Consumer Numbers:"),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 0.0),
+                              child: Row(
+                                children: [
+                                  Expanded(flex:2,
+                                    child: Text(
+                                      "Cons No.",
+                                      style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
+                                    ),
+                                  ),
+                                  Expanded(flex:1,
+                                    child: Text(
+                                      "Quantity",
+                                      style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
+                                    ),
+                                  ),
+                                  Expanded(flex:1,
+                                    child: Text(
+                                      "Action",
+                                      style: TextStyle(fontWeight: FontWeight.normal, fontSize: 12),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            ...selectedConsumerNumbersTV.map((consumerNo) {
+                              // Find the corresponding cylinder quantity from selectedCylinderQuantities list
+                              int cylQty = selectedCylinderQuantitiesTV[selectedConsumerNumbersTV.indexOf(consumerNo)];
+
+                              return Padding(
+                                padding: const EdgeInsets.only(top: 4.0),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      flex:2,
+                                      child: Text(
+                                        consumerNo,
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                    ),
+                                    // SizedBox(width: 15),
+                                    // Display the cylinder quantity dynamically
+                                    Expanded(flex:1,
+                                      child: Text(
+                                        cylQty.toString(),
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                    ),
+                                    Expanded(flex:1,
+                                      child: IconButton(
+                                        icon: Icon(Icons.delete, color: Colors.black87),
+                                        onPressed: () {
+                                          setState(() {
+                                            // Remove the consumer number and its corresponding cylinder quantity
+                                            int index = selectedConsumerNumbersTV.indexOf(consumerNo);
+                                            if (index != -1) {
+                                              selectedConsumerNumbersTV.removeAt(index);
+                                              selectedCylinderQuantitiesTV.removeAt(index);
+                                            }
+                                          });
+                                          updateTotalCylinderQtyTV(); // Recalculate total cylinder quantity
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                            // SizedBox(height: 10),
+                            // // Display the total sum of the cylinder quantities
+                            // Text(
+                            //   'Total Cylinder Quantity: ${totalCylinderQtyTV.toStringAsFixed(0)}',
+                            //   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                            // ),
+                          ],
+                        ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.blue, // Set the background color here
+                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20), // Optional: Add padding
+              ),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Done',style: TextStyle(color: Colors.white),),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+  Widget buildConsumerNumberTVDropdown(StateSetter setState, List<String> selectedConsumerNumbersInDialog, Function setShowAddedConsumers) {
+    return Row(
+      children: [
+        Expanded(
+          child: Autocomplete<String>(
+            optionsBuilder: (TextEditingValue textEditingValue) {
+              if (textEditingValue.text.isEmpty) {
+                return const Iterable<String>.empty(); // Return empty if no input
+              }
+              return consumerNumbersTV.where((consumerNo) =>
+                  consumerNo.toLowerCase().contains(textEditingValue.text.toLowerCase()));
+            },
+            onSelected: (String selectedConsumerNo) {
+              consumerControllerTV.text = selectedConsumerNo; // Set text when selected from autocomplete
+            },
+            fieldViewBuilder: (context, textEditingController, focusNode, onFieldSubmitted) {
+              return TextField(
+                controller: textEditingController,
+                focusNode: focusNode,
+                onSubmitted: (_) {
+                  // onFieldSubmitted();
+                  String consumerNo = textEditingController.text.trim();
+                  print("Entered consumer number: $consumerNo"); // Print the entered consumer number
+                  print("Available consumer numbers: $consumerNumbersTV"); // Print available consumer numbers
+
+                  if (consumerNo.isEmpty || !consumerNumbersTV.contains(consumerNo)) {
+                    print("Consumer number is not valid.");
+                    EasyLoading.showToast(Constants.svTvConsumerSelectFromDD, duration: const Duration(milliseconds: 3000));
+
+                  } else {
+                    print("Consumer number is valid.");
+                    onFieldSubmitted(); // Proceed if valid
+                  }
+
+                },
+                decoration: InputDecoration(
+                  labelText: 'Consumer Number',
+                  border: OutlineInputBorder(),
+                ),
+              );
+            },
+          ),
+        ),
+        IconButton(
+          icon: Icon(Icons.add_circle_outline_sharp),
+          onPressed: () async {
+            String consumerNo = consumerControllerTV.text.trim();
+            print("Entered consumer number: $consumerNo"); // Print the entered consumer number
+            print("Available consumer numbers: $consumerNumbersTV");
+            if (consumerNo.isEmpty || !consumerNumbersTV.contains(consumerNo)) {
+              print("Consumer number is not valid.");
+              // ScaffoldMessenger.of(context).showSnackBar(
+              //   SnackBar(content: Text('This consumer number is not in the list.')),
+              // );
+              EasyLoading.showToast(Constants.svTvConsumerSelectFromDD, duration: const Duration(milliseconds: 3000));
+              return;
+            }
+            if(consumerNo.isNotEmpty) {
+              if (selectedConsumerNumbersInDialog.contains(consumerNo)) {
+                // Show a message that the consumer number is already added
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text('This consumer number is already added.')),
+                );
+              }
+              else{
+                bool consumerExists = await updateRefillSale!.checkIfConsumerExistsInDatabaseTV(consumerNo);
+                if (consumerExists) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Consumer number $consumerNo already exists in the database.'))
+                  );
+                  return; // If the consumer exists, stop further execution
+                }
+                // Add selected consumer number to the list and show it below the dropdown
+                if (consumerControllerTV.text.isNotEmpty &&
+                    !selectedConsumerNumbersInDialog.contains(consumerControllerTV.text)) {
+                  setState(() {
+                  String consumerNo = consumerControllerTV.text;
+                  selectedConsumerNumbersInDialog.add(consumerNo); // Add to list
+                  GetSvtvConsumerListModel? consumer = getSvtvConsumerListTV.firstWhere(
+                        (c) => c.consumerNo == consumerNo,
+                    orElse: () => GetSvtvConsumerListModel(consumerNo: '', cylQty: 0),
+                  );
+                  selectedCylinderQuantitiesTV.add(consumer.cylQty?.toInt() ?? 0); // Add cylinder quantity to the corresponding list
+                  consumerControllerTV.clear(); // Clear the input field after adding
+                  setShowAddedConsumers(true); // Show the added consumer numbers list
+                  });
+                  updateTotalCylinderQtyTV();
+
+                  Navigator.of(context).pop();
+                  _showConsumerNumberTVPopup();// Recalculate total cylinder quantity
+                }
+              }
+            }
+
+
+          },
+        ),
+      ],
+    );
+  }
+
+  void updateSvCylinderAndRecalculateTV(int tvQty) {
+    // Update the controller with the new SV quantity
+    _tvController.text = tvQty.toString();
+
+    // Now perform the calculation and update the empty quantity
+    setState(() {
+
+      int filledQty =
+          int.tryParse(_filledController.text) ?? 0;
+      int svQty =
+          int.tryParse(_svController.text) ?? 0;
+      int defQty =
+          int.tryParse(_defectiveController.text) ??
+              0;
+      int lessEmptyQty =
+          int.tryParse(_lessEmptyController.text) ??
+              0;
+
+      int emptyQty = filledQty - svQty + tvQty - defQty - lessEmptyQty;
+
+      _emptyController.text = emptyQty.toString();
+    });
+  }
+
+  void updateTotalCylinderQtyTV() {
+    totalCylinderQtyTV = 0;  // Reset the total cylinder quantity
+
+    // Loop through all selected consumer numbers
+    selectedConsumerNumbersTV.forEach((consumerNo) {
+      // Look up the consumer data using the consumer number
+      GetSvtvConsumerListModel? consumer = getSvtvConsumerListTV.firstWhere(
+            (c) => c.consumerNo == consumerNo,
+        orElse: () => GetSvtvConsumerListModel(consumerNo: '', cylQty: 0), // Return default if not found
+      );
+      print('Consumer No: $consumerNo, cylQty: ${consumer?.cylQty}');  // Debug print
+
+      // Add the consumer's cylinder quantity (cylQty) to the total
+      totalCylinderQtyTV += consumer.cylQty ?? 0;
+      print('Total Cylinder Quantity TV: $totalCylinderQtyTV');
+    });
+  }
+
+  List<String> getConsumerNumbersTV() {
+    return selectedConsumerNumbersTV;
+  }
+
+  List<int> getCylinderQuantitiesTV() {
+    return selectedCylinderQuantitiesTV;
+  }
+
 
 }

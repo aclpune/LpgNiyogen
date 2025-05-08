@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:lpgsalesandinventory/Screen/ManagerScreen/CashDepositToBankScreen.dart';
-import 'package:lpgsalesandinventory/Screen/ManagerScreen/CashHandoverScreen.dart';
 import 'package:lpgsalesandinventory/Screen/Utils/Styling.dart';
+
 import '../User/splashscreen/page/splash_screen.dart';
 import '../Utils/shared_preference.dart';
+import 'CashDepositToBankScreen.dart';
+import 'CashHandoverScreen.dart';
 class ManagerMoreScree extends StatefulWidget {
   static const screenName = '/managerMoreScree';
   const ManagerMoreScree({super.key});
@@ -17,9 +18,20 @@ class _ManagerMoreScreeState extends State<ManagerMoreScree> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-      key: _scaffoldKey,
-      body:
+    var argLRAdd = ModalRoute.of(context)?.settings.arguments;
+    return  WillPopScope(
+      onWillPop: () async {
+        if (argLRAdd == "fromDrawer") {
+          Navigator.pushReplacementNamed(context, '/bottomNavBarExample');
+          return false;
+        } else {
+          Navigator.pushReplacementNamed(context, '/bottomNavBarExample');
+          return false;
+        }
+      },
+      child: Scaffold(
+        key: _scaffoldKey,
+        body:
         Column(
           children: [
             Expanded(
@@ -33,138 +45,149 @@ class _ManagerMoreScreeState extends State<ManagerMoreScree> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Padding(
+                      //   padding: const EdgeInsets.only(left: 10.0),
+                      //   child: Text("CASH",style:Styling.itemGreyTextBigMore,),
+                      // ),
+                      // Card(
+                      //     shape: RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.circular(5),
+                      //     ),
+                      //     elevation: 1,
+                      //     color: Colors.white,
+                      //     child: Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         // Title for Cylinder Categories Table
+                      //         Padding(
+                      //           padding: const EdgeInsets.all(10.0),
+                      //           child: Row(
+                      //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //             children: [
+                      //               Row(
+                      //                 children: [
+                      //                   Icon(Icons.business_center_outlined),
+                      //                   SizedBox(width: 10,),
+                      //                   Text("Cash Handover",style: Styling.itemBlackTestMore,),
+                      //                 ],
+                      //               ),
+                      //               Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+                      //             ],
+                      //           )
+                      //         ),
+                      //         Container(
+                      //           height: 1,
+                      //           color: Colors.grey[200],
+                      //         ),
+                      //         Padding(
+                      //             padding: const EdgeInsets.all(10.0),
+                      //             child: Row(
+                      //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //               children: [
+                      //                 Row(
+                      //                   children: [
+                      //                     Icon(Icons.add_business_outlined),
+                      //                     SizedBox(width: 10,),
+                      //                     Text("Cash Deposit To Bank",style: Styling.itemBlackTestMore,),
+                      //                   ],
+                      //                 ),
+                      //                 Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+                      //               ],
+                      //             )
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // SizedBox(height: 20,),
+                      // Padding(
+                      //   padding: const EdgeInsets.only(left: 10.0),
+                      //   child: Text("Regulator Item",style:Styling.itemGreyTextBigMore,),
+                      // ),
+                      // GestureDetector(
+                      //   onTap: (){
+                      //     Navigator.pushNamed(
+                      //         context,
+                      //         RegulatorItemReceiptScreen
+                      //             .screenName);
+                      //   },
+                      //   child: Card(
+                      //     shape: RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.circular(5),
+                      //     ),
+                      //     elevation: 1,
+                      //     color: Colors.white,
+                      //     child:
+                      //     Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         // Title for Cylinder Categories Table
+                      //         Padding(
+                      //             padding: const EdgeInsets.all(10.0),
+                      //             child: Row(
+                      //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //               children: [
+                      //
+                      //                 Row(
+                      //                   children: [
+                      //                     Icon(Icons.av_timer_outlined),
+                      //                     SizedBox(width: 10,),
+                      //                     Text("Regulator Item",style: Styling.itemBlackTestMore,),
+                      //                   ],
+                      //                 ),
+                      //
+                      //                 Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+                      //               ],
+                      //             )
+                      //         ),
+                      //
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
+                      // SizedBox(height: 20,),
                       Padding(
                         padding: const EdgeInsets.only(left: 10.0),
-                        child: Text("CASH",style:Styling.itemGreyTextBigMore,),
+                        child: Text("LOGOUT",style:Styling.itemGreyTextBigMore,),
                       ),
-                      Card(
+                      GestureDetector(
+                        onTap: (){
+                          _showLogoutDialog(context);
+                        },
+                        child: Card(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5),
                           ),
                           elevation: 1,
                           color: Colors.white,
-                          child: Column(
+                          child:
+                          Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // Title for Cylinder Categories Table
-                              GestureDetector(
-                             //  onTap: () {
-                             // Navigator.popAndPushNamed(context, CashHandoverScreen.screenName);// Replace with your target screen
-                             //
-                             //  },
-                                onTap: () {
-                                  Navigator.pushNamed(
-                                      context,
-                                      CashHandoverScreen
-                                          .screenName
-                                      // arguments: {
-                                      //   "staffId": data is CylItemListModel
-                                      //       ? data.staffId
-                                      //       : data.staffId,
-                                      //   "StaffName":data is CylItemListModel
-                                      //       ? data.staffName
-                                      //       : data.staffName,
-                                      // }
-                                  );
-                                },
-                              child:Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Icon(Icons.business_center_outlined),
-                                        SizedBox(width: 10,),
-                                        Text("Cash Handover-Bank Deposite",style: Styling.itemBlackTestMore,),
-                                      ],
-                                    ),
-                                    Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
-
-                                  ],
-                                )
-                              ),
-                              ),
-                              Container(
-                                height: 1,
-                                color: Colors.grey[200],
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.pushNamed(
-                                      context,
-                                      CashDepositToBankScreen
-                                          .screenName
-                                    // arguments: {
-                                    //   "staffId": data is CylItemListModel
-                                    //       ? data.staffId
-                                    //       : data.staffId,
-                                    //   "StaffName":data is CylItemListModel
-                                    //       ? data.staffName
-                                    //       : data.staffName,
-                                    // }
-                                  );
-                                },
-                                child:
                               Padding(
                                   padding: const EdgeInsets.all(10.0),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
+
                                       Row(
-                                        children: [
-                                          Icon(Icons.add_business_outlined),
-                                          SizedBox(width: 10,),
-                                          Text("Cash Deposit To Bank",style: Styling.itemBlackTestMore,),
-                                        ],
-                                      ),
-                                      Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
-                                    ],
-                                  )
-                              ),
-    ),
-                            ],
-                          ),
-                        ),
-                      SizedBox(height: 20,),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10.0),
-                        child: Text("LOGOUT",style:Styling.itemGreyTextBigMore,),
-                      ),
-                      Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        elevation: 1,
-                        color: Colors.white,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Title for Cylinder Categories Table
-                            Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    GestureDetector(
-                                      onTap: (){
-                                        _showLogoutDialog(context);
-                                      },
-                                      child: Row(
                                         children: [
                                           Icon(Icons.logout_outlined),
                                           SizedBox(width: 10,),
                                           Text("Logout",style: Styling.itemBlackTestMore,),
                                         ],
                                       ),
-                                    ),
-                                    Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
-                                  ],
-                                )
-                            ),
-                          ],
+
+                                      Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+                                    ],
+                                  )
+                              ),
+
+                            ],
+                          ),
                         ),
                       ),
+
                     ],
                   ),
                 ),
@@ -172,6 +195,8 @@ class _ManagerMoreScreeState extends State<ManagerMoreScree> {
             ),
           ],
         ),
+
+      ),
     );
   }
 

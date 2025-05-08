@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lpgsalesandinventory/Screen/Utils/Styling.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../GodownKeeper/BottomNavigationForGodownKeeper.dart';
 import '../../../GodownKeeper/DashboardScreen.dart';
 import '../../../ManagerScreen/BootomNavigatinBarManager.dart';
 import '../../../ManagerScreen/ManagerDashboard.dart';
@@ -27,7 +28,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
 
-    Future.delayed(const Duration(milliseconds: 5000), () async {
+    Future.delayed(const Duration(milliseconds: 3000), () async {
       navigateToDashboard();
     });
   }
@@ -47,14 +48,13 @@ class _SplashScreenState extends State<SplashScreen> {
             children: [
               // Image.asset('assets/login.png'),
               Image.asset(
-                'assets/logos.gif',  // Path to your image
+                'assets/logonew.png',  // Path to your image
                 height: 250, // Adjust the height as needed
-                width: 250,
-                gaplessPlayback: true,// Adjust the width as needed
+                width: 250,  // Adjust the width as needed
               ),
               SizedBox(height: 10),
               Text(
-                "Version: " + "1.0.4",
+                "Version: " + "1.0.7",
                 style: Styling.itemBlackTestSmall,
               )
             ],
@@ -78,7 +78,7 @@ class _SplashScreenState extends State<SplashScreen> {
         if (userActivet == "Y") {
         if (roleId != null) {
           if(roleId == Constants.roleIdGodown){
-            Navigator.pushReplacementNamed(context, DashboardScreen.screenName,
+            Navigator.pushReplacementNamed(context, BottomNavigationForGodownKeeper.screenName,
                 arguments: "checkVersion");
           }else if(roleId == Constants.roleIdManager){
             Navigator.pushReplacementNamed(context, BottomNavBarExample.screenName,

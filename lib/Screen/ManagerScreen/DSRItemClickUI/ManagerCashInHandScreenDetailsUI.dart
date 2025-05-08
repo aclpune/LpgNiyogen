@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../ClickModelClass/DsrReportCashInHandModel.dart';
 
 
@@ -50,7 +51,7 @@ class _ManagerCashInHandScreenDeailsUI extends State<ManagerCashInHandScreenDeta
              Expanded(
                flex: 2,
                child: Text(
-                 sale.totalAmount!.toStringAsFixed(2),
+                   formatCurrency(sale.totalAmount!.toDouble()),
                  style: TextStyle(fontSize: 16),
 
                ),
@@ -63,5 +64,20 @@ class _ManagerCashInHandScreenDeailsUI extends State<ManagerCashInHandScreenDeta
      ),
    );
   }
+  String formatCurrency(double amount) {
+    if (amount == 0) {
+      return '0.00'; // Return "0.00" if the amount is zero
+    }
+    final format = NumberFormat('#,##,###.00', 'en_IN'); // Indian locale with comma separator
 
+    // Ensure the result always shows a leading zero before the decimal point
+    String formattedAmount = format.format(amount);
+
+    // If there's no integer part, it ensures that a leading zero is added before decimal
+    if (amount < 1 && formattedAmount.startsWith('.')) {
+      formattedAmount = '0' + formattedAmount;
+    }
+
+    return formattedAmount;
+  }
 }

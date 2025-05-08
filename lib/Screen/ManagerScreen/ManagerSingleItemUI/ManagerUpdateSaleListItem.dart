@@ -3,6 +3,7 @@ import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:intl/intl.dart';
 import 'package:lpgsalesandinventory/Screen/Utils/Styling.dart';
 import 'package:lpgsalesandinventory/Screen/Utils/app_url.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,8 +19,10 @@ import '../ManagerUpdateSaleCashUpdation.dart';
 class ManagerUpdateSaleListItem extends StatefulWidget {
   DilySaleSummaryDeliveryBoyWiseListModel filteredSales;
   int? vehicleIDs;
+  String? vehicleNumber;
+  String? receiptNoText;
 
-  ManagerUpdateSaleListItem(this.filteredSales,this.vehicleIDs,{Key? key}) : super(key: key);
+  ManagerUpdateSaleListItem(this.filteredSales,this.vehicleIDs,this.vehicleNumber,this.receiptNoText,{Key? key}) : super(key: key);
 
   @override
   State<ManagerUpdateSaleListItem> createState() => _ManagerUpdateSaleListItemState();
@@ -99,7 +102,7 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
                         children: [
                           SizedBox(width: 65,
                               child: Text('Act.Sale:', style: Styling.itemGreyTextSmall)),
-                          Text('${sale.gDFilledSale ?? 0}', style: Styling.itemBlackTestSmall),
+                          Text('${sale.actualSaleQty ?? 0}', style: Styling.itemBlackTestSmall),
                         ],
                       ),
 
@@ -129,7 +132,8 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
                         children: [
                           SizedBox(width: 65,
                               child: Text('Amount:', style: Styling.itemGreyTextSmall)),
-                          Text('${sale.amount ?? 0}',style: Styling.itemBlackTestSmall),
+                          Text( formatCurrency((sale.amount ?? 0).toDouble()),style: Styling.itemBlackTestSmall),
+
                         ],
                       ),
                     ],
@@ -162,7 +166,7 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
                                   SizedBox(width: 5),
                                   // Amount Text
                                   Icon(Icons.currency_rupee,size: 12,),
-                                  Text('${sale.cashAmt ?? 0}', style: Styling.itemBlackTestVerySmall),
+                                  Text(formatCurrency((sale.cashAmt ?? 0).toDouble()), style: Styling.itemBlackTestVerySmall),
                                 ],
                               ),
 
@@ -188,7 +192,8 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
                                   Text('${sale.prepaidQty ?? 0}', style: Styling.itemBlackTestVerySmall),
                                   SizedBox(width: 5),
                                   Icon(Icons.currency_rupee,size: 12,),
-                                  Text('${sale.prepaidAmt ?? 0}', style: Styling.itemBlackTestVerySmall),
+                                  Text(formatCurrency((sale.prepaidAmt ?? 0).toDouble()), style: Styling.itemBlackTestVerySmall),
+
                                 ],
                               ),
 
@@ -217,7 +222,7 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
                                   Text('${sale.postQty ?? 0}',style: Styling.itemBlackTestVerySmall),
                                   SizedBox(width: 5),
                                   Icon(Icons.currency_rupee,size: 12,),
-                                  Text('${sale.postAmt ?? 0}', style: Styling.itemBlackTestVerySmall),
+                                  Text(formatCurrency((sale.postAmt ?? 0).toDouble()), style: Styling.itemBlackTestVerySmall),
 
                                 ],
                               ),
@@ -245,12 +250,10 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
                                   Text('${sale.creditQty ?? 0}', style: Styling.itemBlackTestVerySmall),
                                   SizedBox(width: 5),
                                   Icon(Icons.currency_rupee,size: 12,),
-                                  Text('${sale.creditAmt ?? 0}', style: Styling.itemBlackTestVerySmall),
+                                  Text(formatCurrency((sale.creditAmt ?? 0).toDouble()), style: Styling.itemBlackTestVerySmall),
                                 ],
                               ),
-
                               // Amount Text
-
                             ],
                           ),
                         ),
@@ -278,7 +281,7 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
                     children: [
                       SizedBox(
                           child: Text('Received Amt.:', style: Styling.itemGreyTextSmall)),
-                      Text('${sale.amount ?? 0}',style: Styling.itemBlackTestSmall),
+                      Text( formatCurrency((sale.denoCashRcvd ?? 0).toDouble()),style: Styling.itemBlackTestSmall),
 
                     ],
                   ),
@@ -359,10 +362,18 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
                           // Navigator.pushReplacementNamed(context, '/managerUpdateSaleCashUpdation');
                           int? itemIds = sale.itemId?.toInt();
                           int itemId = sale.itemId?.toInt() ?? 0;  // Get itemId and convert to int
-
                           // Fetch item rate from the API
                           double? itemRate = await fetchItemRate(itemId);
                           debugPrint("${itemRate}");
+                          String mode;
+                         if((sale.cashQty == 0 && sale.prepaidQty == 0 && sale.postQty == 0 && sale.creditQty == 0 && sale.cashAmt == 0 && sale.postAmt == 0)){
+                            mode = '';
+                          }else if((sale.cashQty != 0 || sale.prepaidQty != 0 || sale.postQty != 0 || sale.creditQty != 0 || sale.cashAmt != 0 || sale.postAmt != 0)){
+                           mode = 'EDIT';
+                         }else{
+                           mode = '';
+                         }
+
                           Navigator.pushNamed(
                               context,
                               ManagerUpdateSaleCashUpdation
@@ -370,7 +381,7 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
                               arguments: {
                                 "delBoyName": sale.staffName,
                                 "itemName": sale.itemName,
-                                "saleQty" : sale.gDFilledSale,
+                                "saleQty" : sale.actualSaleQty,
                                 "svQty" : sale.sVQty,
                                 "tvQty" : sale.tVQty,
                                 "amountTotal" : sale.amount,
@@ -382,12 +393,30 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
                                 "salesGkId" : sale.saleGKId,
                                 "sakesGKItemID" : sale.saleGKItemId,
                                 "vehicleID" :widget.vehicleIDs,
-
+                                "dSCollMgrId" : sale.dSCollMgrId,
+                                "vehicleNumber" : widget.vehicleNumber,
+                                "receiptNoText" : widget.receiptNoText,
+                                "actionModeApi": mode,
+                                "prepaidQtyApi":sale.prepaidQty,
+                                "prepaidAmountApi":sale.prepaidAmt,
+                                "postpaidQtyApi":sale.postQty,
+                                "postpaidAmountApi":sale.postAmt,
+                                "creditQtyApi":sale.creditQty,
+                                "creditAmountApi":sale.creditAmt,
+                                "cashQtyApi":sale.cashQty,
+                                "cashAmountApi":sale.cashAmt,
+                                "cashTotalExpectedAmount" :sale.denoCashExptd,
+                                "cashTotalReceiveAmount" :sale.denoCashRcvd,
+                                "cashBalanceAmount" :sale.cashBalance,
                               });
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(top: 8.0),
-                          child: Text("Update",style: Styling.blueClrTextWithUnderline
+                          child: Text(
+                              (sale.cashQty == 0 && sale.prepaidQty == 0 && sale.postQty == 0 && sale.creditQty == 0 && sale.cashAmt == 0 && sale.postAmt == 0)?
+                              "Update":(sale.cashQty != 0 || sale.prepaidQty != 0 || sale.postQty != 0 || sale.creditQty != 0 || sale.cashAmt != 0 || sale.postAmt != 0)?
+                              "Edit":"",
+                              style: Styling.blueClrTextWithUnderline
                           ),
                         ),
                       ),
@@ -505,5 +534,20 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
       }
     }
   }
+  String formatCurrency(double amount) {
+    if (amount == 0) {
+      return '0.00'; // Return "0.00" if the amount is zero
+    }
+    final format = NumberFormat('#,##,###.00', 'en_IN'); // Indian locale with comma separator
 
+    // Ensure the result always shows a leading zero before the decimal point
+    String formattedAmount = format.format(amount);
+
+    // If there's no integer part, it ensures that a leading zero is added before decimal
+    if (amount < 1 && formattedAmount.startsWith('.')) {
+      formattedAmount = '0' + formattedAmount;
+    }
+
+    return formattedAmount;
+  }
 }

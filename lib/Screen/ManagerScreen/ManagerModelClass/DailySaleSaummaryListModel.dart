@@ -1,30 +1,33 @@
 /// pkId : 0
-/// DMId : 2
+/// DMId : 22
 /// DistributorId : 8118
-/// SaleGKId : 2
-/// VehicleId : 25
-/// VehicleNo : "MH45AB5342"
-/// ItemCount : 2
-/// StaffName : "Amit Thosar"
-/// TotalSVQty : 2
-/// TotalSVAmt : 0
-/// TotalTVQty : 1
+/// SaleGKId : 171
+/// VehicleId : 10
+/// VehicleNo : "MH49KL7474"
+/// ItemCount : 1
+/// StaffName : "Rahul"
+/// TotalSVQty : 0
+/// TotalSVAmt : 0.0
+/// TotalTVQty : 0
 /// TotalTVAmt : 0
-/// TotalFilledQty : 60
+/// TotalFilledQty : 43
+/// TotalActualSaleQty : 43
 /// TotalFilledAmt : 0
-/// TotalAmt : 69300
-/// PrepaidAmt : 0
+/// TotalDefQty : 0
+/// TotalAmt : 34636.50
+/// PrepaidAmt : 0.00
 /// PrepaidQty : 0
-/// PostPaidAmt : 0
+/// PostPaidAmt : 0.00
 /// PostPaidQty : 0
-/// RetiCrAmt : 0
+/// RetiCrAmt : 0.00
 /// RetiCrQty : 0
-/// CashAmt : 0
+/// CashAmt : 0.00
 /// CashQty : 0
 /// Status : null
-/// StatusStr : "Submited"
-/// DailySaleStatus : 1
-/// DelDate : "2025-01-17T00:00:00"
+/// StatusStr : "Accepted"
+/// DailySaleStatus : 2
+/// TotRecievedcAmt : 0.00
+/// DelDate : "2025-04-07T00:00:00"
 /// Action : null
 /// AddedBy : 0
 /// DSCollMgrId : 0
@@ -44,7 +47,9 @@ class DailySaleSaummaryListModel {
       num? totalTVQty, 
       num? totalTVAmt, 
       num? totalFilledQty, 
+      num? totalActualSaleQty, 
       num? totalFilledAmt, 
+      num? totalDefQty, 
       num? totalAmt, 
       num? prepaidAmt, 
       num? prepaidQty, 
@@ -57,6 +62,7 @@ class DailySaleSaummaryListModel {
       dynamic status, 
       String? statusStr, 
       num? dailySaleStatus, 
+      num? totRecievedcAmt, 
       String? delDate, 
       dynamic action, 
       num? addedBy, 
@@ -74,7 +80,9 @@ class DailySaleSaummaryListModel {
     _totalTVQty = totalTVQty;
     _totalTVAmt = totalTVAmt;
     _totalFilledQty = totalFilledQty;
+    _totalActualSaleQty = totalActualSaleQty;
     _totalFilledAmt = totalFilledAmt;
+    _totalDefQty = totalDefQty;
     _totalAmt = totalAmt;
     _prepaidAmt = prepaidAmt;
     _prepaidQty = prepaidQty;
@@ -87,6 +95,7 @@ class DailySaleSaummaryListModel {
     _status = status;
     _statusStr = statusStr;
     _dailySaleStatus = dailySaleStatus;
+    _totRecievedcAmt = totRecievedcAmt;
     _delDate = delDate;
     _action = action;
     _addedBy = addedBy;
@@ -107,7 +116,9 @@ class DailySaleSaummaryListModel {
     _totalTVQty = json['TotalTVQty'];
     _totalTVAmt = json['TotalTVAmt'];
     _totalFilledQty = json['TotalFilledQty'];
+    _totalActualSaleQty = json['TotalActualSaleQty'];
     _totalFilledAmt = json['TotalFilledAmt'];
+    _totalDefQty = json['TotalDefQty'];
     _totalAmt = json['TotalAmt'];
     _prepaidAmt = json['PrepaidAmt'];
     _prepaidQty = json['PrepaidQty'];
@@ -120,6 +131,7 @@ class DailySaleSaummaryListModel {
     _status = json['Status'];
     _statusStr = json['StatusStr'];
     _dailySaleStatus = json['DailySaleStatus'];
+    _totRecievedcAmt = json['TotRecievedcAmt'];
     _delDate = json['DelDate'];
     _action = json['Action'];
     _addedBy = json['AddedBy'];
@@ -138,7 +150,9 @@ class DailySaleSaummaryListModel {
   num? _totalTVQty;
   num? _totalTVAmt;
   num? _totalFilledQty;
+  num? _totalActualSaleQty;
   num? _totalFilledAmt;
+  num? _totalDefQty;
   num? _totalAmt;
   num? _prepaidAmt;
   num? _prepaidQty;
@@ -151,6 +165,7 @@ class DailySaleSaummaryListModel {
   dynamic _status;
   String? _statusStr;
   num? _dailySaleStatus;
+  num? _totRecievedcAmt;
   String? _delDate;
   dynamic _action;
   num? _addedBy;
@@ -168,7 +183,9 @@ DailySaleSaummaryListModel copyWith({  num? pkId,
   num? totalTVQty,
   num? totalTVAmt,
   num? totalFilledQty,
+  num? totalActualSaleQty,
   num? totalFilledAmt,
+  num? totalDefQty,
   num? totalAmt,
   num? prepaidAmt,
   num? prepaidQty,
@@ -181,6 +198,7 @@ DailySaleSaummaryListModel copyWith({  num? pkId,
   dynamic status,
   String? statusStr,
   num? dailySaleStatus,
+  num? totRecievedcAmt,
   String? delDate,
   dynamic action,
   num? addedBy,
@@ -198,7 +216,9 @@ DailySaleSaummaryListModel copyWith({  num? pkId,
   totalTVQty: totalTVQty ?? _totalTVQty,
   totalTVAmt: totalTVAmt ?? _totalTVAmt,
   totalFilledQty: totalFilledQty ?? _totalFilledQty,
+  totalActualSaleQty: totalActualSaleQty ?? _totalActualSaleQty,
   totalFilledAmt: totalFilledAmt ?? _totalFilledAmt,
+  totalDefQty: totalDefQty ?? _totalDefQty,
   totalAmt: totalAmt ?? _totalAmt,
   prepaidAmt: prepaidAmt ?? _prepaidAmt,
   prepaidQty: prepaidQty ?? _prepaidQty,
@@ -211,6 +231,7 @@ DailySaleSaummaryListModel copyWith({  num? pkId,
   status: status ?? _status,
   statusStr: statusStr ?? _statusStr,
   dailySaleStatus: dailySaleStatus ?? _dailySaleStatus,
+  totRecievedcAmt: totRecievedcAmt ?? _totRecievedcAmt,
   delDate: delDate ?? _delDate,
   action: action ?? _action,
   addedBy: addedBy ?? _addedBy,
@@ -229,7 +250,9 @@ DailySaleSaummaryListModel copyWith({  num? pkId,
   num? get totalTVQty => _totalTVQty;
   num? get totalTVAmt => _totalTVAmt;
   num? get totalFilledQty => _totalFilledQty;
+  num? get totalActualSaleQty => _totalActualSaleQty;
   num? get totalFilledAmt => _totalFilledAmt;
+  num? get totalDefQty => _totalDefQty;
   num? get totalAmt => _totalAmt;
   num? get prepaidAmt => _prepaidAmt;
   num? get prepaidQty => _prepaidQty;
@@ -242,6 +265,7 @@ DailySaleSaummaryListModel copyWith({  num? pkId,
   dynamic get status => _status;
   String? get statusStr => _statusStr;
   num? get dailySaleStatus => _dailySaleStatus;
+  num? get totRecievedcAmt => _totRecievedcAmt;
   String? get delDate => _delDate;
   dynamic get action => _action;
   num? get addedBy => _addedBy;
@@ -262,7 +286,9 @@ DailySaleSaummaryListModel copyWith({  num? pkId,
     map['TotalTVQty'] = _totalTVQty;
     map['TotalTVAmt'] = _totalTVAmt;
     map['TotalFilledQty'] = _totalFilledQty;
+    map['TotalActualSaleQty'] = _totalActualSaleQty;
     map['TotalFilledAmt'] = _totalFilledAmt;
+    map['TotalDefQty'] = _totalDefQty;
     map['TotalAmt'] = _totalAmt;
     map['PrepaidAmt'] = _prepaidAmt;
     map['PrepaidQty'] = _prepaidQty;
@@ -275,6 +301,7 @@ DailySaleSaummaryListModel copyWith({  num? pkId,
     map['Status'] = _status;
     map['StatusStr'] = _statusStr;
     map['DailySaleStatus'] = _dailySaleStatus;
+    map['TotRecievedcAmt'] = _totRecievedcAmt;
     map['DelDate'] = _delDate;
     map['Action'] = _action;
     map['AddedBy'] = _addedBy;

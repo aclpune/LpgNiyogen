@@ -1,200 +1,4 @@
-// import 'dart:convert';
-//
-// import 'package:encrypt/encrypt.dart';
-// import 'package:flutter/cupertino.dart' hide Key;
-// import 'package:flutter/material.dart' hide Key;
-// import 'package:http/http.dart' as http;
-// import 'package:intl/intl.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
-// import '../../Utils/app_url.dart';
-// import '../ClickModelClass/GetUnsettledAmountListModel.dart';
-//
-//
-// class ManagerIncomeUnsettledScreenDetails extends StatefulWidget {
-//   final List<GetUnsettledAmountListModel> unsettledModelList;
-//
-//   ManagerIncomeUnsettledScreenDetails({super.key, required this.unsettledModelList});
-//
-//   @override
-//   _ManagerIncomeUnsettledScreenDetails createState() =>
-//       _ManagerIncomeUnsettledScreenDetails();
-// }
-//
-// class _ManagerIncomeUnsettledScreenDetails extends State<ManagerIncomeUnsettledScreenDetails> {
-//   late List<GetUnsettledAmountListModel> unsettledModelList = []; // Initialize as empty list
-//
-//   bool isLoading = true;
-//
-//   var argValue;
-//   String? screenMode; //settled/Unsettled
-//   DateTime? date;
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//
-//     Future.delayed(Duration.zero, () {
-//       setState(() {
-//         argValue = ModalRoute
-//             .of(context)
-//             ?.settings
-//             .arguments as Map;
-//         screenMode = argValue["Flag"];
-//         date = argValue["Date"];
-//
-//         debugPrint("customerHoldingData :- ${screenMode.toString()}");
-//         debugPrint("customerHoldingData :- ${date.toString()}");
-//       });
-//     });
-//     fetchUnsettledData(screenMode!);
-//   }
-//
-//   // Method to fetch data from the API
-//   Future<void> fetchUnsettledData(String flag) async {
-//
-//     SharedPreferences prefs = await SharedPreferences.getInstance();
-//     String? distributorId = prefs.getString('DistributorId');
-//     String? bearerToken = prefs.getString('token');
-//     String? ItemId = prefs.getString('ItemId');
-//
-//     // DateTime now = DateTime.now();
-//     String formattedDate = DateFormat('yyyy-MM-dd').format(date!);
-//     debugPrint("formattedDate :- ${formattedDate.toString()}");
-//     if (bearerToken == null) {
-//       isLoading = false;
-//       throw Exception('Bearer token is missing');
-//     }
-//
-//     // Construct the request body for the POST request
-//     Map<String, dynamic> requestBody = {
-//       "DistributorId": distributorId,
-//       "Date": formattedDate,
-//       "ItemId": ItemId,
-//       "Flag": flag,
-//       // Example: you can replace this with `distributorId` if needed
-//
-//     };
-//
-//     try {
-//       final response = await http.get(
-//         Uri.parse('${AppUrl.GetUnsettledAmountList_Mob}/$distributorId/1/2'),
-//         headers: {
-//           "Content-Type": "application/json",
-//           "Authorization": "Bearer $bearerToken", // Pass bearer token in headers
-//         },
-//       );
-//       debugPrint("CheckDayEndConfirmation"+response.body);
-//       debugPrint("CheckDayEndConfirmation ${response.request}");
-//       if (response.statusCode == 200) {
-//         // If the server returns a 200 OK response, parse the data
-//         final List<dynamic> data = json.decode(response.body);
-//         setState(() {
-//           unsettledModelList = data
-//               .map((jsonItem) => GetUnsettledAmountListModel.fromJson(jsonItem))
-//               .toList();
-//           isLoading = false; // Data is loaded, set isLoading to false
-//         });
-//       } else {
-//         // Handle failed request
-//         throw Exception('Failed to load delivery men');
-//       }
-//     } catch (error) {
-//       // Handle any errors
-//       debugPrint('Error: $error');
-//       setState(() {
-//         isLoading = false; // Stop loading on error
-//       });
-//     }
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Settled/Unsettled'),
-//       ),
-//       body: isLoading
-//           ? const Center(
-//         child: CircularProgressIndicator(),
-//       ) // Show loading indicator while fetching data
-//           : SingleChildScrollView(
-//         child: Column(
-//           children: [
-//             const Padding(
-//               padding: EdgeInsets.all(8.0),
-//               child: Column(
-//                 children: [
-//                   Row(
-//                     children: [
-//                       // Sr No Column Name
-//                       Expanded(
-//                         flex: 1,
-//                         child: Text(
-//                           'Sr.No.',
-//                           style: TextStyle(
-//                             fontWeight: FontWeight.bold,
-//                             fontSize: 16,
-//                           ),
-//                         ),
-//                       ),
-//                       Expanded(
-//                         flex: 2,
-//                         child: Text(
-//                           'Staff Name',
-//                           style: TextStyle(
-//                             fontWeight: FontWeight.bold,
-//                             fontSize: 16,
-//                           ),
-//                         ),
-//                       ),
-//                       Expanded(
-//                         flex: 1,
-//                         child: Text(
-//                           'Qty.',
-//                           style: TextStyle(
-//                             fontWeight: FontWeight.bold,
-//                             fontSize: 16,
-//                           ),
-//                         ),
-//                       ),
-//                       Expanded(
-//                         flex: 2,
-//                         child: Text(
-//                           'Total Amount',
-//                           style: TextStyle(
-//                             fontWeight: FontWeight.bold,
-//                             fontSize: 16,
-//                           ),
-//                         ),
-//                       ),
-//                     ],
-//                   ),
-//                   Divider(), // Horizontal divider after the heading row
-//                 ],
-//               ),
-//             ),
-//             unsettledModelList.isNotEmpty
-//                 ? ListView.builder(
-//               physics: const BouncingScrollPhysics(),
-//               shrinkWrap: true,
-//               itemCount: unsettledModelList.length,
-//               itemBuilder: (context, index) {
-//                 debugPrint("Rendering Expense Item: ${unsettledModelList[index]}");
-//                 return ManagerIncomeUnsettledScreenDetails(
-//                   unsettledModelList: [],
-//                 );
-//               },
-//             )
-//                 : Container(
-//               child: Text('No Records Found'),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-//
-// }
+
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart' hide Key;
@@ -410,7 +214,7 @@ class _ManagerIncomeUnsettledScreenDetails extends State<ManagerIncomeUnsettledS
                   Align(
                     alignment: Alignment.centerRight, // Ensures the content inside is aligned right
                     child: Text(
-                      'Total: ${getTotalCash().toStringAsFixed(2)}',
+                      'Total: ${formatCurrency(getTotalCash())}',
                       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
                   ),
@@ -437,5 +241,22 @@ class _ManagerIncomeUnsettledScreenDetails extends State<ManagerIncomeUnsettledS
     }
 
     return totalAmount;
+  }
+
+  String formatCurrency(double amount) {
+    if (amount == 0) {
+      return '0.00'; // Return "0.00" if the amount is zero
+    }
+    final format = NumberFormat('#,##,###.00', 'en_IN'); // Indian locale with comma separator
+
+    // Ensure the result always shows a leading zero before the decimal point
+    String formattedAmount = format.format(amount);
+
+    // If there's no integer part, it ensures that a leading zero is added before decimal
+    if (amount < 1 && formattedAmount.startsWith('.')) {
+      formattedAmount = '0' + formattedAmount;
+    }
+
+    return formattedAmount;
   }
  }

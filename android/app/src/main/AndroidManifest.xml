@@ -2,7 +2,7 @@
     package="lpg.niyojan.lpgsalesandinventory">
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:label="LPG Niyojan"
+        android:label="Niyojan"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

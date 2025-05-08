@@ -109,6 +109,30 @@ Widget textWidgetBlueColorWithoutStar(String title) {
   );
 }
 
+Widget textWidgetBlueColorWithoutStarRed(String title) {
+  return Container(
+    margin: const EdgeInsets.only(left: 4),
+    child: Row(
+      children: [
+        Text(title, style: Styling.itemRedText,),
+      ],
+    ),
+
+  );
+}
+
+Widget textWidgetBlueColorWithoutStarGreen(String title) {
+  return Container(
+    margin: const EdgeInsets.only(left: 4),
+    child: Row(
+      children: [
+        Text(title, style: Styling.itemGreenText,),
+      ],
+    ),
+
+  );
+}
+
 Widget itemSubLine(String greyText, String blackText) {
   return Container(
     padding: EdgeInsets.only(

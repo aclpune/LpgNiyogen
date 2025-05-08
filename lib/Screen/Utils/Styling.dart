@@ -177,6 +177,7 @@ class Styling {
     fontSize: 1.6 * SizeConfig.textMultiplier!, // Size = 14-- [14/8.66] = 1.6
   );
 
+
   static final TextStyle buttonTextBlack12 = TextStyle(
     color: Colors.black,
     fontFamily: 'OpenSans',
@@ -324,7 +325,7 @@ class Styling {
   static final TextStyle itemGreyTextBigMore = TextStyle(
       fontSize: 2.5 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
       fontFamily: 'OpenSans',
-      fontWeight: FontWeight.bold,
+      fontWeight: FontWeight.normal,
       color: Colors.grey[700]);
 
   /* static final TextStyle selectedTabLight = TextStyle(

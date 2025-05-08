@@ -5,13 +5,13 @@ class ReticulatedModel {
   int? itemId;
   String? paymentMode;
   int? quantity;
-  int? amount;
-  int? vendorId;
-  String? vendorName;
+  double? amount;
+  int? consumerId;
+  String? customerName;
   String? reticulatedRemark;
-  DateTime? addedOn;
   String? action;
   int? addedBy;
+  double? discountAmount;
 
   ReticulatedModel({
     this.retId,
@@ -21,12 +21,12 @@ class ReticulatedModel {
     this.paymentMode,
     this.quantity,
     this.amount,
-    this.vendorId,
-    this.vendorName,
+    this.consumerId,
+    this.customerName,
     this.reticulatedRemark,
-    this.addedOn,
     this.action,
     this.addedBy,
+    this.discountAmount,
   });
 
   factory ReticulatedModel.fromJson(Map<String, dynamic> json) {
@@ -38,12 +38,12 @@ class ReticulatedModel {
       paymentMode: json['PaymentMode'],
       quantity: json['Quantity'],
       amount: json['Amount'],
-      vendorId: json['VendorId'],
-      vendorName: json['VendorName'],
+      consumerId: json['consumerId'],
+      customerName: json['CustomerName'],
       reticulatedRemark: json['ReticulatedRemark'],
-      addedOn: DateTime.parse(json['AddedOn']),
       action: json['Action'],
       addedBy: json['AddedBy'],
+      discountAmount: json['discountAmount'],
     );
   }
 
@@ -56,12 +56,12 @@ class ReticulatedModel {
       'PaymentMode': paymentMode,
       'Quantity': quantity,
       'Amount': amount,
-      'VendorId': vendorId,
-      'VendorName': vendorName,
+      'consumerId':consumerId,
+      'CustomerName': customerName,
       'ReticulatedRemark': reticulatedRemark,
-      'AddedOn': addedOn?.toIso8601String(),
       'Action': action,
       'AddedBy': addedBy,
+      'discountAmount': discountAmount,
     };
   }
 }

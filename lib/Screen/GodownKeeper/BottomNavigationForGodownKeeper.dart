@@ -1,30 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:lpgsalesandinventory/Screen/GodownKeeper/DelBoyStockReturn/DeliveryMenListShowScreen.dart';
-import 'package:lpgsalesandinventory/Screen/ManagerScreen/DeliveryBoyWiseListShow.dart';
-import 'package:lpgsalesandinventory/Screen/ManagerScreen/ManagerDSRReportScreen.dart';
-import 'package:lpgsalesandinventory/Screen/ManagerScreen/ManagerDashboard.dart';
-import 'package:lpgsalesandinventory/Screen/ManagerScreen/ManagerUpdateSaleScreen.dart';
+import 'package:lpgsalesandinventory/Screen/GodownKeeper/DashboardScreen.dart';
 
 import '../Utils/CutomeAppBarManagerBottomNavigationBar.dart';
-import '../Utils/constants.dart';
-import 'ManagerMoreScreen.dart';
-
-class BottomNavBarExample extends StatefulWidget {
-  static const screenName = '/bottomNavBarExample';
+import 'DelBoyStockReturn/DeliveryMenListShowScreen.dart';
+import 'DelBoyStockSubmitToManager/StockSubmitToManager.dart';
+import 'ItemReceipt/AddItem/ItemReceiptScreen.dart';
+import 'MoreOptionScreenGodownKeeper.dart';
+class BottomNavigationForGodownKeeper extends StatefulWidget {
+  static const screenName = '/bottomNavigationForGodownKeeper';
   @override
-  _BottomNavBarExampleState createState() => _BottomNavBarExampleState();
+  _BottomNavigationForGodownKeeperState createState() => _BottomNavigationForGodownKeeperState();
 }
 
-class _BottomNavBarExampleState extends State<BottomNavBarExample> {
+class _BottomNavigationForGodownKeeperState extends State<BottomNavigationForGodownKeeper> {
   // The selected index for the bottom navigation bar
   int _selectedIndex = 0;
 
   // List of pages for each option in the navigation bar
   final List<Widget> _pages = [
-    ManagerDashboardScreen(),
-    ManagerDSRReportScreen(),
-    DeliveryBoyWiseListShow(),
-    ManagerMoreScree(),
+    DashboardScreen(),
+    DeliveryMenListShowScreen(),
+    StockSubmitToManager(),
+    ItemReceiptScreen(),
+    MoreOptionScreenGodownKeeper(),
   ];
 
   // Method to handle item selection
@@ -46,7 +44,6 @@ class _BottomNavBarExampleState extends State<BottomNavBarExample> {
       });
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,19 +54,23 @@ class _BottomNavBarExampleState extends State<BottomNavBarExample> {
         onTap: _onItemTapped,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard,size: 18,),
+            icon: Icon(Icons.dashboard,size: 16,),
             label: 'Dashboard',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.assignment,size: 18,),
-            label: 'DSR Report',
+            icon: Icon(Icons.shopping_cart,size: 16,),
+            label: 'Daily Sale',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart,size: 18,),
-            label: 'Cash Collection',
+            icon: Icon(Icons.summarize,size: 16,),
+            label: "Today's Summary",
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.more_horiz,size: 18,),
+            icon: Icon(Icons.receipt,size: 16,),
+            label: 'Item Receipt',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.more_horiz,size: 16,),
             label: 'More',
           ),
         ],
@@ -80,4 +81,3 @@ class _BottomNavBarExampleState extends State<BottomNavBarExample> {
     );
   }
 }
-

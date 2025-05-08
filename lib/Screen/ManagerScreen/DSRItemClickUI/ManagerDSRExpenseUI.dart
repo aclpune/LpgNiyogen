@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:lpgsalesandinventory/Screen/ManagerScreen/ClickModelClass/DSRReportExpenseModel.dart';
 
 
@@ -36,6 +37,7 @@ class _ManagerDSRExpenseUI extends State<ManagerDSRExpenseUI> {
               child: Text(
                 "$serialNumbers", // Dynamically display serial numbers (index + 1 or any other dynamic value)
                 style: TextStyle(fontSize: 16),
+
               ),
             ),
             Divider(),
@@ -44,20 +46,22 @@ class _ManagerDSRExpenseUI extends State<ManagerDSRExpenseUI> {
               child: Text(
                 expensesale.expensehead ?? "No Head", // Replace with actual field name
                 style: TextStyle(fontSize: 16),
+
               ),
             ),
             Expanded(
               flex: 2,
               child: Text(
-                expensesale.cash!.toStringAsFixed(2) ?? "0", // Replace with actual field name
+                formatCurrency(expensesale.cash!.toDouble()), // Replace with actual field name
                 style: TextStyle(fontSize: 16),
               ),
             ),
             Expanded(
               flex: 2,
               child: Text(
-                expensesale.bank!.toStringAsFixed(2) ?? "0", // Replace with actual field name
+                  formatCurrency(expensesale.bank!.toDouble()), // Replace with actual field name
                 style: TextStyle(fontSize: 16),
+
               ),
             ),
           ],
@@ -68,6 +72,21 @@ class _ManagerDSRExpenseUI extends State<ManagerDSRExpenseUI> {
       );
 
   }
+  String formatCurrency(double amount) {
+    if (amount == 0) {
+      return '0.00'; // Return "0.00" if the amount is zero
+    }
+    final format = NumberFormat('#,##,###.00', 'en_IN'); // Indian locale with comma separator
 
+    // Ensure the result always shows a leading zero before the decimal point
+    String formattedAmount = format.format(amount);
+
+    // If there's no integer part, it ensures that a leading zero is added before decimal
+    if (amount < 1 && formattedAmount.startsWith('.')) {
+      formattedAmount = '0' + formattedAmount;
+    }
+
+    return formattedAmount;
+  }
 }
 

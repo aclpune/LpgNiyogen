@@ -289,7 +289,10 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(height: 8),
+
+                                      const SizedBox(
+                                        height: 8,
+                                      ),
                                       Row(
                                         children: [
                                           SizedBox(
@@ -323,6 +326,32 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                           ),
                                         ],
                                       ),
+
+                                      // Row(
+                                      //   children: [
+                                      //     SizedBox(
+                                      //         width: 70,
+                                      //         child: Text('Unsettled:',
+                                      //             style:
+                                      //             Styling.itemGreyTextSmall)),
+                                      //     Text(totalUnsettledAmountCashFlow.toStringAsFixed(2),
+                                      //         style: Styling.itemBlackTestSmallReportBold),
+                                      //   ],
+                                      // ),
+                                      // SizedBox(
+                                      //   height: 2,
+                                      // ),
+                                      // Row(
+                                      //   children: [
+                                      //     SizedBox(
+                                      //         width: 70,
+                                      //         child: Text('Settled:',
+                                      //             style:
+                                      //             Styling.itemGreyTextSmall)),
+                                      //     Text(totalSettledAmountCashFlow.toStringAsFixed(2),
+                                      //         style: Styling.itemBlackTestSmallReportBold),
+                                      //   ],
+                                      // ),
                                     ],
                                   ),
                                 ],
@@ -1684,6 +1713,32 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                     ),
                   ),
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: isDateValid ? (){
+                        if(saveFlag){
+                          debugPrint("Save data$saveFlag");
+                          showFlushBar(context,
+                              Constants.dayEndCompleted);
+                        }else{
+                          saveCDCMSDataMob();
+                          debugPrint("Save data$saveFlag");
+                        }
+
+                      }:null,
+                      child: Text("Save CDCMS Data"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:isDateValid? saveFlag ? Colors.grey : Colors.blue:Colors.grey,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
           ),
@@ -1755,6 +1810,15 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
+                                  // Expanded(
+                                  //     flex: 3,
+                                  //     child: Text(data is ManagerDsrReportCashHandOverModel
+                                  //         ? data.staffName
+                                  //         : data.staffName,
+                                  //         style: Styling.itemBlackTestSmallReport,
+                                  //         textAlign: TextAlign.left),
+                                  // ),
+
                                   Expanded(
                                     flex: 3,
                                     child: GestureDetector(
@@ -1768,9 +1832,6 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                                   ? data.staffId
                                                   : data.staffId,
                                               "Date":selectedDate,
-                                              "StaffName":data is ManagerDsrReportCashHandOverModel
-                                                  ? data.staffName
-                                                  : data.staffName,
                                             }
                                         );
                                       },
@@ -3057,6 +3118,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
       print("Exception: $e");
     }
   }
+
   String formatCurrency(double amount) {
     if (amount == 0) {
       return '0.00'; // Return "0.00" if the amount is zero

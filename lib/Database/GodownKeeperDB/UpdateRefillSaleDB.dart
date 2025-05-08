@@ -61,7 +61,9 @@ class UpdateRefillSale{
   String collessEmpty = "lessEmpty";
   String colremark = "remark";
   String colsvRemark = "svRemark";
+  String colsvCount = "svCount";
   String coltvConsumerNo = "tvConsumerNo";
+  String coltvCount = "tvCount";
   String colupdateFlag = "updateFlag";
   String colitemAddedDate = "itemAddedDate";
 
@@ -98,6 +100,8 @@ class UpdateRefillSale{
   String colStockGetClosingDef = "ClosingDef";
   String colStockGetSVConsStr = "SVConsStr";
   String colStockGetTVConsStr = "TVConsStr";
+  String colStockGetSVQtyStr = "SVQtyStr";
+  String colStockGetTVQtyStr = "TVQtyStr";
   String colFlagColumnUpdate  = "FlagColumnUpdate";
   String colFlagColumnEdit  = "FlagColumnEdit";
 
@@ -120,7 +124,9 @@ class UpdateRefillSale{
             $collessEmpty TEXT NOT NULL ,
             $colremark TEXT NOT NULL ,
             $colsvRemark TEXT NOT NULL ,
+            $colsvCount TEXT NOT NULL ,
             $coltvConsumerNo TEXT NOT NULL ,
+            $coltvCount TEXT NOT NULL ,
             $colupdateFlag TEXT NOT NULL,
             $colitemAddedDate TEXT NOT NULL
           )
@@ -159,6 +165,8 @@ class UpdateRefillSale{
         $colStockGetClosingDef INTEGER NOT NULL,                          
         $colStockGetSVConsStr TEXT NOT NULL, 
         $colStockGetTVConsStr TEXT NOT NULL, 
+        $colStockGetSVQtyStr TEXT NOT NULL, 
+        $colStockGetTVQtyStr TEXT NOT NULL, 
         $colFlagColumnUpdate TEXT NOT NULL, 
         $colFlagColumnEdit TEXT NOT NULL
           )
@@ -333,7 +341,9 @@ class UpdateRefillSale{
         'lessEmpty': data.lessEmpty,
         'remark': data.remark,
         'svRemark': data.svRemark,
+        'svCount': data.svCount,
         'tvConsumerNo': data.tvConsumerNo,
+        'tvCount': data.tvCount,
         'updateFlag': data.updateFlag,
       },
       where: 'ID = ?',
@@ -343,7 +353,6 @@ class UpdateRefillSale{
     // Return true if at least one row was updated
     return count != null && count > 0;
   }
-
 
   Future<bool> checkIfItemExists(String itemId, String deliveryBoyId,String date) async {
     Database db = await initDatabase();
@@ -403,6 +412,7 @@ class UpdateRefillSale{
   //     );
   //   }
   // }
+
   Future<void> updateRefillSaleFlagToComplete(List<int> itemIds, String deliveryBoyId, String delDate) async {
     try {
       Database db = await initDatabase();
@@ -563,6 +573,8 @@ class UpdateRefillSale{
             'ClosingDef': item.closingDef,
             'SVConsStr': item.sVConsStr ?? '',
             'TVConsStr': item.TVConsStr ?? '',
+            'SVQtyStr': item.SVQtyStr ?? '',
+            'TVQtyStr': item.TVQtyStr ?? '',
             'FlagColumnUpdate': flagColumnUpdate,  // Flag 1 is a string
             'FlagColumnEdit': flagColumnEdit
     };
@@ -711,6 +723,8 @@ class UpdateRefillSale{
     required String remark,
     required String svList,
     required String tvList,
+    required String svQtyList,
+    required String tvQtyList,
   }) async {
     Database db = await initDatabase(); // Assuming `initDatabase()` initializes the database.
 
@@ -728,6 +742,8 @@ class UpdateRefillSale{
         'Remark': remark, // Update the item name// Update the item name
         'SVConsStr': svList, // Update the item name// Update the item name
         'TVConsStr': tvList, // Update the item name// Update the item name
+        'SVQtyStr': svQtyList, // Update the item name// Update the item name
+        'TVQtyStr': tvQtyList, // Update the item name// Update the item name
       },
       where: 'ItemId = ? AND SaleGKId = ? AND DistributorId = ?', // WHERE clause
       whereArgs: [itemId, saleGKId, distributorId], // Arguments for the WHERE clause
@@ -787,4 +803,93 @@ class UpdateRefillSale{
     }
   }
 
+// Function to check if any consumer number already exists in the 'tvConsumerNo' field
+//   Future<bool> checkIfConsumerExistsInDatabaseTV(String newConsumerNo) async {
+//     Database db = await initDatabase();
+//
+//     // Query the table to get the current 'tvConsumerNo' values
+//     List<Map<String, dynamic>> result = await db.query(
+//       tableUpdateRefillSale,
+//       columns: [coltvConsumerNo], // Only query the 'tvConsumerNo' column
+//     );
+//
+//     // Iterate through the result and check if the new consumer number already exists in any row's tvConsumerNo
+//     for (var row in result) {
+//       String existingConsumerNumbers = row[coltvConsumerNo];
+//       List<String> consumerList = existingConsumerNumbers.split(',');
+//
+//       if (consumerList.contains(newConsumerNo)) {
+//         return true; // If the new consumer number already exists in the list, return true
+//       }
+//     }
+//
+//     return false; // If no match is found, return false
+//   }
+
+  // Future<bool> checkIfConsumerExistsInDatabaseSV(String newConsumerNo) async {
+  //   Database db = await initDatabase();
+  //
+  //   // Query the table to get the current 'tvConsumerNo' values
+  //   List<Map<String, dynamic>> result = await db.query(
+  //     tableUpdateRefillSale,
+  //     columns: [colsvRemark], // Only query the 'tvConsumerNo' column
+  //   );
+  //
+  //   // Iterate through the result and check if the new consumer number already exists in any row's tvConsumerNo
+  //   for (var row in result) {
+  //     String existingConsumerNumbers = row[colsvRemark];
+  //     List<String> consumerList = existingConsumerNumbers.split(',');
+  //
+  //     if (consumerList.contains(newConsumerNo)) {
+  //       return true; // If the new consumer number already exists in the list, return true
+  //     }
+  //   }
+  //
+  //   return false; // If no match is found, return false
+  // }
+  Future<bool> checkIfConsumerExistsInDatabaseSV(String newConsumerNo) async {
+    Database db = await initDatabase();
+
+    // Query the table to get the current 'tvConsumerNo' values
+    List<Map<String, dynamic>> result = await db.query(
+      tableUpdateRefillSale,
+      columns: [colsvRemark], // Query the 'svRemark' column (which holds the comma-separated consumer numbers)
+    );
+
+    // Iterate through the result and check if the new consumer number already exists in any row's svRemark
+    for (var row in result) {
+      String existingConsumerNumbers = row[colsvRemark];
+      // Split by comma and trim spaces to ensure no leading/trailing spaces cause issues
+      List<String> consumerList = existingConsumerNumbers.split(',').map((e) => e.trim()).toList();
+
+      if (consumerList.contains(newConsumerNo)) {
+        return true; // If the new consumer number already exists in the list, return true
+      }
+    }
+
+    return false; // If no match is found, return false
+  }
+
+  Future<bool> checkIfConsumerExistsInDatabaseTV(String newConsumerNo) async {
+    Database db = await initDatabase();
+
+    // Query the table to get the current 'tvConsumerNo' values
+    List<Map<String, dynamic>> result = await db.query(
+      tableUpdateRefillSale,
+      columns: [coltvConsumerNo], // Query the 'svRemark' column (which holds the comma-separated consumer numbers)
+    );
+
+    // Iterate through the result and check if the new consumer number already exists in any row's svRemark
+    for (var row in result) {
+      String existingConsumerNumbers = row[coltvConsumerNo];
+      // Split by comma and trim spaces to ensure no leading/trailing spaces cause issues
+      List<String> consumerList = existingConsumerNumbers.split(',').map((e) => e.trim()).toList();
+
+      if (consumerList.contains(newConsumerNo)) {
+        return true; // If the new consumer number already exists in the list, return true
+      }
+    }
+
+    return false; // If no match is found, return false
+  }
 }

@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Utils/app_url.dart';
 import '../ClickModelClass/DsrReportCashInHandModel.dart';
-import '../ManagerModelClass/ManagerDSRReportCashHandOverModel.dart';
 import 'ManagerCashInHandScreenDetailsUI.dart';
 
 class ManagerCashInHandScreenDeails extends StatefulWidget {
@@ -21,13 +20,11 @@ class ManagerCashInHandScreenDeails extends StatefulWidget {
 
 class _ManagerCashInHandScreenDeails extends State<ManagerCashInHandScreenDeails> {
   late List<DsrReportCashInHandModel> cashInHandModel = []; // Initialize as empty list
-  late List<ManagerDsrReportCashHandOverModel> managerCashInHand = [];
 
   bool isLoading = true;
   var argValue;
   DateTime? date;
   int? staffId;
-  String? staffNames;
 
   @override
   void initState() {
@@ -41,7 +38,6 @@ class _ManagerCashInHandScreenDeails extends State<ManagerCashInHandScreenDeails
             .arguments as Map;
         date = argValue["Date"];
         staffId = argValue["staffId"];
-        staffNames = argValue["StaffName"];
 
         debugPrint("date :- ${date.toString()}");
         debugPrint("staffId :- ${staffId.toString()}");
@@ -108,62 +104,12 @@ class _ManagerCashInHandScreenDeails extends State<ManagerCashInHandScreenDeails
     }
   }
 
-  // Future<void> _fetchCashHandoverData() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   String? distributorId = prefs.getString('DistributorId');
-  //   String? godownId = prefs.getString('godownId');
-  //   String? addedBy = prefs.getString('StaffId');
-  //   String? godownKeeperId = prefs.getString('godownKeeperId');
-  //   String? token = prefs.getString('token'); // This is your bearer token
-  //   String formattedDate =
-  //   DateFormat('yyyy-MM-dd').format(selectedDate); // Format selectedDate
-  //   // String formattedDate = "2025-02-17"; // Format selectedDate
-  //
-  //   try {
-  //     final response = await http.post(
-  //       Uri.parse(AppUrl.GetCashHandOverDSRDtlsForMob),
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Authorization': 'Bearer $token',
-  //         // Adding token to the Authorization header
-  //       },
-  //       body: jsonEncode({
-  //         'DistributorId': distributorId,
-  //         'Date': formattedDate,
-  //       }),
-  //     );
-  //
-  //     debugPrint(
-  //         'jsonRequestBody GetCashHandOverDSRDtlsForMob: ${response.request}');
-  //     debugPrint('response GetCashHandOverDSRDtlsForMob:  ${response.body}');
-  //
-  //     if (response.statusCode == 200) {
-  //       // Decode the response body as a List
-  //       final List<dynamic> jsonResponse = jsonDecode(response.body);
-  //
-  //       // Filter the data based on the condition (TransCate == 'DailySale')
-  //       var filteredDataCashInHandList = jsonResponse
-  //           .map((item) => ManagerDsrReportCashHandOverModel.fromJson(
-  //           item)) // Map to model
-  //           .toList();
-  //
-  //       setState(() {
-  //         // Use filtered data to update the UI
-  //         dataCashInHandList = filteredDataCashInHandList;
-  //         isLoading = false;
-  //       });
-  //     } else {
-  //       throw Exception('Failed to load data');
-  //     }
-  //   } catch (e) {
-  //     print('Error: $e');
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
+    // var sale = cashInHandModel;
+    // String? titleText = sale.isNotEmpty ? sale[0].itemName : 'No Items';
     return Scaffold(
-        appBar: AppBar(title: Text('$staffNames'),),
+        appBar: AppBar(title: Text('Cash Hand'),),
         body: isLoading
             ? const Center(
             child: CircularProgressIndicator()) // Show loading indicator while fetching data
@@ -190,7 +136,7 @@ class _ManagerCashInHandScreenDeails extends State<ManagerCashInHandScreenDeails
                         Expanded(
                           flex: 3,
                           child: Text(
-                            'Item Name',
+                            'Staff Name',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -239,7 +185,7 @@ class _ManagerCashInHandScreenDeails extends State<ManagerCashInHandScreenDeails
                   Align(
                   alignment: Alignment.centerRight, // Ensures the content inside is aligned right
                   child: Text(
-                        'Total: ${getTotalCash().toStringAsFixed(2)}',
+                        'Total: ${formatCurrency(getTotalCash())}',
                         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                   ),
@@ -267,5 +213,21 @@ class _ManagerCashInHandScreenDeails extends State<ManagerCashInHandScreenDeails
      }
 
     return totalAmount;
+  }
+  String formatCurrency(double amount) {
+    if (amount == 0) {
+      return '0.00'; // Return "0.00" if the amount is zero
+    }
+    final format = NumberFormat('#,##,###.00', 'en_IN'); // Indian locale with comma separator
+
+    // Ensure the result always shows a leading zero before the decimal point
+    String formattedAmount = format.format(amount);
+
+    // If there's no integer part, it ensures that a leading zero is added before decimal
+    if (amount < 1 && formattedAmount.startsWith('.')) {
+      formattedAmount = '0' + formattedAmount;
+    }
+
+    return formattedAmount;
   }
 }

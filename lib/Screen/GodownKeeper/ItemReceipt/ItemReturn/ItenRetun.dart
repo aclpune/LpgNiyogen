@@ -11,6 +11,7 @@ import '../../../Utils/CustomAppBar.dart';
 import '../../../Utils/app_url.dart';
 import 'package:http/http.dart' as http;
 import '../../../Utils/constants.dart';
+import '../../BottomNavigationForGodownKeeper.dart';
 import '../../DashboardScreen.dart';
 import '../EditItem/Model/GetItemReceiptListModel.dart';
 import 'ItenReturnItemUi.dart';
@@ -34,40 +35,6 @@ class _ItemReturnScreenState extends State<ItemReturnScreen> {
   Future<void> _refresh() async {
     await fetchItemReceipts();  // Call fetchItemReceipts to get updated data
   }
-  void showDetailsDialog(BuildContext context, Map<String, dynamic> item) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Details for ${item['vehicleNo']}'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text("14.2 Kg Empty Return: 200"),
-              Text("14.2 Kg Defective: --"),
-              Text("19 Kg Empty Return: 50"),
-              Text("19 Kg Defective: --"),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: Text("Close"),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                // Handle the "Out" action
-                Navigator.of(context).pop();
-              },
-              child: Text("Out"),
-            ),
-          ],
-        );
-      },
-    );
-  }
   @override
   Widget build(BuildContext context) {
     var argLRAdd = ModalRoute.of(context)?.settings.arguments;
@@ -76,12 +43,12 @@ class _ItemReturnScreenState extends State<ItemReturnScreen> {
         // Show a confirmation dialog
         if (argLRAdd == "fromDrawer") {
           Navigator.pushReplacementNamed(
-              context, DashboardScreen.screenName,
+              context, BottomNavigationForGodownKeeper.screenName,
               arguments: "onBack");
           return false;
         } else {
           Navigator.pushReplacementNamed(
-              context, DashboardScreen.screenName);
+              context, BottomNavigationForGodownKeeper.screenName);
           return false;
         } // In case `null` is returned, return `false`
       },

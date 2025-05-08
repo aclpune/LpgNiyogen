@@ -13,6 +13,7 @@ import '../../Utils/Styling.dart';
 import '../../Utils/Widget.dart';
 import '../../Utils/app_url.dart';
 import '../../Utils/constants.dart';
+import '../BottomNavigationForGodownKeeper.dart';
 import '../DeliveryBoyModel/GetDefectiveStockListModel.dart';
 import '../ItemReceipt/CylItemList/CylItemListModel.dart';
 import 'package:http/http.dart' as http;
@@ -56,10 +57,12 @@ class _MarkDefectiveItemScreenState extends State<MarkDefectiveItemScreen> {
         onWillPop: () async {
           // Show a confirmation dialog
           if (argLRAdd == "fromDrawer") {
-            Navigator.pushReplacementNamed(context, '/godownDashboard');
+            // Navigator.pushReplacementNamed(context, '/godownDashboard');
+            Navigator.pushReplacementNamed(context, BottomNavigationForGodownKeeper.screenName);
             return false;
           } else {
-            Navigator.pushReplacementNamed(context, '/godownDashboard');
+            // Navigator.pushReplacementNamed(context, '/godownDashboard');
+            Navigator.pushReplacementNamed(context, BottomNavigationForGodownKeeper.screenName);
             return false;
           } // In case `null` is returned, return `false`
         },
@@ -190,16 +193,28 @@ class _MarkDefectiveItemScreenState extends State<MarkDefectiveItemScreen> {
                           // Add 10px margin on left and right
                           child: ElevatedButton(
                             onPressed: () {
-                              int defctiveQty = int.parse(_defectiveController.text);
-
-                              if(_defectiveController.text.isNotEmpty){
-                                if(defctiveQty > 0 ){
-                                  submitDefectiveToApi();
-                                }else{
-                                  showFlushBar(context,Constants.validCountEnter);
+                              if(_defectiveController.text.isNotEmpty) {
+                                int defctiveQty = int.parse(
+                                    _defectiveController.text);
+                                if (_defectiveController.text.isNotEmpty) {
+                                  if (_selectedItem != null) {
+                                    if (defctiveQty > 0) {
+                                      submitDefectiveToApi();
+                                    } else {
+                                      showFlushBar(
+                                          context, Constants.validCountEnter);
+                                    }
+                                  } else {
+                                    showFlushBar(context,
+                                        Constants.selectValidItemReceipt);
+                                  }
+                                } else {
+                                  showFlushBar(
+                                      context, Constants.validCountEnter);
                                 }
                               }else{
-                                showFlushBar(context,Constants.validCountEnter);
+                                showFlushBar(
+                                    context, Constants.validCountEnter);
                               }
                             },
                             child: Padding(
