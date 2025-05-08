@@ -43,7 +43,7 @@ BranchAdminAH	cnf@1234*/
   static String forgetPassFailedMessage = 'Forget Password failed';
   static String responseFailedMessage = 'Something went wrong..try again';
   static String flag = 'Y';
-  static String appName = "LPG Niyojan";
+  static String appName = "Niyojan";
   // static String androidPlayStoreAppUrl =
   //     "https://play.google.com/store/apps/details?id=com.aipl.flutter.cnf.flutter_cnf";
   static String androidPlayStoreAppUrl =
@@ -82,6 +82,7 @@ BranchAdminAH	cnf@1234*/
   static String dayEndCompleted = "This action is not permitted as today's day end operation has already been completed.";
   static String totalSaleQtyDailySale = "Refill sale qty exceeds current filled stock for this item, kindly check the qty entered or add filled stock using item receipt menu.";
   static String defectiveSaleQtyDailySale = "Defective qty exceeds current defective stock for this item, kindly check the qty entered or add defective stock.";
+  static String svTvConsumerSelectFromDD = "Please select valid consumer number from list.";
 
   ///manager
   static String expenseSendMgr = "Data saved successfully.";
@@ -112,7 +113,7 @@ BranchAdminAH	cnf@1234*/
   static double size18 = 18;
   static double size16 = 16;
   static double size14 = 14;
-  static String AppBarTitle = "LPG Niyojan";
+  static String AppBarTitle = "Niyojan";
 
   static String DSRMessage =
       "Warning: Once you confirm the DSR,\nApplication will close the day and save the closing entries for inventory (cyl and ARB), along with cash flow transactions.\nYou will not be allowed to make any changes to any transaction once you confirm, and today’s closing will be done.\nAre you sure you want to proceed?";

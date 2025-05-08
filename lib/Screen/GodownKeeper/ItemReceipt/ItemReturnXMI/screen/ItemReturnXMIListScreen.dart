@@ -8,6 +8,7 @@ import '../../../../ConstantScreen/widgets.dart';
 import '../../../../Utils/CustomAppBar.dart';
 import '../../../../Utils/app_url.dart';
 import '../../../../Utils/constants.dart';
+import '../../../BottomNavigationForGodownKeeper.dart';
 import '../../../DashboardScreen.dart';
 import '../../EditItem/Model/GetItemReceiptListModel.dart';
 import 'package:http/http.dart' as http;
@@ -40,12 +41,12 @@ class _ItemReturnXMIListScreenState extends State<ItemReturnXMIListScreen> {
         // Show a confirmation dialog
         if (argLRAdd == "fromDrawer") {
           Navigator.pushReplacementNamed(
-              context, DashboardScreen.screenName,
+              context, BottomNavigationForGodownKeeper.screenName,
               arguments: "onBack");
           return false;
         } else {
           Navigator.pushReplacementNamed(
-              context, DashboardScreen.screenName);
+              context, BottomNavigationForGodownKeeper.screenName);
           return false;
         } // In case `null` is returned, return `false`
       },

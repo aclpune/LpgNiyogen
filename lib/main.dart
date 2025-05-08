@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
 
+import 'Screen/GodownKeeper/BottomNavigationForGodownKeeper.dart';
 import 'Screen/GodownKeeper/DashboardScreen.dart';
 import 'Screen/GodownKeeper/DelBoyStockReturn/DeliveryMenListShowScreen.dart';
 import 'Screen/GodownKeeper/DelBoyStockReturn/StockReturnFromDelBoy.dart';
@@ -15,16 +16,22 @@ import 'Screen/GodownKeeper/ItemReceipt/AddItem/ItemReceiptScreen.dart';
 import 'Screen/GodownKeeper/ItemReceipt/ItemReturn/ItenRetun.dart';
 import 'Screen/GodownKeeper/ItemReceipt/ItemReturnXMI/screen/AddReturnItemXMIScreen.dart';
 import 'Screen/GodownKeeper/ItemReceipt/ItemReturnXMI/screen/ItemReturnXMIListScreen.dart';
+import 'Screen/GodownKeeper/MoreOptionScreenGodownKeeper.dart';
 import 'Screen/ManagerScreen/BootomNavigatinBarManager.dart';
 import 'Screen/GodownKeeper/MarkDefective/MarkDefectiveItemScreen.dart';
 import 'Screen/ManagerScreen/CashDepositToBankScreen.dart';
 import 'Screen/ManagerScreen/CashHandoverScreen.dart';
+import 'Screen/ManagerScreen/DSRItemClickUI/ManagerCashInHandScreenDetails.dart';
+import 'Screen/ManagerScreen/DSRItemClickUI/ManagerDSRReportScreenDetails.dart';
+import 'Screen/ManagerScreen/DSRItemClickUI/ManagerExpenseTabScreenDetails.dart';
+import 'Screen/ManagerScreen/DSRItemClickUI/ManagerIncomeUnsettledScreenDetails.dart';
 import 'Screen/ManagerScreen/DeliveryBoyWiseListShow.dart';
 import 'Screen/ManagerScreen/ManagerDSRReportScreen.dart';
 import 'Screen/ManagerScreen/ManagerDashboard.dart';
 import 'Screen/ManagerScreen/ManagerMoreScreen.dart';
 import 'Screen/ManagerScreen/ManagerUpdateSaleCashUpdation.dart';
 import 'Screen/ManagerScreen/ManagerUpdateSaleScreen.dart';
+import 'Screen/ManagerScreen/RegulatorItemReceiptScreen.dart';
 import 'Screen/User/Login/Screen/MyLogin.dart';
 import 'Screen/User/Login/Screen/VerifyOTP.dart';
 import 'Screen/User/Login/provider/LoginProvider.dart';
@@ -147,6 +154,8 @@ class MyApp extends StatelessWidget {
             AddReturnItemXMIScreen.screenName: (context) => AddReturnItemXMIScreen(),
             ItemReturnXMIListScreen.screenName: (context) => ItemReturnXMIListScreen(),
             MarkDefectiveItemScreen.screenName: (context) => MarkDefectiveItemScreen(),
+            BottomNavigationForGodownKeeper.screenName: (context) => BottomNavigationForGodownKeeper(),
+            MoreOptionScreenGodownKeeper.screenName: (context) => MoreOptionScreenGodownKeeper(),
 
             ///Manager
             CashHandoverScreen.screenName: (context) => CashHandoverScreen(),
@@ -158,6 +167,14 @@ class MyApp extends StatelessWidget {
             ManagerDSRReportScreen.screenName: (context) => ManagerDSRReportScreen(),
             BottomNavBarExample.screenName: (context) => BottomNavBarExample(),
             ManagerMoreScree.screenName: (context) => ManagerMoreScree(),
+            ManagerDSRReportScreenDetails.screenName: (context) => ManagerDSRReportScreenDetails(),
+            ManagerIncomeUnsettledScreenDetails.screenName: (context) => ManagerIncomeUnsettledScreenDetails(),
+            ManagerCashInHandScreenDeails.screenName: (context) => ManagerCashInHandScreenDeails(),
+            ManagerExpenseTabScreenDetails.screenName: (context) => ManagerExpenseTabScreenDetails(),
+            //ManagerCashInHandScreenDetails.screenName: (context) => ManagerCashInHandScreenDetails(),
+
+
+            RegulatorItemReceiptScreen.screenName: (context) => RegulatorItemReceiptScreen(),
 
           },
         ),

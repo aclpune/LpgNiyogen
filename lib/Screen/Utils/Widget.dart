@@ -364,6 +364,7 @@ Widget itemSubLineWithDDsss(String greyText,String textData, bool isImbalanceSto
                 Text(
                   textData,
                   style: Styling.buttonTextBlack,
+                  style: Styling.itemBlackTestVerySmallReport,
                 ),
               ],
             ),

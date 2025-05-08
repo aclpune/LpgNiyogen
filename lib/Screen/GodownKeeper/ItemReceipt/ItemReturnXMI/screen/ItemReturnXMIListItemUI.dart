@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../ConstantScreen/widgets.dart';
 import '../../../../Utils/app_url.dart';
 import '../../../../Utils/constants.dart';
+import '../../../BottomNavigationForGodownKeeper.dart';
 import '../../../DashboardScreen.dart';
 import '../../CylItemList/GetCurrentStcOfGodownKeeperModel.dart';
 import 'package:http/http.dart' as http;
@@ -598,7 +599,9 @@ class _ItemReturnXMIListItemUIState extends State<ItemReturnXMIListItemUI> {
         // Navigator.pushReplacementNamed(context, DashboardScreen.screenName);
         // Navigator.pushReplacementNamed(context, '/godownDashboard');
         Future.delayed(Duration(milliseconds: 300), () {
-          Navigator.pushReplacementNamed(context, DashboardScreen.screenName);
+          // Navigator.pushReplacementNamed(context, DashboardScreen.screenName);
+          Navigator.pushReplacementNamed(context, BottomNavigationForGodownKeeper.screenName);
+
         });
         print("Request successful: ${response.body}");
       } else {

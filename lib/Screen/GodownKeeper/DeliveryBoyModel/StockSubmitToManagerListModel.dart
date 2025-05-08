@@ -198,6 +198,8 @@ class ItemList {
       num? closingDef,
     String? sVConsStr,
     String? TVConsStr,
+    String? SVQtyStr,
+    String? TVQtyStr,
   String? FlagColumnUpdate,}){
     _SaleGKItemId = SaleGKItemId;
     _itemId = itemId;
@@ -214,6 +216,8 @@ class ItemList {
     _closingDef = closingDef;
     _sVConsStr = sVConsStr;
     _TVConsStr = TVConsStr;
+    _SVQtyStr = SVQtyStr;
+    _TVQtyStr = TVQtyStr;
     _FlagColumnUpdate = FlagColumnUpdate;
 }
 
@@ -233,6 +237,8 @@ class ItemList {
     _closingDef = json['ClosingDef'];
     _sVConsStr = json['SVConsStr'];
     _TVConsStr = json['TVConsStr'];
+    _SVQtyStr = json['SVQtyStr'];
+    _TVQtyStr = json['TVQtyStr'];
     _FlagColumnUpdate = json['FlagColumnUpdate'];
   }
   num? _itemId;
@@ -250,6 +256,8 @@ class ItemList {
   num? _closingDef;
   String? _sVConsStr;
   String? _TVConsStr;
+  String? _SVQtyStr;
+  String? _TVQtyStr;
   String? _FlagColumnUpdate;
 ItemList copyWith({
   num? SaleGKItemId,
@@ -267,6 +275,8 @@ ItemList copyWith({
   num? closingDef,
   String? sVConsStr,
   String? TVConsStr,
+  String? SVQtyStr,
+  String? TVQtyStr,
   String? FlagColumnUpdate,
 }) => ItemList(
   SaleGKItemId: SaleGKItemId ?? _SaleGKItemId,
@@ -284,6 +294,8 @@ ItemList copyWith({
   closingDef: closingDef ?? _closingDef,
   sVConsStr: sVConsStr ?? _sVConsStr,
   TVConsStr: TVConsStr ?? _TVConsStr,
+  SVQtyStr: SVQtyStr ?? _SVQtyStr,
+  TVQtyStr: TVQtyStr ?? _TVQtyStr,
   FlagColumnUpdate: FlagColumnUpdate ?? _FlagColumnUpdate,
 );
   num? get SaleGKItemId => _SaleGKItemId;
@@ -301,6 +313,8 @@ ItemList copyWith({
   num? get closingDef => _closingDef;
   String? get sVConsStr => _sVConsStr;
   String? get TVConsStr => _TVConsStr;
+  String? get SVQtyStr => _SVQtyStr;
+  String? get TVQtyStr => _TVQtyStr;
   String? get FlagColumnUpdate => _FlagColumnUpdate;
 
   Map<String, dynamic> toJson() {
@@ -320,6 +334,8 @@ ItemList copyWith({
     map['ClosingDef'] = _closingDef;
     map['SVConsStr'] = _sVConsStr;
     map['TVConsStr'] = _TVConsStr;
+    map['SVQtyStr'] = _SVQtyStr;
+    map['TVQtyStr'] = _TVQtyStr;
     map['FlagColumnUpdate'] = _FlagColumnUpdate;
     return map;
   }

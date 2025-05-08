@@ -86,90 +86,59 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return
       Scaffold(
         key: _scaffoldKey,
-        drawer: CustomeDrawer(), // Assign the scaffold key
-        appBar:
-        PreferredSize(
-          preferredSize: Size.fromHeight(120), // Custom height for the AppBar
-          child: Container(
-            color: Colors.blueAccent, // Custom background color
-            padding: EdgeInsets.only(top: 40, left: 5, right: 16), // Padding for top & sides
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start, // Align items to the start
-              children: [
-                IconButton(
-                  icon: Icon(Icons.menu, color: Colors.white),
-                  // Menu icon for Drawer
-                  onPressed: () {
-                    // Toggle the drawer open or closed
-                    if (_scaffoldKey.currentState!.isDrawerOpen) {
-                      _scaffoldKey.currentState!.closeDrawer();
-                    } else {
-                      _scaffoldKey.currentState!.openDrawer();
-                    }
-                  },
-                ),
-                SizedBox(width: 20),
-
-                // Replacing the Text widget with the Row for Logo and App Name
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    // App Logo
-                    Image.asset(
-                      'assets/playstore.png', // Path to your logo image
-                      height: 40, // Adjust the height as needed
-                    ),
-                    SizedBox(width: 8), // Add some space between the logo and the app name
-                    // App Name (Replace 'App Name' with your constant or dynamic value)
-                    Text(
-                      Constants.AppBarTitle, // Your app name constant or dynamic value
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-
-              ],
-            ),
-          ),
-        ),
-
-        // AppBar(
-        //   title: Column(children: <Widget>[
-        //     Row(
-        //       mainAxisSize: MainAxisSize.max,
-        //       mainAxisAlignment: MainAxisAlignment.center,
+        // drawer: CustomeDrawer(), // Assign the scaffold key
+        // appBar:
+        // PreferredSize(
+        //   preferredSize: Size.fromHeight(120), // Custom height for the AppBar
+        //   child: Container(
+        //     color: Colors.blueAccent, // Custom background color
+        //     padding: EdgeInsets.only(top: 30, left: 5, right: 16), // Padding for top & sides
+        //     child: Row(
+        //       mainAxisAlignment: MainAxisAlignment.start, // Align items to the start
         //       children: [
-        //         Image.asset(
-        //           'assets/icononlytransparentnobuffer.png',
-        //           // Replace with the path to your logo image
-        //           height: 30, // Adjust the height as needed
+        //         IconButton(
+        //           icon: Icon(Icons.menu, color: Colors.white),
+        //           // Menu icon for Drawer
+        //           onPressed: () {
+        //             // Toggle the drawer open or closed
+        //             if (_scaffoldKey.currentState!.isDrawerOpen) {
+        //               _scaffoldKey.currentState!.closeDrawer();
+        //             } else {
+        //               _scaffoldKey.currentState!.openDrawer();
+        //             }
+        //           },
         //         ),
-        //         Flexible(
-        //           flex: 9,
-        //           fit: FlexFit.tight,
-        //           child: Text(
-        //             Constants.AppBarTitle,
-        //             textAlign: TextAlign.start,
-        //           ),
+        //         SizedBox(width: 20),
+        //
+        //         // Replacing the Text widget with the Row for Logo and App Name
+        //         Row(
+        //           mainAxisAlignment: MainAxisAlignment.start,
+        //           children: [
+        //             // App Logo
+        //             Card(
+        //               color: Colors.white,
+        //               elevation: 5,
+        //               shadowColor: Colors.blue,
+        //               shape: RoundedRectangleBorder(
+        //                 borderRadius: BorderRadius.circular(4.0),
+        //               ),
+        //               child: Image.asset(
+        //                 'assets/playstore.png', // Path to your logo image
+        //                 height: 40, // Adjust the height as needed
+        //               ),
+        //             ),
+        //             SizedBox(width: 8), // Add some space between the logo and the app name
+        //             // App Name (Replace 'App Name' with your constant or dynamic value)
+        //             Text(
+        //               Constants.AppBarTitle, // Your app name constant or dynamic value
+        //               style: Styling.appBarTitle,
+        //             ),
+        //           ],
         //         ),
+        //
         //       ],
         //     ),
-        //     Row(
-        //       mainAxisSize: MainAxisSize.max,
-        //       mainAxisAlignment: MainAxisAlignment.end,
-        //       children: [
-        //         Text(
-        //           "userName",
-        //           style: TextStyle(fontSize: 10),
-        //           textAlign: TextAlign.right,
-        //         ),
-        //       ],
-        //     )
-        //   ]),
+        //   ),
         // ),
         body:
           Column(
@@ -781,59 +750,59 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                 ),
               ),
-
-                Container(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        height: 40,
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                            if(stockTransferFlag){
-                              Navigator.pushReplacementNamed(context, '/deliveryMenListShowScreen');
-                            }else{
-                              CustomAlertDialog.showCustomAlert(context, Constants.stockNotAccepted);
-                            }
-                            // Navigator.pushReplacementNamed(context, '/stockReturnFromDelBoy');
-                          },
-                          icon: Icon(Icons.update, size: 20), // Add icon
-                          label: Text("Daily Sale"),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:stockTransferFlag? Colors.blue:Colors.grey,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 40,
-                        child: ElevatedButton.icon(
-                          onPressed: () {
-                              if(stockTransferFlag){
-                                Navigator.pushReplacementNamed(context, '/stockSubmitToManager');
-
-                              }else{
-                                CustomAlertDialog.showCustomAlert(context,Constants.stockNotAccepted);
-                              }
-                          },
-                          icon: Icon(Icons.list_alt, size: 20), // Add icon
-                          label: Text("Today's Summary"),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:stockTransferFlag? Colors.blue:Colors.grey,
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                //
+                // Container(
+                //   padding: const EdgeInsets.all(10.0),
+                //   child: Row(
+                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //     children: [
+                //       SizedBox(
+                //         height: 40,
+                //         child: ElevatedButton.icon(
+                //           onPressed: () {
+                //             if(stockTransferFlag){
+                //               Navigator.pushReplacementNamed(context, '/deliveryMenListShowScreen');
+                //             }else{
+                //               CustomAlertDialog.showCustomAlert(context, Constants.stockNotAccepted);
+                //             }
+                //             // Navigator.pushReplacementNamed(context, '/stockReturnFromDelBoy');
+                //           },
+                //           icon: Icon(Icons.update, size: 20), // Add icon
+                //           label: Text("Daily Sale"),
+                //           style: ElevatedButton.styleFrom(
+                //             backgroundColor:stockTransferFlag? Colors.blue:Colors.grey,
+                //             foregroundColor: Colors.white,
+                //             shape: RoundedRectangleBorder(
+                //               borderRadius: BorderRadius.circular(50),
+                //             ),
+                //           ),
+                //         ),
+                //       ),
+                //       SizedBox(
+                //         height: 40,
+                //         child: ElevatedButton.icon(
+                //           onPressed: () {
+                //               if(stockTransferFlag){
+                //                 Navigator.pushReplacementNamed(context, '/stockSubmitToManager');
+                //
+                //               }else{
+                //                 CustomAlertDialog.showCustomAlert(context,Constants.stockNotAccepted);
+                //               }
+                //           },
+                //           icon: Icon(Icons.list_alt, size: 20), // Add icon
+                //           label: Text("Today's Summary"),
+                //           style: ElevatedButton.styleFrom(
+                //             backgroundColor:stockTransferFlag? Colors.blue:Colors.grey,
+                //             foregroundColor: Colors.white,
+                //             shape: RoundedRectangleBorder(
+                //               borderRadius: BorderRadius.circular(50),
+                //             ),
+                //           ),
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
 
             ],
           ),
@@ -1191,12 +1160,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
             fetchCurrentStock();
             checkAndSaveDayEndData();
             fetchTransactionList();
-          } else if (response['message'] == "UnSuccessful") {
+          } else if (response['message'] == "Token Expired") {
             debugPrint('RefreshTokenExc401 - true');
             showDialogToExpireSession(context);
-          } else {
+          } else{
             debugPrint('RefreshTokenStatus - false');
-
           }
         }).catchError((error) {
           EasyLoading.dismiss();

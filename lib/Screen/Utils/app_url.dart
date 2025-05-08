@@ -33,6 +33,7 @@ class AppUrl {
   static const String GetItemEXMIDetailList = '$baseUrl/GodownKeeper/GetItemEXMIDetailList';
   static const String DefectiveMasterAdd_Mob = '$baseUrl/GodownKeeper/DefectiveMasterAdd_Mob';
   static const String GetDefectiveList_Mob = '$baseUrl/GodownKeeper/GetDefectiveList_Mob';
+  static const String GetDailySaleSVTVConsumerDtls_Mob = '$baseUrl/DailyStockCash/GetDailySaleSVTVConsumerDtls_Mob';
 
   ///maager
   static const String GetDailySaleSummaryListDMWiseForMob = '$baseUrl/DailyStockCash/GetDailySaleSummaryListDMWiseForMob';
@@ -63,4 +64,14 @@ class AppUrl {
   static const String GetDailySaleCollByMgrDataByIdForMob = '$baseUrl/DailyStockCash/GetDailySaleCollByMgrDataByIdForMob';
   static const String GetBalanceByStaffId = '$baseUrl/DailyStockCash/GetBalanceByStaffId';
 
+  //DSR Click API
+  static const String GetCashflowpopupList_Mob = '$baseUrl/Reports/GetCashflowpopupList_Mob';
+   static const String GetexpensepopupList_Mob =  '$baseUrl/Reports/GetexpensepopupList_Mob';
+   static const String GetCashInHandpopupList_Mob = '$baseUrl/Reports/GetCashInHandpopupList_Mob';
+   static const String GetUnsettledAmountList_Mob = '$baseUrl/Reports/GetUnsettledAmountList_Mob';
+   static const String GetexpensepopupListOnAccount_Mob = '$baseUrl/Reports/GetexpensepopupListOnAccount_Mob';
+
+   //Dashboard Click API
+  static const String GetDashboardSettlementCtnList = '$baseUrl/Dashboard/GetDashboardSettlementCtnList';
+  static const String GetDashboardNiyojanPunchCtnLstForMob = '$baseUrl/Dashboard/GetDashboardNiyojanPunchCtnLstForMob';
 }

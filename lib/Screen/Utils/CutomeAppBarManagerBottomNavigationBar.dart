@@ -31,6 +31,7 @@ class _AppBarCustomState extends State<AppBarCustom> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
+        automaticallyImplyLeading: false,
         title: Column(children: <Widget>[
           Row(
             mainAxisSize: MainAxisSize.max,
@@ -38,9 +39,17 @@ class _AppBarCustomState extends State<AppBarCustom> {
             children: [
               Row(
                 children: [
-                  Image.asset(
-                    'assets/playstore.png', // Replace with the path to your logo image
-                    height: 30, // Adjust the height as needed
+                  Card(
+                    color: Colors.white,
+                    elevation: 7,
+                    shadowColor: Colors.blue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                    child: Image.asset(
+                      'assets/playstore.png', // Replace with the path to your logo image
+                      height: 35, // Adjust the height as needed
+                    ),
                   ),
                   SizedBox(width: 5,),
                   Column(
@@ -51,7 +60,7 @@ class _AppBarCustomState extends State<AppBarCustom> {
                         style: Styling.appBarTitle,
                       ),
                       Text(
-                        "Distributor Name",
+                        "",
                         textAlign: TextAlign.start,
                         style: Styling.appBarDesc,
                       ),
@@ -68,7 +77,7 @@ class _AppBarCustomState extends State<AppBarCustom> {
                         textAlign: TextAlign.right,
                       ),
                   Text(
-                    "Roll" ?? ' ',
+                    "" ?? ' ',
                     style: const TextStyle(fontSize: 10),
                     textAlign: TextAlign.right,
                   ),

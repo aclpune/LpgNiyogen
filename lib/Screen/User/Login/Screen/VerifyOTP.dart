@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../GodownKeeper/BottomNavigationForGodownKeeper.dart';
 import '../../../GodownKeeper/DashboardScreen.dart';
 import '../../../ManagerScreen/BootomNavigatinBarManager.dart';
 import '../../../ManagerScreen/ManagerDashboard.dart';
@@ -45,16 +46,7 @@ class _VerifyOtpState extends State<VerifyOtp> {
                     height: 150, // Adjust the height as needed
                     width: 150,  // Adjust the width as needed
                   ),
-                  SizedBox(height: 20),
-                  // Large LOGIN Text
-                  Text(
-                    'Verify OTP',
-                    style: TextStyle(
-                      fontSize:18, // Large font size for LOGIN
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
+
                   SizedBox(height: 40),
                   TextField(
                     controller: _otpController,
@@ -132,8 +124,9 @@ class _VerifyOtpState extends State<VerifyOtp> {
     if (userActivet == "Y") {
       if (roleId != null) {
         if(roleId == Constants.roleIdGodown){
-          Navigator.pushReplacementNamed(context, DashboardScreen.screenName,
+          Navigator.pushReplacementNamed(context, BottomNavigationForGodownKeeper.screenName,
               arguments: "checkVersion");
+
         }else if(roleId == Constants.roleIdManager){
           Navigator.pushReplacementNamed(context, BottomNavBarExample.screenName,
               arguments: "checkVersion");
