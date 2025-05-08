@@ -18,6 +18,7 @@ import '../../Utils/Widget.dart';
 import '../../Utils/app_url.dart';
 import '../../Utils/constants.dart';
 import '../../Utils/shared_preference.dart';
+import '../BottomNavigationForGodownKeeper.dart';
 import '../DashboardScreen.dart';
 import '../DeliveryBoyModel/DeliveryBoyInfoModel.dart';
 import '../DeliveryBoyModel/DeliveryMenSaleListModel.dart';
@@ -51,21 +52,20 @@ class _DeliveryMenListShowScreenState extends State<DeliveryMenListShowScreen> {
         // Show a confirmation dialog
         if (argLRAdd == "fromDrawer") {
           Navigator.pushReplacementNamed(
-              context, DashboardScreen.screenName,
+              context, BottomNavigationForGodownKeeper.screenName,
               arguments: "onBack");
           return false;
         } else {
           Navigator.pushReplacementNamed(
-              context, DashboardScreen.screenName);
+              context, BottomNavigationForGodownKeeper.screenName);
           return false;
         } // In case `null` is returned, return `false`
       },
-
-      child:
+        child:
       Scaffold(
-        appBar: CustomAppBar(
-          title: 'Daily Sale', // Title or hint text for the text field
-        ),
+        // appBar: CustomAppBar(
+        //   title: 'Daily Sale', // Title or hint text for the text field
+        // ),
         body:
         isLoading
             ? Center(child: CircularProgressIndicator())
@@ -131,7 +131,6 @@ class _DeliveryMenListShowScreenState extends State<DeliveryMenListShowScreen> {
                       ],
                     ),
                   ),
-
                   Container(
                     color: const Color(0xff1280B3),
                     height: 1.5,

@@ -1,16 +1,17 @@
-/// SaleGKId : 35
+/// SaleGKId : 171
 /// DistributorId : 8118
-/// StaffId : 2
+/// StaffId : 22
 /// DSCollMgrId : 0
-/// StaffNo : "SN/002"
-/// StaffName : "Amit Thosar"
-/// ItemId : 2
-/// ItemName : "19 kg"
-/// SaleGKItemId : 45
-/// GDFilledSale : 50
-/// SVQty : 2
-/// TVQty : 1
-/// Amount : 75000
+/// StaffNo : "SN/022"
+/// StaffName : "Rahul"
+/// ItemId : 1
+/// ItemName : "14.2 KG"
+/// SaleGKItemId : 151
+/// GDFilledSale : 43
+/// ActualSaleQty : 43
+/// SVQty : 0
+/// TVQty : 0
+/// Amount : 34636
 /// CashQty : 0
 /// CashAmt : 0
 /// PrepaidQty : 0
@@ -19,19 +20,19 @@
 /// PostAmt : 0
 /// CreditQty : 0
 /// CreditAmt : 0
-/// EmptyRetQty : 47
-/// DeffQty : 1
-/// LessEmptyQty : 1
-/// DailySaleStatus : 1
+/// EmptyRetQty : 43
+/// DeffQty : 0
+/// LessEmptyQty : 0
+/// DailySaleStatus : 2
 /// DenoCashExptd : 0
 /// DenoCashRcvd : 0
 /// CashBalance : 0
 /// UserName : ""
-/// StatusStr : "Submited"
+/// StatusStr : "Accepted"
 /// AddedBy : 0
 /// IsActive : 0
 /// AddedOn : "0001-01-01T00:00:00"
-/// DelDate : "2025-01-20T00:00:00"
+/// DelDate : "2025-04-07T00:00:00"
 
 class DilySaleSummaryDeliveryBoyWiseListModel {
   DilySaleSummaryDeliveryBoyWiseListModel({
@@ -45,13 +46,14 @@ class DilySaleSummaryDeliveryBoyWiseListModel {
       String? itemName, 
       num? saleGKItemId, 
       num? gDFilledSale, 
+      num? actualSaleQty, 
       num? sVQty, 
       num? tVQty, 
       num? amount, 
       num? cashQty, 
       num? cashAmt, 
-      num? prepaidQty, 
-      num? prepaidAmt, 
+      num? prepaidQty,
+      num? prepaidAmt,
       num? postQty, 
       num? postAmt, 
       num? creditQty, 
@@ -79,6 +81,7 @@ class DilySaleSummaryDeliveryBoyWiseListModel {
     _itemName = itemName;
     _saleGKItemId = saleGKItemId;
     _gDFilledSale = gDFilledSale;
+    _actualSaleQty = actualSaleQty;
     _sVQty = sVQty;
     _tVQty = tVQty;
     _amount = amount;
@@ -116,6 +119,7 @@ class DilySaleSummaryDeliveryBoyWiseListModel {
     _itemName = json['ItemName'];
     _saleGKItemId = json['SaleGKItemId'];
     _gDFilledSale = json['GDFilledSale'];
+    _actualSaleQty = json['ActualSaleQty'];
     _sVQty = json['SVQty'];
     _tVQty = json['TVQty'];
     _amount = json['Amount'];
@@ -151,6 +155,7 @@ class DilySaleSummaryDeliveryBoyWiseListModel {
   String? _itemName;
   num? _saleGKItemId;
   num? _gDFilledSale;
+  num? _actualSaleQty;
   num? _sVQty;
   num? _tVQty;
   num? _amount;
@@ -185,6 +190,7 @@ DilySaleSummaryDeliveryBoyWiseListModel copyWith({  num? saleGKId,
   String? itemName,
   num? saleGKItemId,
   num? gDFilledSale,
+  num? actualSaleQty,
   num? sVQty,
   num? tVQty,
   num? amount,
@@ -219,6 +225,7 @@ DilySaleSummaryDeliveryBoyWiseListModel copyWith({  num? saleGKId,
   itemName: itemName ?? _itemName,
   saleGKItemId: saleGKItemId ?? _saleGKItemId,
   gDFilledSale: gDFilledSale ?? _gDFilledSale,
+  actualSaleQty: actualSaleQty ?? _actualSaleQty,
   sVQty: sVQty ?? _sVQty,
   tVQty: tVQty ?? _tVQty,
   amount: amount ?? _amount,
@@ -254,6 +261,7 @@ DilySaleSummaryDeliveryBoyWiseListModel copyWith({  num? saleGKId,
   String? get itemName => _itemName;
   num? get saleGKItemId => _saleGKItemId;
   num? get gDFilledSale => _gDFilledSale;
+  num? get actualSaleQty => _actualSaleQty;
   num? get sVQty => _sVQty;
   num? get tVQty => _tVQty;
   num? get amount => _amount;
@@ -291,6 +299,7 @@ DilySaleSummaryDeliveryBoyWiseListModel copyWith({  num? saleGKId,
     map['ItemName'] = _itemName;
     map['SaleGKItemId'] = _saleGKItemId;
     map['GDFilledSale'] = _gDFilledSale;
+    map['ActualSaleQty'] = _actualSaleQty;
     map['SVQty'] = _sVQty;
     map['TVQty'] = _tVQty;
     map['Amount'] = _amount;

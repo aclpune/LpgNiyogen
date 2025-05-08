@@ -1,10 +1,10 @@
 class DenomModel {
   int? id;
-  int? noteType;
+  double? noteType;
   int? quantity;
-  int? totalAmt;
+  double? totalAmt;
   int? retNoteQty;
-  int? retNoteAmt;
+  double? retNoteAmt;
 
   DenomModel({
     this.id,

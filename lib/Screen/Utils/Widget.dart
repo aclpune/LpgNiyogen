@@ -33,6 +33,13 @@ Widget verticalDividerBig() {
     color: Colors.black, // Color of the line
   );
 }
+Widget verticalDividerVerySmallWidth() {
+  return  Container(
+    width: 0.4, // Width of the vertical line
+    height: 40.0, // Height of the vertical line
+    color: Colors.black, // Color of the line
+  );
+}
 Widget myElevButton(BuildContext context, String title, VoidCallback callback) {
   return ElevatedButton(
     onPressed: callback,
@@ -96,6 +103,30 @@ Widget textWidgetBlueColorWithoutStar(String title) {
     child: Row(
       children: [
         Text(title, style: Styling.blueClrText,),
+      ],
+    ),
+
+  );
+}
+
+Widget textWidgetBlueColorWithoutStarRed(String title) {
+  return Container(
+    margin: const EdgeInsets.only(left: 4),
+    child: Row(
+      children: [
+        Text(title, style: Styling.itemRedText,),
+      ],
+    ),
+
+  );
+}
+
+Widget textWidgetBlueColorWithoutStarGreen(String title) {
+  return Container(
+    margin: const EdgeInsets.only(left: 4),
+    child: Row(
+      children: [
+        Text(title, style: Styling.itemGreenText,),
       ],
     ),
 

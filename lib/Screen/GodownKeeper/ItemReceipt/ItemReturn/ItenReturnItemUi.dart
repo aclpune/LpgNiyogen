@@ -19,6 +19,7 @@ import '../../../Utils/CustomeAlertDialog.dart';
 import '../../../Utils/Styling.dart';
 import '../../../Utils/constants.dart';
 import '../../../Utils/shared_preference.dart';
+import '../../BottomNavigationForGodownKeeper.dart';
 import '../../DashboardScreen.dart';
 import '../../DeliveryBoyModel/GetStockTransferListModel.dart';
 import '../AddItem/ItemReceiptScreen.dart';
@@ -561,7 +562,9 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
         // Navigator.pushReplacementNamed(context, DashboardScreen.screenName);
         // Navigator.pushReplacementNamed(context, '/godownDashboard');
         Future.delayed(Duration(milliseconds: 300), () {
-          Navigator.pushReplacementNamed(context, DashboardScreen.screenName);
+          // Navigator.pushReplacementNamed(context, DashboardScreen.screenName);
+          Navigator.pushReplacementNamed(context, BottomNavigationForGodownKeeper.screenName);
+
         });
         print("Request successful: ${response.body}");
       } else {

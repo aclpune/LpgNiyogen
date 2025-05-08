@@ -20,6 +20,7 @@ import '../../../Utils/Styling.dart';
 import '../../../Utils/app_url.dart';
 import '../../../Utils/constants.dart';
 import '../../../Utils/shared_preference.dart';
+import '../../BottomNavigationForGodownKeeper.dart';
 import '../../DashboardScreen.dart';
 import '../../DeliveryBoyModel/GetStockTransferListModel.dart';
 import '../CylItemList/CylItemListModel.dart';
@@ -248,7 +249,8 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
               if (responseValue > 0) {
                 EasyLoading.showToast(Constants.itemAddedSuccessfully,
                     duration: const Duration(milliseconds: 3000));
-                Navigator.pushReplacementNamed(context, '/godownDashboard');
+                // Navigator.pushReplacementNamed(context, '/godownDashboard');
+                Navigator.pushReplacementNamed(context, BottomNavigationForGodownKeeper.screenName);
                 setState(() {
                   vehicleNoController.clear();
                   items.forEach((item) {
@@ -360,17 +362,21 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
       onWillPop: () async {
         // Show a confirmation dialog
         if (argLRAdd == "fromDrawer") {
-          Navigator.pushReplacementNamed(context, '/godownDashboard');
+          Navigator.pushReplacementNamed(
+              context, BottomNavigationForGodownKeeper.screenName,
+              arguments: "onBack");
           return false;
         } else {
-          Navigator.pushReplacementNamed(context, '/godownDashboard');
+          Navigator.pushReplacementNamed(
+              context, BottomNavigationForGodownKeeper.screenName,
+              arguments: "onBack");
           return false;
         } // In case `null` is returned, return `false`
       },
       child: Scaffold(
-        appBar: CustomAppBar(
-          title: 'Item Receipt', // Title or hint text for the text field
-        ),
+        // appBar: CustomAppBar(
+        //   title: 'Item Receipt', // Title or hint text for the text field
+        // ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(

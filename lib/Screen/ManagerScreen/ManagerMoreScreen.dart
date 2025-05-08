@@ -4,7 +4,8 @@ import 'package:lpgsalesandinventory/Screen/Utils/Styling.dart';
 
 import '../User/splashscreen/page/splash_screen.dart';
 import '../Utils/shared_preference.dart';
-import 'RegulatorItemReceiptScreen.dart';
+import 'CashDepositToBankScreen.dart';
+import 'CashHandoverScreen.dart';
 class ManagerMoreScree extends StatefulWidget {
   static const screenName = '/managerMoreScree';
   const ManagerMoreScree({super.key});
@@ -31,169 +32,169 @@ class _ManagerMoreScreeState extends State<ManagerMoreScree> {
       child: Scaffold(
         key: _scaffoldKey,
         body:
-          Column(
-            children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  // Ensures the content is scrollable
+        Column(
+          children: [
+            Expanded(
+              child: SingleChildScrollView(
+                // Ensures the content is scrollable
+                child:
+                Padding(
+                  padding: const EdgeInsets.only(
+                      left: 5.0, right:5.0, bottom: 5.0, top: 10.0),
                   child:
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        left: 5.0, right:5.0, bottom: 5.0, top: 10.0),
-                    child:
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Padding(
-                        //   padding: const EdgeInsets.only(left: 10.0),
-                        //   child: Text("CASH",style:Styling.itemGreyTextBigMore,),
-                        // ),
-                        // Card(
-                        //     shape: RoundedRectangleBorder(
-                        //       borderRadius: BorderRadius.circular(5),
-                        //     ),
-                        //     elevation: 1,
-                        //     color: Colors.white,
-                        //     child: Column(
-                        //       crossAxisAlignment: CrossAxisAlignment.start,
-                        //       children: [
-                        //         // Title for Cylinder Categories Table
-                        //         Padding(
-                        //           padding: const EdgeInsets.all(10.0),
-                        //           child: Row(
-                        //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //             children: [
-                        //               Row(
-                        //                 children: [
-                        //                   Icon(Icons.business_center_outlined),
-                        //                   SizedBox(width: 10,),
-                        //                   Text("Cash Handover",style: Styling.itemBlackTestMore,),
-                        //                 ],
-                        //               ),
-                        //               Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
-                        //             ],
-                        //           )
-                        //         ),
-                        //         Container(
-                        //           height: 1,
-                        //           color: Colors.grey[200],
-                        //         ),
-                        //         Padding(
-                        //             padding: const EdgeInsets.all(10.0),
-                        //             child: Row(
-                        //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //               children: [
-                        //                 Row(
-                        //                   children: [
-                        //                     Icon(Icons.add_business_outlined),
-                        //                     SizedBox(width: 10,),
-                        //                     Text("Cash Deposit To Bank",style: Styling.itemBlackTestMore,),
-                        //                   ],
-                        //                 ),
-                        //                 Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
-                        //               ],
-                        //             )
-                        //         ),
-                        //       ],
-                        //     ),
-                        //   ),
-                        // SizedBox(height: 20,),
-                        // Padding(
-                        //   padding: const EdgeInsets.only(left: 10.0),
-                        //   child: Text("Regulator Item",style:Styling.itemGreyTextBigMore,),
-                        // ),
-                        // GestureDetector(
-                        //   onTap: (){
-                        //     Navigator.pushNamed(
-                        //         context,
-                        //         RegulatorItemReceiptScreen
-                        //             .screenName);
-                        //   },
-                        //   child: Card(
-                        //     shape: RoundedRectangleBorder(
-                        //       borderRadius: BorderRadius.circular(5),
-                        //     ),
-                        //     elevation: 1,
-                        //     color: Colors.white,
-                        //     child:
-                        //     Column(
-                        //       crossAxisAlignment: CrossAxisAlignment.start,
-                        //       children: [
-                        //         // Title for Cylinder Categories Table
-                        //         Padding(
-                        //             padding: const EdgeInsets.all(10.0),
-                        //             child: Row(
-                        //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //               children: [
-                        //
-                        //                 Row(
-                        //                   children: [
-                        //                     Icon(Icons.av_timer_outlined),
-                        //                     SizedBox(width: 10,),
-                        //                     Text("Regulator Item",style: Styling.itemBlackTestMore,),
-                        //                   ],
-                        //                 ),
-                        //
-                        //                 Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
-                        //               ],
-                        //             )
-                        //         ),
-                        //
-                        //       ],
-                        //     ),
-                        //   ),
-                        // ),
-                        // SizedBox(height: 20,),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10.0),
-                          child: Text("LOGOUT",style:Styling.itemGreyTextBigMore,),
-                        ),
-                        GestureDetector(
-                          onTap: (){
-                            _showLogoutDialog(context);
-                          },
-                          child: Card(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            elevation: 1,
-                            color: Colors.white,
-                            child:
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // Title for Cylinder Categories Table
-                                  Padding(
-                                      padding: const EdgeInsets.all(10.0),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Padding(
+                      //   padding: const EdgeInsets.only(left: 10.0),
+                      //   child: Text("CASH",style:Styling.itemGreyTextBigMore,),
+                      // ),
+                      // Card(
+                      //     shape: RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.circular(5),
+                      //     ),
+                      //     elevation: 1,
+                      //     color: Colors.white,
+                      //     child: Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         // Title for Cylinder Categories Table
+                      //         Padding(
+                      //           padding: const EdgeInsets.all(10.0),
+                      //           child: Row(
+                      //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //             children: [
+                      //               Row(
+                      //                 children: [
+                      //                   Icon(Icons.business_center_outlined),
+                      //                   SizedBox(width: 10,),
+                      //                   Text("Cash Handover",style: Styling.itemBlackTestMore,),
+                      //                 ],
+                      //               ),
+                      //               Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+                      //             ],
+                      //           )
+                      //         ),
+                      //         Container(
+                      //           height: 1,
+                      //           color: Colors.grey[200],
+                      //         ),
+                      //         Padding(
+                      //             padding: const EdgeInsets.all(10.0),
+                      //             child: Row(
+                      //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //               children: [
+                      //                 Row(
+                      //                   children: [
+                      //                     Icon(Icons.add_business_outlined),
+                      //                     SizedBox(width: 10,),
+                      //                     Text("Cash Deposit To Bank",style: Styling.itemBlackTestMore,),
+                      //                   ],
+                      //                 ),
+                      //                 Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+                      //               ],
+                      //             )
+                      //         ),
+                      //       ],
+                      //     ),
+                      //   ),
+                      // SizedBox(height: 20,),
+                      // Padding(
+                      //   padding: const EdgeInsets.only(left: 10.0),
+                      //   child: Text("Regulator Item",style:Styling.itemGreyTextBigMore,),
+                      // ),
+                      // GestureDetector(
+                      //   onTap: (){
+                      //     Navigator.pushNamed(
+                      //         context,
+                      //         RegulatorItemReceiptScreen
+                      //             .screenName);
+                      //   },
+                      //   child: Card(
+                      //     shape: RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.circular(5),
+                      //     ),
+                      //     elevation: 1,
+                      //     color: Colors.white,
+                      //     child:
+                      //     Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         // Title for Cylinder Categories Table
+                      //         Padding(
+                      //             padding: const EdgeInsets.all(10.0),
+                      //             child: Row(
+                      //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //               children: [
+                      //
+                      //                 Row(
+                      //                   children: [
+                      //                     Icon(Icons.av_timer_outlined),
+                      //                     SizedBox(width: 10,),
+                      //                     Text("Regulator Item",style: Styling.itemBlackTestMore,),
+                      //                   ],
+                      //                 ),
+                      //
+                      //                 Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+                      //               ],
+                      //             )
+                      //         ),
+                      //
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
+                      // SizedBox(height: 20,),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0),
+                        child: Text("LOGOUT",style:Styling.itemGreyTextBigMore,),
+                      ),
+                      GestureDetector(
+                        onTap: (){
+                          _showLogoutDialog(context);
+                        },
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          elevation: 1,
+                          color: Colors.white,
+                          child:
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Title for Cylinder Categories Table
+                              Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+
+                                      Row(
                                         children: [
-
-                                            Row(
-                                              children: [
-                                                Icon(Icons.logout_outlined),
-                                                SizedBox(width: 10,),
-                                                Text("Logout",style: Styling.itemBlackTestMore,),
-                                              ],
-                                            ),
-
-                                          Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+                                          Icon(Icons.logout_outlined),
+                                          SizedBox(width: 10,),
+                                          Text("Logout",style: Styling.itemBlackTestMore,),
                                         ],
-                                      )
-                                  ),
+                                      ),
 
-                                ],
+                                      Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+                                    ],
+                                  )
                               ),
+
+                            ],
                           ),
                         ),
+                      ),
 
-                      ],
-                    ),
+                    ],
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
+        ),
 
       ),
     );

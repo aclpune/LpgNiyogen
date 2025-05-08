@@ -6,7 +6,6 @@ class TransactionModel {
   String? transactionCode;
   String? transTime;
   String? remark;
-  DateTime? addedOn;
   String? action;
   int? addedBy;
 
@@ -18,7 +17,6 @@ class TransactionModel {
     this.transactionCode,
     this.transTime,
     this.remark,
-    this.addedOn,
     this.action,
     this.addedBy,
   });
@@ -32,7 +30,6 @@ class TransactionModel {
       transactionCode: json['TransactionCode'],
       transTime: json['TransTime'],
       remark: json['Remark'],
-      addedOn: DateTime.parse(json['AddedOn']),
       action: json['Action'],
       addedBy: json['AddedBy'],
     );
@@ -47,7 +44,6 @@ class TransactionModel {
       'TransactionCode': transactionCode,
       'TransTime': transTime,
       'Remark': remark,
-      'AddedOn': addedOn?.toIso8601String(),
       'Action': action,
       'AddedBy': addedBy,
     };
