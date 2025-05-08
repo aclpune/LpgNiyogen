@@ -23,9 +23,6 @@ import '../Utils/shared_preference.dart';
 
 import 'package:http/http.dart' as http;
 
-import 'ClickModelClass/GetDashboardPostpaidVarifiPendCntLstForMobListModel.dart';
-import 'ClickModelClass/GetDashboardSVStockPendCtnListForMobListModel.dart';
-import 'ClickModelClass/GetDashboardTVStockPendCtnListForMob.dart';
 import 'DashboardItemClickUI/DashboardPostPaidVerifPendDetails.dart';
 import 'DashboardItemClickUI/DashboardPrepaidDetailUI.dart';
 import 'DashboardItemClickUI/DashboardPrepaidDetails.dart';
@@ -33,9 +30,7 @@ import 'DashboardItemClickUI/DashboardSVDetails.dart';
 import 'DashboardItemClickUI/DashboardTVDetails.dart';
 import 'ManagerModelClass/GetCurrentStockDetailManagerModel.dart';
 import 'ManagerModelClass/GetManagerDashboarDetailModel.dart';
-import 'ManagerSingleItemUI/CDCMSStockItemUI.dart';
-import 'ManagerSingleItemUI/EmptyInwardStockItemUI.dart';
-import 'ManagerSingleItemUI/FilledInwardStockItemUI.dart';
+
 import 'ManagerSingleItemUI/ImbalanceStockItemUI.dart';
 
 class ManagerDashboardScreen extends StatefulWidget {
