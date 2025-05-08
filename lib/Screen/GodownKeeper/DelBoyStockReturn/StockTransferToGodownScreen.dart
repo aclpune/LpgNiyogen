@@ -207,7 +207,8 @@ class _StockTransferTOGodownScreenState extends State<StockTransferTOGodownScree
                       Expanded(child: textWidgetBlueColorWithStar("Select Godown", "*")),
                       Flexible(
                         flex: 1,
-                        child: DropdownButtonFormField<GetGodownListModel>(
+                        child:
+                        DropdownButtonFormField<GetGodownListModel>(
                           decoration: buildInputBorderUpdateStatus("Select Godown", context),
                           value: _selectedGodownModel,
                           style: Styling.textFormText,

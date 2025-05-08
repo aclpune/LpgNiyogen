@@ -75,6 +75,8 @@ class LoginProvider extends ChangeNotifier {
         Navigator.pushReplacementNamed(context, '/verifyOtp');
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         debugPrint("dashbpa");
+        debugPrint("dashbpa${response.authToken}");
+        debugPrint("dashbpa${_loginResponse!.authToken!}");
 
       }else{
       showFlushBar(context,

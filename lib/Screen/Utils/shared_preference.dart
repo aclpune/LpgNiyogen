@@ -21,7 +21,10 @@ class SharedPref {
         await prefs.setString('Status', user.status.toString()) &&
         await prefs.setString('token', user.token.toString()) &&
         await prefs.setString('expiration', user.expiration.toString()) &&
-        await prefs.setString('refresh_token', user.refreshToken.toString());
+        await prefs.setString('refresh_token', user.refreshToken.toString()) &&
+        await prefs.setString('RoleName', user.roleName.toString()) &&
+        await prefs.setString('DistributorName', user.distributorName.toString()) &&
+        await prefs.setString('UserId', user.userId.toString());
   }
 
   // Get user information from SharedPreferences
@@ -43,6 +46,9 @@ class SharedPref {
     String Token = prefs.getString("Token") ?? '';
     String expiration = prefs.getString("expiration") ?? '';
     String refresh_token = prefs.getString("refresh_token") ?? '';
+    String roleName = prefs.getString("RoleName") ?? '';
+    String distributorName = prefs.getString("DistributorName") ?? '';
+    int userId = int.parse(prefs.getString("UserId") ?? '0');
 
     return AuthToken(
       staffId: StaffId,
@@ -59,6 +65,9 @@ class SharedPref {
       token: Token,
       expiration: expiration,
       refreshToken: refresh_token,
+      roleName: roleName,
+      distributorName: distributorName,
+      userId: userId,
     );
   }
 
@@ -80,6 +89,9 @@ class SharedPref {
     await prefs.remove('expiration');
     await prefs.remove('refresh_token');
     await prefs.remove('userActive');
+    await prefs.remove('RoleName');
+    await prefs.remove('DistributorName');
+    await prefs.remove('UserId');
 
 
     // Clear all prefs data

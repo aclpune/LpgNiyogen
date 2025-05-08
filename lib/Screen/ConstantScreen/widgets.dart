@@ -2,6 +2,7 @@ import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart' hide Badge;
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:lpgsalesandinventory/Screen/Utils/Styling.dart';
 
 import '../utils/constants.dart';
 
@@ -69,4 +70,103 @@ Widget countTextWidget(
     ),
   );
 }
+
+Widget countTextWidgetText(
+    BuildContext context, String count, String title) {
+  return Container(
+    padding: const EdgeInsets.only(right: 5, left: 5),
+    child: Row(
+      children: <Widget>[
+        SizedBox(width: 100,
+          child: Text(count.toString(),
+              style: Styling.itemGreyText),
+        ),
+         Text(
+            ": $title",
+            // style:Styling.itemBlackTest,
+            style:Styling.textFormText,
+          ),
+
+      ],
+    ),
+  );
+}
+
+Widget countTextWidgetTextWithoutHeading(
+    BuildContext context, String title) {
+  return Container(
+    padding: const EdgeInsets.only(right: 5, left: 5),
+    child: Row(
+      children: <Widget>[
+        Text(
+          title,
+          // style:Styling.itemBlackTest,
+          style:Styling.blueClrText,
+        ),
+
+      ],
+    ),
+  );
+}
+Widget countTextWidgetTextcash(
+    BuildContext context, String title) {
+  return Container(
+    padding: const EdgeInsets.only(right: 5, left: 5),
+    child: Row(
+      children: <Widget>[
+        Text(
+          "$title",
+          // style:Styling.itemBlackTest,
+          style:Styling.itemGreyText,
+        ),
+
+      ],
+    ),
+  );
+}
+Widget countTextWidgetRemark(
+    BuildContext context, String count, String title) {
+  return Container(
+    padding: const EdgeInsets.only(right: 5, left: 5),
+    child: Row(
+      children: <Widget>[
+        SizedBox(width: 100,
+          child: Text(count.toString(),
+              style: Styling.itemGreyText),
+        ),
+        Text(
+          ": $title",
+          // style:Styling.itemBlackTest,
+          style:Styling.textFormText,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+
+      ],
+    ),
+  );
+}
+
+Widget countTextWidgetTextStar(BuildContext context, String label, {bool showAsterisk = false}) {
+
+  return RichText(
+    text: TextSpan(
+      children: [
+        TextSpan(
+          text: label,
+          style:Styling.itemGreyText,
+        ),
+        if (showAsterisk)
+          TextSpan(
+            text: ' *',
+            style: TextStyle(
+              color: Colors.red, // Asterisk in red
+              fontSize: 16,
+            ),
+          ),
+      ],
+    ),
+  );
+}
+
 

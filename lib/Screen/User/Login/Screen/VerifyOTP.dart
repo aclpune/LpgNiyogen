@@ -137,7 +137,11 @@ class _VerifyOtpState extends State<VerifyOtp> {
         }else if(roleId == Constants.roleIdManager){
           Navigator.pushReplacementNamed(context, BottomNavBarExample.screenName,
               arguments: "checkVersion");
-        }else{
+        }else if(roleId == Constants.roleIdOwner){
+          Navigator.pushReplacementNamed(context, BottomNavBarExample.screenName,
+              arguments: "checkVersion");
+        }
+        else{
           Navigator.pushReplacementNamed(context, MyLogin.screenName);
         }
 

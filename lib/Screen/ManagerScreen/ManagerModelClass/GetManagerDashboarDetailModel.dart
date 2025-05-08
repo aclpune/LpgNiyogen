@@ -1,23 +1,30 @@
 /// DistributorId : 8118
 /// ItemId : 1
-/// ItemName : "14.2 kg"
-/// FilledDiff : 7348
-/// EmptyDiff : 5826
-/// DefectiveDiff : 374
+/// ItemName : "14.2 KG"
+/// FilledDiff : 287
+/// EmptyDiff : 661
+/// DefectiveDiff : 0
 /// TodayImbQty : 0
-/// AsOfDateImbQty : 19
-/// DMCount : 7
-/// TotalAmount : 150982.00
-/// TotalIncome : 124805.00
-/// TotalExp : 5000.00
-/// StaffOnAccToday : 632.00
-/// StaffOnAccAsOf : 13543.10
-/// cDCMSPunPend : 2318
-/// NiyoJanPunPend : 6
-/// PaymtDoneBtDelPend : 1098
-/// DelDoneBtPaymtPend : 9
-/// NiyojanPun : 0
+/// AsOfDateImbQty : 221
+/// DMCount : 5
+/// TotalAmount : 145024.00
+/// TotalIncome : 77542.50
+/// TotalExp : 1230.00
+/// StaffOnAccToday : 0.00
+/// StaffOnAccAsOf : 86034.00
+/// cDCMSPunPend : 134
+/// PaymtDoneBtDelPend : 36
+/// DelDoneBtPaymtPend : 139
+/// NiyojanPun : 2
 /// NiyojanDuplicate : 0
+/// DelDonNiyoJanPunPend : 612
+/// NiyoJanPunDelPend : 3
+/// OldBkgPendNewBkgRecv : 18
+/// SettlementPendSince : "2025-04-22T12:36:53"
+/// cDCMDPendSince : "2025-04-25T01:00:00"
+/// PostPaidVerifPend : 228
+/// SVPendingStk : 40
+/// TVPendingStk : 0
 
 class GetManagerDashboarDetailModel {
   GetManagerDashboarDetailModel({
@@ -36,11 +43,18 @@ class GetManagerDashboarDetailModel {
       num? staffOnAccToday, 
       num? staffOnAccAsOf, 
       num? cDCMSPunPend, 
-      num? niyoJanPunPend, 
       num? paymtDoneBtDelPend, 
       num? delDoneBtPaymtPend, 
       num? niyojanPun, 
-      num? niyojanDuplicate,}){
+      num? niyojanDuplicate, 
+      num? delDonNiyoJanPunPend, 
+      num? niyoJanPunDelPend, 
+      num? oldBkgPendNewBkgRecv, 
+      String? settlementPendSince, 
+      String? cDCMDPendSince, 
+      num? postPaidVerifPend, 
+      num? sVPendingStk, 
+      num? tVPendingStk,}){
     _distributorId = distributorId;
     _itemId = itemId;
     _itemName = itemName;
@@ -56,11 +70,18 @@ class GetManagerDashboarDetailModel {
     _staffOnAccToday = staffOnAccToday;
     _staffOnAccAsOf = staffOnAccAsOf;
     _cDCMSPunPend = cDCMSPunPend;
-    _niyoJanPunPend = niyoJanPunPend;
     _paymtDoneBtDelPend = paymtDoneBtDelPend;
     _delDoneBtPaymtPend = delDoneBtPaymtPend;
     _niyojanPun = niyojanPun;
     _niyojanDuplicate = niyojanDuplicate;
+    _delDonNiyoJanPunPend = delDonNiyoJanPunPend;
+    _niyoJanPunDelPend = niyoJanPunDelPend;
+    _oldBkgPendNewBkgRecv = oldBkgPendNewBkgRecv;
+    _settlementPendSince = settlementPendSince;
+    _cDCMDPendSince = cDCMDPendSince;
+    _postPaidVerifPend = postPaidVerifPend;
+    _sVPendingStk = sVPendingStk;
+    _tVPendingStk = tVPendingStk;
 }
 
   GetManagerDashboarDetailModel.fromJson(dynamic json) {
@@ -79,11 +100,18 @@ class GetManagerDashboarDetailModel {
     _staffOnAccToday = json['StaffOnAccToday'];
     _staffOnAccAsOf = json['StaffOnAccAsOf'];
     _cDCMSPunPend = json['cDCMSPunPend'];
-    _niyoJanPunPend = json['NiyoJanPunPend'];
     _paymtDoneBtDelPend = json['PaymtDoneBtDelPend'];
     _delDoneBtPaymtPend = json['DelDoneBtPaymtPend'];
     _niyojanPun = json['NiyojanPun'];
     _niyojanDuplicate = json['NiyojanDuplicate'];
+    _delDonNiyoJanPunPend = json['DelDonNiyoJanPunPend'];
+    _niyoJanPunDelPend = json['NiyoJanPunDelPend'];
+    _oldBkgPendNewBkgRecv = json['OldBkgPendNewBkgRecv'];
+    _settlementPendSince = json['SettlementPendSince'];
+    _cDCMDPendSince = json['cDCMDPendSince'];
+    _postPaidVerifPend = json['PostPaidVerifPend'];
+    _sVPendingStk = json['SVPendingStk'];
+    _tVPendingStk = json['TVPendingStk'];
   }
   num? _distributorId;
   num? _itemId;
@@ -100,11 +128,18 @@ class GetManagerDashboarDetailModel {
   num? _staffOnAccToday;
   num? _staffOnAccAsOf;
   num? _cDCMSPunPend;
-  num? _niyoJanPunPend;
   num? _paymtDoneBtDelPend;
   num? _delDoneBtPaymtPend;
   num? _niyojanPun;
   num? _niyojanDuplicate;
+  num? _delDonNiyoJanPunPend;
+  num? _niyoJanPunDelPend;
+  num? _oldBkgPendNewBkgRecv;
+  String? _settlementPendSince;
+  String? _cDCMDPendSince;
+  num? _postPaidVerifPend;
+  num? _sVPendingStk;
+  num? _tVPendingStk;
 GetManagerDashboarDetailModel copyWith({  num? distributorId,
   num? itemId,
   String? itemName,
@@ -120,11 +155,18 @@ GetManagerDashboarDetailModel copyWith({  num? distributorId,
   num? staffOnAccToday,
   num? staffOnAccAsOf,
   num? cDCMSPunPend,
-  num? niyoJanPunPend,
   num? paymtDoneBtDelPend,
   num? delDoneBtPaymtPend,
   num? niyojanPun,
   num? niyojanDuplicate,
+  num? delDonNiyoJanPunPend,
+  num? niyoJanPunDelPend,
+  num? oldBkgPendNewBkgRecv,
+  String? settlementPendSince,
+  String? cDCMDPendSince,
+  num? postPaidVerifPend,
+  num? sVPendingStk,
+  num? tVPendingStk,
 }) => GetManagerDashboarDetailModel(  distributorId: distributorId ?? _distributorId,
   itemId: itemId ?? _itemId,
   itemName: itemName ?? _itemName,
@@ -140,11 +182,18 @@ GetManagerDashboarDetailModel copyWith({  num? distributorId,
   staffOnAccToday: staffOnAccToday ?? _staffOnAccToday,
   staffOnAccAsOf: staffOnAccAsOf ?? _staffOnAccAsOf,
   cDCMSPunPend: cDCMSPunPend ?? _cDCMSPunPend,
-  niyoJanPunPend: niyoJanPunPend ?? _niyoJanPunPend,
   paymtDoneBtDelPend: paymtDoneBtDelPend ?? _paymtDoneBtDelPend,
   delDoneBtPaymtPend: delDoneBtPaymtPend ?? _delDoneBtPaymtPend,
   niyojanPun: niyojanPun ?? _niyojanPun,
   niyojanDuplicate: niyojanDuplicate ?? _niyojanDuplicate,
+  delDonNiyoJanPunPend: delDonNiyoJanPunPend ?? _delDonNiyoJanPunPend,
+  niyoJanPunDelPend: niyoJanPunDelPend ?? _niyoJanPunDelPend,
+  oldBkgPendNewBkgRecv: oldBkgPendNewBkgRecv ?? _oldBkgPendNewBkgRecv,
+  settlementPendSince: settlementPendSince ?? _settlementPendSince,
+  cDCMDPendSince: cDCMDPendSince ?? _cDCMDPendSince,
+  postPaidVerifPend: postPaidVerifPend ?? _postPaidVerifPend,
+  sVPendingStk: sVPendingStk ?? _sVPendingStk,
+  tVPendingStk: tVPendingStk ?? _tVPendingStk,
 );
   num? get distributorId => _distributorId;
   num? get itemId => _itemId;
@@ -161,11 +210,18 @@ GetManagerDashboarDetailModel copyWith({  num? distributorId,
   num? get staffOnAccToday => _staffOnAccToday;
   num? get staffOnAccAsOf => _staffOnAccAsOf;
   num? get cDCMSPunPend => _cDCMSPunPend;
-  num? get niyoJanPunPend => _niyoJanPunPend;
   num? get paymtDoneBtDelPend => _paymtDoneBtDelPend;
   num? get delDoneBtPaymtPend => _delDoneBtPaymtPend;
   num? get niyojanPun => _niyojanPun;
   num? get niyojanDuplicate => _niyojanDuplicate;
+  num? get delDonNiyoJanPunPend => _delDonNiyoJanPunPend;
+  num? get niyoJanPunDelPend => _niyoJanPunDelPend;
+  num? get oldBkgPendNewBkgRecv => _oldBkgPendNewBkgRecv;
+  String? get settlementPendSince => _settlementPendSince;
+  String? get cDCMDPendSince => _cDCMDPendSince;
+  num? get postPaidVerifPend => _postPaidVerifPend;
+  num? get sVPendingStk => _sVPendingStk;
+  num? get tVPendingStk => _tVPendingStk;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -184,11 +240,18 @@ GetManagerDashboarDetailModel copyWith({  num? distributorId,
     map['StaffOnAccToday'] = _staffOnAccToday;
     map['StaffOnAccAsOf'] = _staffOnAccAsOf;
     map['cDCMSPunPend'] = _cDCMSPunPend;
-    map['NiyoJanPunPend'] = _niyoJanPunPend;
     map['PaymtDoneBtDelPend'] = _paymtDoneBtDelPend;
     map['DelDoneBtPaymtPend'] = _delDoneBtPaymtPend;
     map['NiyojanPun'] = _niyojanPun;
     map['NiyojanDuplicate'] = _niyojanDuplicate;
+    map['DelDonNiyoJanPunPend'] = _delDonNiyoJanPunPend;
+    map['NiyoJanPunDelPend'] = _niyoJanPunDelPend;
+    map['OldBkgPendNewBkgRecv'] = _oldBkgPendNewBkgRecv;
+    map['SettlementPendSince'] = _settlementPendSince;
+    map['cDCMDPendSince'] = _cDCMDPendSince;
+    map['PostPaidVerifPend'] = _postPaidVerifPend;
+    map['SVPendingStk'] = _sVPendingStk;
+    map['TVPendingStk'] = _tVPendingStk;
     return map;
   }
 

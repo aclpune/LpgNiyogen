@@ -1147,7 +1147,7 @@ class _CashDepositToBankScreenState extends State<CashDepositToBankScreen> {
                           Icon(Icons.monetization_on, color: Colors.blue),
                           SizedBox(width: 8),
                           Text(
-                            'Collected Amount:',
+                            'Cash In Hand:',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ],
@@ -1177,7 +1177,7 @@ class _CashDepositToBankScreenState extends State<CashDepositToBankScreen> {
                           Icon(Icons.account_balance, color: Colors.blue),
                           SizedBox(width: 8),
                           Text(
-                            'Bank Name:',
+                            'Select Bank:',
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ],

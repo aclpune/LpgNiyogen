@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:lpgsalesandinventory/Screen/ManagerScreen/CashDepositToBankScreen.dart';
+import 'package:lpgsalesandinventory/Screen/ManagerScreen/CashHandoverScreen.dart';
 import 'package:lpgsalesandinventory/Screen/Utils/Styling.dart';
-
 import '../User/splashscreen/page/splash_screen.dart';
 import '../Utils/shared_preference.dart';
 class ManagerMoreScree extends StatefulWidget {
@@ -46,7 +47,27 @@ class _ManagerMoreScreeState extends State<ManagerMoreScree> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // Title for Cylinder Categories Table
-                              Padding(
+                              GestureDetector(
+                             //  onTap: () {
+                             // Navigator.popAndPushNamed(context, CashHandoverScreen.screenName);// Replace with your target screen
+                             //
+                             //  },
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                      context,
+                                      CashHandoverScreen
+                                          .screenName
+                                      // arguments: {
+                                      //   "staffId": data is CylItemListModel
+                                      //       ? data.staffId
+                                      //       : data.staffId,
+                                      //   "StaffName":data is CylItemListModel
+                                      //       ? data.staffName
+                                      //       : data.staffName,
+                                      // }
+                                  );
+                                },
+                              child:Padding(
                                 padding: const EdgeInsets.all(10.0),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -55,17 +76,36 @@ class _ManagerMoreScreeState extends State<ManagerMoreScree> {
                                       children: [
                                         Icon(Icons.business_center_outlined),
                                         SizedBox(width: 10,),
-                                        Text("Cash Handover",style: Styling.itemBlackTestMore,),
+                                        Text("Cash Handover-Bank Deposite",style: Styling.itemBlackTestMore,),
                                       ],
                                     ),
                                     Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+
                                   ],
                                 )
+                              ),
                               ),
                               Container(
                                 height: 1,
                                 color: Colors.grey[200],
                               ),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                      context,
+                                      CashDepositToBankScreen
+                                          .screenName
+                                    // arguments: {
+                                    //   "staffId": data is CylItemListModel
+                                    //       ? data.staffId
+                                    //       : data.staffId,
+                                    //   "StaffName":data is CylItemListModel
+                                    //       ? data.staffName
+                                    //       : data.staffName,
+                                    // }
+                                  );
+                                },
+                                child:
                               Padding(
                                   padding: const EdgeInsets.all(10.0),
                                   child: Row(
@@ -82,6 +122,7 @@ class _ManagerMoreScreeState extends State<ManagerMoreScree> {
                                     ],
                                   )
                               ),
+    ),
                             ],
                           ),
                         ),
@@ -121,7 +162,6 @@ class _ManagerMoreScreeState extends State<ManagerMoreScree> {
                                   ],
                                 )
                             ),
-
                           ],
                         ),
                       ),
@@ -132,7 +172,6 @@ class _ManagerMoreScreeState extends State<ManagerMoreScree> {
             ),
           ],
         ),
-
     );
   }
 

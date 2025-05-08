@@ -28,6 +28,7 @@ class _AppBarCustomState extends State<AppBarCustom> {
   }
 
   String? userName;
+  //int? userId;
   @override
   Widget build(BuildContext context) {
     return AppBar(
@@ -85,6 +86,10 @@ class _AppBarCustomState extends State<AppBarCustom> {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       userName = preferences.getString("StaffName").toString();
       debugPrint("User Name:- $userName");
+      // String? staffIdString = preferences.getString("UserId");
+      // userId = staffIdString != null ? int.tryParse(staffIdString) : null;
+      // debugPrint("User Name:- $userName");
+      // debugPrint("user Id:- $userId");
     } catch (error) {
       rethrow;
     }

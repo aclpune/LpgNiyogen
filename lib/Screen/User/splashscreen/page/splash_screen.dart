@@ -27,7 +27,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
 
-    Future.delayed(const Duration(milliseconds: 3000), () async {
+    Future.delayed(const Duration(milliseconds: 5000), () async {
       navigateToDashboard();
     });
   }
@@ -47,9 +47,10 @@ class _SplashScreenState extends State<SplashScreen> {
             children: [
               // Image.asset('assets/login.png'),
               Image.asset(
-                'assets/icononlytransparentnobuffer.png',  // Path to your image
+                'assets/logos.gif',  // Path to your image
                 height: 250, // Adjust the height as needed
-                width: 250,  // Adjust the width as needed
+                width: 250,
+                gaplessPlayback: true,// Adjust the width as needed
               ),
               SizedBox(height: 10),
               Text(
@@ -71,7 +72,7 @@ class _SplashScreenState extends State<SplashScreen> {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       roleId = preferences.getString('roleId');
       userActivet = preferences.getString('userActive');
-      debugPrint(roleId);
+      debugPrint("roleId $roleId");
       debugPrint(userActivet);
 
         if (userActivet == "Y") {
@@ -82,7 +83,11 @@ class _SplashScreenState extends State<SplashScreen> {
           }else if(roleId == Constants.roleIdManager){
             Navigator.pushReplacementNamed(context, BottomNavBarExample.screenName,
                 arguments: "checkVersion");
-          }else{
+          }else if(roleId == Constants.roleIdOwner){
+            Navigator.pushReplacementNamed(context, BottomNavBarExample.screenName,
+                arguments: "checkVersion");
+          }
+          else{
             Navigator.pushReplacementNamed(context, MyLogin.screenName);
           }
 

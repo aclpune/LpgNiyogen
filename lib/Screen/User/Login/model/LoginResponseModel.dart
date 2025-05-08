@@ -1,4 +1,4 @@
-/// authToken : {"StaffId":29,"DistributorId":8118,"StaffName":"  Ajay Devgan","MobileNo":"919999999999","RoleId":0,"GodownId":1,"GodownKeeperId":11,"OTP":"1516","DistributorCode":"41015336","StaffStatus":1,"Status":"Success","Token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIiLCJqdGkiOiI3MjhmMmNhNC02MzBlLTQ4YjgtOTc1NS1jYzIwYzk1ZDJjNWMiLCJuYW1laWQiOiIiLCJyb2xlIjoiMCIsIkxvZ2dlZE9uIjoiMTYtMTItMjAyNCAxNDoxMjo1NSIsIkRpc3BsYXlOYW1lIjoiICBBamF5IERldmdhbiIsIm5iZiI6MTczNDMzODU3NSwiZXhwIjoxNzM0NDQ2NTc1LCJpYXQiOjE3MzQzMzg1NzUsImlzcyI6Ik15U3VwZXJLZXlNeVN1cGVyS2V5TXlTdXBlcktleU15U3VwZXJLZXlNeVN1cGVyS2V5TXlTdXBlcktleSIsImF1ZCI6Ik15U3VwZXJLZXlNeVN1cGVyS2V5TXlTdXBlcktleU15U3VwZXJLZXlNeVN1cGVyS2V5TXlTdXBlcktleSJ9.mg7KzhvTCN3BV9GTBqRLZIehjNHJrqvnV9iYPwCKjuA","expiration":"2024-12-17T14:42:55Z","refresh_token":"cf77b4355fde4cd3997fb163adfb2102"}
+/// authToken : {"StaffId":19,"DistributorId":8118,"StaffName":"Christina Alotkar","MobileNo":"8983099288","RoleId":3,"GodownId":0,"GodownKeeperId":0,"OTP":"1458","DistributorCode":"41015336","StaffStatus":1,"Status":"Success","Token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJDaHJpc3RpbmEgQWxvdGthciIsImp0aSI6ImFkY2NjNjkwLTNlMmYtNDhlMS04ODA4LWI3YmU2MmQxNzliMCIsIm5hbWVpZCI6IkNocmlzdGluYSBBbG90a2FyIiwicm9sZSI6IjAiLCJMb2dnZWRPbiI6IjUvNy8yMDI1IDQ6MzI6NTQgUE0iLCJEaXNwbGF5TmFtZSI6IkNocmlzdGluYSBBbG90a2FyIiwibmJmIjoxNzQ2NjE1Nzc0LCJleHAiOjE3NDY3MjM3NzQsImlhdCI6MTc0NjYxNTc3NCwiaXNzIjoiTXlTdXBlcktleU15U3VwZXJLZXlNeVN1cGVyS2V5TXlTdXBlcktleU15U3VwZXJLZXlNeVN1cGVyS2V5IiwiYXVkIjoiTXlTdXBlcktleU15U3VwZXJLZXlNeVN1cGVyS2V5TXlTdXBlcktleU15U3VwZXJLZXlNeVN1cGVyS2V5In0.PL2R87FEE6qzcU-sPVtcoSuPbkOe5jEPogj7qsTsi8Y","expiration":"2025-05-08T17:02:54Z","refresh_token":"07f40198a2bb4db89b28599999b53e17","RoleName":"Manager","DistributorName":"SHREE RENUKA GAS SUPPLY COMPANY","UserId":42}
 
 class LoginResponseModel {
   LoginResponseModel({
@@ -25,37 +25,44 @@ LoginResponseModel copyWith({  AuthToken? authToken,
 
 }
 
-/// StaffId : 29
+/// StaffId : 19
 /// DistributorId : 8118
-/// StaffName : "  Ajay Devgan"
-/// MobileNo : "919999999999"
-/// RoleId : 0
-/// GodownId : 1
-/// GodownKeeperId : 11
-/// OTP : "1516"
+/// StaffName : "Christina Alotkar"
+/// MobileNo : "8983099288"
+/// RoleId : 3
+/// GodownId : 0
+/// GodownKeeperId : 0
+/// OTP : "1458"
 /// DistributorCode : "41015336"
 /// StaffStatus : 1
 /// Status : "Success"
-/// Token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIiLCJqdGkiOiI3MjhmMmNhNC02MzBlLTQ4YjgtOTc1NS1jYzIwYzk1ZDJjNWMiLCJuYW1laWQiOiIiLCJyb2xlIjoiMCIsIkxvZ2dlZE9uIjoiMTYtMTItMjAyNCAxNDoxMjo1NSIsIkRpc3BsYXlOYW1lIjoiICBBamF5IERldmdhbiIsIm5iZiI6MTczNDMzODU3NSwiZXhwIjoxNzM0NDQ2NTc1LCJpYXQiOjE3MzQzMzg1NzUsImlzcyI6Ik15U3VwZXJLZXlNeVN1cGVyS2V5TXlTdXBlcktleU15U3VwZXJLZXlNeVN1cGVyS2V5TXlTdXBlcktleSIsImF1ZCI6Ik15U3VwZXJLZXlNeVN1cGVyS2V5TXlTdXBlcktleU15U3VwZXJLZXlNeVN1cGVyS2V5TXlTdXBlcktleSJ9.mg7KzhvTCN3BV9GTBqRLZIehjNHJrqvnV9iYPwCKjuA"
-/// expiration : "2024-12-17T14:42:55Z"
-/// refresh_token : "cf77b4355fde4cd3997fb163adfb2102"
+/// Token : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJDaHJpc3RpbmEgQWxvdGthciIsImp0aSI6ImFkY2NjNjkwLTNlMmYtNDhlMS04ODA4LWI3YmU2MmQxNzliMCIsIm5hbWVpZCI6IkNocmlzdGluYSBBbG90a2FyIiwicm9sZSI6IjAiLCJMb2dnZWRPbiI6IjUvNy8yMDI1IDQ6MzI6NTQgUE0iLCJEaXNwbGF5TmFtZSI6IkNocmlzdGluYSBBbG90a2FyIiwibmJmIjoxNzQ2NjE1Nzc0LCJleHAiOjE3NDY3MjM3NzQsImlhdCI6MTc0NjYxNTc3NCwiaXNzIjoiTXlTdXBlcktleU15U3VwZXJLZXlNeVN1cGVyS2V5TXlTdXBlcktleU15U3VwZXJLZXlNeVN1cGVyS2V5IiwiYXVkIjoiTXlTdXBlcktleU15U3VwZXJLZXlNeVN1cGVyS2V5TXlTdXBlcktleU15U3VwZXJLZXlNeVN1cGVyS2V5In0.PL2R87FEE6qzcU-sPVtcoSuPbkOe5jEPogj7qsTsi8Y"
+/// expiration : "2025-05-08T17:02:54Z"
+/// refresh_token : "07f40198a2bb4db89b28599999b53e17"
+/// RoleName : "Manager"
+/// DistributorName : "SHREE RENUKA GAS SUPPLY COMPANY"
+/// UserId : 42
 
 class AuthToken {
   AuthToken({
-      num?    staffId,
-      num?    distributorId,
+      num? staffId, 
+      num? distributorId, 
       String? staffName, 
       String? mobileNo, 
-      num?    roleId,
-      num?    godownId,
-      num?    godownKeeperId,
+      num? roleId, 
+      num? godownId, 
+      num? godownKeeperId, 
       String? otp, 
       String? distributorCode, 
-      num?    staffStatus,
+      num? staffStatus, 
       String? status, 
       String? token, 
       String? expiration, 
-      String? refreshToken,}){
+      String? refreshToken, 
+      String? roleName, 
+      String? distributorName, 
+      num?  userId,
+  }){
     _staffId = staffId;
     _distributorId = distributorId;
     _staffName = staffName;
@@ -70,6 +77,9 @@ class AuthToken {
     _token = token;
     _expiration = expiration;
     _refreshToken = refreshToken;
+    _roleName = roleName;
+    _distributorName = distributorName;
+    _userId = userId;
 }
 
   AuthToken.fromJson(dynamic json) {
@@ -87,6 +97,9 @@ class AuthToken {
     _token = json['Token'];
     _expiration = json['expiration'];
     _refreshToken = json['refresh_token'];
+    _roleName = json['RoleName'];
+    _distributorName = json['DistributorName'];
+    _userId = json['UserId'];
   }
   num? _staffId;
   num? _distributorId;
@@ -102,6 +115,9 @@ class AuthToken {
   String? _token;
   String? _expiration;
   String? _refreshToken;
+  String? _roleName;
+  String? _distributorName;
+  num? _userId;
 AuthToken copyWith({  num? staffId,
   num? distributorId,
   String? staffName,
@@ -116,6 +132,9 @@ AuthToken copyWith({  num? staffId,
   String? token,
   String? expiration,
   String? refreshToken,
+  String? roleName,
+  String? distributorName,
+  num? userId,
 }) => AuthToken(  staffId: staffId ?? _staffId,
   distributorId: distributorId ?? _distributorId,
   staffName: staffName ?? _staffName,
@@ -130,6 +149,9 @@ AuthToken copyWith({  num? staffId,
   token: token ?? _token,
   expiration: expiration ?? _expiration,
   refreshToken: refreshToken ?? _refreshToken,
+  roleName: roleName ?? _roleName,
+  distributorName: distributorName ?? _distributorName,
+  userId: userId ?? _userId,
 );
   num? get staffId => _staffId;
   num? get distributorId => _distributorId;
@@ -145,6 +167,9 @@ AuthToken copyWith({  num? staffId,
   String? get token => _token;
   String? get expiration => _expiration;
   String? get refreshToken => _refreshToken;
+  String? get roleName => _roleName;
+  String? get distributorName => _distributorName;
+  num? get userId => _userId;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -162,6 +187,9 @@ AuthToken copyWith({  num? staffId,
     map['Token'] = _token;
     map['expiration'] = _expiration;
     map['refresh_token'] = _refreshToken;
+    map['RoleName'] = _roleName;
+    map['DistributorName'] = _distributorName;
+    map['UserId'] = _userId;
     return map;
   }
 

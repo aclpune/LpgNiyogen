@@ -33,6 +33,13 @@ Widget verticalDividerBig() {
     color: Colors.black, // Color of the line
   );
 }
+Widget verticalDividerVerySmallWidth() {
+  return  Container(
+    width: 0.4, // Width of the vertical line
+    height: 40.0, // Height of the vertical line
+    color: Colors.black, // Color of the line
+  );
+}
 Widget myElevButton(BuildContext context, String title, VoidCallback callback) {
   return ElevatedButton(
     onPressed: callback,
@@ -339,7 +346,7 @@ Widget itemSubLineWithDDsss(String greyText,String textData, bool isImbalanceSto
                 ),
                 Text(
                   textData,
-                  style: Styling.textFormText,
+                  style: Styling.itemBlackTestVerySmallReport,
                 ),
               ],
             ),

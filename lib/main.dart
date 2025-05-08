@@ -19,6 +19,14 @@ import 'Screen/ManagerScreen/BootomNavigatinBarManager.dart';
 import 'Screen/GodownKeeper/MarkDefective/MarkDefectiveItemScreen.dart';
 import 'Screen/ManagerScreen/CashDepositToBankScreen.dart';
 import 'Screen/ManagerScreen/CashHandoverScreen.dart';
+import 'Screen/ManagerScreen/DSRItemClickUI/ManagerCashInHandScreenDetails.dart';
+import 'Screen/ManagerScreen/DSRItemClickUI/ManagerDSRReportScreenDetails.dart';
+import 'Screen/ManagerScreen/DSRItemClickUI/ManagerExpenseTabScreenDetails.dart';
+import 'Screen/ManagerScreen/DSRItemClickUI/ManagerIncomeUnsettledScreenDetails.dart';
+import 'Screen/ManagerScreen/DashboardItemClickUI/DashboardPostPaidVerifPendDetails.dart';
+import 'Screen/ManagerScreen/DashboardItemClickUI/DashboardPrepaidDetails.dart';
+import 'Screen/ManagerScreen/DashboardItemClickUI/DashboardSVDetails.dart';
+import 'Screen/ManagerScreen/DashboardItemClickUI/DashboardTVDetails.dart';
 import 'Screen/ManagerScreen/DeliveryBoyWiseListShow.dart';
 import 'Screen/ManagerScreen/ManagerDSRReportScreen.dart';
 import 'Screen/ManagerScreen/ManagerDashboard.dart';
@@ -158,6 +166,17 @@ class MyApp extends StatelessWidget {
             ManagerDSRReportScreen.screenName: (context) => ManagerDSRReportScreen(),
             BottomNavBarExample.screenName: (context) => BottomNavBarExample(),
             ManagerMoreScree.screenName: (context) => ManagerMoreScree(),
+            ManagerDSRReportScreenDetails.screenName: (context) => ManagerDSRReportScreenDetails(),
+            ManagerIncomeUnsettledScreenDetails.screenName: (context) => ManagerIncomeUnsettledScreenDetails(),
+            ManagerCashInHandScreenDeails.screenName: (context) => ManagerCashInHandScreenDeails(),
+            ManagerExpenseTabScreenDetails.screenName: (context) => ManagerExpenseTabScreenDetails(),
+            DashboardPrepaidDetails.screenName: (context) => DashboardPrepaidDetails(),
+            DashboardPostPaidVerifPendDetails.screenName: (context) => DashboardPostPaidVerifPendDetails(),
+            DashboardSVDetails.screenName: (context) => DashboardSVDetails(),
+            DashboardTVDetails.screenName: (context) => DashboardTVDetails(),
+            //ManagerCashInHandScreenDetails.screenName: (context) => ManagerCashInHandScreenDetails(),
+
+
 
           },
         ),

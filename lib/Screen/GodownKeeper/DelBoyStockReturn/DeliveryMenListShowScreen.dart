@@ -60,8 +60,7 @@ class _DeliveryMenListShowScreenState extends State<DeliveryMenListShowScreen> {
           return false;
         } // In case `null` is returned, return `false`
       },
-
-      child:
+        child:
       Scaffold(
         appBar: CustomAppBar(
           title: 'Daily Sale', // Title or hint text for the text field
@@ -131,7 +130,6 @@ class _DeliveryMenListShowScreenState extends State<DeliveryMenListShowScreen> {
                       ],
                     ),
                   ),
-
                   Container(
                     color: const Color(0xff1280B3),
                     height: 1.5,
