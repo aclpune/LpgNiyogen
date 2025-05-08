@@ -3,8 +3,6 @@ class AppUrl {
   // static const String baseUrl = 'https://20.193.149.194/lpgniyojanapi'; // UAT Client
    static const String baseUrl = 'https://20.193.149.194/lpgniyojanuatapi'; // UAT New Development
  // static const String baseUrl = 'https://lpgniyojan.aadyaminfotech.com/lpgniyojanapi'; // Production New
-   static const String baseUrl = 'https://20.193.149.194/lpgniyojanuatapi'; // UAT New Development
-  // static const String baseUrl = 'https://lpgniyojan.aadyaminfotech.com/lpgniyojanapi'; // Production New
 
   ///Log in
   // static const String login = '$baseUrl/Login/LoginUser';
@@ -88,14 +86,5 @@ class AppUrl {
     static const String GetCashHandOverDtls = '$baseUrl/DailyStockCash/GetCashHandOverDtls';
     //static const String GetCashDenominationItemList = '$baseUrl/Masters/GetCashDenominationItemList';
 
-  //DSR Click API
-  static const String GetCashflowpopupList_Mob = '$baseUrl/Reports/GetCashflowpopupList_Mob';
-   static const String GetexpensepopupList_Mob =  '$baseUrl/Reports/GetexpensepopupList_Mob';
-   static const String GetCashInHandpopupList_Mob = '$baseUrl/Reports/GetCashInHandpopupList_Mob';
-   static const String GetUnsettledAmountList_Mob = '$baseUrl/Reports/GetUnsettledAmountList_Mob';
-   static const String GetexpensepopupListOnAccount_Mob = '$baseUrl/Reports/GetexpensepopupListOnAccount_Mob';
 
-   //Dashboard Click API
-  static const String GetDashboardSettlementCtnList = '$baseUrl/Dashboard/GetDashboardSettlementCtnList';
-  static const String GetDashboardNiyojanPunchCtnLstForMob = '$baseUrl/Dashboard/GetDashboardNiyojanPunchCtnLstForMob';
 }
