@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../GodownKeeper/BottomNavigationForGodownKeeper.dart';
 import '../../../GodownKeeper/DashboardScreen.dart';
 import '../../../ManagerScreen/BootomNavigatinBarManager.dart';
 import '../../../ManagerScreen/ManagerDashboard.dart';
@@ -123,8 +124,9 @@ class _VerifyOtpState extends State<VerifyOtp> {
     if (userActivet == "Y") {
       if (roleId != null) {
         if(roleId == Constants.roleIdGodown){
-          Navigator.pushReplacementNamed(context, DashboardScreen.screenName,
+          Navigator.pushReplacementNamed(context, BottomNavigationForGodownKeeper.screenName,
               arguments: "checkVersion");
+
         }else if(roleId == Constants.roleIdManager){
           Navigator.pushReplacementNamed(context, BottomNavBarExample.screenName,
               arguments: "checkVersion");

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lpgsalesandinventory/Screen/Utils/Styling.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../GodownKeeper/BottomNavigationForGodownKeeper.dart';
 import '../../../GodownKeeper/DashboardScreen.dart';
 import '../../../ManagerScreen/BootomNavigatinBarManager.dart';
 import '../../../ManagerScreen/ManagerDashboard.dart';
@@ -77,7 +78,7 @@ class _SplashScreenState extends State<SplashScreen> {
         if (userActivet == "Y") {
         if (roleId != null) {
           if(roleId == Constants.roleIdGodown){
-            Navigator.pushReplacementNamed(context, DashboardScreen.screenName,
+            Navigator.pushReplacementNamed(context, BottomNavigationForGodownKeeper.screenName,
                 arguments: "checkVersion");
           }else if(roleId == Constants.roleIdManager){
             Navigator.pushReplacementNamed(context, BottomNavBarExample.screenName,

@@ -18,6 +18,7 @@ import '../../../../Utils/Styling.dart';
 import '../../../../Utils/app_url.dart';
 import '../../../../Utils/constants.dart';
 import '../../../../Utils/shared_preference.dart';
+import '../../../BottomNavigationForGodownKeeper.dart';
 import '../../CylItemList/CylItemListModel.dart';
 import 'package:http/http.dart' as http;
 import '../model/GetEXMIListModel.dart';
@@ -100,10 +101,13 @@ class _AddReturnItemXMIScreenState extends State<AddReturnItemXMIScreen> {
       onWillPop: () async {
         // Show a confirmation dialog
         if (argLRAdd == "fromDrawer") {
-          Navigator.pushReplacementNamed(context, '/godownDashboard');
+          Navigator.pushReplacementNamed(
+              context, BottomNavigationForGodownKeeper.screenName,
+              arguments: "onBack");
           return false;
         } else {
-          Navigator.pushReplacementNamed(context, '/godownDashboard');
+          Navigator.pushReplacementNamed(
+              context, BottomNavigationForGodownKeeper.screenName);
           return false;
         } // In case `null` is returned, return `false`
       },
@@ -1111,7 +1115,9 @@ class _AddReturnItemXMIScreenState extends State<AddReturnItemXMIScreen> {
             if (responseValue > 0) {
               EasyLoading.showToast(Constants.itemAddedSuccessfully,
                   duration: const Duration(milliseconds: 3000));
-              Navigator.pushReplacementNamed(context, '/godownDashboard');
+              // Navigator.pushReplacementNamed(context, '/godownDashboard');
+              Navigator.pushReplacementNamed(context, BottomNavigationForGodownKeeper.screenName);
+
               setState(() {
                 vehicleNoController.clear();
                 items.forEach((item) {

@@ -22,6 +22,7 @@ import '../../Utils/app_url.dart';
 import '../../Utils/constants.dart';
 import '../../Utils/shared_preference.dart';
 import '../../Utils/size_config.dart';
+import '../BottomNavigationForGodownKeeper.dart';
 import '../DashboardScreen.dart';
 import '../DeliveryBoyModel/DeliveryBoyInfoModel.dart';
 import '../DeliveryBoyModel/GetSVTVConsumerListModel.dart';
@@ -2857,7 +2858,14 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
             print('Data sent successfully');
             EasyLoading.showToast("Data Sent Successfully.",
                 duration: const Duration(milliseconds: 3000));
-            Navigator.pushReplacementNamed(context, '/deliveryMenListShowScreen');
+            // Navigator.pushReplacementNamed(context, '/deliveryMenListShowScreen');
+            // Navigator.pushReplacementNamed(
+            //   context,
+            //   '/bottomNavigationForGodownKeeper',
+            //   arguments: 1, // Pass the index of the tab you want to show (e.g., Delivery Men tab)
+            // );
+            Navigator.pushReplacementNamed(context, BottomNavigationForGodownKeeper.screenName);
+
             // Safely extract ItemIds (ensure they're integers)
             List<int> itemIds = apiItemList.map<int>((item) {
               // Try to safely parse the ItemId string as an integer
@@ -3529,7 +3537,14 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
           print('Data sent successfully: ${response.body}');
           EasyLoading.showToast("Data Sent Successfully..",
               duration: const Duration(milliseconds: 3000));
-          Navigator.pushReplacementNamed(context, '/deliveryMenListShowScreen');
+          // Navigator.pushReplacementNamed(context, '/deliveryMenListShowScreen');
+          // Navigator.pushReplacementNamed(
+          //   context,
+          //   '/bottomNavigationForGodownKeeper',
+          //   arguments: 1, // Pass the index of the tab you want to show (e.g., Delivery Men tab)
+          // );
+          Navigator.pushReplacementNamed(context, BottomNavigationForGodownKeeper.screenName);
+
           EasyLoading.dismiss();
         } else {
           print('Failed to send data: ${response.statusCode}');

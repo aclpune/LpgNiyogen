@@ -31,7 +31,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   IconButton(
                     icon: Icon(Icons.arrow_back, color: Colors.white),
                     onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/godownDashboard'); // Go back on click
+                      Navigator.pushReplacementNamed(context, '/bottomNavigationForGodownKeeper'); // Go back on click
                     },
                   ),
                   Row(

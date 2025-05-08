@@ -20,6 +20,7 @@ import '../../Utils/Styling.dart';
 import '../../Utils/Widget.dart';
 import '../../Utils/constants.dart';
 import '../../Utils/shared_preference.dart';
+import '../BottomNavigationForGodownKeeper.dart';
 import '../DashboardScreen.dart';
 import '../DelBoyStockReturn/StockReturnFromDelBoy.dart';
 import '../DeliveryBoyModel/DeliveryBoyInfoModel.dart';
@@ -100,19 +101,19 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
         // Show a confirmation dialog
         if (argLRAdd == "fromDrawer") {
           Navigator.pushReplacementNamed(
-              context, DashboardScreen.screenName,
+              context, BottomNavigationForGodownKeeper.screenName,
               arguments: "onBack");
           return false;
         } else {
           Navigator.pushReplacementNamed(
-              context, DashboardScreen.screenName);
+              context, BottomNavigationForGodownKeeper.screenName);
           return false;
         } // In case `null` is returned, return `false`
       },
       child: Scaffold(
-        appBar: CustomAppBar(
-          title: 'Submitted Stock', // Title or hint text for the text field
-        ),
+        // appBar: CustomAppBar(
+        //   title: 'Submitted Stock', // Title or hint text for the text field
+        // ),
         body:
         RefreshIndicator(
           onRefresh: _refresh,
@@ -522,57 +523,6 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
                                                       height: 1,
                                                       width: MediaQuery.of(context).size.width,
                                                     ),
-                                                    // Container(
-                                                    //   color: Colors.grey,
-                                                    //   height: 1,
-                                                    // ),
-                                                    // SizedBox(height: 10),
-                                                    // isFlagPending?
-                                                    // Row(
-                                                    //   mainAxisAlignment: MainAxisAlignment.end,
-                                                    //   children: [
-                                                    //     ElevatedButton(
-                                                    //       onPressed: () {
-                                                    //         num? dmId = sale.dMId;
-                                                    //         num? gkId = sale.saleGKId;
-                                                    //         // Finalize and close the dialog after the user finishes adding remarks
-                                                    //         submitDelBoyStockList(dmId.toString(),gkId.toString());
-                                                    //       },
-                                                    //       style: ElevatedButton.styleFrom(
-                                                    //         backgroundColor: Colors.blue,
-                                                    //         shape: RoundedRectangleBorder(
-                                                    //           borderRadius: BorderRadius.circular(50),
-                                                    //         ),
-                                                    //       ),
-                                                    //       child: const Text(
-                                                    //         "Submit",
-                                                    //         style: TextStyle(color: Colors.white),
-                                                    //       ),
-                                                    //     ),
-                                                    //     SizedBox(width: 20),
-                                                    //     ElevatedButton(
-                                                    //       onPressed: () {
-                                                    //         Navigator.push(
-                                                    //           context,
-                                                    //           MaterialPageRoute(
-                                                    //             builder: (context) => EditSaleScreen(sale: sale),
-                                                    //           ),
-                                                    //         );
-                                                    //       },
-                                                    //       style: ElevatedButton.styleFrom(
-                                                    //         backgroundColor: Colors.blue,
-                                                    //         shape: RoundedRectangleBorder(
-                                                    //           borderRadius: BorderRadius.circular(50),
-                                                    //         ),
-                                                    //       ),
-                                                    //       child: const Text(
-                                                    //         "Edit",
-                                                    //         style: TextStyle(color: Colors.white),
-                                                    //       ),
-                                                    //     ),
-                                                    //   ],
-                                                    // ):
-                                                    //     Container(),
                                                   ],
                                                 );
                                               },
@@ -738,47 +688,47 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
     }
   }
 
-  Future<void> submitDelBoyStockList(String delManId,String gkId) async {
-    Constants.isNetworkAvailable =
-    await InternetConnectionChecker().hasConnection;
-    if(Constants.isNetworkAvailable){
-      try {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        String? distributorId = prefs.getString('DistributorId');
-        String? bearerToken = prefs.getString('token');
-
-        if (bearerToken == null) {
-          throw Exception('Bearer token is missing');
-        }
-
-        final response = await http.get(
-          Uri.parse('${AppUrl.DailySaleByGK_StatusUpdate}/$distributorId/$gkId/SubmitToManager'),
-          headers: {
-            'Authorization': 'Bearer $bearerToken',
-          },
-        );
-
-        debugPrint("request body DailySaleByGK_StatusUpdate: ${response.request}");
-        debugPrint("Response body DailySaleByGK_StatusUpdate: ${response.body}");
-
-        if (response.statusCode == 200) {
-          var data = json.decode(response.body);
-          updateRefillSale!.updateFlagToComplete(delManId,gkId);
-          Navigator.pushReplacementNamed(context, DashboardScreen.screenName);
-          // stockDataFuture = updateRefillSale!.getDataFromDatabase();
-          // debugPrint("stockDataFuture: $stockDataFuture");
-        } else {
-          debugPrint("Failed to fetch data from API: ${response.statusCode}");
-        }
-      } catch (e) {
-        debugPrint("Error during API call: $e");
-      }
-    }else{
-      showFlushBar(context,
-          Constants.connectionMessage);
-    }
-
-  }
+  // Future<void> submitDelBoyStockList(String delManId,String gkId) async {
+  //   Constants.isNetworkAvailable =
+  //   await InternetConnectionChecker().hasConnection;
+  //   if(Constants.isNetworkAvailable){
+  //     try {
+  //       SharedPreferences prefs = await SharedPreferences.getInstance();
+  //       String? distributorId = prefs.getString('DistributorId');
+  //       String? bearerToken = prefs.getString('token');
+  //
+  //       if (bearerToken == null) {
+  //         throw Exception('Bearer token is missing');
+  //       }
+  //
+  //       final response = await http.get(
+  //         Uri.parse('${AppUrl.DailySaleByGK_StatusUpdate}/$distributorId/$gkId/SubmitToManager'),
+  //         headers: {
+  //           'Authorization': 'Bearer $bearerToken',
+  //         },
+  //       );
+  //
+  //       debugPrint("request body DailySaleByGK_StatusUpdate: ${response.request}");
+  //       debugPrint("Response body DailySaleByGK_StatusUpdate: ${response.body}");
+  //
+  //       if (response.statusCode == 200) {
+  //         var data = json.decode(response.body);
+  //         updateRefillSale!.updateFlagToComplete(delManId,gkId);
+  //         Navigator.pushReplacementNamed(context, BottomNavigationForGodownKeeper.screenName);
+  //         // stockDataFuture = updateRefillSale!.getDataFromDatabase();
+  //         // debugPrint("stockDataFuture: $stockDataFuture");
+  //       } else {
+  //         debugPrint("Failed to fetch data from API: ${response.statusCode}");
+  //       }
+  //     } catch (e) {
+  //       debugPrint("Error during API call: $e");
+  //     }
+  //   }else{
+  //     showFlushBar(context,
+  //         Constants.connectionMessage);
+  //   }
+  //
+  // }
 
   Future<void> getstockDataFuture() async {
     // Delay fetching the data by 2 seconds

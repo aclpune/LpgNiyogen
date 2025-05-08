@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
 
+import 'Screen/GodownKeeper/BottomNavigationForGodownKeeper.dart';
 import 'Screen/GodownKeeper/DashboardScreen.dart';
 import 'Screen/GodownKeeper/DelBoyStockReturn/DeliveryMenListShowScreen.dart';
 import 'Screen/GodownKeeper/DelBoyStockReturn/StockReturnFromDelBoy.dart';
@@ -15,6 +16,7 @@ import 'Screen/GodownKeeper/ItemReceipt/AddItem/ItemReceiptScreen.dart';
 import 'Screen/GodownKeeper/ItemReceipt/ItemReturn/ItenRetun.dart';
 import 'Screen/GodownKeeper/ItemReceipt/ItemReturnXMI/screen/AddReturnItemXMIScreen.dart';
 import 'Screen/GodownKeeper/ItemReceipt/ItemReturnXMI/screen/ItemReturnXMIListScreen.dart';
+import 'Screen/GodownKeeper/MoreOptionScreenGodownKeeper.dart';
 import 'Screen/ManagerScreen/BootomNavigatinBarManager.dart';
 import 'Screen/GodownKeeper/MarkDefective/MarkDefectiveItemScreen.dart';
 import 'Screen/ManagerScreen/CashDepositToBankScreen.dart';
@@ -152,6 +154,8 @@ class MyApp extends StatelessWidget {
             AddReturnItemXMIScreen.screenName: (context) => AddReturnItemXMIScreen(),
             ItemReturnXMIListScreen.screenName: (context) => ItemReturnXMIListScreen(),
             MarkDefectiveItemScreen.screenName: (context) => MarkDefectiveItemScreen(),
+            BottomNavigationForGodownKeeper.screenName: (context) => BottomNavigationForGodownKeeper(),
+            MoreOptionScreenGodownKeeper.screenName: (context) => MoreOptionScreenGodownKeeper(),
 
             ///Manager
             CashHandoverScreen.screenName: (context) => CashHandoverScreen(),
