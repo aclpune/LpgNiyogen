@@ -171,6 +171,7 @@ class Styling {
     fontSize: 1.6 * SizeConfig.textMultiplier!, // Size = 14-- [14/8.66] = 1.6
   );
 
+
   static final TextStyle buttonTextBlack12 = TextStyle(
     color: Colors.black,
     fontFamily: 'OpenSans',

@@ -1156,9 +1156,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
         });
         isLoading = false;
       } else {
-        refreshTokens();
-        isLoading = false;
-        throw Exception(Constants.listGettingFail);
+        setState(() {
+          refreshTokens();
+          isLoading = false;
+          showFlushBar(context,
+              Constants.listGettingFail);
+        });
       }
     } else {
       refreshTokens();

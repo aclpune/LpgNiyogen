@@ -4,9 +4,19 @@ class ConsumerModel {
   int? staffId;
   int? itemId;
   String? consumerNo;
-  DateTime? addedOn;
   String? action;
   int? addedBy;
+  String? consumerName;
+  String? orderDate;
+  String? cashmemoDate;
+  String? paymentStatus;
+  String? remark;
+  int? niyojanDel;
+  int? cDCMSDel;
+  int? InCorrectStatus;
+  String? PayDate;
+  String? DeliveryDate;
+  String? SettDate;
 
   ConsumerModel({
     this.consId,
@@ -14,9 +24,19 @@ class ConsumerModel {
     this.staffId,
     this.itemId,
     this.consumerNo,
-    this.addedOn,
     this.action,
     this.addedBy,
+    this.consumerName,
+    this.orderDate,
+    this.cashmemoDate,
+    this.paymentStatus,
+    this.remark,
+    this.niyojanDel,
+    this.cDCMSDel,
+    this.InCorrectStatus,
+    this.PayDate,
+    this.DeliveryDate,
+    this.SettDate,
   });
 
   factory ConsumerModel.fromJson(Map<String, dynamic> json) {
@@ -26,9 +46,19 @@ class ConsumerModel {
       staffId: json['StaffId'],
       itemId: json['ItemId'],
       consumerNo: json['ConsumerNo'],
-      addedOn: DateTime.parse(json['AddedOn']),
       action: json['Action'],
       addedBy: json['AddedBy'],
+      consumerName: json['ConsumerName'],
+      orderDate: json['OrderDate'],
+      cashmemoDate: json['CashDate'],
+      paymentStatus: json['PaymentStatus'],
+      remark: json['ConsumerRemark'],
+      niyojanDel: json['NiyojanDel'],
+      cDCMSDel: json['cDCMSDel'],
+      InCorrectStatus: json['InCorrectStatus'],
+      PayDate: json['PayDate'],
+      DeliveryDate: json['DeliveryDate'],
+      SettDate: json['SettDate'],
     );
   }
 
@@ -39,9 +69,19 @@ class ConsumerModel {
       'StaffId': staffId,
       'ItemId': itemId,
       'ConsumerNo': consumerNo,
-      'AddedOn': addedOn?.toIso8601String(),
       'Action': action,
       'AddedBy': addedBy,
+      'ConsumerName': consumerName,
+      'OrderDate': orderDate, // <- safely convert to String
+      'CashDate': cashmemoDate,
+      'PaymentStatus': paymentStatus,
+      'ConsumerRemark': remark,
+      'NiyojanDel': niyojanDel,
+      'cDCMSDel': cDCMSDel,
+      'InCorrectStatus': InCorrectStatus,
+      'PayDate': PayDate,
+      'DeliveryDate': DeliveryDate,
+      'SettDate': SettDate,
     };
   }
 }

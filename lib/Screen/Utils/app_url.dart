@@ -1,8 +1,8 @@
 class AppUrl {
   // static const String baseUrl = 'https://192.168.2.27:502'; // Local
   // static const String baseUrl = 'https://20.193.149.194/lpgniyojanapi'; // UAT Client
-  // static const String baseUrl = 'https://20.193.149.194/lpgniyojanuatapi'; // UAT New Development
-  static const String baseUrl = 'https://lpgniyojan.aadyaminfotech.com/lpgniyojanapi'; // Production New
+   static const String baseUrl = 'https://20.193.149.194/lpgniyojanuatapi'; // UAT New Development
+  // static const String baseUrl = 'https://lpgniyojan.aadyaminfotech.com/lpgniyojanapi'; // Production New
 
   ///Log in
   // static const String login = '$baseUrl/Login/LoginUser';
@@ -39,7 +39,7 @@ class AppUrl {
   static const String GetDailySaleDetailsByStaffIdForMob = '$baseUrl/DailyStockCash/GetDailySaleDetailsByStaffIdForMob';
   static const String GetDailySaleCollReceiptNo = '$baseUrl/DailyStockCash/GetDailySaleCollReceiptNo';
   static const String GetRSPDetailsList = '$baseUrl/Masters/GetRSPDetailsList';
-  static const String GetVendorMasterList = '$baseUrl/Masters/GetVendorMasterList';
+  static const String GetCustomerList = '$baseUrl/Masters/GetCustomerList';
   static const String GetExpenseHeaderList = '$baseUrl/Masters/GetExpenseHeaderList';
   static const String UpdateSaleAddEditForMob = '$baseUrl/DailyStockCash/UpdateSaleAddEditForMob';
   static const String ExpenseDetailsAddEdit = '$baseUrl/DailyStockCash/ExpenseDetailsAddEdit';
@@ -58,5 +58,9 @@ class AppUrl {
   static const String DSRCheckSavedornot = '$baseUrl/Reports/DSRCheckSavedornot';
   static const String CheckDayEndConfirmation = '$baseUrl/Masters/CheckDayEndConfirmation';
   static const String GetCashFlowSummaryDSRMob = '$baseUrl/Reports/GetCashFlowSummaryDSRMob';
+  static const String DailySaleCheckCashLessConsumerDtls = '$baseUrl/DailyStockCash/DailySaleCheckCashLessConsumerDtls_Mob';
+  static const String GetCustDiscountList = '$baseUrl/Masters/GetCustDiscountList';
+  static const String GetDailySaleCollByMgrDataByIdForMob = '$baseUrl/DailyStockCash/GetDailySaleCollByMgrDataByIdForMob';
+  static const String GetBalanceByStaffId = '$baseUrl/DailyStockCash/GetBalanceByStaffId';
 
 }

@@ -1229,9 +1229,9 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
               // Delivery Date
               itemSubLine("Delivery Date",formattedDate!),
               SizedBox(height: 5,),
-              itemSubLine("Delivery Men",selectedDelBoyName!),
+              itemSubLine("Delivery Men",selectedDelBoyName ?? ''),
               SizedBox(height: 5,),
-              itemSubLine("Vehicle No.",vehicleNo!),
+              itemSubLine("Vehicle No.",vehicleNo ?? ''),
               SizedBox(height: 5,),
               Divider(),
               /// Add New Section Imbalance

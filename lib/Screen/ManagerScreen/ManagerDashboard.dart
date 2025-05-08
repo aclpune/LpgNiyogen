@@ -1289,7 +1289,8 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                       itemSubLineSubMenu("Filled",isInwardStockFilledListViewVisible),
                                                       Visibility(
                                                           visible: isInwardStockFilledListViewVisible,
-                                                        child: Column(
+                                                        child:
+                                                        Column(
                                                           children: [
                                                             Container(
                                                               decoration: BoxDecoration(
@@ -2841,12 +2842,14 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
           showFlushBar(context, Constants.listGettingFail);
         }
       } catch (e) {
-        setState(() {
-          refreshTokens();
-          EasyLoading.dismiss();
-          isLoading = false;
-        });
-        refreshTokens();
+        if(mounted) {
+          setState(() {
+            refreshTokens();
+            EasyLoading.dismiss();
+            isLoading = false;
+          });
+        }
+
         // ScaffoldMessenger.of(context).showSnackBar(
         //   SnackBar(content: Text('Error: $e')),
         // );

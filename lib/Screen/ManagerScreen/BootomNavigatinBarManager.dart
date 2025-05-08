@@ -35,61 +35,22 @@ class _BottomNavBarExampleState extends State<BottomNavBarExample> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Check if arguments are passed to set the initial index
+    final args = ModalRoute.of(context)?.settings.arguments;
+    if (args != null && args is int) {
+      setState(() {
+        _selectedIndex = args; // Set the passed index
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar:AppBarCustom(),
-
-      // PreferredSize(
-      //   preferredSize: Size.fromHeight(120), // Custom height for the AppBar
-      //   child: Container(
-      //     color: Colors.blueAccent,
-      //     // Custom background color
-      //     padding: EdgeInsets.only(top: 40, left: 5, right: 16,bottom: 5),
-      //     // Padding for top & sides
-      //     child: Row(
-      //       mainAxisAlignment: MainAxisAlignment.start,
-      //       // Align items to the start
-      //       children: [
-      //         // IconButton(
-      //         //   icon: Icon(Icons.menu, color: Colors.white),
-      //         //   // Menu icon for Drawer
-      //         //   onPressed: () {
-      //         //     // Toggle the drawer open or closed
-      //         //     if (_scaffoldKey.currentState!.isDrawerOpen) {
-      //         //       _scaffoldKey.currentState!.closeDrawer();
-      //         //     } else {
-      //         //       _scaffoldKey.currentState!.openDrawer();
-      //         //     }
-      //         //   },
-      //         // ),
-      //         SizedBox(width: 20),
-      //         // // Replacing the Text widget with the Row for Logo and App Name
-      //         Row(
-      //           mainAxisAlignment: MainAxisAlignment.start,
-      //           children: [
-      //             // App Logo
-      //             Image.asset(
-      //               'assets/playstore.png', // Path to your logo image
-      //               height: 40, // Adjust the height as needed
-      //             ),
-      //             SizedBox(width: 8),
-      //             // Add some space between the logo and the app name
-      //             // App Name (Replace 'App Name' with your constant or dynamic value)
-      //             Text(
-      //               Constants.AppBarTitle,
-      //               // Your app name constant or dynamic value
-      //               style: TextStyle(
-      //                 color: Colors.white,
-      //                 fontSize: 20,
-      //                 fontWeight: FontWeight.bold,
-      //               ),
-      //             ),
-      //           ],
-      //         ),
-      //       ],
-      //     ),
-      //   ),
-      // ),
       body: _pages[_selectedIndex], // Display the selected page
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
@@ -105,7 +66,7 @@ class _BottomNavBarExampleState extends State<BottomNavBarExample> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart,size: 18,),
-            label: 'Refill Sale',
+            label: 'Cash Collection',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.more_horiz,size: 18,),

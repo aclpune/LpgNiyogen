@@ -83,6 +83,25 @@ BranchAdminAH	cnf@1234*/
   static String totalSaleQtyDailySale = "Refill sale qty exceeds current filled stock for this item, kindly check the qty entered or add filled stock using item receipt menu.";
   static String defectiveSaleQtyDailySale = "Defective qty exceeds current defective stock for this item, kindly check the qty entered or add defective stock.";
 
+  ///manager
+  static String expenseSendMgr = "Data saved successfully.";
+  static String expenseExistMgr = "Record already exist.";
+  ///update sale
+  static String transactionDetails = "Please enter transaction details.";
+  static String customerDetails = "Please enter customer details.";
+  static String reticulatedCylinderQuantity = "The reticulated cylinder quantity must be equal to the customer cylinder quantity.";
+  static String receivedAmount = "Please enter a valid total received amount.";
+  static String addBalanceDelBoyAccount = "Please select the balance amount to be added to the delivery personnel’s account.";
+  static String denominationAmount = "The total received amount must match the final total amount.";
+  static String totalReceivedAmountLumpsum = "The total receivable amount cannot exceed the actual sale amount.";
+  static String allDataEmpty = "Please review and enter the required details.";
+  static String correctionRequestMethod = "Correction Request Processed Successfully.";
+  static String acceptSale = "Accepted Successfully..";
+  static String selectPaymentMode = "Please select payment mode.";
+  static String selectConsumerMode = "Please select consumer.";
+  static String creditQty = "The quantity cannot exceed the cylinder quantity.";
+  static String cashAmount = "Please enter a valid cash amount.";
+
   static String roleIdGodown = "3";
   static String roleIdManager= "1";
 

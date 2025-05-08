@@ -4,6 +4,8 @@ import 'package:lpgsalesandinventory/Screen/Utils/Styling.dart';
 
 import '../User/splashscreen/page/splash_screen.dart';
 import '../Utils/shared_preference.dart';
+import 'CashDepositToBankScreen.dart';
+import 'CashHandoverScreen.dart';
 class ManagerMoreScree extends StatefulWidget {
   static const screenName = '/managerMoreScree';
   const ManagerMoreScree({super.key});
@@ -46,21 +48,26 @@ class _ManagerMoreScreeState extends State<ManagerMoreScree> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // Title for Cylinder Categories Table
-                              Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Icon(Icons.business_center_outlined),
-                                        SizedBox(width: 10,),
-                                        Text("Cash Handover",style: Styling.itemBlackTestMore,),
-                                      ],
-                                    ),
-                                    Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
-                                  ],
-                                )
+                              GestureDetector(
+                                onTap: (){
+                                  Navigator.popAndPushNamed(context, CashDepositToBankScreen.screenName);
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Icon(Icons.business_center_outlined),
+                                          SizedBox(width: 10,),
+                                          Text("Cash Handover",style: Styling.itemBlackTestMore,),
+                                        ],
+                                      ),
+                                      Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+                                    ],
+                                  )
+                                ),
                               ),
                               Container(
                                 height: 1,
