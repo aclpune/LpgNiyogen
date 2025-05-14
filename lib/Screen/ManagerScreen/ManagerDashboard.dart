@@ -84,6 +84,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
     debugPrint("ManagerDashboardScreen: initState called");
     fetchCurrentStock();
     fetchDashboarDetail();
+    fetchSavedData();
 
   }
   // Function to handle pull-to-refresh action
@@ -558,7 +559,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                                         totalIncome!),
                                                                     // Replace this with your dynamic data
                                                                     style: Styling
-                                                                        .countNumber,
+                                                                        .textFormText,
                                                                     textAlign:
                                                                     TextAlign
                                                                         .center,
@@ -585,7 +586,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                                         totalExpense!),
                                                                     // Replace this with your dynamic data
                                                                     style: Styling
-                                                                        .countNumber,
+                                                                        .textFormText,
                                                                     textAlign:
                                                                     TextAlign
                                                                         .center,
@@ -620,7 +621,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                                               onAccountToday!),
                                                                           // Replace this with your dynamic data
                                                                           style:
-                                                                          Styling.countNumber,
+                                                                          Styling.textFormText,
                                                                           textAlign:
                                                                           TextAlign.center,
                                                                         ),
@@ -637,7 +638,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                                               onAccountAsOfDate!),
                                                                           // Replace this with your dynamic data
                                                                           style:
-                                                                          Styling.countNumber,
+                                                                          Styling.textFormText,
                                                                           textAlign:
                                                                           TextAlign.center,
                                                                         ),
@@ -814,7 +815,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                                 behavior: HitTestBehavior.opaque,
                                                                 child: Text(
                                                                   //pendingInCdcmsC.toString(),
-                                                                  '${pendingInCdcmsC.toString()} ($formattedDatecdcms)', // Use 'N/A' if cDCMDPendSince is null
+                                                                  '${pendingInCdcmsC.toString()}', // Use 'N/A' if cDCMDPendSince is null
                                                                   style: Styling.countNumber.copyWith(
                                                                     color: Colors.blue,
                                                                     decoration: TextDecoration.underline,
@@ -825,7 +826,15 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                               ),
                                                               SizedBox(height: 4),
                                                               Text(
-                                                                "Pending in cDCMS",
+                                                                "Since ($formattedDatecdcms)",
+                                                                // Label for emptyDiff
+                                                                style: Styling
+                                                                    .textFormText,
+                                                                textAlign:
+                                                                TextAlign.center,
+                                                              ),
+                                                              Text(
+                                                                "Pending in cDCMS\n\n",
                                                                 style: Styling.textFormText,
                                                                 textAlign: TextAlign.center,
                                                               ),
@@ -1047,7 +1056,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                                         4),
                                                                     // Space between count and label
                                                                     Text(
-                                                                      'Payment done,\ndelivery pending.',
+                                                                      'Payment done,\ndelivery pending.\n',
                                                                       // Label for filledDiff
                                                                       style: Styling
                                                                           .textFormText,
@@ -1087,7 +1096,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                                       Text(
                                                                         //settlDelPayPendC.toString(),
                                                                         //'${settlDelPayPendC.toString()} ($cDCMDPendSince)',
-                                                                        '${settlDelPayPendC.toString()} ($formattedDate)', // Use 'N/A' if cDCMDPendSince is null
+                                                                        '${settlDelPayPendC.toString()}', // Use 'N/A' if cDCMDPendSince is null
 
                                                                         // settlDelPayPendC.toString(),
                                                                         // Combine the count and formatted date
@@ -1103,6 +1112,14 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                                     SizedBox(
                                                                         height: 4),
                                                                     // Space between count and label
+                                                                    Text(
+                                                                      "Since ($formattedDate)",
+                                                                      // Label for emptyDiff
+                                                                      style: Styling
+                                                                          .textFormText,
+                                                                      textAlign:
+                                                                      TextAlign.center,
+                                                                    ),
                                                                     Text(
                                                                       'Delivered,\npayment pending',
                                                                       // Label for emptyDiff
@@ -3351,20 +3368,34 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
             refreshTokens();
             EasyLoading.dismiss();
             isLoading = false;
+            showFlushBar(context, Constants.listGettingFail);
           });
         }
         // ScaffoldMessenger.of(context).showSnackBar(
         //   SnackBar(content: Text('Error: $e')),
         // );
-        refreshTokens();
-        showFlushBar(context, Constants.listGettingFail);
+
+
       }
     } else {
       EasyLoading.dismiss();
       showFlushBar(context, Constants.connectionMessage);
     }
   }
+  Future<void> fetchSavedData() async {
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String isAlreadyLogin = preferences.getString("IsAlreadyLogin").toString();
+      debugPrint("isAlreadyLogin$isAlreadyLogin");
+      if(isAlreadyLogin == "0" || isAlreadyLogin == null || isAlreadyLogin == "null" || isAlreadyLogin.isEmpty){
+        _showLogoutDialog(context);
+      }else{
 
+      }
+    } catch (error) {
+      rethrow;
+    }
+  }
   Future<void> refreshTokens() async {
     LoginProvider auth = Provider.of<LoginProvider>(context, listen: false);
     try {
@@ -3499,5 +3530,27 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
         NumberFormat('#,##,###.00', 'en_IN'); // Indian locale without symbol
 
     return format.format(amount);
+  }
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Confirm Logout"),
+          content: Text(" Please log in to the application again."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                // Logic for confirming logout
+                Navigator.of(context).pop(); // Close the dialog
+                logoutUser(context); // Call logout function here
+              },
+              child: Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

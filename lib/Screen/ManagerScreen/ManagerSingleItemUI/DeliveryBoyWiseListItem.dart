@@ -15,6 +15,7 @@ import '../../Utils/constants.dart';
 import '../BootomNavigatinBarManager.dart';
 import '../DeliveryBoyWiseListShow.dart';
 import '../ManagerModelClass/DailySaleSaummaryListModel.dart';
+import '../ManagerModelClass/GetLastUploadedFrileDifferenceModel.dart';
 import '../ManagerUpdateSaleScreen.dart';
 
 class DeliveryBoyWiseListItem extends StatefulWidget {
@@ -30,7 +31,13 @@ class DeliveryBoyWiseListItem extends StatefulWidget {
 class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
   bool isListViewVisible = false; // Tracks if ListView is visible
   bool _isExpanded = false;
-
+  List<GetLastUploadedFrileDifferenceModel> getLastUploadedFile = []; // List for filtered results
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getLastUploadedFileDifference();
+  }
   @override
   Widget build(BuildContext context) {
     var sale = widget.filteredSales;
@@ -444,26 +451,36 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                       onTap: () {
                         if((sale.dailySaleStatus == 1 || sale.dailySaleStatus == 4)){
                           int? saleGk = sale.saleGKId?.toInt();
-                          statusChangeApi(saleGk!,0,2);
+                          statusChangeApi(saleGk!,0,2,Constants.acceptSale);
                         }else{
-                          Navigator.pushNamed(
-                              context, ManagerUpdateSaleScreen.screenName,
-                              arguments: {
-                                "delBoyName": sale.staffName,
-                                "receiptNo": "",
-                                "receiptDate": sale.delDate,
-                                "delBoyId": sale.dMId,
-                                "saledgkID": sale.saleGKId,
-                                "vehicleNo": sale.vehicleNo,
-                                "vehicleID": sale.vehicleId,
-                              });
+                          if(getLastUploadedFile[0].bkgHrDiff == 0 && getLastUploadedFile[0].settHrDiff == 0){
+                            Navigator.pushNamed(
+                                context, ManagerUpdateSaleScreen.screenName,
+                                arguments: {
+                                  "delBoyName": sale.staffName,
+                                  "receiptNo": "",
+                                  "receiptDate": sale.delDate,
+                                  "delBoyId": sale.dMId,
+                                  "saledgkID": sale.saleGKId,
+                                  "vehicleNo": sale.vehicleNo,
+                                  "vehicleID": sale.vehicleId,
+                                });
+                          }else{
+                            showCustomAlertDialog(
+                              context,
+                              title: 'You have not uploaded latest file',
+                              content: 'To complete the cash collection, you need to upload the latest file. Please log in to the Niyojan web portal to upload the file.',
+                            );
+
+                          }
+
                         }
 
                       },
                       child: Padding(
                         padding: const EdgeInsets.only(top: 8.0),
                         child: Text((sale.dailySaleStatus == 1 || sale.dailySaleStatus == 4)?"Accept" :
-                        (sale.dailySaleStatus == 2 || sale.dailySaleStatus != 3 || sale.dailySaleStatus != 1 || sale.dailySaleStatus != 4 || sale.dailySaleStatus != 7)?"Update":"",
+                        ((sale.dailySaleStatus == 2 )||( sale.dailySaleStatus != 3 && sale.dailySaleStatus != 1 && sale.dailySaleStatus != 4 && sale.dailySaleStatus != 7))?"Update":"",
                             style: Styling.blueClrTextWithUnderline),
                       ),
                     ),
@@ -474,7 +491,7 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                       onTap: () {
                         if((sale.dailySaleStatus != 3 && sale.dailySaleStatus != 5 && sale.dailySaleStatus != 6 && sale.dailySaleStatus != 7 && sale.dailySaleStatus != 8)){
                           int? saleGk = sale.saleGKId?.toInt();
-                          statusChangeApi(saleGk!,0,3);
+                          statusChangeApi(saleGk!,0,3,Constants.correctionRequestMethod);
                         }else{
 
                         }
@@ -495,7 +512,7 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
     );
   }
 
-  Future<void> statusChangeApi(int salesGKId, int salesGKItemId,int flagUpdate) async {
+  Future<void> statusChangeApi(int salesGKId, int salesGKItemId,int flagUpdate,String messageShow) async {
     Constants.isNetworkAvailable = await InternetConnectionChecker().hasConnection;
 
     if (!Constants.isNetworkAvailable) {
@@ -526,8 +543,7 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
         if (response.statusCode == 200) {
           final body = response.body;
 
-          if (body == '2') {
-            EasyLoading.showToast(Constants.acceptSale,
+            EasyLoading.showToast(messageShow,
                 duration: const Duration(milliseconds: 3000));
             // Example: refresh screen or go back to previous screen
             // Navigator.pop(context); // or do a refresh using setState()
@@ -536,15 +552,6 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
               BottomNavBarExample.screenName,
               arguments: 2, // This opens the third tab
             );
-          } else if (body == '3') {
-            EasyLoading.showToast(Constants.correctionRequestMethod,
-                duration: const Duration(milliseconds: 3000));
-            Navigator.pushNamed(
-              context,
-              BottomNavBarExample.screenName,
-              arguments: 2, // This opens the third tab
-            );
-          }
           setState(() {
             // update your UI or state variables if needed
           });
@@ -574,6 +581,143 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
     }
 
     return formattedAmount;
+  }
+  Future<void> getLastUploadedFileDifference() async {
+    Constants.isNetworkAvailable = await InternetConnectionChecker().hasConnection;
+
+    if (!Constants.isNetworkAvailable) {
+      // Return an empty list if there is no network connection
+      showFlushBar(context,
+          Constants.connectionMessage);
+
+    }else {
+      try {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? distributorId = prefs.getString('DistributorId');
+        String? bearerToken = prefs.getString('token');
+
+        if (bearerToken == null) {
+          throw Exception('Bearer token is missing');
+        }
+
+        final response = await http.get(
+          Uri.parse(
+              '${AppUrl.GetLastUploadedTimeDiff}/$distributorId'),
+          headers: {
+            'Authorization': 'Bearer $bearerToken',
+          },
+        );
+
+        debugPrint("Response body GetLastUploadedTimeDiff: ${response.body}");
+        debugPrint("request body GetLastUploadedTimeDiff: ${response.request}");
+
+        if (response.statusCode == 200) {
+          // Parse the JSON response
+          final List<dynamic> data = json.decode(response.body);
+          setState(() {
+            getLastUploadedFile = data.map((jsonItem) =>
+                GetLastUploadedFrileDifferenceModel.fromJson(jsonItem)).toList();
+
+          });
+        } else {
+
+          throw Exception('Failed to load sales data');
+        }
+      } catch (error) {
+
+        debugPrint("Error: $error");
+        // Return an empty list in case of an error
+      }
+    }
+  }
+
+  // void showCustomAlertDialog(BuildContext context, {
+  //   required String title,
+  //   required String content,
+  //   String cancelText = 'OK',
+  // }) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: Text(title,style: Styling.bodyTitleWithBlue,textAlign: TextAlign.center,),
+  //         content: Text(content,style: Styling.textFormText,textAlign: TextAlign.center,),
+  //         actions: [
+  //           ElevatedButton(
+  //             style: ElevatedButton.styleFrom(
+  //               backgroundColor: Colors.redAccent,
+  //               // Button expands to fill available width// Text color of the button
+  //               shape: RoundedRectangleBorder(
+  //                 // Optional: Set rounded corners
+  //                 borderRadius: BorderRadius.circular(50),
+  //               ),
+  //             ),
+  //             child: Text(cancelText,style: TextStyle(color: Colors.white),),
+  //             onPressed: () {
+  //               Navigator.of(context).pop(); // Close dialog
+  //             },
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
+  void showCustomAlertDialog(
+      BuildContext context, {
+        required String title,
+        required String content,
+        String cancelText = 'OK',
+      }) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // optional: prevent tap outside to dismiss
+      builder: (BuildContext context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 24.0),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.info_outline_rounded,
+                size: 48,
+                color: Colors.orange,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                title,
+                style: Styling.bodyTitleWithBlue,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                content,
+                style: Styling.textFormText,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    cancelText,
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
 }

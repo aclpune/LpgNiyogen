@@ -1833,37 +1833,6 @@ class _ManagerUpdateSaleCashUpdationState
                                       ),
                                     ],
                                   ),
-                                  // Row(
-                                  //   crossAxisAlignment: CrossAxisAlignment.start,
-                                  //   children: [
-                                  //     Row(
-                                  //       children: [
-                                  //         SizedBox(
-                                  //             width: 50,
-                                  //             child: Text('TV',
-                                  //                 style:
-                                  //                 Styling.itemGreyTextSmall)),
-                                  //         Text(": ${tvQty.toString()}",
-                                  //             style: Styling.itemBlackTestSmall),
-                                  //       ],
-                                  //     ),
-                                  //     SizedBox(
-                                  //       height: 5,
-                                  //     ),
-                                  //     Row(
-                                  //       children: [
-                                  //         SizedBox(
-                                  //             width: 50,
-                                  //             child: Text('DM\nAmt.',
-                                  //                 style:
-                                  //                 Styling.itemGreyTextSmall)),
-                                  //         Text(
-                                  //             ": ${amountTotal ?? 0.toStringAsFixed(2)}",
-                                  //             style: Styling.itemBlackTestSmall),
-                                  //       ],
-                                  //     ),
-                                  //   ],
-                                  // ),
                                   Column(
                                     children: [
                                       ElevatedButton(
@@ -2058,15 +2027,6 @@ class _ManagerUpdateSaleCashUpdationState
                 ),
               ],
             ),
-            // Amount Text
-            // Column(
-            //   crossAxisAlignment: CrossAxisAlignment.start,
-            //   children: [
-            //     SizedBox(height: 8),
-            //     Text('₹${amountPrepaidCylinder.toStringAsFixed(0)}',
-            //         style: Styling.itemBlackTest),
-            //   ],
-            // ),
 
             Row(
               children: [
@@ -2076,12 +2036,6 @@ class _ManagerUpdateSaleCashUpdationState
                   child: TextField(
                     controller: _amountControllerPrepaid,
                     keyboardType: TextInputType.number,
-                    // inputFormatters: [
-                    //   FilteringTextInputFormatter.digitsOnly,
-                    //   // Only digits allowed
-                    //   LengthLimitingTextInputFormatter(3),
-                    //   // Limit to 6 characters
-                    // ],
                     enabled: false,
                     decoration: InputDecoration(
                       labelStyle: TextStyle(color: Colors.blueAccent),
@@ -2144,15 +2098,6 @@ class _ManagerUpdateSaleCashUpdationState
                             } else {
                             }
                       },
-                      // style: ButtonStyle(
-                      //   backgroundColor:((_qtyControllerPrepaid.text.isNotEmpty) &&
-                      //       (_consumerController.text.isNotEmpty))?
-                      //   MaterialStateProperty.all<Color>(
-                      //       Color(0xff1280b3)
-                      //   ): MaterialStateProperty.all<Color>(
-                      //       Color(0xff666666)
-                      //   ),
-                      // ),
                       style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(
                         (_consumerController.text.isNotEmpty)
@@ -2386,18 +2331,6 @@ class _ManagerUpdateSaleCashUpdationState
               ],
             ),
 
-            // // Amount Text
-            // Column(
-            //   crossAxisAlignment: CrossAxisAlignment.start,
-            //   children: [
-            //     SizedBox(height: 8),
-            //     Text(
-            //       '₹${amountPostpaidCylinder.toStringAsFixed(0)}',
-            //       style: Styling.itemBlackTest,
-            //     ),
-            //   ],
-            // ),
-
             Row(
               children: [
                 // Text(
@@ -2472,8 +2405,6 @@ class _ManagerUpdateSaleCashUpdationState
                             }
                           }
                         }
-
-
                       });
                     },
                   ),
@@ -2532,11 +2463,6 @@ class _ManagerUpdateSaleCashUpdationState
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                       labelStyle: TextStyle(color: Colors.blueAccent),
-                      // suffixIcon: Icon(
-                      //   Icons.access_time,
-                      //   color: Color(0xff1280b3),
-                      //   size: 18,
-                      // ),
 
                     ),
                     inputFormatters: [
@@ -2608,13 +2534,6 @@ class _ManagerUpdateSaleCashUpdationState
                                     Color(0xff666666),
                                   ),
                       ),
-                      // style: ElevatedButton.styleFrom(
-                      //   backgroundColor:_getButtonColor(),
-                      //   // Change color based on enabled state
-                      //   shape: RoundedRectangleBorder(
-                      //     borderRadius: BorderRadius.circular(50),
-                      //   ),
-                      // ),
                       child: Text(
                         'Add',
                         style: TextStyle(
@@ -2804,11 +2723,7 @@ class _ManagerUpdateSaleCashUpdationState
                     ],
                     enabled: false,
                     onChanged: (value) {
-                      // setState(() {
-                      //   creditQty = int.tryParse(value) ?? 0;
-                      // });
-                      // _calculateCylinderAmountCredit();
-                      // _validateQuantities("Credit");
+
                     },
                   ),
                 ),
@@ -2972,52 +2887,12 @@ class _ManagerUpdateSaleCashUpdationState
                     textAlign: TextAlign.center,
                     enabled: false,
                     onChanged: (value) {
-                      // int qtyVendorCylinder =
-                      //     int.parse(_vendorCylinderQtyControllerCredit.text);
-                      // if (_qtyControllerCredit.text.isNotEmpty) {
-                      //   int qtyCredit = int.parse(_qtyControllerCredit.text);
-                      //   if (qtyVendorCylinder > qtyCredit) {
-                      //     showFlushBar(context,
-                      //         'Quantity Should Not Be Greater Than Cylinder Qty');
-                      //     _vendorCylinderQtyControllerCredit.clear();
-                      //   }
-                      // }
-                      // setState(() {
-                      //   // _calculateCylinderAmountCreditByVendor();
-                      //   // Update selected value
-                      // });
+
                     },
                   ),
                 ),
               ],
             ),
-            // Row(
-            //   children: [
-            //     Expanded(
-            //         child: textWidgetBlueColorWithStar("Payment Mode:", "*")),
-            //     Flexible(
-            //       flex: 1,
-            //       child: DropdownButtonFormField<String>(
-            //         decoration: InputDecoration(
-            //           contentPadding:
-            //           EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-            //         ),
-            //         style: Styling.itemBlackTest,
-            //         items: paymentModeCredit
-            //             .map((String value) => DropdownMenuItem<String>(
-            //           value: value,
-            //           child: Text(value),
-            //         ))
-            //             .toList(),
-            //         onChanged: (value) {
-            //           setState(() {
-            //             selectedPaymentMode = value; // Update selected value
-            //           });
-            //         },
-            //       ),
-            //     ),
-            //   ],
-            // ),
 
             Row(
               children: [
@@ -3316,9 +3191,6 @@ class _ManagerUpdateSaleCashUpdationState
                           _amountControllerCash.text='';
                         }
                       });
-
-                      // calculateBalanceAmountForReceiveAmountCash();
-                      // _validateQuantities("Cash");
                     },
                   ),
                 ),
@@ -4318,30 +4190,6 @@ class _ManagerUpdateSaleCashUpdationState
                             )), // Centering the text
                           ),
                           Text("X"),
-                          // Expanded(
-                          //   child: Center(
-                          //       child: TextField(controller:returnQuantity500Controller,
-                          //         style: TextStyle(
-                          //             fontWeight:
-                          //             FontWeight
-                          //                 .normal,
-                          //             fontSize:
-                          //             16),
-                          //         textAlign: TextAlign.center, // Centers the text horizontally
-                          //         decoration: InputDecoration(
-                          //           // Optional: Add a border
-                          //           contentPadding: EdgeInsets.zero, // Removes padding inside the TextField
-                          //         ),
-                          //         keyboardType: TextInputType.number,
-                          //         inputFormatters: [
-                          //           FilteringTextInputFormatter.digitsOnly,
-                          //         ],// Makes the input a number field
-                          //         onChanged: (value) {
-                          //           calculate500AmountReturnAmount(500); // Update the result when quantity changes
-                          //         },
-                          //
-                          //       )), // Centering the text
-                          // ),
                           Expanded(
                             child: Center(
                               child: StatefulBuilder(
@@ -4417,26 +4265,6 @@ class _ManagerUpdateSaleCashUpdationState
                             )), // Centering the text
                           ),
                           Text("X"),
-                          // Expanded(
-                          //   child: Center(
-                          //       child:
-                          //       TextField(
-                          //     controller: returnQuantity200Controller,
-                          //     style: TextStyle(
-                          //         fontWeight: FontWeight.normal, fontSize: 16),
-                          //     textAlign: TextAlign.center,
-                          //     keyboardType: TextInputType.number,
-                          //     inputFormatters: [
-                          //       FilteringTextInputFormatter.digitsOnly,
-                          //     ],
-                          //     // Makes the input a number field
-                          //     onChanged: (value) {
-                          //       calculate200AmountReturnAmount(
-                          //           200); // Update the result when quantity changes
-                          //     },
-                          //   )
-                          //   ), // Centering the text
-                          // ),
                           Expanded(
                             child: Center(
                               child: StatefulBuilder(
@@ -4503,32 +4331,6 @@ class _ManagerUpdateSaleCashUpdationState
                             )), // Centering the text
                           ),
                           Text("X"),
-                          // Expanded(
-                          //   child: Center(
-                          //       child:
-                          //       TextField(
-                          //     controller: returnQuantity100Controller,
-                          //     style: TextStyle(
-                          //         fontWeight: FontWeight.normal, fontSize: 16),
-                          //     textAlign: TextAlign.center,
-                          //     // Centers the text horizontally
-                          //     decoration: InputDecoration(
-                          //       // Optional: Add a border
-                          //       contentPadding: EdgeInsets
-                          //           .zero, // Removes padding inside the TextField
-                          //     ),
-                          //     keyboardType: TextInputType.number,
-                          //     inputFormatters: [
-                          //       FilteringTextInputFormatter.digitsOnly,
-                          //     ],
-                          //     // Makes the input a number field
-                          //     onChanged: (value) {
-                          //       calculate100AmountReturnAmount(
-                          //           100); // Update the result when quantity changes
-                          //     },
-                          //   )
-                          //   ), // Centering the text
-                          // ),
                           Expanded(
                             child: Center(
                               child: StatefulBuilder(
@@ -4602,32 +4404,6 @@ class _ManagerUpdateSaleCashUpdationState
                             )), // Centering the text
                           ),
                           Text("X"),
-                          // Expanded(
-                          //   child: Center(
-                          //       child:
-                          //       TextField(
-                          //     controller: returnQuantity50Controller,
-                          //     style: TextStyle(
-                          //         fontWeight: FontWeight.normal, fontSize: 16),
-                          //     textAlign: TextAlign.center,
-                          //     // Centers the text horizontally
-                          //     decoration: InputDecoration(
-                          //       // Optional: Add a border
-                          //       contentPadding: EdgeInsets
-                          //           .zero, // Removes padding inside the TextField
-                          //     ),
-                          //     keyboardType: TextInputType.number,
-                          //     inputFormatters: [
-                          //       FilteringTextInputFormatter.digitsOnly,
-                          //     ],
-                          //     // Makes the input a number field
-                          //     onChanged: (value) {
-                          //       calculate50AmountReturnAmount(
-                          //           50); // Update the result when quantity changes
-                          //     },
-                          //   )
-                          //   ), // Centering the text
-                          // ),
                           Expanded(
                             child: Center(
                               child: StatefulBuilder(
@@ -4699,32 +4475,6 @@ class _ManagerUpdateSaleCashUpdationState
                             )), // Centering the text
                           ),
                           Text("X"),
-                          // Expanded(
-                          //   child: Center(
-                          //       child:
-                          //       TextField(
-                          //     controller: returnQuantity20Controller,
-                          //     style: TextStyle(
-                          //         fontWeight: FontWeight.normal, fontSize: 16),
-                          //     textAlign: TextAlign.center,
-                          //     // Centers the text horizontally
-                          //     decoration: InputDecoration(
-                          //       // Optional: Add a border
-                          //       contentPadding: EdgeInsets
-                          //           .zero, // Removes padding inside the TextField
-                          //     ),
-                          //     keyboardType: TextInputType.number,
-                          //     inputFormatters: [
-                          //       FilteringTextInputFormatter.digitsOnly,
-                          //     ],
-                          //     // Makes the input a number field
-                          //     onChanged: (value) {
-                          //       calculate20AmountReturnAmount(
-                          //           20); // Update the result when quantity changes
-                          //     },
-                          //   )
-                          //   ), // Centering the text
-                          // ),
                           Expanded(
                             child: Center(
                               child: StatefulBuilder(
@@ -4796,32 +4546,6 @@ class _ManagerUpdateSaleCashUpdationState
                             )), // Centering the text
                           ),
                           Text("X"),
-                          // Expanded(
-                          //   child: Center(
-                          //       child:
-                          //       TextField(
-                          //     controller: returnQuantity10Controller,
-                          //     style: TextStyle(
-                          //         fontWeight: FontWeight.normal, fontSize: 16),
-                          //     textAlign: TextAlign.center,
-                          //     // Centers the text horizontally
-                          //     decoration: InputDecoration(
-                          //       // Optional: Add a border
-                          //       contentPadding: EdgeInsets
-                          //           .zero, // Removes padding inside the TextField
-                          //     ),
-                          //     keyboardType: TextInputType.number,
-                          //     inputFormatters: [
-                          //       FilteringTextInputFormatter.digitsOnly,
-                          //     ],
-                          //     // Makes the input a number field
-                          //     onChanged: (value) {
-                          //       calculate10AmountReturnAmount(
-                          //           10); // Update the result when quantity changes
-                          //     },
-                          //   )
-                          //   ), // Centering the text
-                          // ),
                           Expanded(
                             child: Center(
                               child: StatefulBuilder(
@@ -4893,32 +4617,6 @@ class _ManagerUpdateSaleCashUpdationState
                             )), // Centering the text
                           ),
                           Text("X"),
-                          // Expanded(
-                          //   child: Center(
-                          //       child:
-                          //       TextField(
-                          //     controller: returnQuantity5Controller,
-                          //     style: TextStyle(
-                          //         fontWeight: FontWeight.normal, fontSize: 16),
-                          //     textAlign: TextAlign.center,
-                          //     // Centers the text horizontally
-                          //     decoration: InputDecoration(
-                          //       // Optional: Add a border
-                          //       contentPadding: EdgeInsets
-                          //           .zero, // Removes padding inside the TextField
-                          //     ),
-                          //     keyboardType: TextInputType.number,
-                          //     inputFormatters: [
-                          //       FilteringTextInputFormatter.digitsOnly,
-                          //     ],
-                          //     // Makes the input a number field
-                          //     onChanged: (value) {
-                          //       calculate5AmountReturnAmount(
-                          //           5); // Update the result when quantity changes
-                          //     },
-                          //   )
-                          //   ), // Centering the text
-                          // ),
                           Expanded(
                             child: Center(
                               child: StatefulBuilder(
@@ -4992,32 +4690,6 @@ class _ManagerUpdateSaleCashUpdationState
                                 )), // Centering the text
                           ),
                           Text("X"),
-                          // Expanded(
-                          //   child: Center(
-                          //       child:
-                          //       TextField(
-                          //     controller: returnQuantity5Controller,
-                          //     style: TextStyle(
-                          //         fontWeight: FontWeight.normal, fontSize: 16),
-                          //     textAlign: TextAlign.center,
-                          //     // Centers the text horizontally
-                          //     decoration: InputDecoration(
-                          //       // Optional: Add a border
-                          //       contentPadding: EdgeInsets
-                          //           .zero, // Removes padding inside the TextField
-                          //     ),
-                          //     keyboardType: TextInputType.number,
-                          //     inputFormatters: [
-                          //       FilteringTextInputFormatter.digitsOnly,
-                          //     ],
-                          //     // Makes the input a number field
-                          //     onChanged: (value) {
-                          //       calculate5AmountReturnAmount(
-                          //           5); // Update the result when quantity changes
-                          //     },
-                          //   )
-                          //   ), // Centering the text
-                          // ),
                           Expanded(
                             child: Center(
                               child: StatefulBuilder(
@@ -5090,32 +4762,6 @@ class _ManagerUpdateSaleCashUpdationState
                                 )), // Centering the text
                           ),
                           Text("X"),
-                          // Expanded(
-                          //   child: Center(
-                          //       child:
-                          //       TextField(
-                          //     controller: returnQuantity5Controller,
-                          //     style: TextStyle(
-                          //         fontWeight: FontWeight.normal, fontSize: 16),
-                          //     textAlign: TextAlign.center,
-                          //     // Centers the text horizontally
-                          //     decoration: InputDecoration(
-                          //       // Optional: Add a border
-                          //       contentPadding: EdgeInsets
-                          //           .zero, // Removes padding inside the TextField
-                          //     ),
-                          //     keyboardType: TextInputType.number,
-                          //     inputFormatters: [
-                          //       FilteringTextInputFormatter.digitsOnly,
-                          //     ],
-                          //     // Makes the input a number field
-                          //     onChanged: (value) {
-                          //       calculate5AmountReturnAmount(
-                          //           5); // Update the result when quantity changes
-                          //     },
-                          //   )
-                          //   ), // Centering the text
-                          // ),
                           Expanded(
                             child: Center(
                               child: StatefulBuilder(
@@ -5188,32 +4834,6 @@ class _ManagerUpdateSaleCashUpdationState
                                 )), // Centering the text
                           ),
                           Text("X"),
-                          // Expanded(
-                          //   child: Center(
-                          //       child:
-                          //       TextField(
-                          //     controller: returnQuantity5Controller,
-                          //     style: TextStyle(
-                          //         fontWeight: FontWeight.normal, fontSize: 16),
-                          //     textAlign: TextAlign.center,
-                          //     // Centers the text horizontally
-                          //     decoration: InputDecoration(
-                          //       // Optional: Add a border
-                          //       contentPadding: EdgeInsets
-                          //           .zero, // Removes padding inside the TextField
-                          //     ),
-                          //     keyboardType: TextInputType.number,
-                          //     inputFormatters: [
-                          //       FilteringTextInputFormatter.digitsOnly,
-                          //     ],
-                          //     // Makes the input a number field
-                          //     onChanged: (value) {
-                          //       calculate5AmountReturnAmount(
-                          //           5); // Update the result when quantity changes
-                          //     },
-                          //   )
-                          //   ), // Centering the text
-                          // ),
                           Expanded(
                             child: Center(
                               child: StatefulBuilder(
@@ -5364,14 +4984,6 @@ class _ManagerUpdateSaleCashUpdationState
       String? StaffId = prefs.getString('StaffId');
       int? staffIds = int.parse(StaffId!);
       int? distributorIds = int.parse(distributorId!);
-
-      // bool alreadyExists = _consumerList.any((element) => element.consumerNo == consumerNo);
-      //
-      // if (alreadyExists) {
-      //   // Show a message
-      //   showFlushBar(context, "Consumer $consumerNo already added.");
-      //   return;
-      // }
 
       setState(() {
         // Add all fields to the model, not just consumerNo
@@ -6883,35 +6495,6 @@ class _ManagerUpdateSaleCashUpdationState
                       width: MediaQuery.of(context).size.width * 0.6,
                       // Use relative width (60% of screen width)
                       child:
-                          // DropdownButtonFormField<
-                          //     GetExpenceHeadAmountListModel>(
-                          //   decoration: InputDecoration(
-                          //     contentPadding: EdgeInsets.symmetric(
-                          //         vertical: 12, horizontal: 10),
-                          //   ),
-                          //   style: Styling.itemBlackTest,
-                          //   items: _expensesHeaders
-                          //       .map((GetExpenceHeadAmountListModel expenses) {
-                          //     return DropdownMenuItem<
-                          //         GetExpenceHeadAmountListModel>(
-                          //       value: expenses,
-                          //       child: Text(expenses.expHeadName ?? ''),
-                          //     );
-                          //   }).toList(),
-                          //   onChanged:
-                          //       (GetExpenceHeadAmountListModel? selectedVendor) {
-                          //     if (selectedVendor != null) {
-                          //       _selectedExpenseHead = selectedVendor.expHeadName;
-                          //       _selectedExpenseHeadId =
-                          //           selectedVendor.expHeadId?.toInt();
-                          //       // Handle dropdown selection here
-                          //       print(
-                          //           "Selected Vendor Name: $_selectedExpenseHead");
-                          //       print(
-                          //           "Selected Vendor ID: $_selectedExpenseHeadId");
-                          //     }
-                          //   },
-                          // ),
                           DropdownButtonFormField<
                               GetExpenceHeadAmountListModel>(
                             isExpanded: true,

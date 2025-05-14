@@ -35,36 +35,38 @@ class _ManagerExpenseTabScreenUI extends State<ManagerExpenseTabScreenUI>{
               Row(
                 children: [
                   Expanded(
-                    flex: 1,
+                    flex: 2,
                     child: Text(
                         "$serialNumbers", // Dynamically display serial numbers (index + 1 or any other dynamic value)
                       style: TextStyle(fontSize: 16),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                   Expanded(
-                    flex: 2,
+                    flex: 4,
                     child: Text(sale.staffName == null ? '':
                       sale.staffName.toString() ?? '',
                       style: TextStyle(fontSize: 16),
+                      textAlign: TextAlign.left,
                     ),
                   ),
                   Expanded(
-                    flex: 2,
+                    flex: 3,
                     child: Text(
                         formatCurrency(sale.cash!.toDouble()),
                       style: TextStyle(fontSize: 16),
+                      textAlign: TextAlign.center,
                     ),
                   ),
-                  Visibility(
-                    visible: mode != 'On Account',
-                    child: Expanded(
-                      flex: 2,
+                 Expanded(
+                      flex: 3,
                       child: Text(
                           formatCurrency(sale.bank!.toDouble()),
                         style: TextStyle(fontSize: 16),
+                        textAlign: TextAlign.center,
                       ),
                     ),
-                  ),
+
                 ],
               ),
               Divider(),

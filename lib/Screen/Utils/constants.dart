@@ -87,6 +87,7 @@ BranchAdminAH	cnf@1234*/
   ///manager
   static String expenseSendMgr = "Data saved successfully.";
   static String expenseExistMgr = "Record already exist.";
+  static String cashHandOverDeno = "The Entered Cash Denomination Total Should Be Equal To Cash Handover/Deposit Amount.";
   ///update sale
   static String transactionDetails = "Please enter transaction details.";
   static String customerDetails = "Please enter customer details.";

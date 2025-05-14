@@ -4,6 +4,7 @@ import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../User/splashscreen/page/splash_screen.dart';
 import '../Utils/Styling.dart';
 import '../Utils/shared_preference.dart';
+import 'ItemReceipt/AddItem/ItemReceiptScreen.dart';
 import 'ItemReceipt/ItemReturn/ItenRetun.dart';
 import 'ItemReceipt/ItemReturnXMI/screen/AddReturnItemXMIScreen.dart';
 import 'ItemReceipt/ItemReturnXMI/screen/ItemReturnXMIListScreen.dart';
@@ -54,8 +55,53 @@ class _MoreOptionScreenGodownKeeperState
                       Padding(
                         padding: const EdgeInsets.only(left: 10.0),
                         child: Text(
-                          "Item Return",
+                          "Item Receipt/Return",
                           style: Styling.itemGreyTextBigMore,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushReplacementNamed(
+                              context, ItemReceiptScreen.screenName);
+                        },
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          elevation: 1,
+                          color: Colors.white,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Title for Cylinder Categories Table
+                              Padding(
+                                  padding: const EdgeInsets.all(15.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Icon(
+                                              Icons.receipt),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                          Text(
+                                            "Item Receipt",
+                                            style: Styling.itemBlackTestMore,
+                                          ),
+                                        ],
+                                      ),
+                                      Icon(
+                                        Icons.arrow_forward_ios_sharp,
+                                        color: Colors.grey,
+                                        size: 20,
+                                      ),
+                                    ],
+                                  )),
+                            ],
+                          ),
                         ),
                       ),
                       GestureDetector(

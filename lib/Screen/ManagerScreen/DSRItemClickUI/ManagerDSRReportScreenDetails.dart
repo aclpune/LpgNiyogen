@@ -424,7 +424,7 @@ class _ManagerDSRReportScreenDetailsState extends State<ManagerDSRReportScreenDe
                             Align(
                               alignment: Alignment.center,
                               child: Text(
-                                'Total Cash Amt.- ${formatCurrency(getExpenseCashAmount())}',
+                                'Cash Amt.- ${formatCurrency(getExpenseCashAmount())}',
                                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                             ),
@@ -434,7 +434,7 @@ class _ManagerDSRReportScreenDetailsState extends State<ManagerDSRReportScreenDe
                             Align(
                               alignment: Alignment.center,
                               child: Text(
-                                'Total Bank Amt.- ${formatCurrency(getExpenseBankAmount())}',
+                                'Bank Amt.- ${formatCurrency(getExpenseBankAmount())}',
                                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                               ),
                             ),

@@ -24,7 +24,10 @@ class SharedPref {
         await prefs.setString('refresh_token', user.refreshToken.toString()) &&
         await prefs.setString('RoleName', user.roleName.toString()) &&
         await prefs.setString('DistributorName', user.distributorName.toString()) &&
-        await prefs.setString('UserId', user.userId.toString());
+        await prefs.setString('UserId', user.userId.toString()) &&
+        await prefs.setString('MgrEmail', user.MgrEmail.toString()) &&
+        await prefs.setString('OwnerEmail', user.OwnerEmail.toString())&&
+        await prefs.setString('IsAlreadyLogin', user.IsAlreadyLogin.toString());
   }
 
   // Get user information from SharedPreferences

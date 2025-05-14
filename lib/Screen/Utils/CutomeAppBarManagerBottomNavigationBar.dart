@@ -27,7 +27,7 @@ class _AppBarCustomState extends State<AppBarCustom> {
     });
   }
 
-  String? userName;
+  String? userName,role,distributorName,roleId;
   //int? userId;
   @override
   Widget build(BuildContext context) {
@@ -54,6 +54,8 @@ class _AppBarCustomState extends State<AppBarCustom> {
                   ),
                   SizedBox(width: 5,),
                   Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         Constants.AppBarTitle,
@@ -61,9 +63,10 @@ class _AppBarCustomState extends State<AppBarCustom> {
                         style: Styling.appBarTitle,
                       ),
                       Text(
-                        "",
+                        distributorName == "null"?'':
+                        distributorName ?? '',
                         textAlign: TextAlign.start,
-                        style: Styling.appBarDesc,
+                        style: Styling.hintTextVerySmall,
                       ),
                     ],
                   ),
@@ -74,12 +77,13 @@ class _AppBarCustomState extends State<AppBarCustom> {
                 children: [
                       Text(
                         userName ?? ' ',
-                        style: const TextStyle(fontSize: 14),
+                        style: Styling.hintTextSmall,
                         textAlign: TextAlign.right,
                       ),
+                  SizedBox(height: 2,),
                   Text(
-                    "" ?? ' ',
-                    style: const TextStyle(fontSize: 10),
+                    role ?? '',
+                    style: Styling.hintTextSmall,
                     textAlign: TextAlign.right,
                   ),
                 ],
@@ -94,7 +98,24 @@ class _AppBarCustomState extends State<AppBarCustom> {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       userName = preferences.getString("StaffName").toString();
+      String roles = preferences.getString("RoleName").toString();
+      distributorName = preferences.getString("DistributorName").toString();
+      roleId = preferences.getString("roleId").toString();
       debugPrint("User Name:- $userName");
+      if(roleId == "0"){
+        if(roles == "null" || roles.isEmpty){
+          role = "Godown Keeper";
+        }else{
+          role = roles;
+        }
+      }else{
+        if(roles == "null" || roles.isEmpty){
+          role = "";
+        }else{
+          role = roles;
+        }
+      }
+
       // String? staffIdString = preferences.getString("UserId");
       // userId = staffIdString != null ? int.tryParse(staffIdString) : null;
       // debugPrint("User Name:- $userName");
