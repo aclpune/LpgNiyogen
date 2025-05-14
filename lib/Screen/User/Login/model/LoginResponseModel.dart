@@ -62,6 +62,9 @@ class AuthToken {
       String? roleName, 
       String? distributorName, 
       num?  userId,
+      String? MgrEmail,
+      String? OwnerEmail,
+      num? IsAlreadyLogin
   }){
     _staffId = staffId;
     _distributorId = distributorId;
@@ -80,6 +83,9 @@ class AuthToken {
     _roleName = roleName;
     _distributorName = distributorName;
     _userId = userId;
+    _MgrEmail = MgrEmail;
+    _OwnerEmail = OwnerEmail;
+    _IsAlreadyLogin = IsAlreadyLogin;
 }
 
   AuthToken.fromJson(dynamic json) {
@@ -100,6 +106,9 @@ class AuthToken {
     _roleName = json['RoleName'];
     _distributorName = json['DistributorName'];
     _userId = json['UserId'];
+    _MgrEmail = json['MgrEmail'];
+    _OwnerEmail = json['OwnerEmail'];
+    _IsAlreadyLogin = json['IsAlreadyLogin'];
   }
   num? _staffId;
   num? _distributorId;
@@ -118,6 +127,9 @@ class AuthToken {
   String? _roleName;
   String? _distributorName;
   num? _userId;
+  String? _MgrEmail;
+  String? _OwnerEmail;
+  num? _IsAlreadyLogin;
 AuthToken copyWith({  num? staffId,
   num? distributorId,
   String? staffName,
@@ -135,6 +147,9 @@ AuthToken copyWith({  num? staffId,
   String? roleName,
   String? distributorName,
   num? userId,
+  String? MgrEmail,
+  String? OwnerEmail,
+  num? IsAlreadyLogin,
 }) => AuthToken(  staffId: staffId ?? _staffId,
   distributorId: distributorId ?? _distributorId,
   staffName: staffName ?? _staffName,
@@ -152,6 +167,9 @@ AuthToken copyWith({  num? staffId,
   roleName: roleName ?? _roleName,
   distributorName: distributorName ?? _distributorName,
   userId: userId ?? _userId,
+  MgrEmail: MgrEmail ?? _MgrEmail,
+  OwnerEmail: OwnerEmail ?? _OwnerEmail,
+  IsAlreadyLogin: IsAlreadyLogin ?? _IsAlreadyLogin,
 );
   num? get staffId => _staffId;
   num? get distributorId => _distributorId;
@@ -170,6 +188,9 @@ AuthToken copyWith({  num? staffId,
   String? get roleName => _roleName;
   String? get distributorName => _distributorName;
   num? get userId => _userId;
+  String? get MgrEmail => _MgrEmail;
+  String? get OwnerEmail => _OwnerEmail;
+  num? get IsAlreadyLogin => _IsAlreadyLogin;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -190,6 +211,9 @@ AuthToken copyWith({  num? staffId,
     map['RoleName'] = _roleName;
     map['DistributorName'] = _distributorName;
     map['UserId'] = _userId;
+    map['MgrEmail'] = _MgrEmail;
+    map['OwnerEmail'] = _OwnerEmail;
+    map['IsAlreadyLogin'] = _IsAlreadyLogin;
     return map;
   }
 

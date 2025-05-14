@@ -51,6 +51,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   List<GetStockTransferListModel> _stockTransferList = [];
   bool isLoading = true;
   String? mobileNo;
+  String? userName,role,distributorName,roleId;
   @override
   void initState() {
     super.initState();
@@ -68,6 +69,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     fetchCurrentStock();
     checkAndSaveDayEndData();
     fetchTransactionList();
+    fetchSavedData();
   }
   // Function to handle pull-to-refresh action
   Future<void> _onRefresh() async {
@@ -82,64 +84,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   bool stockTransferFlag = false;
   @override
   Widget build(BuildContext context) {
-
     return
       Scaffold(
         key: _scaffoldKey,
-        // drawer: CustomeDrawer(), // Assign the scaffold key
-        // appBar:
-        // PreferredSize(
-        //   preferredSize: Size.fromHeight(120), // Custom height for the AppBar
-        //   child: Container(
-        //     color: Colors.blueAccent, // Custom background color
-        //     padding: EdgeInsets.only(top: 30, left: 5, right: 16), // Padding for top & sides
-        //     child: Row(
-        //       mainAxisAlignment: MainAxisAlignment.start, // Align items to the start
-        //       children: [
-        //         IconButton(
-        //           icon: Icon(Icons.menu, color: Colors.white),
-        //           // Menu icon for Drawer
-        //           onPressed: () {
-        //             // Toggle the drawer open or closed
-        //             if (_scaffoldKey.currentState!.isDrawerOpen) {
-        //               _scaffoldKey.currentState!.closeDrawer();
-        //             } else {
-        //               _scaffoldKey.currentState!.openDrawer();
-        //             }
-        //           },
-        //         ),
-        //         SizedBox(width: 20),
-        //
-        //         // Replacing the Text widget with the Row for Logo and App Name
-        //         Row(
-        //           mainAxisAlignment: MainAxisAlignment.start,
-        //           children: [
-        //             // App Logo
-        //             Card(
-        //               color: Colors.white,
-        //               elevation: 5,
-        //               shadowColor: Colors.blue,
-        //               shape: RoundedRectangleBorder(
-        //                 borderRadius: BorderRadius.circular(4.0),
-        //               ),
-        //               child: Image.asset(
-        //                 'assets/playstore.png', // Path to your logo image
-        //                 height: 40, // Adjust the height as needed
-        //               ),
-        //             ),
-        //             SizedBox(width: 8), // Add some space between the logo and the app name
-        //             // App Name (Replace 'App Name' with your constant or dynamic value)
-        //             Text(
-        //               Constants.AppBarTitle, // Your app name constant or dynamic value
-        //               style: Styling.appBarTitle,
-        //             ),
-        //           ],
-        //         ),
-        //
-        //       ],
-        //     ),
-        //   ),
-        // ),
         body:
           Column(
             children: [
@@ -750,60 +697,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                 ),
               ),
-                //
-                // Container(
-                //   padding: const EdgeInsets.all(10.0),
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //     children: [
-                //       SizedBox(
-                //         height: 40,
-                //         child: ElevatedButton.icon(
-                //           onPressed: () {
-                //             if(stockTransferFlag){
-                //               Navigator.pushReplacementNamed(context, '/deliveryMenListShowScreen');
-                //             }else{
-                //               CustomAlertDialog.showCustomAlert(context, Constants.stockNotAccepted);
-                //             }
-                //             // Navigator.pushReplacementNamed(context, '/stockReturnFromDelBoy');
-                //           },
-                //           icon: Icon(Icons.update, size: 20), // Add icon
-                //           label: Text("Daily Sale"),
-                //           style: ElevatedButton.styleFrom(
-                //             backgroundColor:stockTransferFlag? Colors.blue:Colors.grey,
-                //             foregroundColor: Colors.white,
-                //             shape: RoundedRectangleBorder(
-                //               borderRadius: BorderRadius.circular(50),
-                //             ),
-                //           ),
-                //         ),
-                //       ),
-                //       SizedBox(
-                //         height: 40,
-                //         child: ElevatedButton.icon(
-                //           onPressed: () {
-                //               if(stockTransferFlag){
-                //                 Navigator.pushReplacementNamed(context, '/stockSubmitToManager');
-                //
-                //               }else{
-                //                 CustomAlertDialog.showCustomAlert(context,Constants.stockNotAccepted);
-                //               }
-                //           },
-                //           icon: Icon(Icons.list_alt, size: 20), // Add icon
-                //           label: Text("Today's Summary"),
-                //           style: ElevatedButton.styleFrom(
-                //             backgroundColor:stockTransferFlag? Colors.blue:Colors.grey,
-                //             foregroundColor: Colors.white,
-                //             shape: RoundedRectangleBorder(
-                //               borderRadius: BorderRadius.circular(50),
-                //             ),
-                //           ),
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
-
             ],
           ),
 
@@ -1063,10 +956,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
           isLoading = false;
           refreshTokens();
         });
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(content: Text('Error: $e')),
-        // );
-
         showFlushBar(context,
             Constants.listGettingFail);
       }
@@ -1137,6 +1026,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
       isLoading = false;
       showFlushBar(
           context, Constants.connectionMessage);
+    }
+  }
+
+  Future<void> fetchSavedData() async {
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      userName = preferences.getString("StaffName").toString();
+      String roles = preferences.getString("RoleName").toString();
+      distributorName = preferences.getString("IsAlreadyLogin").toString();
+      String isAlreadyLogin = preferences.getString("IsAlreadyLogin").toString();
+      debugPrint("User Name:- $userName");
+      if(isAlreadyLogin == "0" || isAlreadyLogin == null || isAlreadyLogin == "null" || isAlreadyLogin.isEmpty){
+        _showLogoutDialog(context);
+      }else{
+
+      }
+    } catch (error) {
+      rethrow;
     }
   }
 
@@ -1327,5 +1234,29 @@ class _DashboardScreenState extends State<DashboardScreen> {
       // Exception handling
       print("Exception: $e");
     }
+  }
+
+  // Function to show logout confirmation dialog
+  void _showLogoutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Confirm Logout"),
+          content: Text(" Please log in to the application again."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                // Logic for confirming logout
+                Navigator.of(context).pop(); // Close the dialog
+                logoutUser(context); // Call logout function here
+              },
+              child: Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

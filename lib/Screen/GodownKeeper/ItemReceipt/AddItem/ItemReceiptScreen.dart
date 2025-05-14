@@ -374,9 +374,9 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
         } // In case `null` is returned, return `false`
       },
       child: Scaffold(
-        // appBar: CustomAppBar(
-        //   title: 'Item Receipt', // Title or hint text for the text field
-        // ),
+        appBar: CustomAppBar(
+          title: 'Item Receipt', // Title or hint text for the text field
+        ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(

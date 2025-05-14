@@ -44,15 +44,14 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                         children: [
                           Card(
                             color: Colors.white,
-                            elevation: 5,
+                            elevation: 7,
                             shadowColor: Colors.blue,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(4.0),
                             ),
                             child: Image.asset(
-                              'assets/playstore.png', // Your logo image path
-                              height: 40, // Adjust the height as needed
-                              width: 40,  // Adjust the width as needed
+                              'assets/playstore.png', // Replace with the path to your logo image
+                              height: 35, // Adjust the height as needed
                             ),
                           ),
                         ],

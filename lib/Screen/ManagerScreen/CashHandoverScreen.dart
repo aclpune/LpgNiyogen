@@ -8,16 +8,20 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../ConstantScreen/widgets.dart';
 import '../GodownKeeper/ItemReceipt/CylItemList/CylItemListModel.dart';
+import '../Utils/CustomAppBarManager.dart';
 import '../Utils/Styling.dart';
 import '../Utils/Widget.dart';
 import '../Utils/app_url.dart';
 import 'package:http/http.dart' as http;
 import '../Utils/constants.dart';
+import 'BootomNavigatinBarManager.dart';
 import 'CashHandoverListViewUI.dart';
 import 'CashHandoverModelClass/GetBankMappingDetailsListModel.dart';
 import 'CashHandoverModelClass/GetCashHandOverDtlsModel.dart';
 import 'CashHandoverModelClass/GetStaffDetailsListUserIsMadeModel.dart';
+import 'ManagerModelClass/DenomModel.dart';
 import 'ManagerModelClass/GetNoteTypeAndIDFroDenominationListModel.dart';
+import 'ManagerModelClass/ManagerDSRReportCashDeniminationModel.dart';
 class CashHandoverScreen extends StatefulWidget {
   static const screenName = '/cashHandoverScreen';
   const CashHandoverScreen({super.key});
@@ -32,14 +36,18 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
   List<GetCashHandOverDtlsModel> cashInHandDetails = [];
   GetStaffDetailsListUserIsMadeModel? _selectedItemModel;
   List<GetBankMappingDetailsListModel> bankmappingModel = [];
-  List<GetNoteTypeAndIdFroDenominationListModel>
-  getNoteTypeAndIdFroDenominationListModel = [];
+  List<dynamic> dataCashDenominationList = [];
+  List<DenomModel>getNoteTypeAndIdFroDenominationListModel = [];
+  double totalAmountCashDenomination = 0;
   GetBankMappingDetailsListModel? _selectBankModel;
   DateTime selectedDate = DateTime.now();
   final GlobalKey<FormFieldState> _dropdownKey = GlobalKey<FormFieldState>();
   final GlobalKey<FormState> formKey1 = GlobalKey<FormState>();
   final GlobalKey<FormState> formKey2 = GlobalKey<FormState>();
   final GlobalKey<FormState> formKey3 = GlobalKey<FormState>();
+  List<TextEditingController> qtyController = [];
+  List<double> amounts = [];
+  double totalAmount = 0.0;// Keep track of the total amount.
 
 
   String? _selectedItem;
@@ -60,559 +68,47 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
   String? selectedBankName;
   String? selectedBankId;
   String? selectedTransMode;
+  int? selecteBankIDApi;
+  int? accMappingId;
   bool isCashDenominationListViewVisible = false;
-  final TextEditingController quantity500Controller = TextEditingController();
-  final TextEditingController quantity200Controller = TextEditingController();
-  final TextEditingController quantity100Controller = TextEditingController();
-  final TextEditingController quantity50Controller = TextEditingController();
-  final TextEditingController quantity20Controller = TextEditingController();
-  final TextEditingController quantity10Controller = TextEditingController();
-  final TextEditingController quantity5Controller = TextEditingController();
-  final TextEditingController quantity2Controller = TextEditingController();
-  final TextEditingController quantity1Controller = TextEditingController();
-  final TextEditingController quantity050Controller = TextEditingController();
-  double result500 = 0.0;
-  double result200 = 0.0;
-  double result100 = 0.0;
-  double result50 = 0.0;
-  double result20 = 0.0;
-  double result10 = 0.0;
-  double result5 = 0.0;
-  double result2 = 0.0;
-  double result1 = 0.0;
-  double result050 = 0.0;
-  double total = 0.0;
+  final String formattedDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+  bool isBankDisabled = false;
+  bool isStaffSelected = false;
+  double? balancedamt;
+  double? cashamt;
+
+  final depositController = TextEditingController();
+  bool _isDepositEmpty = false;
+  double remainingAmount = 0.0;
   @override
   void initState() {
 
     super.initState();
-
-        DateTime now = DateTime.now();
+    DateTime now = DateTime.now();
     String formattedDate = DateFormat('dd-mm-yyyy').format(now);
     fetchItems();
     fetchStaff();
     fetchBank();
-
     fetchSavedData();
-        fetchStaffList(selectedDate);
+    fetchStaffList(selectedDate);
     getNoteTypeAndIDList();
-
-    // fetchSavedData();
-    // .whenComplete((){
-    //   setState(() {
-    //     compareStaffId();
-    //   });
-    // });
-
-
   }
 
-
-  void calculate500Amount(int value) {
-    // Get the quantity from the text field
-    double qty = double.tryParse(quantity500Controller.text) ?? 0.0;
-    // Calculate the amount (quantity * 500)
-    setState(() {
-      result500 = qty * 500;
-      // Calculate the amount based on the value
-      switch (value) {
-        case 500:
-          result500 = qty * 500;
-          break;
-        case 200:
-          result200 = qty * 200;
-          break;
-        case 100:
-          result100 = qty * 100;
-          break;
-        case 50:
-          result50 = qty * 50;
-          break;
-        case 20:
-          result20 = qty * 20;
-          break;
-        case 10:
-          result10 = qty * 10;
-          break;
-        case 5:
-          result5 = qty * 5;
-          break;
-        case 2:
-          result2 = qty * 2;
-          break;
-        case 1:
-          result1 = qty * 1;
-          break;
-        case 0.50:
-          result050 = qty * 0.50;
-          break;
-        default:
-          break;
-      }
-
-      // Calculate the total of all results, treating null or 0.0 as 0
-      total = (result500 ?? 0.0) + (result200 ?? 0.0) + (result100 ?? 0.0) +
-          (result50 ?? 0.0) + (result20 ?? 0.0) + (result10 ?? 0.0) + (result5 ?? 0.0) + (result2 ?? 0.0) + (result1 ?? 0.0) + (result050 ?? 0.0);
-
-    });
+  @override
+  void dispose() {
+    // Dispose controllers to free resources
+    for (var controller in qtyController) {
+      controller.dispose();
+    }
+    super.dispose();
   }
-  void calculate200Amount(int value) {
-    // Get the quantity from the text field
-    double qty = double.tryParse(quantity200Controller.text) ?? 0.0;
-    // Calculate the amount (quantity * 500)
-    setState(() {
-      result200 = qty * 200;
-      switch (value) {
-        case 500:
-          result500 = qty * 500;
-          break;
-        case 200:
-          result200 = qty * 200;
-          break;
-        case 100:
-          result100 = qty * 100;
-          break;
-        case 50:
-          result50 = qty * 50;
-          break;
-        case 20:
-          result20 = qty * 20;
-          break;
-        case 10:
-          result10 = qty * 10;
-          break;
-        case 5:
-          result5 = qty * 5;
-          break;
-        case 2:
-          result2 = qty * 2;
-          break;
-        case 1:
-          result1 = qty * 1;
-          break;
-        case 0.50:
-          result050 = qty * 0.50;
-          break;
-        default:
-          break;
-      }
-      // Calculate the total of all results, treating null or 0.0 as 0
-      total = (result500 ?? 0.0) + (result200 ?? 0.0) + (result100 ?? 0.0) +
-          (result50 ?? 0.0) + (result20 ?? 0.0) + (result10 ?? 0.0) + (result5 ?? 0.0) + (result2 ?? 0.0) + (result1 ?? 0.0) + (result050 ?? 0.0);
-    });
-  }
-  void calculate100Amount(int value) {
-    // Get the quantity from the text field
-    double qty = double.tryParse(quantity100Controller.text) ?? 0.0;
-    // Calculate the amount (quantity * 500)
-    setState(() {
-      result100 = qty * 100;
-
-      switch (value) {
-        case 500:
-          result500 = qty * 500;
-          break;
-        case 200:
-          result200 = qty * 200;
-          break;
-        case 100:
-          result100 = qty * 100;
-          break;
-        case 50:
-          result50 = qty * 50;
-          break;
-        case 20:
-          result20 = qty * 20;
-          break;
-        case 10:
-          result10 = qty * 10;
-          break;
-        case 5:
-          result5 = qty * 5;
-          break;
-        case 2:
-          result2 = qty * 2;
-          break;
-        case 1:
-          result1 = qty * 1;
-          break;
-          case 0.50:
-        result050 = qty * 0.50;
-        break;
-
-        default:
-          break;
-      }
-
-      // Calculate the total of all results, treating null or 0.0 as 0
-      total = (result500 ?? 0.0) + (result200 ?? 0.0) + (result100 ?? 0.0) +
-          (result50 ?? 0.0) + (result20 ?? 0.0) + (result10 ?? 0.0) + (result5 ?? 0.0) + (result2 ?? 0.0) + (result1 ?? 0.0) + (result050 ?? 0.0);
-
-    });
-  }
-  void calculate50Amount(int value) {
-    // Get the quantity from the text field
-    double qty = double.tryParse(quantity50Controller.text) ?? 0.0;
-    // Calculate the amount (quantity * 500)
-    setState(() {
-      result50 = qty * 50;
-
-      switch (value) {
-        case 500:
-          result500 = qty * 500;
-          break;
-        case 200:
-          result200 = qty * 200;
-          break;
-        case 100:
-          result100 = qty * 100;
-          break;
-        case 50:
-          result50 = qty * 50;
-          break;
-        case 20:
-          result20 = qty * 20;
-          break;
-        case 10:
-          result10 = qty * 10;
-          break;
-        case 5:
-          result5 = qty * 5;
-          break;
-        case 2:
-          result2 = qty * 2;
-          break;
-        case 1:
-          result1 = qty * 1;
-          break;
-          case 0.50:
-        result050 = qty * 0.50;
-        break;
-
-        default:
-          break;
-      }
-
-      // Calculate the total of all results, treating null or 0.0 as 0
-      total = (result500 ?? 0.0) + (result200 ?? 0.0) + (result100 ?? 0.0) +
-          (result50 ?? 0.0) + (result20 ?? 0.0) + (result10 ?? 0.0) + (result5 ?? 0.0) + (result2 ?? 0.0) + (result1 ?? 0.0) + (result050 ?? 0.0);
-
-    });
-  }
-  void calculate20Amount(int value) {
-    // Get the quantity from the text field
-    double qty = double.tryParse(quantity20Controller.text) ?? 0.0;
-    // Calculate the amount (quantity * 500)
-    setState(() {
-      result20 = qty * 20;
-
-      switch (value) {
-        case 500:
-          result500 = qty * 500;
-          break;
-        case 200:
-          result200 = qty * 200;
-          break;
-        case 100:
-          result100 = qty * 100;
-          break;
-        case 50:
-          result50 = qty * 50;
-          break;
-        case 20:
-          result20 = qty * 20;
-          break;
-        case 10:
-          result10 = qty * 10;
-          break;
-        case 5:
-          result5 = qty * 5;
-          break;
-        case 2:
-          result2 = qty * 2;
-          break;
-        case 1:
-          result1 = qty * 1;
-          break;
-        case 0.50:
-          result050 = qty * 0.50;
-          break;
-        default:
-          break;
-      }
-
-      // Calculate the total of all results, treating null or 0.0 as 0
-      total = (result500 ?? 0.0) + (result200 ?? 0.0) + (result100 ?? 0.0) +
-          (result50 ?? 0.0) + (result20 ?? 0.0) + (result10 ?? 0.0) + (result5 ?? 0.0) + (result2 ?? 0.0) + (result1 ?? 0.0) + (result050 ?? 0.0);
-
-    });
-  }
-  void calculate10Amount(int value) {
-    // Get the quantity from the text field
-    double qty = double.tryParse(quantity10Controller.text) ?? 0.0;
-    // Calculate the amount (quantity * 500)
-    setState(() {
-      result10 = qty * 10;
-
-      switch (value) {
-        case 500:
-          result500 = qty * 500;
-          break;
-        case 200:
-          result200 = qty * 200;
-          break;
-        case 100:
-          result100 = qty * 100;
-          break;
-        case 50:
-          result50 = qty * 50;
-          break;
-        case 20:
-          result20 = qty * 20;
-          break;
-        case 10:
-          result10 = qty * 10;
-          break;
-        case 5:
-          result5 = qty * 5;
-          break;
-        case 2:
-          result2 = qty * 2;
-          break;
-        case 1:
-          result1 = qty * 1;
-          break;
-        case 0.50:
-          result050 = qty * 0.50;
-          break;
-        default:
-          break;
-      }
-
-      // Calculate the total of all results, treating null or 0.0 as 0
-      total = (result500 ?? 0.0) + (result200 ?? 0.0) + (result100 ?? 0.0) +
-          (result50 ?? 0.0) + (result20 ?? 0.0) + (result10 ?? 0.0) + (result5 ?? 0.0) + (result2 ?? 0.0) + (result1 ?? 0.0) + (result050 ?? 0.0);
-
-    });
-  }
-  void calculate5Amount(int value) {
-    // Get the quantity from the text field
-    double qty = double.tryParse(quantity5Controller.text) ?? 0.0;
-    // Calculate the amount (quantity * 500)
-    setState(() {
-      result5 = qty * 5;
-
-      switch (value) {
-        case 500:
-          result500 = qty * 500;
-          break;
-        case 200:
-          result200 = qty * 200;
-          break;
-        case 100:
-          result100 = qty * 100;
-          break;
-        case 50:
-          result50 = qty * 50;
-          break;
-        case 20:
-          result20 = qty * 20;
-          break;
-        case 10:
-          result10 = qty * 10;
-          break;
-        case 5:
-          result5 = qty * 5;
-          break;
-        case 2:
-          result2 = qty * 2;
-          break;
-        case 1:
-          result1 = qty * 1;
-          break;
-        case 0.50:
-          result050 = qty * 0.50;
-          break;
-        default:
-          break;
-      }
-
-      // Calculate the total of all results, treating null or 0.0 as 0
-      total = (result500 ?? 0.0) + (result200 ?? 0.0) + (result100 ?? 0.0) +
-          (result50 ?? 0.0) + (result20 ?? 0.0) + (result10 ?? 0.0) + (result5 ?? 0.0) + (result2 ?? 0.0) + (result1 ?? 0.0) + (result050 ?? 0.0);
-
-    });
-  }
-  void calculate2Amount(int value) {
-    // Get the quantity from the text field
-    double qty = double.tryParse(quantity2Controller.text) ?? 0.0;
-    // Calculate the amount (quantity * 500)
-    setState(() {
-      result2 = qty * 2;
-
-      switch (value) {
-        case 500:
-          result500 = qty * 500;
-          break;
-        case 200:
-          result200 = qty * 200;
-          break;
-        case 100:
-          result100 = qty * 100;
-          break;
-        case 50:
-          result50 = qty * 50;
-          break;
-        case 20:
-          result20 = qty * 20;
-          break;
-        case 10:
-          result10 = qty * 10;
-          break;
-        case 5:
-          result5 = qty * 5;
-          break;
-        case 2:
-          result2 = qty * 2;
-          break;
-        case 1:
-          result1 = qty * 1;
-          break;
-        case 0.50:
-          result050 = qty * 0.50;
-          break;
-        default:
-          break;
-      }
-
-      // Calculate the total of all results, treating null or 0.0 as 0
-      total = (result500 ?? 0.0) + (result200 ?? 0.0) + (result100 ?? 0.0) +
-          (result50 ?? 0.0) + (result20 ?? 0.0) + (result10 ?? 0.0) + (result5 ?? 0.0) + (result2 ?? 0.0) + (result1 ?? 0.0) + (result050 ?? 0.0);
-
-    });
-  }
-  void calculate1Amount(int value) {
-    // Get the quantity from the text field
-    double qty = double.tryParse(quantity1Controller.text) ?? 0.0;
-    // Calculate the amount (quantity * 500)
-    setState(() {
-      result1 = qty * 1;
-
-      switch (value) {
-        case 500:
-          result500 = qty * 500;
-          break;
-        case 200:
-          result200 = qty * 200;
-          break;
-        case 100:
-          result100 = qty * 100;
-          break;
-        case 50:
-          result50 = qty * 50;
-          break;
-        case 20:
-          result20 = qty * 20;
-          break;
-        case 10:
-          result10 = qty * 10;
-          break;
-        case 5:
-          result5 = qty * 5;
-          break;
-        case 2:
-          result2 = qty *2;
-          break;
-        case 1:
-          result1 = qty * 1;
-          break;
-          case 0.50:
-        result050 = qty * 0.50;
-        break;
-
-        default:
-          break;
-      }
-
-      // Calculate the total of all results, treating null or 0.0 as 0
-      total = (result500 ?? 0.0) + (result200 ?? 0.0) + (result100 ?? 0.0) +
-          (result50 ?? 0.0) + (result20 ?? 0.0) + (result10 ?? 0.0) + (result5 ?? 0.0) + (result2 ?? 0.0) + (result1 ?? 0.0) + (result050 ?? 0.0);
-
-    });
-  }
-  void calculate050Amount(double value) {
-    // Get the quantity from the text field
-    double qty = double.tryParse(quantity050Controller.text) ?? 0.0;
-    // Calculate the amount (quantity * 500)
-    setState(() {
-      result050 = qty * 0.50;
-
-      switch (value) {
-        case 500:
-          result500 = qty * 500;
-          break;
-        case 200:
-          result200 = qty * 200;
-          break;
-        case 100:
-          result100 = qty * 100;
-          break;
-        case 50:
-          result50 = qty * 50;
-          break;
-        case 20:
-          result20 = qty * 20;
-          break;
-        case 10:
-          result10 = qty * 10;
-          break;
-        case 5:
-          result5 = qty * 5;
-          break;
-        case 2:
-          result2 = qty * 2;
-          break;
-        case 1:
-          result1 = qty * 1;
-          break;
-        case 0.50:
-          result050 = qty * 0.50;
-          break;
-        default:
-          break;
-      }
-
-      // Calculate the total of all results, treating null or 0.0 as 0
-      total = (result500 ?? 0.0) + (result200 ?? 0.0) + (result100 ?? 0.0) +
-          (result50 ?? 0.0) + (result20 ?? 0.0) + (result10 ?? 0.0) + (result5 ?? 0.0) + (result2 ?? 0.0) + (result1 ?? 0.0) + (result050 ?? 0.0);
-
-    });
-  }
-
-  final String formattedDate = DateFormat('dd-mm-yyyy').format(DateTime.now());
-  bool isBankDisabled = false;
-  bool isStaffSelected = false;
-  double? balancedamt;
-  double cashamt = 10000.00; // Example value
- // TextEditingController depositController = TextEditingController();
-  final depositController = TextEditingController();
-  bool _isDepositEmpty = false;
-  //final totalController = TextEditingController();
-  double remainingAmount = 0.0;
-  // void _validateForm() {
-  //   setState(() {
-  //     // Check if the deposit is empty
-  //     _isDepositEmpty = depositController.text.isEmpty;
-  //   });
-
 
   @override
   Widget build(BuildContext context) {
-    var sale = bankmappingModel;
 
     return Scaffold(
-      appBar:AppBar(
-        title: Text('Cash Handover - Bank Deposit'), // Title or hint text for the text field
+      appBar:CustomAppBarManager(
+        title: 'Cash Handover - Bank Deposit', // Title or hint text for the text field
       ),
       body:
       Padding(
@@ -625,95 +121,52 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Icon(Icons.calendar_today, color: Colors.blue),
-                      SizedBox(width: 8),
-                      countTextWidgetTextcash(
-                        context,'Deposit Date'
+                      Expanded(
+                        child: textWidgetBlueColorWithoutStar(
+                            'Deposit Date'),
                       ),
-                      // countTextWidgetTextStar(
-                      //   context,
-                      //   'Deposit Date',
-                      //   showAsterisk: true, // Add a parameter to conditionally show the asterisk
-                      // ),
-                    ],
-                  ),
-                  SizedBox(width: 15),
-                  Row(
-                    children: [
-                      Text(": $formattedDate"),
-                      SizedBox(width: 8),
-                    ],
-                  ),
+                      Flexible(flex: 1,
+                          child: Text("$formattedDate")),
                 ],
               ),
               SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Icon(Icons.person, color: Colors.blue),
-                      SizedBox(width: 8),
-                      countTextWidgetTextStar(
-                        context,
-                        'Deposit By',
-                        showAsterisk: true, // Add a parameter to conditionally show the asterisk
+                      Expanded(
+                        child: textWidgetBlueColorWithStar(
+                          'Deposit By', "*", // Add a parameter to conditionally show the asterisk
+                        ),
                       ),
-                    ],
-                  ),
-                  SizedBox(width: 30),
-                  Row(
-                    children: [
-                      Text(": $userName"),
-                      SizedBox(width: 8),
-                    ],
-                  ),
+               
+                      Flexible(flex: 1,child: Text("$userName")),
+                  
                 ],
               ),
               SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Icon(Icons.monetization_on, color: Colors.blue),
-                      SizedBox(width: 8),
-                      countTextWidgetTextcash(
-                        context,'Cash In Hand'
-                      ),
-                    ],
-                  ),
-                  SizedBox(width: 12),
-                  Row(
-                    children: [
-                      //totalamt?.toStringAsFixed(2),
-                      Text(':${(totalamt ?? 0).toStringAsFixed(2)}'),
-                      SizedBox(width: 8),
-                    ],
-                  ),
+                      Expanded(child: textWidgetBlueColorWithoutStar('Cash In Hand')),
+                      Flexible(flex: 1,child: Text('${(totalamt ?? 0).toStringAsFixed(2)}')),
                 ],
               ),
               SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Icon(Icons.person, color: Colors.blue),
-                      SizedBox(width: 8),
-                      countTextWidgetTextStar(
-                        context,
-                        'Cash Handover\n To',
-                        showAsterisk: true, // Add a parameter to conditionally show the asterisk
+                      Expanded(
+                        child:
+                            textWidgetBlueColorWithStar(
+                              'Cash Handover To',
+                             "*", // Add a parameter to conditionally show the asterisk
+                            ),
                       ),
-                    ],
-                  ),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
+                      padding: const EdgeInsets.only(left:0.0),
                       child: DropdownButtonFormField<GetStaffDetailsListUserIsMadeModel>(
+                        isExpanded: true,
                         key: formKey1,
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
@@ -724,6 +177,7 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
                             value: item,
                             child: Text(
                               item.staffName ?? '',
+                              style: Styling.itemBlackTest,
                             ),
                           );
                         }).toList(),
@@ -731,7 +185,7 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
                           setState(() {
                             _selectedItemModel = selectedItem;
                             _selectedItem = selectedItem?.staffName ?? '';
-                            selectedItemId = selectedItem?.staffId?.toInt();
+                            selectedItemId = selectedItem?.userId?.toInt();
                             // Clear bank selection when staff is selected
                             _selectBankModel = null;
                             selectedBankName = null;
@@ -741,35 +195,33 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 10),
-                  Text(
-                    "OR",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+
                 ],
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 5),
+              Center(
+                child: Text(
+                  "OR",
+                  style:Styling.itemBlackTestSmallReportBold
+                ),
+              ),
+              SizedBox(height: 5),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Icon(Icons.account_balance, color: Colors.blue),
-                      SizedBox(width: 8),
-                      countTextWidgetTextStar(
-                        context,
-                        ' Select Bank\n Account No.',
-                        showAsterisk: true, // Add a parameter to conditionally show the asterisk
+                      Expanded(
+                        child: textWidgetBlueColorWithStar(
+                          ' Select Bank \n Account No.',
+                          "*" // Add a parameter to conditionally show the asterisk
+                        ),
                       ),
-                    ],
-                  ),
+                    
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
-                      child: DropdownButtonFormField<GetBankMappingDetailsListModel>(
+                      padding: const EdgeInsets.only(left: 0.0),
+                      child:
+                      DropdownButtonFormField<GetBankMappingDetailsListModel>(
+                        isExpanded: true,
                         key: formKey2,
                         decoration: InputDecoration(),
                         value: _selectBankModel,
@@ -778,6 +230,7 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
                             value: item,
                             child: Text(
                               '${item.bankName ?? ''} - ${item.accountNo ?? ''}',
+                              style: Styling.itemBlackTest,
                             ),
                           );
                         }).toList(),
@@ -787,8 +240,9 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
                             selectedBankName = selectedItem?.bankName;
                             selectedBankId = selectedItem?.accountNo;
                             getTransMode = getTransModeListForBank(selectedItem);
-                            selectedTransMode = null; // Reset transaction mode
-                            // Clear staff selection when bank is selected
+                            selecteBankIDApi = selectedItem?.bankId?.toInt();
+                            accMappingId = selectedItem?.mappingId?.toInt();
+                            selectedTransMode = null;
                             _selectedItemModel = null;
                             _selectedItem = null;
                             selectedItemId = null;
@@ -803,18 +257,13 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Icon(Icons.monetization_on, color: Colors.blue),
-                      SizedBox(width: 8),
-                      countTextWidgetTextStar(
-                        context,
-                        'Cash Hand/\n Deposit Amt.',
-                        showAsterisk: true, // Add a parameter to conditionally show the asterisk
+                      Expanded(
+                        child: textWidgetBlueColorWithStar(
+                          'Cash Hand/\nDeposit Amt.',
+                          "*" // Add a parameter to conditionally show the asterisk
+                        ),
                       ),
-                    ],
-                  ),
-                  SizedBox(width: 20),
+                   
                   Expanded(
                     child: TextField(
                       controller: depositController,
@@ -824,45 +273,37 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
                       ],
                       decoration: InputDecoration(
                         labelText: 'Enter Deposit Amt.',
-                        border: OutlineInputBorder(),
                         errorText: _isDepositEmpty ? 'Deposit Amt. is Required' : null, // Show error if required
                       ),
                       onChanged: (value) {
                         setState(() {
                           _isDepositEmpty = value.isEmpty;
+                          double val = double.parse(value);
+                          if(val>totalamt!){
+                            depositController.clear();
+                            remainingAmount = 0;
+                          }else{
+                            updateRemainingAmount();
+                          }
                         });
-                        updateRemainingAmount();
                       },
                     ),
                   ),
-                SizedBox(width: 8),
+
                 ],
               ),
               SizedBox(height: 20),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Icon(Icons.monetization_on, color: Colors.blue),
-                      SizedBox(width: 8),
-                      countTextWidgetTextcash(
-                        context,'Balanced\nAmount'
+                      Expanded(
+                        child: textWidgetBlueColorWithoutStar(
+                            'Balanced Amount'
+                        ),
                       ),
-                    ],
-                  ),
-                  SizedBox(width: 45),
-                  Row(
-                    children: [
-                      Row(
-                        children: [
-                          Text(':${remainingAmount.toString()}'),
-                          SizedBox(width: 8),
-                        ],
-                      ),
-                      SizedBox(width: 8),
-                    ],
-                  ),
+                          
+                          Flexible(flex: 1,child: Text('${remainingAmount.toString()}')),
+                    
                 ],
               ),
               SizedBox(height: 10),
@@ -870,20 +311,16 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        Icon(Icons.account_balance, color: Colors.blue),
-                        SizedBox(width: 8),
-                        countTextWidgetTextStar(
-                          context,
-                          'Select Dep.\n Mode',
-                          showAsterisk: true, // Add a parameter to conditionally show the asterisk
+                    
+                        Expanded(
+                          child: textWidgetBlueColorWithStar(
+                            'Select Dep.Mode',"*"// Add a parameter to conditionally show the asterisk
+                          ),
                         ),
-                      ],
-                    ),
+
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 20.0),
+                        padding: const EdgeInsets.only(left: 0.0),
                         child: DropdownButtonFormField<String>(
                           key: formKey3,
                           decoration: InputDecoration(
@@ -905,29 +342,6 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
                         ),
                       ),
                     ),
-                    // Expanded(
-                    //   child: Padding(
-                    //     padding: const EdgeInsets.only(left: 20.0),
-                    //     child:
-                    //     DropdownButtonFormField<String>(
-                    //       key: formKey3,
-                    //       decoration:
-                    //       InputDecoration(contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),),
-                    //       items: getTransMode
-                    //           .map((String value) => DropdownMenuItem<String>(
-                    //         value: value,
-                    //         child: Text(value),
-                    //       ))
-                    //           .toList(),
-                    //       onChanged: (value) {
-                    //         setState(() {
-                    //           selectedTransMode = value;
-                    //         });
-                    //       },
-                    //       isExpanded: true,
-                    //     ),
-                    //   ),
-                    // ),
                   ],
                 ),
               SizedBox(height: 20),
@@ -995,8 +409,8 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
                         debugPrint(
                             "Rendering Expense Item: ${cashInHandDetails[index]}");
                         return CashHandoverListViewUI(
-                          cashInHandDetails[index],
-                          index + 1,
+                            cashInHandDetails[index],
+                            index + 1,
                             cashInHandDetails.length
                         );
                       },
@@ -1018,10 +432,11 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
                     child: Card(
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
-                        child: Column(
+                        child:
+                        Column(
                           children: [
                             Padding(
-                              padding: const EdgeInsets.all(10.0),
+                              padding: const EdgeInsets.only(bottom: 8.0),
                               child: Row(
                                 mainAxisAlignment:
                                 MainAxisAlignment.spaceBetween,
@@ -1029,9 +444,9 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
                                   Text(
                                     "Cash denomination",
                                     style: TextStyle(
-                                        fontSize: 16,
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold,),
+                                      fontSize: 16,
+                                      color: Colors.blue,
+                                      fontWeight: FontWeight.bold,),
                                   ),
                                   Icon(
                                     isCashDenominationListViewVisible
@@ -1042,634 +457,161 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
                               ),
                             ),
                             Visibility(
-                                visible:
-                                isCashDenominationListViewVisible,
-                                child:
-                                Container(
-                                  decoration: BoxDecoration(
-                                    // Background color of the box
-                                    borderRadius:
-                                    BorderRadius.circular(8),
-                                    border: Border.all(
-                                        width:
-                                        1), // Optional: Add rounded corners
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      // First Row with Vertical Divider
-                                      SizedBox(
-                                        height:50,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                          // Center the row content
-                                          children: [
-                                            // First Text and Divider inside Expanded to ensure equal size
-                                            Expanded(
-                                              child: Center(
-                                                  child: Text(
-                                                      "Note Type", style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      fontSize: 14),)), // Centering the text
-                                            ),
-                                            Expanded(
-                                              child: Center(
-                                                  child: Text(
-                                                      "Qty", style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      fontSize: 14),)), // Centering the text
-                                            ),
-                                            Expanded(
-                                              child: Center(
-                                                  child: Text(
-                                                      "Amount", style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      fontSize: 14),)), // Centering the text
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        color: Colors.black12,
-                                        height: 1,
-                                        width: double.infinity,
-                                      ),
-                                      // Second Row with Vertical Divider
-                                      Row(
+                              visible:
+                              isCashDenominationListViewVisible,
+                              child:
+                              Container(
+                                decoration: BoxDecoration(
+                                  // Background color of the box
+                                  borderRadius:
+                                  BorderRadius.circular(8),
+                                  border: Border.all(
+                                      width:
+                                      1), // Optional: Add rounded corners
+                                ),
+                                child: Column(
+                                  children: [
+                                    // First Row with Vertical Divider
+                                    SizedBox(
+                                      height:50,
+                                      child: Row(
                                         mainAxisAlignment:
                                         MainAxisAlignment.center,
                                         // Center the row content
                                         children: [
                                           // First Text and Divider inside Expanded to ensure equal size
                                           Expanded(
+                                            flex: 2,
                                             child: Center(
                                                 child: Text(
-                                                  "500",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.normal,
-                                                      fontSize: 16),
-                                                )), // Centering the text
+                                                  "Note Type", style: TextStyle(
+                                                    fontWeight:
+                                                    FontWeight.bold,
+                                                    fontSize: 14),)), // Centering the text
                                           ),
-                                          Text("X"),
                                           Expanded(
+                                            flex: 3,
                                             child: Center(
-                                                child: TextField(controller:quantity500Controller,
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .normal,
-                                                        fontSize:
-                                                        16),
-                                                  textAlign: TextAlign.center, // Centers the text horizontally
-                                                  decoration: InputDecoration(
-                                                   // Optional: Add a border
-                                                    contentPadding: EdgeInsets.zero, // Removes padding inside the TextField
+                                                child: Text(
+                                                  "Qty", style: TextStyle(
+                                                    fontWeight:
+                                                    FontWeight.bold,
+                                                    fontSize: 14),)), // Centering the text
+                                          ),
+                                          Expanded(
+                                            flex: 3,
+                                            child: Center(
+                                                child: Text(
+                                                  "Amount", style: TextStyle(
+                                                    fontWeight:
+                                                    FontWeight.bold,
+                                                    fontSize: 14),)), // Centering the text
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(height: 10,),
+                                    ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: BouncingScrollPhysics(),
+                                      itemCount: getNoteTypeAndIdFroDenominationListModel.length,
+                                      itemBuilder: (context, index) {
+                                        final data = getNoteTypeAndIdFroDenominationListModel[index];
+                                        return
+                                          Column(
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: Center(
+                                                      child: Text(
+                                                        "${data.noteType}",
+                                                        style: TextStyle(fontSize: 12),
+                                                        textAlign: TextAlign.left,
+                                                      ),
+                                                    ),
                                                   ),
-                                                  keyboardType: TextInputType.number, // Makes the input a number field
-                                                  onChanged: (value) {
-                                                    calculate500Amount(500); // Update the result when quantity changes
-                                                  },
-                                                )), // Centering the text
-                                          ),
-                                          Text("="),
-                                          Expanded(
-                                            child: Center(
-                                                child: Text(result500.toStringAsFixed(0),
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .normal,
-                                                        fontSize:
-                                                        16))), // Centering the text
-                                          ),
-                                        ],
-                                      ),
-                                      Container(
-                                        color: Colors.black12,
-                                        height: 1,
-                                        width: double.infinity,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                        // Center the row content
-                                        children: [
-                                          // First Text and Divider inside Expanded to ensure equal size
-                                          Expanded(
-                                            child: Center(
-                                                child: Text(
-                                                  "200",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.normal,
-                                                      fontSize: 16),
-                                                )), // Centering the text
-                                          ),
-                                          Text("X"),
-                                          Expanded(
-                                            child: Center(
-                                                child: TextField(controller:quantity200Controller,
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .normal,
-                                                        fontSize:
-                                                        16),
-                                                  textAlign: TextAlign.center,
-                                                  keyboardType: TextInputType.number, // Makes the input a number field
-                                                  onChanged: (value) {
-                                                    calculate200Amount(200); // Update the result when quantity changes
-                                                  },)), // Centering the text
-                                          ),
-                                          Text("="),
-                                          Expanded(
-                                            child: Center(
-                                                child: Text(result200.toStringAsFixed(0),
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .normal,
-                                                        fontSize:
-                                                        16))), // Centering the text
-                                          ),
-                                        ],
-                                      ),
-                                      Container(
-                                        color: Colors.black12,
-                                        height: 1,
-                                        width: double.infinity,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                        // Center the row content
-                                        children: [
-                                          // First Text and Divider inside Expanded to ensure equal size
-                                          Expanded(
-                                            child: Center(
-                                                child: Text(
-                                                  "100",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.normal,
-                                                      fontSize: 16),
-                                                )), // Centering the text
-                                          ),
-                                          Text("X"),
-                                          Expanded(
-                                            child: Center(
-                                                child: TextField(controller:quantity100Controller,
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .normal,
-                                                        fontSize:
-                                                        16),
-                                                  textAlign: TextAlign.center, // Centers the text horizontally
-                                                  decoration: InputDecoration(
-                                                    // Optional: Add a border
-                                                    contentPadding: EdgeInsets.zero, // Removes padding inside the TextField
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: Center(
+                                                      child: Text(
+                                                        "X",
+                                                        style: TextStyle(fontSize: 12),
+                                                      ),
+                                                    ),
                                                   ),
-                                                  keyboardType: TextInputType.number, // Makes the input a number field
-                                                  onChanged: (value) {
-                                                    calculate100Amount(100); // Update the result when quantity changes
-                                                  },)), // Centering the text
-                                          ),
-                                          Text("="),
-                                          Expanded(
-                                            child: Center(
-                                                child: Text(result100.toStringAsFixed(0),
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .normal,
-                                                        fontSize:
-                                                        16),
-                                                )), // Centering the text
-                                          ),
-                                        ],
-                                      ),
-                                      Container(
-                                        color: Colors.black12,
-                                        height: 1,
-                                        width: double.infinity,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                        // Center the row content
-                                        children: [
-                                          // First Text and Divider inside Expanded to ensure equal size
-                                          Expanded(
-                                            child: Center(
-                                                child: Text(
-                                                  "50",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.normal,
-                                                      fontSize: 16),
-                                                )), // Centering the text
-                                          ),
-                                          Text("X"),
-                                          Expanded(
-                                            child: Center(
-                                                child: TextField(controller:quantity50Controller ,
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .normal,
-                                                        fontSize:
-                                                        16),  textAlign: TextAlign.center, // Centers the text horizontally
-                                                  decoration: InputDecoration(
-                                                    // Optional: Add a border
-                                                    contentPadding: EdgeInsets.zero, // Removes padding inside the TextField
-                                                  ),
-                                                  keyboardType: TextInputType.number, // Makes the input a number field
-                                                  onChanged: (value) {
-                                                    calculate50Amount(50); // Update the result when quantity changes
-                                                  },)), // Centering the text
-                                          ),
-                                          Text("="),
-                                          Expanded(
-                                            child: Center(
-                                                child: Text(result50.toStringAsFixed(0),
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .normal,
-                                                        fontSize:
-                                                        16))), // Centering the text
-                                          ),
-                                        ],
-                                      ),
-                                      Container(
-                                        color: Colors.black12,
-                                        height: 1,
-                                        width: double.infinity,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                        // Center the row content
-                                        children: [
-                                          // First Text and Divider inside Expanded to ensure equal size
-                                          Expanded(
-                                            child: Center(
-                                                child: Text(
-                                                  "20",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.normal,
-                                                      fontSize: 16),
-                                                )), // Centering the text
-                                          ),
-                                          Text("X"),
-                                          Expanded(
-                                            child: Center(
-                                                child: TextField(controller:quantity20Controller,
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .normal,
-                                                        fontSize:
-                                                        16),
-                                                  textAlign: TextAlign.center, // Centers the text horizontally
-                                                  decoration: InputDecoration(
-                                                    // Optional: Add a border
-                                                    contentPadding: EdgeInsets.zero, // Removes padding inside the TextField
-                                                  ),
-                                                  keyboardType: TextInputType.number, // Makes the input a number field
-                                                  onChanged: (value) {
-                                                    calculate20Amount(20); // Update the result when quantity changes
-                                                  },)), // Centering the text
-                                          ),
-                                          Text("="),
-                                          Expanded(
-                                            child: Center(
-                                                child: Text(result20.toStringAsFixed(0),
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .normal,
-                                                        fontSize:
-                                                        16))), // Centering the text
-                                          ),
-                                        ],
-                                      ),
-                                      Container(
-                                        color: Colors.black12,
-                                        height: 1,
-                                        width: double.infinity,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                        // Center the row content
-                                        children: [
-                                          // First Text and Divider inside Expanded to ensure equal size
-                                          Expanded(
-                                            child: Center(
-                                                child: Text(
-                                                  "10",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.normal,
-                                                      fontSize: 16),
-                                                )), // Centering the text
-                                          ),
-                                          Text("X"),
-                                          Expanded(
-                                            child: Center(
-                                                child: TextField(controller:quantity10Controller,
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .normal,
-                                                        fontSize:
-                                                        16),
-                                                  textAlign: TextAlign.center, // Centers the text horizontally
-                                                  decoration: InputDecoration(
-                                                    // Optional: Add a border
-                                                    contentPadding: EdgeInsets.zero, // Removes padding inside the TextField
-                                                  ),
-                                                  keyboardType: TextInputType.number, // Makes the input a number field
-                                                  onChanged: (value) {
-                                                    calculate10Amount(10); // Update the result when quantity changes
-                                                  },)), // Centering the text
-                                          ),
-                                          Text("="),
-                                          Expanded(
-                                            child: Center(
-                                                child: Text(result10.toStringAsFixed(0),
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .normal,
-                                                        fontSize:
-                                                        16))), // Centering the text
-                                          ),
-                                        ],
-                                      ),
-                                      Container(
-                                        color: Colors.black12,
-                                        height: 1,
-                                        width: double.infinity,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                        // Center the row content
-                                        children: [
-                                          // First Text and Divider inside Expanded to ensure equal size
-                                          Expanded(
-                                            child: Center(
-                                                child: Text(
-                                                  "5",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.normal,
-                                                      fontSize: 16),
-                                                )), // Centering the text
-                                          ),
-                                          Text("X"),
-                                          Expanded(
-                                            child: Center(
-                                                child: TextField(controller:quantity5Controller,
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .normal,
-                                                        fontSize:
-                                                        16),
-                                                  textAlign: TextAlign.center, // Centers the text horizontally
-                                                  decoration: InputDecoration(
-                                                    // Optional: Add a border
-                                                    contentPadding: EdgeInsets.zero, // Removes padding inside the TextField
-                                                  ),
-                                                  keyboardType: TextInputType.number, // Makes the input a number field
-                                                  onChanged: (value) {
-                                                    calculate5Amount(5); // Update the result when quantity changes
-                                                  },)), // Centering the text
-                                          ),
-                                          Text("="),
-                                          Expanded(
-                                            child: Center(
-                                                child: Text(result5.toStringAsFixed(0),
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .normal,
-                                                        fontSize:
-                                                        16))), // Centering the text
-                                          ),
-                                        ],
-                                      ),
-                                      Container(
-                                        color: Colors.black12,
-                                        height: 1,
-                                        width: double.infinity,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                        // Center the row content
-                                        children: [
-                                          // First Text and Divider inside Expanded to ensure equal size
-                                          Expanded(
-                                            child: Center(
-                                                child: Text(
-                                                  "2",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.normal,
-                                                      fontSize: 16),
-                                                )), // Centering the text
-                                          ),
-                                          Text("X"),
-                                          Expanded(
-                                            child: Center(
-                                                child: TextField(controller:quantity2Controller,
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight
-                                                          .normal,
-                                                      fontSize:
-                                                      16),
-                                                  textAlign: TextAlign.center, // Centers the text horizontally
-                                                  decoration: InputDecoration(
-                                                    // Optional: Add a border
-                                                    contentPadding: EdgeInsets.zero, // Removes padding inside the TextField
-                                                  ),
-                                                  keyboardType: TextInputType.number, // Makes the input a number field
-                                                  onChanged: (value) {
-                                                    calculate2Amount(2); // Update the result when quantity changes
-                                                  },)), // Centering the text
-                                          ),
-                                          Text("="),
-                                          Expanded(
-                                            child: Center(
-                                                child: Text(result2.toStringAsFixed(0),
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .normal,
-                                                        fontSize:
-                                                        16))), // Centering the text
-                                          ),
-                                        ],
-                                      ),
-                                      Container(
-                                        color: Colors.black12,
-                                        height: 1,
-                                        width: double.infinity,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                        // Center the row content
-                                        children: [
-                                          // First Text and Divider inside Expanded to ensure equal size
-                                          Expanded(
-                                            child: Center(
-                                                child: Text(
-                                                  "1",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.normal,
-                                                      fontSize: 16),
-                                                )), // Centering the text
-                                          ),
-                                          Text("X"),
-                                          Expanded(
-                                            child: Center(
-                                                child: TextField(controller:quantity1Controller,
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight
-                                                          .normal,
-                                                      fontSize:
-                                                      16),
-                                                  textAlign: TextAlign.center, // Centers the text horizontally
-                                                  decoration: InputDecoration(
-                                                    // Optional: Add a border
-                                                    contentPadding: EdgeInsets.zero, // Removes padding inside the TextField
-                                                  ),
-                                                  keyboardType: TextInputType.number, // Makes the input a number field
-                                                  onChanged: (value) {
-                                                    calculate1Amount(1); // Update the result when quantity changes
-                                                  },)), // Centering the text
-                                          ),
-                                          Text("="),
-                                          Expanded(
-                                            child: Center(
-                                                child: Text(result1.toStringAsFixed(0),
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .normal,
-                                                        fontSize:
-                                                        16))), // Centering the text
-                                          ),
-                                        ],
-                                      ),
-                                      Container(
-                                        color: Colors.black12,
-                                        height: 1,
-                                        width: double.infinity,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                        // Center the row content
-                                        children: [
-                                          // First Text and Divider inside Expanded to ensure equal size
-                                          Expanded(
-                                            child: Center(
-                                                child: Text(
-                                                  "0.50",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.normal,
-                                                      fontSize: 16),
-                                                )), // Centering the text
-                                          ),
-                                          Text("X"),
-                                          Expanded(
-                                            child: Center(
-                                                child: TextField(controller:quantity050Controller,
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight
-                                                          .normal,
-                                                      fontSize:
-                                                      16),
-                                                  textAlign: TextAlign.center, // Centers the text horizontally
-                                                  decoration: InputDecoration(
-                                                    // Optional: Add a border
-                                                    contentPadding: EdgeInsets.zero, // Removes padding inside the TextField
-                                                  ),
-                                                  keyboardType: TextInputType.number, // Makes the input a number field
-                                                  onChanged: (value) {
-                                                    calculate050Amount(0.50); // Update the result when quantity changes
-                                                  },)), // Centering the text
-                                          ),
-                                          Text("="),
-                                          Expanded(
-                                            child: Center(
-                                                child: Text(result050.toString(),
-                                                    style: TextStyle(
-                                                        fontWeight:
-                                                        FontWeight
-                                                            .normal,
-                                                        fontSize:
-                                                        16))), // Centering the text
-                                          ),
-                                        ],
-                                      ),
-                                      Container(
-                                        color: Colors.black12,
-                                        height: 1,
-                                        width: double.infinity,
-                                      ),
-                                      SizedBox(height: 20),
+                                                  Expanded(
+                                                    flex: 3,
+                                                    child: Center(
+                                                      child: TextField(
+                                                        controller: qtyController[index],
+                                                        keyboardType: TextInputType.number,
+                                                        inputFormatters: <TextInputFormatter>[
+                                                          FilteringTextInputFormatter.digitsOnly,
+                                                        ],
 
-                                      // Total Amount Field
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.end,
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.all(8.0),
-                                              child: Text('Total Amount:',style: TextStyle(fontWeight: FontWeight.bold),),
-                                            ),
-                                            SizedBox(
-                                              width: 150,
-                                              height: 40,
-                                              child: Container(
-                                                alignment: Alignment.center, // Ensure the text inside is centered both horizontally and vertically
-                                                decoration: BoxDecoration(
-                                                  borderRadius: BorderRadius.circular(8),
-                                                  border: Border.all(width: 1), // Optional: Add rounded corners
-                                                ),
-                                                child: Text(
-                                                  total.toString(),
-                                                  textAlign: TextAlign.center, // Centers the text horizontally
-                                                  style: TextStyle(fontSize: 16), // Optional: Adjust text style if needed
-                                                ),
+                                                        onChanged: (value) {
+                                                          setState(() {
+                                                            amounts[index] = (double.tryParse(value) ?? 0.0) * data.noteType!;
+                                                            totalAmount = amounts.fold(0.0, (sum, amount) => sum + amount);
+                                                            debugPrint("totalAmount$totalAmount");
+                                                          });
+                                                        },
+                                                        textAlign: TextAlign.center,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    flex: 1,
+                                                    child: Center(
+                                                      child: Text(
+                                                        "=",
+                                                        style: TextStyle(fontSize: 12),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  Expanded(
+                                                    flex:3,
+                                                    child: Center(
+                                                      child: Text(
+                                                        "${amounts[index].toStringAsFixed(2)}",
+                                                        style: TextStyle(fontSize: 12),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            )
-                                          ],
-                                        ),
+                                            ],
+                                          );
+                                      },
+                                    ),
+                                    SizedBox(height: 10,),
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 8.0),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          Expanded(
+                                              flex: 0,
+                                              child: Text("Total Amount : ",
+                                                  style: Styling.itemBlackTestBold,
+                                                  textAlign: TextAlign.left)),
+                                          Expanded(
+                                              flex: 0,
+                                              child: Text(
+                                                totalAmount.toStringAsFixed(2),
+                                                style: Styling.itemBlackTestBold,
+                                              )),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                )
-                            )
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+
                           ],
                         ),
                       ),
@@ -1677,6 +619,7 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
                   ),
                 ],
               ),
+
               SizedBox(height: 20),
               // Save Button
               Row(
@@ -1688,7 +631,7 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
                         cancelAction();
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
+                        backgroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50),
                         ),
@@ -1696,7 +639,7 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
                       child: Text(
                         'Cancel',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Colors.black,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
@@ -1708,10 +651,10 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
                     child: ElevatedButton(
                       onPressed: () {
                         //save button action
-                        saveAction();
+                        updateCashAddEditForMob();
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey,
+                        backgroundColor: Colors.blue,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50),
                         ),
@@ -1728,20 +671,6 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
                   ),
                 ],
               ),
-
-              // SizedBox(
-              //   width: double.infinity,
-              //   child: ElevatedButton(
-              //     onPressed: () {},
-              //     style: ElevatedButton.styleFrom(
-              //       backgroundColor: Colors.blue,
-              //       shape: RoundedRectangleBorder(
-              //         borderRadius: BorderRadius.circular(50),
-              //       ),
-              //     ),
-              //     child: Text('Save',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 16),),
-              //   ),
-              // ),
             ],
           ),
         ),
@@ -1822,7 +751,6 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
       throw Exception('Failed to load items');
     }
   }
-
   Future<void> fetchBank() async {
     EasyLoading.show();
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -1891,23 +819,33 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
             "request body GetCashDenominationItemList: ${response.request}");
 
         if (response.statusCode == 200) {
-          // Parse the JSON response
-          final List<dynamic> data = json.decode(response.body);
+          // Decode the response body as a List
+          final List<dynamic> jsonResponse = jsonDecode(response.body);
+
+          // Filter the data based on the condition (TransCate == 'DailySale')
+          var filteredDataCashDenominationList = jsonResponse
+              .map((item) => DenomModel.fromJson(
+              item)) // Map to model
+              .toList();
+
+
           setState(() {
-            getNoteTypeAndIdFroDenominationListModel = data
-                .map((jsonItem) =>
-                GetNoteTypeAndIdFroDenominationListModel.fromJson(jsonItem))
-                .toList();
+            // Use filtered data to update the UI
+            getNoteTypeAndIdFroDenominationListModel = filteredDataCashDenominationList;
+            dataCashDenominationList = filteredDataCashDenominationList;
             isLoading = false;
+
+            qtyController = List.generate(
+              getNoteTypeAndIdFroDenominationListModel.length,
+                  (index) => TextEditingController(),
+            );
+
+            amounts = List.generate(
+              getNoteTypeAndIdFroDenominationListModel.length,
+                  (index) => 0.0,
+            );
+            // totalAmountCashDenomination = totalAmount;
           });
-          // int expenseDetailList = 0;
-          //
-          // for (var i = 0; i < getExpenseDetailListModel!.length; i++) {
-          //   int? getExpenseDetailList = getExpenseDetailListModel![i].expAmount?.toInt();
-          //   expenseDetailList += getExpenseDetailList!;
-          // }
-          // debugPrint("Response body expenseDetailList: ${expenseDetailList}");
-          // expenseAmtTotal = expenseDetailList;
         } else {
           isLoading = false;
           throw Exception('Failed to load sales data');
@@ -1919,7 +857,6 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
       }
     }
   }
-
   Future<void> fetchStaffList(DateTime date) async {
     Constants.isNetworkAvailable =
     await InternetConnectionChecker().hasConnection;
@@ -2002,17 +939,29 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
       rethrow;
     }
   }
+  String formatCurrency(double amount) {
+    if (amount == 0) {
+      return '0.00'; // Return "0.00" if the amount is zero
+    }
+    final format = NumberFormat('#,##,###.00', 'en_IN'); // Indian locale with comma separator
+
+    // Ensure the result always shows a leading zero before the decimal point
+    String formattedAmount = format.format(amount);
+
+    // If there's no integer part, it ensures that a leading zero is added before decimal
+    if (amount < 1 && formattedAmount.startsWith('.')) {
+      formattedAmount = '0' + formattedAmount;
+    }
+
+    return formattedAmount;
+  }
   void updateRemainingAmount() {
     final deposit = double.tryParse(depositController.text) ?? 0.0;
-    final total = cashamt ?? 0.0;
+    final total = totalamt ?? 0.0;
 
     setState(() {
       remainingAmount = total - deposit;
     });
-  }
-  void saveAction()
-  {
-
   }
   void cancelAction(){
     setState(() {
@@ -2024,9 +973,125 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
       selectedBankId = null;
       depositController.clear();
       selectedTransMode = null;
+
     });
     formKey1.currentState?.reset();
     formKey2.currentState?.reset();
-   formKey3.currentState?.reset();
+    formKey3.currentState?.reset();
   }
+  Future<void> updateCashAddEditForMob() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? distributorId = prefs.getString('DistributorId');
+    String? bearerToken = prefs.getString('token');
+    String? addedBy = prefs.getString('StaffId');
+    String? userId = prefs.getString("UserId");
+    int? addedBys = int.parse(addedBy!);
+    int? distributorIds = int.parse(distributorId!);
+    final DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+    double hvrBnkDepAmt = 0;
+    if(depositController.text.isNotEmpty){
+      hvrBnkDepAmt = double.parse(depositController.text);
+      if(totalAmount != null){
+        if(totalAmount != hvrBnkDepAmt){
+          showFlushBar(context, Constants.cashHandOverDeno);
+          return;
+        }
+      }
+    }else{
+      showFlushBar(context, Constants.cashAmount);
+    }
+
+    if((_selectedItem == null || selectedItemId == null) && (selectedBankName == null || selectedBankId == null)){
+      showFlushBar(context, Constants.selectValidItemReceipt);
+      return;
+    }
+
+    if(selectedBankName != null || selectedBankId != null){
+      if(selectedTransMode == null){
+        showFlushBar(context, Constants.selectValidItemReceipt);
+        return;
+      }
+    }
+
+    final List<Map<String, dynamic>> dataCashDenomination = getNoteTypeAndIdFroDenominationListModel.asMap().entries.map((entry) {
+      int index = entry.key;
+      var data = entry.value;
+      return {
+        "NoteId": data.id ?? 0, // Use null-aware operator to handle null values
+        "NoteQty": qtyController[index].text.isNotEmpty ? int.tryParse(qtyController[index].text) : 0,
+        "NoteAmt": amounts[index],
+        "RetNoteQty": 0, // Replace with actual value if available
+        "RetNoteAmt": 0.0, // Replace with actual value if available
+      };
+    }).toList();
+
+    int? bankId;
+    int? accMappingIds;
+    if(selectedBankName != null) {
+      bankId = selecteBankIDApi;
+      accMappingIds = accMappingId;
+    }else{
+      bankId = 0;
+      accMappingIds = 0;
+    }
+    final Map<String, dynamic> requestBody = {
+      "HvrBnkDepId": 0,
+      "DistributorId":distributorIds,
+      "HvrBnkDepDate": formattedDate,
+      "HvrBnkDepFrom": userId,
+      "CashInHand":totalamt,
+      "HandoverToId": selectedItemId,
+      "BankId":bankId ,
+      "AccMappingId":accMappingIds,
+      "HvrBnkDepAmt":hvrBnkDepAmt,
+      "BalAmt": remainingAmount,
+      "DepositMode":selectedTransMode ?? '',
+      "HandoverStatus": 2,
+      "AddedBy": userId,
+      "UpdatedFrom": 'MOB',
+      "DenomDtList": dataCashDenomination,
+    };
+    print("DepositCashAddEdit: ${requestBody}");
+    requestBody.forEach((key, value) {
+      print('$key: $value');
+    });
+    // try {
+      final response = await http.post(
+        Uri.parse('${AppUrl.DepositCashAddEdit}'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $bearerToken",
+        },
+        body: json.encode(requestBody),
+      );
+      // print("response UpdateSaleAddEditForMob: ${response.statusCode} - ${response.body}");
+      print(
+          "requestBody UpdateSaleAddEditForMob: ${response.statusCode} - ${response.request}${requestBody}");
+
+      // Handling response
+      if (response.statusCode == 200) {
+        // Successful response
+        print("Response UpdateSaleAddEditForMob: ${response.body}");
+
+        Navigator.pushNamed(
+          context,
+          BottomNavBarExample.screenName,
+          arguments: 3, // This opens the third tab
+        );
+        EasyLoading.showToast(Constants.expenseSendMgr,
+            duration: const Duration(milliseconds: 3000));
+        setState(() {
+          fetchStaffList(selectedDate);
+        });
+      } else {
+        // Error response
+        print("Error UpdateSaleAddEditForMob: ${response.statusCode} - ${response.body}");
+      }
+    // } catch (e) {
+    //   // Exception handling
+    //   print("Exception UpdateSaleAddEditForMob: $e");
+    // }
   }
+
+}

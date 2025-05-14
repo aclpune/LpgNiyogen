@@ -146,48 +146,51 @@ class _ManagerExpenseTabScreenDetailsState extends State<ManagerExpenseTabScreen
                   Row(
                     children: [
                       const Expanded(
-                        flex: 1,
+                        flex: 2,
                         child: Text(
                           'Sr.No.',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
-                      const Expanded(
-                        flex: 2,
+                      Expanded(
+                        flex: 4,
                         child: Text(
                           'Staff Name',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
+                          textAlign: TextAlign.left,
                         ),
                       ),
                       const Expanded(
-                        flex: 2,
+                        flex: 3,
                         child: Text(
                           'Cash Amt',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
-                      Visibility(
-                        visible: flag != 'On Account',
-                        child: Expanded(
-                          flex: 2,
+                        Expanded(
+                          flex: 3,
                           child: Text(
-                            flag == 'On Account' ? '' : 'Bank Amount',
+                             'Bank Amount',
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
+                            textAlign: TextAlign.center,
                           ),
                         ),
-                      ),
+
+
                     ],
                   ),
                   const Divider(),
@@ -226,7 +229,6 @@ class _ManagerExpenseTabScreenDetailsState extends State<ManagerExpenseTabScreen
                     ),
                   ),
                   SizedBox(width: 8),
-                  if (flag != 'On Account')
                   Align(
                     alignment: Alignment.centerRight, // Ensures the content inside is aligned right
                     child: Text(

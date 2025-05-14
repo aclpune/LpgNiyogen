@@ -21,7 +21,6 @@ class _BottomNavigationForGodownKeeperState extends State<BottomNavigationForGod
     DashboardScreen(),
     DeliveryMenListShowScreen(),
     StockSubmitToManager(),
-    ItemReceiptScreen(),
     MoreOptionScreenGodownKeeper(),
   ];
 
@@ -64,10 +63,6 @@ class _BottomNavigationForGodownKeeperState extends State<BottomNavigationForGod
           BottomNavigationBarItem(
             icon: Icon(Icons.summarize,size: 16,),
             label: "Today's Summary",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.receipt,size: 16,),
-            label: 'Item Receipt',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.more_horiz,size: 16,),

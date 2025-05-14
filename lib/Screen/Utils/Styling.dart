@@ -200,6 +200,11 @@ class Styling {
       1.4 * SizeConfig.textMultiplier!, // Size = 16-- [18/8.66] = 2.07
       fontFamily: 'OpenSans');
 
+  static final TextStyle hintTextVerySmall = TextStyle(
+      fontSize:
+      1.2 * SizeConfig.textMultiplier!, // Size = 16-- [18/8.66] = 2.07
+      fontFamily: 'OpenSans');
+
   static final TextStyle itemGreyText = TextStyle(
       fontSize: 1.8 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
       fontFamily: 'OpenSans',

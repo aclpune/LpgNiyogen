@@ -1,9 +1,9 @@
 class AppUrl {
-   //static const String baseUrl = 'https://192.168.2.27:502'; // Local
+   // static const String baseUrl = 'https://192.168.2.27:502'; // Local
   // static const String baseUrl = 'https://20.193.149.194/lpgniyojanapi'; // UAT Client
-   static const String baseUrl = 'https://20.193.149.194/lpgniyojanuatapi'; // UAT New Development
- // static const String baseUrl = 'https://lpgniyojan.aadyaminfotech.com/lpgniyojanapi'; // Production New
-
+  //  static const String baseUrl = 'https://20.193.149.194/lpgniyojanuatapi'; // UAT New Development
+ static const String baseUrl = 'https://lpgniyojan.aadyaminfotech.com/lpgniyojanapi'; // Production New
+ //
   ///Log in
   // static const String login = '$baseUrl/Login/LoginUser';
   // static const String login = '$baseUrl/Login/GetLoginDetails';
@@ -64,6 +64,8 @@ class AppUrl {
   static const String GetCustDiscountList = '$baseUrl/Masters/GetCustDiscountList';
   static const String GetDailySaleCollByMgrDataByIdForMob = '$baseUrl/DailyStockCash/GetDailySaleCollByMgrDataByIdForMob';
   static const String GetBalanceByStaffId = '$baseUrl/DailyStockCash/GetBalanceByStaffId';
+  static const String GetLastUploadedTimeDiff = '$baseUrl/AutoExport/GetLastUploadedTimeDiff';
+  static const String DepositCashAddEdit = '$baseUrl/DailyStockCash/DepositCashAddEdit';
 
   ///DSR Click API
   static const String GetCashflowpopupList_Mob = '$baseUrl/Reports/GetCashflowpopupList_Mob';
