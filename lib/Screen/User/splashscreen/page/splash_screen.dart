@@ -11,7 +11,6 @@ import '../../../Utils/shared_preference.dart';
 import '../../Login/Screen/MyLogin.dart';
 import 'dart:io' as io;
 
-
 class SplashScreen extends StatefulWidget {
   static const screenName = '/splashScreen';
 
@@ -54,7 +53,7 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
               SizedBox(height: 10),
               Text(
-                "Version: " + "1.0.8",
+                "Version: " + "2.0.0",
                 style: Styling.itemBlackTestSmall,
               )
             ],
@@ -65,7 +64,6 @@ class _SplashScreenState extends State<SplashScreen> {
       ),
     );
   }
-
 
   Future<void> navigateToDashboard() async {
     try {

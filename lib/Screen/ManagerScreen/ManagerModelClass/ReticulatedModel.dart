@@ -6,7 +6,7 @@ class ReticulatedModel {
   String? paymentMode;
   int? quantity;
   double? amount;
-  int? consumerId;
+  int? CustomerId;
   String? customerName;
   String? reticulatedRemark;
   String? action;
@@ -21,7 +21,7 @@ class ReticulatedModel {
     this.paymentMode,
     this.quantity,
     this.amount,
-    this.consumerId,
+    this.CustomerId,
     this.customerName,
     this.reticulatedRemark,
     this.action,
@@ -38,7 +38,7 @@ class ReticulatedModel {
       paymentMode: json['PaymentMode'],
       quantity: json['Quantity'],
       amount: json['Amount'],
-      consumerId: json['consumerId'],
+      CustomerId: json['CustomerId'],
       customerName: json['CustomerName'],
       reticulatedRemark: json['ReticulatedRemark'],
       action: json['Action'],
@@ -56,7 +56,7 @@ class ReticulatedModel {
       'PaymentMode': paymentMode,
       'Quantity': quantity,
       'Amount': amount,
-      'consumerId':consumerId,
+      'CustomerId':CustomerId,
       'CustomerName': customerName,
       'ReticulatedRemark': reticulatedRemark,
       'Action': action,

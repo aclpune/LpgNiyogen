@@ -375,7 +375,7 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
                           ),
                           verticalDividerSmall(), // Small vertical divider
                           Expanded(
-                            flex: 2,
+                            flex: 3,
                             child: Text(
                               'Staff Name',
                               style: Styling.itemBlackTestBold,
@@ -827,7 +827,6 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
               .map((item) => DenomModel.fromJson(
               item)) // Map to model
               .toList();
-
 
           setState(() {
             // Use filtered data to update the UI

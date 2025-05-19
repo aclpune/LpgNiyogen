@@ -60,6 +60,7 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
     filteredData = [];
     checkAndSaveDayEndData();
   }
+
   // Handle the back press
   Future<bool> onBackPressed() async {
     bool shouldExit = await showDialog(
