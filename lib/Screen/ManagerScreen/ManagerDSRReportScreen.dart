@@ -83,7 +83,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
   double totalSettledAmountCashFlow = 0.0;
   double totalExpenseAmountCashFlow = 0.0;
   double totalCahFlowSummaryAmountCashFlow = 0.0;
-
+  double totalCashInHandAmountCashFlow = 0.0;
   Future<void> _selectDate(BuildContext context) async {
     showDatePicker(
             context: context,
@@ -1875,30 +1875,28 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                           textAlign: TextAlign.center)),
                                 ],
                               ),
-                              SizedBox(height: 15,),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Expanded(
-                                      flex: 0,
-                                      child: Text("Total Cash In Hand : ",
-                                          style: Styling.itemBlackTestBold,
-                                          textAlign: TextAlign.left)),
-                                  Expanded(
-                                      flex: 0,
-                                      child: Text(
-                                        data is ManagerDsrReportCashHandOverModel
-                                            ? formatCurrency((data.totalAmt ?? 0.0).toDouble())
-                                            : formatCurrency((data.totalAmt ?? 0.0).toDouble()),
-                                          style: Styling.itemBlackTestBold,
-                                          )),
-                                ],
-                              ),
-
+                              SizedBox(height: 5,),
                             ],
                           ),
                         );
                       },
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                            flex: 0,
+                            child: Text("Total Cash In Hand : ",
+                                style: Styling.itemBlackTestBold,
+                                textAlign: TextAlign.left)),
+                        Expanded(
+                            flex: 0,
+                            child: Text(
+                              formatCurrency(totalCashInHandAmountCashFlow),
+                              style: Styling.itemBlackTestBold,
+                            )
+                        ),
+                      ],
                     ),
                   ],
                 ),
@@ -2696,6 +2694,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
         double totalSettledAmount = 0.0;
         double totalExpenseAmount = 0.0;
         double totalCahFlowSummaryAmount = 0.0;
+        double totalCahInHandAmount = 0.0;
 // Iterate through each item in your data
         for (var incomeData in dataIncomeTotalAmountList) {
           // Debugging each item to see Mode and Amount
@@ -2755,6 +2754,14 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
 
         totalCahFlowSummaryAmountCashFlow = totalCahFlowSummaryAmount;
         debugPrint("Total CahFlowSummary Amount: $totalCahFlowSummaryAmount");
+
+        for (var cashInHand in dataCashInHandList) {
+          totalCahInHandAmount +=
+              cashInHand.totalAmt ?? 0.0; // Add the amount to the cash total
+        }
+
+        totalCashInHandAmountCashFlow = totalCahInHandAmount;
+        debugPrint("Total totalCahInHandAmount Amount: $totalCahInHandAmount");
 
         if (mounted) {
           EasyLoading.dismiss();

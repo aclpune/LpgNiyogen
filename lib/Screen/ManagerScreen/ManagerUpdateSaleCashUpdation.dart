@@ -2103,7 +2103,8 @@ class _ManagerUpdateSaleCashUpdationState
                         (_consumerController.text.isNotEmpty)
                             ? Color(0xff1280b3)
                             : Color(0xff666666),
-                      )),
+                      )
+                      ),
                       child: Text(
                         'Add',
                         style: TextStyle(
@@ -2209,6 +2210,7 @@ class _ManagerUpdateSaleCashUpdationState
                       // Ensures the list takes only the required height
                       physics: const NeverScrollableScrollPhysics(),
                       // Disables inner scrolling
+                      padding: EdgeInsets.zero,
                       itemCount: _consumerList.length,
                       itemBuilder: (context, index) {
                         final transaction = _consumerList[index];
@@ -2442,11 +2444,14 @@ class _ManagerUpdateSaleCashUpdationState
                     style: Styling.itemBlackTest,
                     onChanged: (value) {
                       // Manually trim spaces at the beginning and end
-                      _transactionCodeControllerPostpaid.text = value.trim();
-                      _transactionCodeControllerPostpaid.selection =
-                          TextSelection.fromPosition(TextPosition(
-                              offset: _transactionCodeControllerPostpaid
-                                  .text.length));
+                      setState(() {
+                        _transactionCodeControllerPostpaid.text = value.trim();
+                        _transactionCodeControllerPostpaid.selection =
+                            TextSelection.fromPosition(TextPosition(
+                                offset: _transactionCodeControllerPostpaid
+                                    .text.length));
+                      });
+
                     },
                   ),
                 ),
@@ -2525,14 +2530,11 @@ class _ManagerUpdateSaleCashUpdationState
                           }
                       },
                       style: ButtonStyle(
-                        backgroundColor:
+                          backgroundColor: MaterialStateProperty.all<Color>(
                             (_transactionCodeControllerPostpaid.text.isNotEmpty)
-                                ? MaterialStateProperty.all<Color>(
-                                    Color(0xff1280b3),
-                                  )
-                                : MaterialStateProperty.all<Color>(
-                                    Color(0xff666666),
-                                  ),
+                                ? Color(0xff1280b3)
+                                : Color(0xff666666),
+                          )
                       ),
                       child: Text(
                         'Add',
@@ -2591,6 +2593,7 @@ class _ManagerUpdateSaleCashUpdationState
                     shrinkWrap: true,
                     // Ensures the list takes only the required height
                     physics: const NeverScrollableScrollPhysics(),
+                    padding: EdgeInsets.zero,
                     // Disables inner scrolling
                     itemCount: _transactionList.length,
                     itemBuilder: (context, index) {
@@ -5134,7 +5137,7 @@ class _ManagerUpdateSaleCashUpdationState
       int? staffIds = int.parse(StaffId!);
       int? distributorIds = int.parse(distributorId!);
       final alreadyExists = _reticulatedList.any(
-              (element) => element.consumerId == selectedVendorId);
+              (element) => element.CustomerId == selectedVendorId);
       if(!alreadyExists){
         setState(() {
           _reticulatedList.add(
@@ -5149,7 +5152,7 @@ class _ManagerUpdateSaleCashUpdationState
               paymentMode: selectedPaymentMode,
               quantity: int.parse(_vendorCylinderQtyControllerCredit.text),
               amount: amountCreditCylinderByVendor,
-              consumerId: selectedVendorId,
+              CustomerId: selectedVendorId,
               // Replace with actual value
               customerName: selectedVendorName,
               reticulatedRemark: _remarkControllerCredit.text,
@@ -6518,13 +6521,16 @@ class _ManagerUpdateSaleCashUpdationState
                         }).toList(),
                         onChanged:
                             (GetExpenceHeadAmountListModel? selectedExpense) {
-                          if (selectedExpense != null) {
-                            _selectedExpenseHead = selectedExpense.expHeadName;
-                            _selectedExpenseHeadId =
-                                selectedExpense.expHeadId?.toInt();
-                            print("Selected exp Name: $_selectedExpenseHead");
-                            print("Selected exp ID: $_selectedExpenseHeadId");
-                          }
+                              setState(() {
+                                if (selectedExpense != null) {
+                                  _selectedExpenseHead = selectedExpense.expHeadName;
+                                  _selectedExpenseHeadId =
+                                      selectedExpense.expHeadId?.toInt();
+                                  print("Selected exp Name: $_selectedExpenseHead");
+                                  print("Selected exp ID: $_selectedExpenseHeadId");
+                                }
+                              });
+
                         },
                       ),
                     ),

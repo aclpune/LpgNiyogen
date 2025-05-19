@@ -30,9 +30,8 @@ class _CashHandoverListViewUI extends State<CashHandoverListViewUI> {
   Widget build(BuildContext context) {
     var sale = widget.cashHandovermodel;
     var serialNumbers = widget.serialNumber;
-    return Padding(
-      padding: EdgeInsets.all(8.0),
-      child: Column(
+    return
+      Column(
         children: [
           Row(
             //mainAxisAlignment: MainAxisAlignment.center,
@@ -42,21 +41,21 @@ class _CashHandoverListViewUI extends State<CashHandoverListViewUI> {
                 child: Text(
                   "$serialNumbers", // Dynamically display serial numbers (index + 1 or any other dynamic value)
                   style: TextStyle(fontSize: 16),
-                  //textAlign: TextAlign.center,
-
-                ),
-              ),
-              //verticalDividerVerySmallWidth(),
-              Divider(),
-              Expanded(
-                flex: 2,
-                child: Text(
-                  sale.staffName ?? '',
-                  style: TextStyle(fontSize: 16),
                   textAlign: TextAlign.center,
                 ),
               ),
               //verticalDividerVerySmallWidth(),
+              verticalDividerSmall(),
+              Expanded(
+                flex: 3,
+                child: Text(
+                  sale.staffName ?? '',
+                  style: TextStyle(fontSize: 16),
+                  textAlign: TextAlign.left,
+                ),
+              ),
+              //verticalDividerVerySmallWidth(),
+              verticalDividerSmall(),
               Expanded(
                 flex: 2,
                 child: Text(
@@ -65,14 +64,14 @@ class _CashHandoverListViewUI extends State<CashHandoverListViewUI> {
                   textAlign: TextAlign.center,
                 ),
               ),
-              Divider(),
+              // Divider(),
             ],
           ),
           if (widget.serialNumber != widget.listLength)
             Divider(),
         ],
-      ),
-    );
+      );
+
   }
 
 }

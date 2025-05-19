@@ -44,6 +44,14 @@ class _DeliveryMenListShowScreenState extends State<DeliveryMenListShowScreen> {
     super.initState();
     fetchDeliveryBoyInfo();
   }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Trigger fetching of data whenever the screen is visited again
+    fetchDeliveryBoyInfo();
+  }
+
   @override
   Widget build(BuildContext context) {
     var argLRAdd = ModalRoute.of(context)?.settings.arguments;

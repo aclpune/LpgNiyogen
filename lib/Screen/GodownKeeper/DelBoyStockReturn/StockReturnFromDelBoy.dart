@@ -2859,13 +2859,13 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
             EasyLoading.showToast("Data Sent Successfully.",
                 duration: const Duration(milliseconds: 3000));
             // Navigator.pushReplacementNamed(context, '/deliveryMenListShowScreen');
-            // Navigator.pushReplacementNamed(
+            // Navigator.pushNamed(
             //   context,
-            //   '/bottomNavigationForGodownKeeper',
-            //   arguments: 1, // Pass the index of the tab you want to show (e.g., Delivery Men tab)
+            //   BottomNavigationForGodownKeeper.screenName,
+            //   arguments: 1, // This opens the third tab
             // );
-            Navigator.pushReplacementNamed(context, BottomNavigationForGodownKeeper.screenName);
-
+            // Navigator.pushReplacementNamed(context, BottomNavigationForGodownKeeper.screenName);
+            Navigator.pop(context);
             // Safely extract ItemIds (ensure they're integers)
             List<int> itemIds = apiItemList.map<int>((item) {
               // Try to safely parse the ItemId string as an integer
