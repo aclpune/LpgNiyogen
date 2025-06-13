@@ -24,6 +24,7 @@ import '../BottomNavigationForGodownKeeper.dart';
 import '../DashboardScreen.dart';
 import '../DelBoyStockReturn/StockReturnFromDelBoy.dart';
 import '../DeliveryBoyModel/DeliveryBoyInfoModel.dart';
+import '../DeliveryBoyModel/GetStockTransferListModel.dart';
 import '../DeliveryBoyModel/ItemData.dart';
 import '../DeliveryBoyModel/StockSubmitToManagerListModel.dart';
 
@@ -49,6 +50,9 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
   String? mobileNo;
   bool isSearchActive = false;
   bool saveFlag = false;
+
+  List<GetStockTransferListModel> _stockTransferList = [];
+  bool stockTransferFlag = false;
   @override
 
   void initState() {
@@ -58,6 +62,7 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
     stockDataFuture = updateRefillSale!.getDataFromDatabase();
     debugPrint("stockDataFuture: $stockDataFuture");
     filteredData = [];
+    fetchTransactionList();
     checkAndSaveDayEndData();
   }
 
@@ -362,7 +367,7 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
                                                 ),
                                               ],
                                             ),
-                                            saveFlag ? Container():
+                                            !stockTransferFlag?Container():saveFlag ? Container():
                                             sale.dailySaleStatus == 3 || sale.dailySaleStatus == 1?
                                             !isSearchActive?
                                             PopupMenuButton<String>(
@@ -1174,6 +1179,60 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
     // Convert the map values to a list and return
     return groupedDataMap.values.toList();
   }
+  Future<void> fetchTransactionList() async {
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+    if (Constants.isNetworkAvailable) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? distributorId = prefs.getString('DistributorId');
+      String? godownId = prefs.getString('godownId');
+      String? bearerToken = prefs.getString('token'); // Assuming the token is stored here
+      int dId = int.parse(distributorId!);
+      int gId = int.parse(godownId!);
+      if (bearerToken == null) {
+        throw Exception('Bearer token is missing');
+      }
 
+      final response = await http.get(
+        Uri.parse('${AppUrl.GetStockTransferDtls}/$dId/$gId'),
+        headers: {
+          'Authorization': 'Bearer $bearerToken', // Add Bearer token here
+        },
+      );
+      debugPrint(
+          "GetStockTransferDtls" + '${AppUrl.GetStockTransferDtls}/$distributorId/1/2');
+      debugPrint("GetStockTransferDtls" + response.body);
+      if (response.statusCode == 200) {
+        // Parse the response
+        List<dynamic> data = json.decode(response.body);
+        setState(() {
+          _stockTransferList = data.map((json) => GetStockTransferListModel.fromJson(json)).toList();
+          bool hasZeroStkTrans = false;
+          for (int i = 0; i < _stockTransferList.length; i++) {
+            if (_stockTransferList[i].isStkTrans == 0) {
+              hasZeroStkTrans = true;
+              debugPrint("Found item with isStkTrans = 0");
+              break; // No need to continue checking once we find an item with isStkTrans = 0
+            }
+          }
+          if (hasZeroStkTrans) {
+            stockTransferFlag = false; // Disable the button
+            // showFlushBar(
+            //     context, "Action Restricted", "Cannot perform the action as one or more items have isStkTrans = 0");
+          } else {
+            stockTransferFlag = true; // Enable the button
+          }
+        });
+
+      } else {
+        refreshTokens();
+        throw Exception('Failed To Load Items');
+      }
+    } else {
+      refreshTokens();
+      showFlushBar(
+          context,Constants.connectionMessage);
+    }
+  }
 }
 

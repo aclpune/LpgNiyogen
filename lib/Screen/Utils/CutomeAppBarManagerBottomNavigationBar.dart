@@ -73,7 +73,6 @@ class _AppBarCustomState extends State<AppBarCustom> {
                 ],
               ),
               Column(
-
                 children: [
                       Text(
                         userName ?? ' ',

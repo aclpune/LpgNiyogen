@@ -6,6 +6,9 @@ import '../User/splashscreen/page/splash_screen.dart';
 import '../Utils/shared_preference.dart';
 import 'CashDepositToBankScreen.dart';
 import 'CashHandoverScreen.dart';
+import 'PaymentReceiptScreen/PaymentReceiptScreen.dart';
+import 'SVSaleReportScreen.dart';
+import 'UpdatePaymentsScreen/UpdatePaymentScreen.dart';
 class ManagerMoreScree extends StatefulWidget {
   static const screenName = '/managerMoreScree';
   const ManagerMoreScree({super.key});
@@ -53,7 +56,8 @@ class _ManagerMoreScreeState extends State<ManagerMoreScree> {
                         onTap: (){
                           Navigator.pushReplacementNamed(context, CashHandoverScreen.screenName);
                         },
-                        child: Card(
+                        child:
+                        Card(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5),
                           ),
@@ -75,6 +79,118 @@ class _ManagerMoreScreeState extends State<ManagerMoreScree> {
                                           Icon(Icons.currency_rupee_sharp),
                                           SizedBox(width: 10,),
                                           Text("Cash Handover",style: Styling.itemBlackTestMore,),
+                                        ],
+                                      ),
+
+                                      Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+                                    ],
+                                  )
+                              ),
+                            ],
+                          ),
+
+                        ),
+                      ),
+                      Container(
+                        height: 1,
+                        color: Colors.grey[200],
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, SVSaleReportScreen.screenName
+                          );
+                        },
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          elevation: 1,
+                          color: Colors.white,
+                          child:
+                              Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child:
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Icon(Icons.comment_bank_outlined),
+                                          SizedBox(width: 10,),
+                                          Text("SV Sale",style: Styling.itemBlackTestMore,),
+                                        ],
+                                      ),
+                                      Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+
+                                    ],
+                                  )
+                              ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.pushReplacementNamed(context, UpdatePaymentScreen.screenName);
+                        },
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          elevation: 1,
+                          color: Colors.white,
+                          child:
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Title for Cylinder Categories Table
+                              Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+
+                                      Row(
+                                        children: [
+                                          Icon(Icons.currency_rupee_sharp),
+                                          SizedBox(width: 10,),
+                                          Text("Update Payments",style: Styling.itemBlackTestMore,),
+                                        ],
+                                      ),
+
+                                      Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+                                    ],
+                                  )
+                              ),
+
+                            ],
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.pushReplacementNamed(context, PaymentReceiptScreen.screenName);
+                        },
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          elevation: 1,
+                          color: Colors.white,
+                          child:
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Title for Cylinder Categories Table
+                              Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+
+                                      Row(
+                                        children: [
+                                          Icon(Icons.currency_rupee_sharp),
+                                          SizedBox(width: 10,),
+                                          Text("Payments Receipt",style: Styling.itemBlackTestMore,),
                                         ],
                                       ),
 
@@ -129,7 +245,6 @@ class _ManagerMoreScreeState extends State<ManagerMoreScree> {
                           ),
                         ),
                       ),
-
                     ],
                   ),
                 ),

@@ -786,6 +786,7 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
       throw Exception('Failed to load items');
     }
   }
+
   Future<void> getNoteTypeAndIDList() async {
     Constants.isNetworkAvailable =
     await InternetConnectionChecker().hasConnection;
@@ -856,6 +857,7 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
       }
     }
   }
+
   Future<void> fetchStaffList(DateTime date) async {
     Constants.isNetworkAvailable =
     await InternetConnectionChecker().hasConnection;
@@ -978,6 +980,7 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
     formKey2.currentState?.reset();
     formKey3.currentState?.reset();
   }
+
   Future<void> updateCashAddEditForMob() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? distributorId = prefs.getString('DistributorId');

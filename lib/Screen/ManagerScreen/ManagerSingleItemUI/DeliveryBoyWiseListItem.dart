@@ -471,7 +471,6 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                               title: 'You have not uploaded latest file',
                               content: 'To complete the cash collection, you need to upload the latest file. Please log in to the Niyojan web portal to upload the file.',
                             );
-
                           }
 
                         }

@@ -39,7 +39,10 @@ import 'Screen/ManagerScreen/ManagerDashboard.dart';
 import 'Screen/ManagerScreen/ManagerMoreScreen.dart';
 import 'Screen/ManagerScreen/ManagerUpdateSaleCashUpdation.dart';
 import 'Screen/ManagerScreen/ManagerUpdateSaleScreen.dart';
+import 'Screen/ManagerScreen/PaymentReceiptScreen/PaymentReceiptScreen.dart';
 import 'Screen/ManagerScreen/RegulatorItemReceiptScreen.dart';
+import 'Screen/ManagerScreen/SVSaleReportScreen.dart';
+import 'Screen/ManagerScreen/UpdatePaymentsScreen/UpdatePaymentScreen.dart';
 import 'Screen/User/Login/Screen/MyLogin.dart';
 import 'Screen/User/Login/Screen/VerifyOTP.dart';
 import 'Screen/User/Login/provider/LoginProvider.dart';
@@ -191,6 +194,9 @@ class MyApp extends StatelessWidget {
             DashboardPostPaidVerifPendDetails.screenName: (context) => DashboardPostPaidVerifPendDetails(),
             DashboardSVDetails.screenName: (context) => DashboardSVDetails(),
             DashboardTVDetails.screenName: (context) => DashboardTVDetails(),
+            SVSaleReportScreen.screenName: (context) => SVSaleReportScreen(),
+            PaymentReceiptScreen.screenName: (context) => PaymentReceiptScreen(),
+            UpdatePaymentScreen.screenName: (context) => UpdatePaymentScreen(),
             //ManagerCashInHandScreenDetails.screenName: (context) => ManagerCashInHandScreenDetails(),
 
 

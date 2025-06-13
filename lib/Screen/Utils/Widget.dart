@@ -26,6 +26,14 @@ Widget verticalDividerSmallest() {
   );
 }
 
+Widget verticalDividerSmallestRed() {
+  return  Container(
+    width: 2.0, // Width of the vertical line
+    height: 15.0, // Height of the vertical line
+    color: Colors.redAccent, // Color of the line
+  );
+}
+
 Widget verticalDividerBig() {
   return  Container(
     width: 1.0, // Width of the vertical line
@@ -413,4 +421,26 @@ Widget itemSubLineSubMenu(String greyText, bool isImbalanceStockListViewVisible)
       ),
     );
 
+}
+
+Widget countTextWidgetTextStarverysmall(BuildContext context, String label, {bool showAsterisk = false}) {
+
+  return RichText(
+    text: TextSpan(
+      children: [
+        TextSpan(
+          text: label,
+          style:Styling.itemBlackTestVerySmall,
+        ),
+        if (showAsterisk)
+          TextSpan(
+            text: ' *',
+            style: TextStyle(
+              color: Colors.red, // Asterisk in red
+              fontSize: 8,
+            ),
+          ),
+      ],
+    ),
+  );
 }

@@ -664,7 +664,6 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                                 Constants.dayEndCompleted);
                           }else{
                             if(stockTransferFlag){
-
                               if (vehicleNoController.text.isNotEmpty) {
                                 setState(() {
                                   _submitData();

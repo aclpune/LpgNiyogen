@@ -1,60 +1,72 @@
 /// DistributorId : 8118
 /// ItemId : 1
 /// ItemName : "14.2 KG"
-/// FilledDiff : 287
-/// EmptyDiff : 661
+/// FilledDiff : 0
+/// EmptyDiff : 0
 /// DefectiveDiff : 0
 /// TodayImbQty : 0
-/// AsOfDateImbQty : 221
-/// DMCount : 5
-/// TotalAmount : 145024.00
-/// TotalIncome : 77542.50
-/// TotalExp : 1230.00
+/// AsOfDateImbQty : 135
+/// DMCount : 12
+/// TotalAmount : 263874.00
+/// TotalIncome : 0.00
+/// TotalExp : 3433.00
 /// StaffOnAccToday : 0.00
-/// StaffOnAccAsOf : 86034.00
-/// cDCMSPunPend : 134
-/// PaymtDoneBtDelPend : 36
-/// DelDoneBtPaymtPend : 139
-/// NiyojanPun : 2
+/// StaffOnAccAsOf : 6838996.00
+/// cDCMSPunPend : 103
+/// PaymtDoneBtDelPend : 40
+/// DelDoneBtPaymtPend : 106
+/// NiyojanPun : 0
 /// NiyojanDuplicate : 0
-/// DelDonNiyoJanPunPend : 612
-/// NiyoJanPunDelPend : 3
-/// OldBkgPendNewBkgRecv : 18
-/// SettlementPendSince : "2025-04-22T12:36:53"
-/// cDCMDPendSince : "2025-04-25T01:00:00"
-/// PostPaidVerifPend : 228
-/// SVPendingStk : 40
-/// TVPendingStk : 0
+/// DelDonNiyoJanPunPend : 1715
+/// NiyoJanPunDelPend : 0
+/// OldBkgPendNewBkgRecv : 383
+/// SettlementPendSince : "2025-04-29T01:00:00"
+/// cDCMDPendSince : "2025-05-27T01:00:00"
+/// PostPaidVerifPend : 260
+/// SVPendingStk : 61
+/// TVPendingStk : 1
+/// PaymtDoneBtDelPendAmt : 34220.00
+/// DelDoneBtPaymtPendAmt : 90683.00
+/// PostPaidVerifPendAmt : 2982453.50
+/// TotalPendingSettCnt : 169
+/// TotalPendingSettAmt : 144579.50
+/// TotalPendingSettSince : "2025-04-29T01:00:00"
 
 class GetManagerDashboarDetailModel {
   GetManagerDashboarDetailModel({
-    num? distributorId,
-    num? itemId,
-    String? itemName,
-    num? filledDiff,
-    num? emptyDiff,
-    num? defectiveDiff,
-    num? todayImbQty,
-    num? asOfDateImbQty,
-    num? dMCount,
-    num? totalAmount,
-    num? totalIncome,
-    num? totalExp,
-    num? staffOnAccToday,
-    num? staffOnAccAsOf,
-    num? cDCMSPunPend,
-    num? paymtDoneBtDelPend,
-    num? delDoneBtPaymtPend,
-    num? niyojanPun,
-    num? niyojanDuplicate,
-    num? delDonNiyoJanPunPend,
-    num? niyoJanPunDelPend,
-    num? oldBkgPendNewBkgRecv,
-    String? settlementPendSince,
-    String? cDCMDPendSince,
-    num? postPaidVerifPend,
-    num? sVPendingStk,
-    num? tVPendingStk,}){
+      num? distributorId, 
+      num? itemId, 
+      String? itemName, 
+      num? filledDiff, 
+      num? emptyDiff, 
+      num? defectiveDiff, 
+      num? todayImbQty, 
+      num? asOfDateImbQty, 
+      num? dMCount, 
+      num? totalAmount, 
+      num? totalIncome, 
+      num? totalExp, 
+      num? staffOnAccToday, 
+      num? staffOnAccAsOf, 
+      num? cDCMSPunPend, 
+      num? paymtDoneBtDelPend, 
+      num? delDoneBtPaymtPend, 
+      num? niyojanPun, 
+      num? niyojanDuplicate, 
+      num? delDonNiyoJanPunPend, 
+      num? niyoJanPunDelPend, 
+      num? oldBkgPendNewBkgRecv, 
+      String? settlementPendSince, 
+      String? cDCMDPendSince, 
+      num? postPaidVerifPend, 
+      num? sVPendingStk, 
+      num? tVPendingStk, 
+      num? paymtDoneBtDelPendAmt, 
+      num? delDoneBtPaymtPendAmt, 
+      num? postPaidVerifPendAmt, 
+      num? totalPendingSettCnt, 
+      num? totalPendingSettAmt, 
+      String? totalPendingSettSince,}){
     _distributorId = distributorId;
     _itemId = itemId;
     _itemName = itemName;
@@ -82,7 +94,13 @@ class GetManagerDashboarDetailModel {
     _postPaidVerifPend = postPaidVerifPend;
     _sVPendingStk = sVPendingStk;
     _tVPendingStk = tVPendingStk;
-  }
+    _paymtDoneBtDelPendAmt = paymtDoneBtDelPendAmt;
+    _delDoneBtPaymtPendAmt = delDoneBtPaymtPendAmt;
+    _postPaidVerifPendAmt = postPaidVerifPendAmt;
+    _totalPendingSettCnt = totalPendingSettCnt;
+    _totalPendingSettAmt = totalPendingSettAmt;
+    _totalPendingSettSince = totalPendingSettSince;
+}
 
   GetManagerDashboarDetailModel.fromJson(dynamic json) {
     _distributorId = json['DistributorId'];
@@ -112,6 +130,12 @@ class GetManagerDashboarDetailModel {
     _postPaidVerifPend = json['PostPaidVerifPend'];
     _sVPendingStk = json['SVPendingStk'];
     _tVPendingStk = json['TVPendingStk'];
+    _paymtDoneBtDelPendAmt = json['PaymtDoneBtDelPendAmt'];
+    _delDoneBtPaymtPendAmt = json['DelDoneBtPaymtPendAmt'];
+    _postPaidVerifPendAmt = json['PostPaidVerifPendAmt'];
+    _totalPendingSettCnt = json['TotalPendingSettCnt'];
+    _totalPendingSettAmt = json['TotalPendingSettAmt'];
+    _totalPendingSettSince = json['TotalPendingSettSince'];
   }
   num? _distributorId;
   num? _itemId;
@@ -140,61 +164,79 @@ class GetManagerDashboarDetailModel {
   num? _postPaidVerifPend;
   num? _sVPendingStk;
   num? _tVPendingStk;
-  GetManagerDashboarDetailModel copyWith({  num? distributorId,
-    num? itemId,
-    String? itemName,
-    num? filledDiff,
-    num? emptyDiff,
-    num? defectiveDiff,
-    num? todayImbQty,
-    num? asOfDateImbQty,
-    num? dMCount,
-    num? totalAmount,
-    num? totalIncome,
-    num? totalExp,
-    num? staffOnAccToday,
-    num? staffOnAccAsOf,
-    num? cDCMSPunPend,
-    num? paymtDoneBtDelPend,
-    num? delDoneBtPaymtPend,
-    num? niyojanPun,
-    num? niyojanDuplicate,
-    num? delDonNiyoJanPunPend,
-    num? niyoJanPunDelPend,
-    num? oldBkgPendNewBkgRecv,
-    String? settlementPendSince,
-    String? cDCMDPendSince,
-    num? postPaidVerifPend,
-    num? sVPendingStk,
-    num? tVPendingStk,
-  }) => GetManagerDashboarDetailModel(  distributorId: distributorId ?? _distributorId,
-    itemId: itemId ?? _itemId,
-    itemName: itemName ?? _itemName,
-    filledDiff: filledDiff ?? _filledDiff,
-    emptyDiff: emptyDiff ?? _emptyDiff,
-    defectiveDiff: defectiveDiff ?? _defectiveDiff,
-    todayImbQty: todayImbQty ?? _todayImbQty,
-    asOfDateImbQty: asOfDateImbQty ?? _asOfDateImbQty,
-    dMCount: dMCount ?? _dMCount,
-    totalAmount: totalAmount ?? _totalAmount,
-    totalIncome: totalIncome ?? _totalIncome,
-    totalExp: totalExp ?? _totalExp,
-    staffOnAccToday: staffOnAccToday ?? _staffOnAccToday,
-    staffOnAccAsOf: staffOnAccAsOf ?? _staffOnAccAsOf,
-    cDCMSPunPend: cDCMSPunPend ?? _cDCMSPunPend,
-    paymtDoneBtDelPend: paymtDoneBtDelPend ?? _paymtDoneBtDelPend,
-    delDoneBtPaymtPend: delDoneBtPaymtPend ?? _delDoneBtPaymtPend,
-    niyojanPun: niyojanPun ?? _niyojanPun,
-    niyojanDuplicate: niyojanDuplicate ?? _niyojanDuplicate,
-    delDonNiyoJanPunPend: delDonNiyoJanPunPend ?? _delDonNiyoJanPunPend,
-    niyoJanPunDelPend: niyoJanPunDelPend ?? _niyoJanPunDelPend,
-    oldBkgPendNewBkgRecv: oldBkgPendNewBkgRecv ?? _oldBkgPendNewBkgRecv,
-    settlementPendSince: settlementPendSince ?? _settlementPendSince,
-    cDCMDPendSince: cDCMDPendSince ?? _cDCMDPendSince,
-    postPaidVerifPend: postPaidVerifPend ?? _postPaidVerifPend,
-    sVPendingStk: sVPendingStk ?? _sVPendingStk,
-    tVPendingStk: tVPendingStk ?? _tVPendingStk,
-  );
+  num? _paymtDoneBtDelPendAmt;
+  num? _delDoneBtPaymtPendAmt;
+  num? _postPaidVerifPendAmt;
+  num? _totalPendingSettCnt;
+  num? _totalPendingSettAmt;
+  String? _totalPendingSettSince;
+GetManagerDashboarDetailModel copyWith({  num? distributorId,
+  num? itemId,
+  String? itemName,
+  num? filledDiff,
+  num? emptyDiff,
+  num? defectiveDiff,
+  num? todayImbQty,
+  num? asOfDateImbQty,
+  num? dMCount,
+  num? totalAmount,
+  num? totalIncome,
+  num? totalExp,
+  num? staffOnAccToday,
+  num? staffOnAccAsOf,
+  num? cDCMSPunPend,
+  num? paymtDoneBtDelPend,
+  num? delDoneBtPaymtPend,
+  num? niyojanPun,
+  num? niyojanDuplicate,
+  num? delDonNiyoJanPunPend,
+  num? niyoJanPunDelPend,
+  num? oldBkgPendNewBkgRecv,
+  String? settlementPendSince,
+  String? cDCMDPendSince,
+  num? postPaidVerifPend,
+  num? sVPendingStk,
+  num? tVPendingStk,
+  num? paymtDoneBtDelPendAmt,
+  num? delDoneBtPaymtPendAmt,
+  num? postPaidVerifPendAmt,
+  num? totalPendingSettCnt,
+  num? totalPendingSettAmt,
+  String? totalPendingSettSince,
+}) => GetManagerDashboarDetailModel(  distributorId: distributorId ?? _distributorId,
+  itemId: itemId ?? _itemId,
+  itemName: itemName ?? _itemName,
+  filledDiff: filledDiff ?? _filledDiff,
+  emptyDiff: emptyDiff ?? _emptyDiff,
+  defectiveDiff: defectiveDiff ?? _defectiveDiff,
+  todayImbQty: todayImbQty ?? _todayImbQty,
+  asOfDateImbQty: asOfDateImbQty ?? _asOfDateImbQty,
+  dMCount: dMCount ?? _dMCount,
+  totalAmount: totalAmount ?? _totalAmount,
+  totalIncome: totalIncome ?? _totalIncome,
+  totalExp: totalExp ?? _totalExp,
+  staffOnAccToday: staffOnAccToday ?? _staffOnAccToday,
+  staffOnAccAsOf: staffOnAccAsOf ?? _staffOnAccAsOf,
+  cDCMSPunPend: cDCMSPunPend ?? _cDCMSPunPend,
+  paymtDoneBtDelPend: paymtDoneBtDelPend ?? _paymtDoneBtDelPend,
+  delDoneBtPaymtPend: delDoneBtPaymtPend ?? _delDoneBtPaymtPend,
+  niyojanPun: niyojanPun ?? _niyojanPun,
+  niyojanDuplicate: niyojanDuplicate ?? _niyojanDuplicate,
+  delDonNiyoJanPunPend: delDonNiyoJanPunPend ?? _delDonNiyoJanPunPend,
+  niyoJanPunDelPend: niyoJanPunDelPend ?? _niyoJanPunDelPend,
+  oldBkgPendNewBkgRecv: oldBkgPendNewBkgRecv ?? _oldBkgPendNewBkgRecv,
+  settlementPendSince: settlementPendSince ?? _settlementPendSince,
+  cDCMDPendSince: cDCMDPendSince ?? _cDCMDPendSince,
+  postPaidVerifPend: postPaidVerifPend ?? _postPaidVerifPend,
+  sVPendingStk: sVPendingStk ?? _sVPendingStk,
+  tVPendingStk: tVPendingStk ?? _tVPendingStk,
+  paymtDoneBtDelPendAmt: paymtDoneBtDelPendAmt ?? _paymtDoneBtDelPendAmt,
+  delDoneBtPaymtPendAmt: delDoneBtPaymtPendAmt ?? _delDoneBtPaymtPendAmt,
+  postPaidVerifPendAmt: postPaidVerifPendAmt ?? _postPaidVerifPendAmt,
+  totalPendingSettCnt: totalPendingSettCnt ?? _totalPendingSettCnt,
+  totalPendingSettAmt: totalPendingSettAmt ?? _totalPendingSettAmt,
+  totalPendingSettSince: totalPendingSettSince ?? _totalPendingSettSince,
+);
   num? get distributorId => _distributorId;
   num? get itemId => _itemId;
   String? get itemName => _itemName;
@@ -222,6 +264,12 @@ class GetManagerDashboarDetailModel {
   num? get postPaidVerifPend => _postPaidVerifPend;
   num? get sVPendingStk => _sVPendingStk;
   num? get tVPendingStk => _tVPendingStk;
+  num? get paymtDoneBtDelPendAmt => _paymtDoneBtDelPendAmt;
+  num? get delDoneBtPaymtPendAmt => _delDoneBtPaymtPendAmt;
+  num? get postPaidVerifPendAmt => _postPaidVerifPendAmt;
+  num? get totalPendingSettCnt => _totalPendingSettCnt;
+  num? get totalPendingSettAmt => _totalPendingSettAmt;
+  String? get totalPendingSettSince => _totalPendingSettSince;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -252,6 +300,12 @@ class GetManagerDashboarDetailModel {
     map['PostPaidVerifPend'] = _postPaidVerifPend;
     map['SVPendingStk'] = _sVPendingStk;
     map['TVPendingStk'] = _tVPendingStk;
+    map['PaymtDoneBtDelPendAmt'] = _paymtDoneBtDelPendAmt;
+    map['DelDoneBtPaymtPendAmt'] = _delDoneBtPaymtPendAmt;
+    map['PostPaidVerifPendAmt'] = _postPaidVerifPendAmt;
+    map['TotalPendingSettCnt'] = _totalPendingSettCnt;
+    map['TotalPendingSettAmt'] = _totalPendingSettAmt;
+    map['TotalPendingSettSince'] = _totalPendingSettSince;
     return map;
   }
 
