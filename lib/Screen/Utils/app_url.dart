@@ -1,7 +1,8 @@
 class AppUrl {
    // static const String baseUrl = 'https://192.168.2.27:502'; // Local
+   static const String baseUrl = 'https://192.168.2.64:502'; // Local new
   // static const String baseUrl = 'https://20.193.149.194/lpgniyojanapi'; // UAT Client
-   static const String baseUrl = 'https://20.193.149.194/lpgniyojanuatapi'; // UAT New Development
+  //  static const String baseUrl = 'https://20.193.149.194/lpgniyojanuatapi'; // UAT New Development
  // static const String baseUrl = 'https://lpgniyojan.aadyaminfotech.com/lpgniyojanapi'; // Production New
 
   ///Log in
@@ -47,8 +48,7 @@ class AppUrl {
   static const String ExpenseDetailsAddEdit = '$baseUrl/DailyStockCash/ExpenseDetailsAddEdit';
   static const String GetExpenseDetailsListByStaffId = '$baseUrl/DailyStockCash/GetExpenseDetailsListByStaffId';
   static const String GetCashDenominationItemList = '$baseUrl/Masters/GetCashDenominationItemList';
-  // static const String GetMobDashboardSummaryForMgr = '$baseUrl/Dashboard/GetMobDashboardSummaryForMgr';
-  static const String GetMobDashboardSummaryForMgr = '$baseUrl/Dashboard/GetDashboardSummaryForMgr';
+  static const String GetMobDashboardSummaryForMgr = '$baseUrl/Dashboard/GetMobDashboardSummaryForMgr';
   static const String InventoryCurrentStockDtlsForMobDash = '$baseUrl/Dashboard/InventoryCurrentStockDtlsForMobDash';
   static const String GetDsrIncomeReportListForMob = '$baseUrl/Reports/GetDsrIncomeReportListForMob';
   static const String GetDSRDataAgainstDateForMob = '$baseUrl/Reports/GetDSRDataAgainstDateForMob';
@@ -67,7 +67,7 @@ class AppUrl {
   static const String GetBalanceByStaffId = '$baseUrl/DailyStockCash/GetBalanceByStaffId';
   static const String GetLastUploadedTimeDiff = '$baseUrl/AutoExport/GetLastUploadedTimeDiff';
   static const String DepositCashAddEdit = '$baseUrl/DailyStockCash/DepositCashAddEdit';
-  static const String PendingSVAddEdit_Mob = '$baseUrl/DailyStockCash/PendingSVAddEdit_Mob';
+
 
   ///DSR Click API
   static const String GetCashflowpopupList_Mob = '$baseUrl/Reports/GetCashflowpopupList_Mob';
@@ -83,6 +83,9 @@ class AppUrl {
   static const String GetDashboardSVStockPendCtnListForMob = '$baseUrl/Dashboard/GetDashboardSVStockPendCtnListForMob';
   static const String GetDashboardTVStockPendCtnListForMob = '$baseUrl/Dashboard/GetDashboardTVStockPendCtnListForMob';
   static const String GetBankMappingDetailsList = '$baseUrl/Masters/GetBankMappingDetailsList';
+  static const String GetDashboardOnAccAmtCtnListMob_V1 = '$baseUrl/Dashboard/GetDashboardOnAccAmtCtnListMob_V1';
+  static const String GetDashboardUnsettledAmtListMob_V1 = '$baseUrl/Dashboard/GetDashboardUnsettledAmtListMob_V1';
+  static const String GetDashboardImbalanceDtlsListMob_V1 = '$baseUrl/Dashboard/GetDashboardImbalanceDtlsListMob_V1';
 
   ///Cash Handover API
    static const String GetStaffDetailsListUserIsMade = '$baseUrl/Masters/GetStaffDetailsListUserIsMade';
@@ -91,6 +94,7 @@ class AppUrl {
     //static const String GetCashDenominationItemList = '$baseUrl/Masters/GetCashDenominationItemList';
 
 //sv
+  static const String PendingSVAddEdit_Mob = '$baseUrl/DailyStockCash/PendingSVAddEdit_Mob';
   static const String GetDistStampDuty = '$baseUrl/DailyStockCash/GetDistStampDuty';
   static const String GetArbCurrentStockList = '$baseUrl/Reports/GetArbCurrentStockList';
   static const String GetARBItemMasterList = '$baseUrl/Masters/GetARBItemMasterList';
@@ -116,4 +120,20 @@ class AppUrl {
   static const String GetBankcashReceiptList = '$baseUrl/DailyStockCash/GetBankcashReceiptList';
   static const String BankCashReceiptAddEdit = '$baseUrl/DailyStockCash/BankCashReceiptAddEdit';
   static const String GetReceiptCashDenominationDtl = '$baseUrl/DailyStockCash/GetReceiptCashDenominationDtl';
+
+  ///Salary Payments
+  static const String GetSalaryIncentiveEntryList = '$baseUrl/DailyStockCash/GetSalaryIncentiveEntryList';
+  //static const String GetStaffDetailsList = '$baseUrl/DailyStockCash/GetStaffDetailsList';
+  static const String SalaryIncentiveEntryAddEdit = '$baseUrl/DailyStockCash/SalaryIncentiveEntryAddEdit';
+  static const String GetCashDenominationDtlsById = '$baseUrl/DailyStockCash/GetCashDenominationDtlsById';
+
+  ///TV
+
+  static const String TVDtlsAddEdit = '$baseUrl/DailyStockCash/TVDtlsAddEdit_V2';
+  static const String GetTVDetails = '$baseUrl/DailyStockCash/GetTVDetails_V2';
+  static const String GetTVEntryCashDenominationDtl = '$baseUrl/DailyStockCash/GetTVEntryCashDenominationDtl_V2';
 }
+
+
+
+

@@ -286,10 +286,25 @@ InputDecoration buildInputBorderUpdateStatus(
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)));
 }
 
+InputDecoration buildInputBorderUpdateStatusMgr(
+    String hintText, BuildContext context) {
+  return InputDecoration(
+      hintText: hintText,
+      hintStyle: Styling.hintTextSmall,
+      border: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.grey.shade400),
+      ),
+      enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey.shade500, width: 1.0)),
+      contentPadding: EdgeInsets.all(1.2 * SizeConfig.heightMultiplier!),
+      // border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0))
+  );
+}
 
 InputDecoration buildInputWithoutBorderUpdateStatus(
-    BuildContext context) {
+    String hintText, BuildContext context) {
   return InputDecoration(
+      hintText: hintText,
       enabledBorder: InputBorder.none,
       border: InputBorder.none);
 }

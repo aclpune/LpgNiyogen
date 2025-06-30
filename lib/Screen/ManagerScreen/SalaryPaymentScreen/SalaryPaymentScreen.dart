@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -19,46 +20,35 @@ import '../CashHandoverModelClass/GetBankMappingDetailsListModel.dart';
 import '../CashHandoverModelClass/GetCashHandOverDtlsModel.dart';
 import '../ManagerModelClass/DenomModel.dart';
 import '../ManagerMoreScreen.dart';
-import 'GetBalanceByStaffIdModel.dart';
-import 'GetCashHandOverDtlsListModel.dart';
-import 'GetExpenseHeaderListModel.dart';
-import 'GetPaymentDetailListModel.dart';
-import 'GetPaymentdetailCashDenominationDtlModel.dart';
-import 'GetStaffDetailsListModel.dart';
-import 'GetVehicleDetailsByStaffIdModel.dart';
-import 'GetVendorMasterListModel.dart';
+import '../UpdatePaymentsScreen/GetCashHandOverDtlsListModel.dart';
+import '../UpdatePaymentsScreen/GetStaffDetailsListModel.dart';
+import 'GetCashDenominationDtlsByIdModel.dart';
+import 'GetSalaryIncentiveEntryListModel.dart';
 
-
-class UpdatePaymentScreen extends StatefulWidget {
-  static const screenName = '/updatePaymentScreen';
-  const UpdatePaymentScreen({super.key});
+class SalaryPaymentScreen extends StatefulWidget {
+  static const screenName = '/salaryPaymentScreen';
+  const SalaryPaymentScreen({super.key});
 
   @override
-  State<UpdatePaymentScreen> createState() => _UpdatePaymentScreenState();
+  State<SalaryPaymentScreen> createState() => _SalaryPaymentScreenState();
 }
-class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
+class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
 
   final String formattedDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
-
-  // final DateTime now = DateTime.now();
-  // String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+  List<String> getpaidAgainstSalary = ["Commission Charges", "Salary", "Incentive", "Advance"];
+  String? selectedpaidAgainstSalary;
   List<String> getTransMode = ["Cash", "Online"];
   String? selectedTransMode;
-  final GlobalKey<FormState> formKey1 = GlobalKey<FormState>();
-  List<String> getTransStaff = ["Staff", "Vendor"];
-  String? selectedStaff = "Staff";
-  //Map<int, bool> isQtyFilled = {};
-  //late List<TextEditingController> qtyControllerReturn;
-  //late List<double> amountsReturn;
-  //late double returnAmount;
-  //late double finalAmountCashDeno;
-
+  GetBankMappingDetailsListModel? _selectBankModel;
+  List<GetSalaryIncentiveEntryListModel> listModel = [];
+  List<GetCashDenominationDtlsByIdModel> returndenominationModel = [];
+  final String cDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
   late List<TextEditingController> qtyController;
   late List<double> amounts;
   double totalAmount = 0.0;
   late double finalAmountCashDeno;
   late Map<int, bool> isQtyFilled;
-
+  final GlobalKey<FormState> formKey1 = GlobalKey<FormState>();
   final GlobalKey<FormState> formKey2 = GlobalKey<FormState>();
   final GlobalKey<FormState> formKey3 = GlobalKey<FormState>();
   final GlobalKey<FormState> formKey4 = GlobalKey<FormState>();
@@ -67,45 +57,35 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
   final timeController = TextEditingController();
   final transReviewController = TextEditingController();
   late final _balanceController = TextEditingController();
-  bool _isDepositEmpty = false;
   final TranCodeController = TextEditingController();
   final remarkController = TextEditingController();
   TextEditingController vendorNameController = TextEditingController();
   TextEditingController mobileNumberController = TextEditingController();
+  bool _isDepositEmpty = false;
   bool isCashDenominationListViewVisible = false;
   List<DenomModel>getNoteTypeAndIdFroDenominationListModel = [];
   List<dynamic> dataCashDenominationList = [];
   bool isLoading = true;
-  // List<TextEditingController> qtyController = [];
-  //List<double> amounts = [];
-  // double totalAmount = 0.0;
+  List<GetCashHandOverDtlsListModel> cashdatamodel = [];
+  List<GetStaffDetailsListModel> staffmodel = [];
+  GetStaffDetailsListModel? selectedstaff;
+   bool isvisibilityStaffStatus = false;
   List<GetBankMappingDetailsListModel> bankModel = [];
-  List<GetPaymentDetailListModel> paymentModel = [];
-  GetBankMappingDetailsListModel? _selectBankModel;
-  List<GetVendorMasterListModel> vendorModel = [];
-  GetVendorMasterListModel? _selectVendor;
-  List<GetPaymentdetailCashDenominationDtlModel> denominationModel = [];
-  GetPaymentdetailCashDenominationDtlModel? _selectDenomination;
   String? selectedBankName;
   String? selectedBankId;
   double? valueBal;
   bool _isTranscode = false;
   bool _isVendorName = false;
   String? receiptNoText;
-  String? receiptNoTextEdit;
+  String? cashInHandEdit;
   List<dynamic> dataCashInHandList = [];
   DateTime selectedDate = DateTime.now();
-  List<GetCashHandOverDtlsListModel> cashdatamodel = [];
-  double? totalamt;
+
+  double? totalAmt;
   String? userName,userId;
-  List<GetStaffDetailsListModel> staffmodel = [];
-  List<GetVehicleDetailsByStaffIdModel> vehiclemodel = [];
-  List<GetBalanceByStaffIdModel> balancemodel = [];
-  GetStaffDetailsListModel? selectedstaff;
-  List<GetExpenseHeaderListModel> expenseModel = [];
-  GetExpenseHeaderListModel? selectedExpense;
   String? _selectedItem;
   int? selectedItemId;
+  int? selectedItemType;
   String? _selectedExp;
   int? selectedExpId;
   String? _selectedVendor;
@@ -122,182 +102,248 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
   bool isEditing = false;
   var argValue;
   String? modes;
-  int? paymentId;
+  int? salaryEntryId;
   int? payId;
 
-
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   getNoteTypeAndIDList();
+  //   fetchBank();
+  //   fetchSavedData();
+  //    getCashHandOverDtlsList(selectedDate);
+  //   getStaffDetailsList();
+  //   loadInitialStaffData();
+  //   getSalaryPaymentList();
+  //   getVoucherNoForExpense();
+  //
+  //   Future.delayed(Duration.zero, () {
+  //     setState(() async {
+  //       argValue = ModalRoute.of(context)?.settings.arguments as Map;
+  //       modes = argValue?["modeChange"]?? '';
+  //       if (argValue != null) {
+  //         String paymentModeEdit = argValue["paymentModeV"] ?? 0;
+  //          selectedTransMode = paymentModeEdit;
+  //         String staffNameEdit = argValue["staffNameV"] ?? 0;
+  //         selectedItemId = int.tryParse(argValue["staffIdV"] ?? '') ?? 0;
+  //         String paidModeEdit = argValue["paidModeV"] ?? 0;
+  //         selectedpaidAgainstSalary = paidModeEdit;
+  //         int selectecteItemTypeEdit = argValue["ItemTypeV"];
+  //         selectedItemType = selectecteItemTypeEdit;
+  //         //updateSelectedPaidAgainstSalary() = paidModeEdit;
+  //         //updateSelectedPaidAgainstSalary();
+  //        // filteredPaidAgainstSalary = paidModeEdit;
+  //         double amountTotalEdit = double.tryParse(argValue["amountTotalV"] ?? '') ?? 0;
+  //         selectedExpId = int.tryParse(argValue["expHeadId"] ?? '') ?? 0;
+  //         String payRemarkEdit = argValue["payRemarkV"] ?? 0;
+  //         String transTimeEdit = argValue["transTimeV"] ?? 0;
+  //         String transRemarkEdit = argValue["transRemarkV"] ?? 0;
+  //         String transationCodeEdit = argValue["transationCodeV"] ?? 0;
+  //         String accountNoEdit = argValue["accountNoV"] ?? 0;
+  //         selecteBankIDApi = int.tryParse(argValue["bankIdV"] ?? '') ?? 0;
+  //         accMappingId = int.tryParse(argValue["mappingIdV"] ?? '') ?? 0;
+  //         salaryEntryId = int.tryParse(argValue["salaryEntryIDV"] ?? '') ?? 0;
+  //
+  //         timeController.text = transTimeEdit;
+  //         TranCodeController.text = transationCodeEdit;
+  //         transReviewController.text = transRemarkEdit;
+  //         _balanceController.text = amountTotalEdit.toString();
+  //         remarkController.text = payRemarkEdit;
+  //
+  //
+  //         if(filteredPaidAgainstSalary.contains(paidModeEdit)){
+  //           selectedpaidAgainstSalary = paidModeEdit;
+  //           selectedItemType = selectecteItemTypeEdit;
+  //         } else{
+  //           selectedpaidAgainstSalary = null;
+  //         }
+  //
+  //         // if(getpaidAgainstSalary.contains(paidModeEdit)){
+  //         //   selectedpaidAgainstSalary = paidModeEdit;
+  //         //   selectedItemType = selectecteItemTypeEdit;
+  //         // } else{
+  //         //   selectedpaidAgainstSalary = null;
+  //         // }
+  //
+  //         //Edit Action For Transaction Mode
+  //         if(getTransMode.contains(paymentModeEdit)){
+  //           selectedTransMode = paymentModeEdit;
+  //         }else if(paymentModeEdit == "Bank"){
+  //            selectedTransMode = "Online";
+  //          } else{
+  //           selectedTransMode = null;
+  //         }
+  //
+  //         //Edit Action On Selected Staff
+  //         if (selectedItemId != 0) {
+  //           getStaffDetailsList().whenComplete(() {
+  //             selectedstaff = staffmodel.firstWhere(
+  //                   (item) => item.staffName == staffNameEdit,
+  //               orElse: () => GetStaffDetailsListModel(staffName: ''),
+  //             );
+  //             debugPrint("Staff selected during edit: ${selectedstaff?.staffName}");
+  //           });
+  //         }
+  //
+  //         //Edit Action On Cash Denomination
+  //         getNoteTypeAndIDList().whenComplete((){
+  //           getReceiptCashDenominationDtl(salaryEntryId!).whenComplete(() {
+  //             if (returndenominationModel.isNotEmpty) {
+  //               initializeControllers();
+  //             } else {
+  //               debugPrint("Denomination data is empty");
+  //             }
+  //           });
+  //         });
+  //
+  //         //Edit Action On Bank Mode
+  //         // await fetchBank();
+  //         // if(accountNoEdit.isNotEmpty && accountNoEdit != "null"){
+  //         //   final match = bankModel.firstWhere(
+  //         //         (item) => item.accountNo?.trim() == accountNoEdit.trim(),
+  //         //     orElse: () => GetBankMappingDetailsListModel(),
+  //         //   );
+  //         //
+  //         //   if((match.accountNo ?? '').isNotEmpty){
+  //         //     setState(() {
+  //         //       _selectBankModel = match;
+  //         //     });
+  //         //   }
+  //         // }
+  //         await fetchBank();
+  //         if(accountNoEdit.isNotEmpty && accountNoEdit != "null"){
+  //           final match = bankModel.firstWhere(
+  //                 (item) => item.accountNo?.trim() == accountNoEdit.trim(),
+  //             orElse: () => GetBankMappingDetailsListModel(),
+  //           );
+  //
+  //           if((match.accountNo ?? '').isNotEmpty){
+  //             setState(() {
+  //               _selectBankModel = match;
+  //             });
+  //           }
+  //         }
+  //       }
+  //     });
+  //   });
+  // }
   @override
   void initState() {
-
     super.initState();
+
+    // First, execute asynchronous operations without calling setState
     getNoteTypeAndIDList();
     fetchBank();
     fetchSavedData();
     getCashHandOverDtlsList(selectedDate);
     getStaffDetailsList();
-    getVendorMasterList();
-    getExpenseHeaderList();
     loadInitialStaffData();
-    getPaymentDetailList();
-    //
+    getSalaryPaymentList();
     getVoucherNoForExpense();
 
+    // Then, execute delayed tasks that involve async code
+    Future.delayed(Duration.zero, () async {
+      // Fetch data from arguments
+      argValue = ModalRoute.of(context)?.settings.arguments as Map?;
+      modes = argValue?["modeChange"] ?? '';
 
-    Future.delayed(Duration.zero, ()  async{
+      if (argValue != null) {
+        String paymentModeEdit = argValue["paymentModeV"] ?? 0;
+        selectedTransMode = paymentModeEdit;
 
-        argValue = ModalRoute.of(context)?.settings.arguments as Map;
-        modes = argValue?["modeChange"]?? '';
-        if (argValue != null) {
-          String payVoucherNoEdit = argValue["payVoucherNoV"] ?? 0;
-          receiptNoTextEdit = payVoucherNoEdit;
-          String depositDateEdit = argValue["depositDateV"] ?? 0;
-          String paymentModeEdit = argValue["paymentModeV"] ?? 0;
-          // selectedTransMode = paymentModeEdit;
-          String paymentToIDEdit = argValue["paymentToIDV"] ?? 0;
-          String staffNameEdit = argValue["staffNameV"] ?? 0;
-          // selectedItemId = argValue["staffIdV"] ?? 0;
-          selectedItemId = int.tryParse(argValue["staffIdV"] ?? '') ?? 0;
-          vendorId = int.tryParse(argValue["vendorIdV"] ?? '') ?? 0;
-          vehicleId = int.tryParse(argValue["vehIdV"] ?? '') ?? 0;
-          if(getTransMode.contains(paymentModeEdit)){
-            selectedTransMode = paymentModeEdit;
-          }
-          // else if(paymentModeEdit == "Bank"){
-          //   selectedTransMode = "Online";
-          // }
-          else{
-            selectedTransMode = null;
-          }
+        String staffNameEdit = argValue["staffNameV"] ?? 0;
+        selectedItemId = int.tryParse(argValue["staffIdV"] ?? '') ?? 0;
 
-          // String payVoucherNoEdit = argValue["payVoucherNoV"] ?? 0;
-          // receiptNoText = payVoucherNoEdit;
+        String paidModeEdit = argValue["paidModeV"] ?? 0;
+        selectedpaidAgainstSalary = paidModeEdit;
+
+        double amountTotalEdit = double.tryParse(argValue["amountTotalV"] ?? '') ?? 0;
+        selectedExpId = int.tryParse(argValue["expHeadId"] ?? '') ?? 0;
+        String payRemarkEdit = argValue["payRemarkV"] ?? 0;
+        String transTimeEdit = argValue["transTimeV"] ?? 0;
+        String transRemarkEdit = argValue["transRemarkV"] ?? 0;
+        String transationCodeEdit = argValue["transationCodeV"] ?? 0;
+        String accountNoEdit = argValue["accountNoV"] ?? 0;
+        selecteBankIDApi = int.tryParse(argValue["bankIdV"] ?? '') ?? 0;
+        accMappingId = int.tryParse(argValue["mappingIdV"] ?? '') ?? 0;
+        salaryEntryId = int.tryParse(argValue["salaryEntryIDV"] ?? '') ?? 0;
+        if (filteredPaidAgainstSalary.contains(paidModeEdit)) {
+          selectedpaidAgainstSalary = paidModeEdit;
+
+        } else {
+          selectedpaidAgainstSalary = null;
+        }
+        // Set controller texts
+        timeController.text = transTimeEdit;
+        TranCodeController.text = transationCodeEdit;
+        transReviewController.text = transRemarkEdit;
+        _balanceController.text = amountTotalEdit.toString();
+        remarkController.text = payRemarkEdit;
 
 
-          // vendorId = argValue["vendorIdV"] ?? 0;
-          // vehicleId = argValue["vehIdV"] ?? 0;
-          String vehicleNoEdit = argValue["vehicleNoV"] ?? 0;
-          // double amountTotalEdit = argValue["amountTotalV"] ?? 0;
-          double amountTotalEdit = double.tryParse(argValue["amountTotalV"] ?? '') ?? 0;
-          // selectedExpId = argValue["expHeadId"] ?? 0;
-          selectedExpId = int.tryParse(argValue["expHeadId"] ?? '') ?? 0;
-          String payRemarkEdit = argValue["payRemarkV"] ?? 0;
-          String transTimeEdit = argValue["transTimeV"] ?? 0;
-          timeController.text = transTimeEdit;
-          String transationCodeEdit = argValue["transationCodeV"] ?? 0;
-          TranCodeController.text = transationCodeEdit;
-          String transRemarkEdit = argValue["transRemarkV"] ?? 0;
-          transReviewController.text = transRemarkEdit;
-          String expHeadNameEdit = argValue["expHeadNameV"] ?? 0;
 
-          _balanceController.text = amountTotalEdit.toString();
-          remarkController.text = transRemarkEdit;
-          // selecteBankIDApi = argValue["bankIdV"] ?? 0;
-          // accMappingId = argValue["mappingIdV"] ?? 0;
-          String accountNoEdit = argValue["accountNoV"] ?? 0;
-          selecteBankIDApi = int.tryParse(argValue["bankIdV"] ?? '') ?? 0;
-          accMappingId = int.tryParse(argValue["mappingIdV"] ?? '') ?? 0;
-          _selectBankModel = bankModel.firstWhere(
-                (item) => item.accountNo == accountNoEdit,
-            orElse: () => GetBankMappingDetailsListModel(
-              bankName: 'Default Bank',
-              accountNo: '',
-            ),
-          );
-
-          paymentId = int.tryParse(argValue["paymentIdV"] ?? '') ?? 0;
-          getNoteTypeAndIDList().whenComplete((){
-            getPaymentdetailCashDenominationDtl(paymentId!).whenComplete((){
-              if(denominationModel.isNotEmpty){
-                initializeControllers();
-              }else{
-                debugPrint("empty");
-              }
-            });
-          });
-          // int? paymentIdEdit = int.tryParse(argValue["paymentIdV"] ?? '') ?? 0;
-          //
-          // getPaymentdetailCashDenominationDtl(paymentIdEdit).whenComplete(() {
-          //   if (denominationModel.isNotEmpty) {
-          //     initializeControllers();
-          //   } else {
-          //     debugPrint("empty");
-          //   }
-          // });
-          //   paymentIdEdit = int.tryParse(argValue["paymentIdV"] ?? '') ?? 0;
-          //   if(selectedItemId != 0){
-          //     selectedStaff = "Staff";
-          //     getStaffDetailsList().whenComplete((){
-          //       selectedstaff = staffmodel.firstWhere(
-          //             (item) => item.staffName == staffNameEdit,
-          //         orElse: () => GetStaffDetailsListModel(
-          //           staffName: '',
-          //
-          //         ),
-          //       );
-          //     });
-          // debugPrint("dgkjsljg");
-          //   }
-          //paymentIdEdit = int.tryParse(argValue["paymentIdV"] ?? '') ?? 0;
-
-          if (selectedItemId != 0) {
-            selectedStaff = "Staff";
-          }
-          else if( vendorId != 0){
-            selectedStaff = "Vendor";
-          }
-          await getStaffDetailsList();
-          getStaffDetailsList().whenComplete(() {
-            selectedstaff = staffmodel.firstWhere(
-                  (item) => item.staffId == selectedItemId,
-              orElse: () => GetStaffDetailsListModel(staffName: ''),
-            );
-
-            // Call balance and vehicle details functions when editing
-            if (selectedstaff?.staffId != null) {
-              getBalanceByStaffId(selectedstaff!.staffId.toString());
-              getVehicleDetailsByStaffId(selectedstaff!.staffId.toString());
-            }
-
-            debugPrint("Staff selected during edit: ${selectedstaff?.staffName}");
-          });
-          await getVendorMasterList();
-          getVendorMasterList().whenComplete((){
-            _selectVendor = vendorModel.firstWhere(
-                  (item) => item.vendorId == vendorId,
-              orElse: () => GetVendorMasterListModel(vendorName: ''),
-            );
-            debugPrint("vendorName $_selectVendor");
-          });
-
-          debugPrint("feffefefef$staffNameEdit");
-         await getExpenseHeaderList();
-          getExpenseHeaderList().whenComplete((){
-            selectedExpense = expenseModel.firstWhere(
-                  (item) => item.expHeadName == expHeadNameEdit,
-              orElse: () => GetExpenseHeaderListModel(
-                expHeadName: '',
-              ),
-            );
-          });
-          // loadDenominationData(psvIdEdit!);
-
-          await fetchBank();
-          if(accountNoEdit.isNotEmpty && accountNoEdit != "null"){
-            final match = bankModel.firstWhere(
-                  (item) => item.accountNo?.trim() == accountNoEdit.trim(),
-              orElse: () => GetBankMappingDetailsListModel(),
-            );
-
-            if((match.accountNo ?? '').isNotEmpty){
-              setState(() {
-                _selectBankModel = match;
-              });
-            }
-          }
+        // Edit action for transaction mode
+        if (getTransMode.contains(paymentModeEdit)) {
+          selectedTransMode = paymentModeEdit;
+        } else if (paymentModeEdit == "Bank") {
+          selectedTransMode = "Online";
+        } else {
+          selectedTransMode = null;
         }
 
+        // Edit action for selected staff
+        if (selectedItemId != 0) {
+          await getStaffDetailsList(); // Wait for staff details list to load
+          selectedstaff = staffmodel.firstWhere(
+                (item) => item.staffId == selectedItemId,
+            orElse: () => GetStaffDetailsListModel(staffName: ''),
+          );
+          debugPrint("Staff selected during edit: ${selectedstaff?.staffId}");
+          setState(() {
+            // Assuming 'staffType' is part of your staff model
+            selectedItemType = selectedstaff?.staffType != null
+                ? int.tryParse(selectedstaff!.staffType.toString())
+                : null;
+            debugPrint("selectecteItemTypeEditint $selectedItemType");
+
+          });
+        }
+
+
+        // Edit action for cash denomination
+        await getNoteTypeAndIDList(); // Wait for denomination data
+        await getReceiptCashDenominationDtl(salaryEntryId!); // Get denomination details
+        if (returndenominationModel.isNotEmpty) {
+          initializeControllers();
+        } else {
+          debugPrint("Denomination data is empty");
+        }
+
+        // Edit action for bank mode
+        await fetchBank();
+        if (accountNoEdit.isNotEmpty && accountNoEdit != "null") {
+          final match = bankModel.firstWhere(
+                (item) => item.accountNo?.trim() == accountNoEdit.trim(),
+            orElse: () => GetBankMappingDetailsListModel(),
+          );
+
+          if ((match.accountNo ?? '').isNotEmpty) {
+            setState(() {
+              _selectBankModel = match;
+            });
+          }
+        }
+      }
     });
   }
+
+  // void updateSelectedPaidAgainstSalary() {
+  //   if (filteredPaidAgainstSalary.contains(paidModeEdit)) {
+  //     selectedpaidAgainstSalary = paidModeEdit;
+  //   } else {
+  //     selectedpaidAgainstSalary = null; // or some default value
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -315,7 +361,7 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
         },
         child: Scaffold(
         appBar:CustomAppBarManager(
-          title: 'Update Payment', // Title or hint text for the text field
+          title: 'Salary Payment', // Title or hint text for the text field
         ),
         body:
         Padding(
@@ -334,7 +380,7 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
                     ),
                     Flexible(flex: 1,
                       child:
-                      Text('${formatCurrency(totalamt ?? 0)}',
+                      Text('${formatCurrency(totalAmt ?? 0)}',
                       ),
                     ),
                   ],
@@ -344,23 +390,7 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Expanded(
-                      child: textWidgetBlueColorWithoutStar(
-                          'Pay Voucher No.'),
-                    ),
-                    Flexible(flex: 1,
-                        child:Text(
-                          modes == "EDIT" ? (receiptNoTextEdit ?? '') : (receiptNoText ?? ''),
-                          style: TextStyle(color: Colors.grey),
-                        )
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: textWidgetBlueColorWithoutStar('Deposit Date'),
+                      child: textWidgetBlueColorWithoutStar('Paid Date'),
                     ),
                     Flexible(flex: 1,
                       child: Text("$formattedDate",
@@ -370,6 +400,194 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
                   ],
                 ),
                 SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: textWidgetBlueColorWithStar(
+                            'Staff Name',
+                            "*"
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left:0.0),
+                          child:
+                          DropdownButtonFormField<GetStaffDetailsListModel>(
+                            isExpanded: true,
+                            key: formKey1,
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                            ),
+                            value:staffmodel.contains(selectedstaff)?selectedstaff:null ,
+                            items: staffmodel.map((item) {
+                              return DropdownMenuItem<GetStaffDetailsListModel>(
+                                value: item,
+                                child: Text(
+                                  item.staffName ?? '',
+                                  style: Styling.itemBlackTest,
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (selectedItem) {
+                              setState(() {
+                                debugPrint("on chabge");
+                                selectedstaff = selectedItem;
+                                _selectedItem = selectedItem?.staffName ?? '';
+                                selectedItemId = selectedItem?.staffId?.toInt();
+                                selectedItemType = selectedItem?.staffType?.toInt();
+                                debugPrint("selectedItemType $selectedItemType");
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                 // SizedBox(height: 10),
+                  SizedBox(height: 5),
+                Visibility(
+                    visible: selectedstaff != null && selectedItemType != 2, // Only visible when a staff is selected
+                    child:
+                  Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child:
+                      textWidgetBlueColorWithStar(
+                        'Paid Against',
+                        "*", // Add a parameter to conditionally show the asterisk
+                      ),
+                    ),
+                    Flexible(
+                 flex: 1,
+                        child:
+                        // DropdownButtonFormField<String>(
+                        //   key: formKey2,
+                        //   decoration: InputDecoration(
+                        //     contentPadding: EdgeInsets.symmetric(
+                        //         vertical: 12, horizontal: 10),
+                        //   ),
+                        //   value: selectedpaidAgainstSalary,
+                        //   // Bind the selected value
+                        //   items: filteredPaidAgainstSalary.map((String value) =>
+                        //       DropdownMenuItem<String>(
+                        //         value: value,
+                        //         child: Text(value),
+                        //       ))
+                        //       .toList(),
+                        //   onChanged: (value) {
+                        //     setState(() {
+                        //       selectedpaidAgainstSalary =
+                        //           value;
+                        //     });
+                        //   },
+                        //   isExpanded: true,
+                        // ),
+                        DropdownButtonFormField<String>(
+                          key: formKey2,
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                          ),
+                          // value: selectedpaidAgainstSalary,
+                          value:filteredPaidAgainstSalary.contains(selectedpaidAgainstSalary)?selectedpaidAgainstSalary:null ,
+                          // Ensure the list has no duplicate values
+                          items: filteredPaidAgainstSalary.toSet().toList().map((String value) =>
+                              DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              )
+                          ).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedpaidAgainstSalary = value;
+                            });
+                          },
+                          isExpanded: true,
+                        ),
+
+                    ),
+                   ],
+                  ),
+                ),
+               // SizedBox(height: 10),
+                //SizedBox(height: 5),
+                  Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: textWidgetBlueColorWithStar(
+                        'Paid Salary Amount',
+                        "*",
+                      ),
+                    ),
+                    // Flexible(
+                    //   flex: 1,
+                    //   child: TextField(
+                    //     controller: _balanceController,
+                    //     keyboardType: TextInputType.number,
+                    //     // inputFormatters: [
+                    //     //   FilteringTextInputFormatter.deny(RegExp(r'\s')), // Disallow spaces
+                    //     //
+                    //     // ],
+                    //     onChanged: (value) {
+                    //
+                    //       setState(() {
+                    //         _isDepositEmpty = value.isEmpty;
+                    //         double val = double.tryParse(value.replaceAll(',', '')) ?? 0;
+                    //         if (val > totalAmt!) {
+                    //           _balanceController.clear();
+                    //         }
+                    //       });
+                    //     },
+                    //     decoration: InputDecoration(
+                    //       hintText: 'Enter paid Salary Amount',
+                    //       errorText: _isDepositEmpty ? 'Paid Salary Amt is required' : null,
+                    //       errorStyle: TextStyle(color: Colors.red),
+                    //       focusedErrorBorder: UnderlineInputBorder(
+                    //         borderSide: BorderSide(color: Colors.red),
+                    //       ),
+                    //       errorBorder: UnderlineInputBorder(
+                    //         borderSide: BorderSide(color: Colors.red),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                    Flexible(
+                      flex: 1,
+                      child: TextField(
+                        controller: _balanceController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.deny(RegExp(r'\s')), // Disallow spaces
+                          FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')), // Allow digits and one decimal
+                          LengthLimitingTextInputFormatter(9), // Limit to 9 characters total
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            _isDepositEmpty = value.isEmpty;
+                            double val = double.tryParse(value.replaceAll(',', '')) ?? 0;
+
+
+                          });
+                        },
+                        decoration: InputDecoration(
+                          hintText: 'Enter paid Salary Amount',
+                          errorText: _isDepositEmpty ? 'Paid Salary Amt is required and must be greater than zero' : null,
+                          errorStyle: TextStyle(color: Colors.red),
+                          focusedErrorBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.red),
+                          ),
+                          errorBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.red),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                  ],
+                ),
+                  SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -383,7 +601,7 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
                     Flexible(flex: 1,
                       child:
                       DropdownButtonFormField<String>(
-                        key: formKey1,
+                        key: formKey4,
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.symmetric(
                               vertical: 12, horizontal: 10),
@@ -405,55 +623,9 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
                         isExpanded: true,
                       ),
                     ),
-                    // Flexible(flex: 1,
-                    //   child:
-                    //   // DropdownButtonFormField<String>(
-                    //   //   key: formKey2,
-                    //   //   decoration: InputDecoration(
-                    //   //     contentPadding: EdgeInsets.symmetric(
-                    //   //         vertical: 12, horizontal: 10),
-                    //   //   ),
-                    //   //   value: selectedStaff,
-                    //   //   // Bind the selected value
-                    //   //   items: getTransMode
-                    //   //       .map((String value) =>
-                    //   //       DropdownMenuItem<String>(
-                    //   //         value: value,
-                    //   //         child: Text(value),
-                    //   //       ))
-                    //   //       .toList(),
-                    //   //   onChanged: (value) {
-                    //   //     setState(() {
-                    //   //       selectedStaff =
-                    //   //           value; // Update the selected value
-                    //   //     });
-                    //   //   },
-                    //   //   isExpanded: true,
-                    //   // ),
-                    //   // DropdownButtonFormField<String>(
-                    //   //   key: formKey1,
-                    //   //   decoration: InputDecoration(
-                    //   //     contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                    //   //   ),
-                    //   //   value: selectedTransMode,
-                    //   //   items: ['Cash', 'Online'].map((String value) {
-                    //   //     return DropdownMenuItem<String>(
-                    //   //       value: value,
-                    //   //       child: Text(value),
-                    //   //     );
-                    //   //   }).toList(),
-                    //   //   onChanged: (value) {
-                    //   //     setState(() {
-                    //   //       selectedTransMode = value!;
-                    //   //     });
-                    //   //   },
-                    //   //   isExpanded: true,
-                    //   // ),
-                    //
-                    // ),
                   ],
                 ),
-
+                SizedBox(height: 5),
                 if(selectedTransMode == "Online")
                   Column(
                     children: [
@@ -534,6 +706,11 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
                           Expanded(
                             child: TextField(
                               controller: timeController,
+                              // inputFormatters: [
+                              //   FilteringTextInputFormatter.allow(
+                              //     RegExp(r'^\d{0,5}:?$'), // up to 5 digits, optional 1 colon at end
+                              //   ),
+                              // ],
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(RegExp(r'^\d{0,2}:?\d{0,2}$')),
                                 LengthLimitingTextInputFormatter(5),
@@ -554,13 +731,13 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
                             child:
                             TextField(
                               controller: transReviewController,
-                              inputFormatters: [
-                                LengthLimitingTextInputFormatter(250), // Limit to 250 characters
-                              ],
                               decoration: InputDecoration(
                                 labelText: 'Transaction Remark',
                               ),
                               maxLines: 2, // Allows multiline remarks
+                              inputFormatters: [
+                                LengthLimitingTextInputFormatter(250), // Limit to 250 characters
+                              ],
                               onChanged: (value) {
                                 setState(() {});
                               },
@@ -571,318 +748,6 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
                     ],
                   ),
                 SizedBox(height: 5),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: textWidgetBlueColorWithoutStar(
-                          'Payment To'
-                      ),
-                    ),
-                    Flexible(flex: 1,
-                      child:
-                      // DropdownButtonFormField<String>(
-                      //   key: formKey2,
-                      //   decoration: InputDecoration(
-                      //     contentPadding: EdgeInsets.symmetric(
-                      //         vertical: 12, horizontal: 10),
-                      //   ),
-                      //   value: selectedStaff,
-                      //   // Bind the selected value
-                      //   items: getTransStaff
-                      //       .map((String value) =>
-                      //       DropdownMenuItem<String>(
-                      //         value: value,
-                      //         child: Text(value),
-                      //       ))
-                      //       .toList(),
-                      //   onChanged: (value) {
-                      //     setState(() {
-                      //       selectedStaff =
-                      //           value; // Update the selected value
-                      //     });
-                      //   },
-                      //   isExpanded: true,
-                      // ),
-                      DropdownButtonFormField<String>(
-                        key: formKey2,
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                        ),
-                        value: selectedStaff,
-                        items: ['Vendor', 'Staff'].map((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedStaff = value!;
-                          });
-                        },
-                        isExpanded: true,
-                      ),
-
-                    ),
-                  ],
-                ),
-                if(selectedStaff == "Staff")...[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: textWidgetBlueColorWithStar(
-                            'Staff Name',
-                            "*"
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left:0.0),
-                          child:
-                          DropdownButtonFormField<GetStaffDetailsListModel>(
-                            isExpanded: true,
-                            key: formKey3,
-                            decoration: InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                            ),
-                            value:staffmodel.contains(selectedstaff)?selectedstaff:null ,
-                            items: staffmodel.map((item) {
-                              return DropdownMenuItem<GetStaffDetailsListModel>(
-                                value: item,
-                                child: Text(
-                                  item.staffName ?? '',
-                                  style: Styling.itemBlackTest,
-                                ),
-                              );
-                            }).toList(),
-                            onChanged: (selectedItem) {
-                              setState(() {
-                                selectedstaff = selectedItem;
-                                _selectedItem = selectedItem?.staffName ?? '';
-                                selectedItemId = selectedItem?.staffId?.toInt();
-                              });
-
-                              if (selectedItem?.staffId != null) {
-                                getBalanceByStaffId(selectedItem!.staffId.toString());
-                                getVehicleDetailsByStaffId(selectedItem.staffId.toString());
-                              }
-                            },
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: textWidgetBlueColorWithoutStar(
-                            'Balance'),
-                      ),
-                      Flexible(
-                        flex: 1,
-                        child: Text(
-                          balanceAmount.isNotEmpty ? balanceAmount : '',
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: textWidgetBlueColorWithoutStar(
-                            'Vehicle No'),
-                      ),
-                      Flexible(
-                        flex: 1,
-                        child: Text(
-                          vehicleNumber.isNotEmpty ? vehicleNumber : 'MH12A0000',
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-                SizedBox(height: 5),
-                if(selectedStaff == "Vendor")...[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      textWidgetBlueColorWithStar(
-                        'Vendor Name',
-                        "*",
-                      ),
-                      SizedBox(width: 10,),
-                      ElevatedButton(
-                        onPressed: (){
-                          setState(() {
-                            _showAddVendorPopup();
-                          });
-                        },
-                        // onPressed: _addNewItem,
-                        child: Icon(
-                          Icons.add,
-                          color: Colors.white,
-                        ),
-                        style: ElevatedButton.styleFrom(
-                            shape: CircleBorder(),
-                            padding: EdgeInsets.all(12),
-                            backgroundColor: Colors.blue),
-                      ),
-                      SizedBox(width: 20,),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 0.0),
-                          child:
-                          DropdownButtonFormField<GetVendorMasterListModel>(
-                            isExpanded: true,
-                            key: formKey5,
-                            decoration: InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                            ),
-                            value: vendorModel.contains(_selectVendor)?_selectVendor:null ,
-                            items: vendorModel.map((item) {
-                              return DropdownMenuItem<GetVendorMasterListModel>(
-                                value: item,
-                                child: Text(
-                                  item.vendorName ?? '',
-                                  style: Styling.itemBlackTest,
-                                ),
-                              );
-                            }).toList(),
-                            onChanged: (selectedItem) {
-                              setState(() {
-                                _selectVendor = selectedItem;
-                                _selectedVendor = selectedItem?.vendorName ?? '';
-                                vendorId = selectedItem?.vendorId?.toInt();
-                              });
-                              validator: (value) {
-                                if (value == null) {
-                                  return 'Please select a vendor';
-                                }
-                                return null;
-                              };
-                            },
-                          ),
-                          // DropdownButtonFormField<GetVendorMasterListModel>(
-                          //   value: _selectVendor,
-                          //   items: vendorModel.map((item) {
-                          //     return DropdownMenuItem<GetVendorMasterListModel>(
-                          //       value: item,
-                          //       child: Text(item.vendorName ?? ''),
-                          //     );
-                          //   }).toList(),
-                          //   onChanged: (selectedItem) {
-                          //     setState(() {
-                          //       _selectVendor = selectedItem;
-                          //       _selectedVendor = selectedItem?.vendorName ?? '';
-                          //       vendorId = selectedItem?.vendorId?.toInt();
-                          //     });
-                          //   },
-                          // )
-
-
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-
-                SizedBox(height: 5),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: textWidgetBlueColorWithStar(
-                          'Expense Type',
-                          "*"
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 0.0),
-                        child: DropdownButtonFormField<GetExpenseHeaderListModel>(
-                          isExpanded: true,
-                          key: formKey6,
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                          ),
-                          value: expenseModel.contains(selectedExpense)?selectedExpense:null,
-                          items: expenseModel.map((item) {
-                            return DropdownMenuItem<GetExpenseHeaderListModel>(
-                              value: item,
-                              child: Text(
-                                item.expHeadName ?? '',
-                                style: Styling.itemBlackTest,
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: (selectedItem) {
-                            setState(() {
-                              selectedExpense = selectedItem;
-                              _selectedExp = selectedItem?.expHeadName ?? '';
-                              selectedExpId = selectedItem?.expHeadId?.toInt();
-                            });
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: textWidgetBlueColorWithStar(
-                        'Total Amount',
-                        "*",
-                      ),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: TextField(
-                        controller: _balanceController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.deny(RegExp(r'\s')), // Disallow spaces
-                          FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')), // Allow digits and one decimal
-                          LengthLimitingTextInputFormatter(9), // Limit to 9 characters total
-                        ],
-                        onChanged: (value) {
-                          setState(() {
-                            _isDepositEmpty = value.isEmpty;
-                            double val = double.tryParse(value.replaceAll(',', '')) ?? 0;
-                            if(selectedTransMode == 'Cash'){
-                              if (val > totalamt!) {
-                                _balanceController.clear();
-                              }
-                            }
-
-                          });
-                        },
-                        decoration: InputDecoration(
-                          hintText: 'Total Amount',
-                          errorText: _isDepositEmpty ? 'Amount is required' : null,
-                          errorStyle: TextStyle(color: Colors.red),
-                          focusedErrorBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.red),
-                          ),
-                          errorBorder: UnderlineInputBorder(
-                            borderSide: BorderSide(color: Colors.red),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                //SizedBox(height: 5),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
@@ -900,7 +765,6 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
                         ],
                         decoration: InputDecoration(
                           labelText: 'Remark',
-                          // border: OutlineInputBorder(),
                         ),
                         maxLines: 2, // Allows multiline remarks
                       ),
@@ -1134,16 +998,14 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
                         ),
                       ),
                     ),
-
                     SizedBox(width: 10), // Adds space between buttons
-
                     ElevatedButton(
                       onPressed: () {
                         if (modes == "EDIT") {
-                          paymentDetailAddEditForMob(paymentId!, "EDIT");
+                          SalaryIncentiveEntryAddEdit(salaryEntryId!, "EDIT");
 
                         } else {
-                          paymentDetailAddEditForMob(0, "ADD");
+                          SalaryIncentiveEntryAddEdit(0, "ADD");
                         }
                       },
                       style: ElevatedButton.styleFrom(
@@ -1169,20 +1031,21 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
                 ),
                 SizedBox(height: 5),
                 Card(
-                  child: paymentModel.isNotEmpty
+                  child: listModel.isNotEmpty
                       ? ListView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    itemCount: paymentModel.length,
+                    itemCount: listModel.length,
                     itemBuilder: (context, index) {
-                      GetPaymentDetailListModel? payList = paymentModel[index];
+                      GetSalaryIncentiveEntryListModel? payList = listModel[index];
                       return  Column(
                         children: [
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Expanded(child: Text(payList.paymentDate ?? '', style: TextStyle(color: Colors.blue),),),
-                              Expanded(child: Text(payList.voucherNo ?? '', style: TextStyle(color: Colors.blue),),),
+                              // Expanded(child: Text( payList.paidDate ?? '', style: TextStyle(color: Colors.blue),),),
+                              Expanded(child: Text(payList.paidDate != null ? DateFormat('dd-MM-yyyy').format(DateTime.parse(payList.paidDate!)) : '', style: TextStyle(color: Colors.blue),),),
+                              Expanded(child: Text(payList.staffName ?? '', style: TextStyle(color: Colors.blue),),),
                               Expanded(
                                 flex: 0,
                                 child: Row(
@@ -1193,53 +1056,42 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
                                       icon: Icon(Icons.edit, color: Colors.blue),  // Icon for edit
                                       onPressed: () {
                                         setState(() {
-                                          var payVoucherNo = payList.voucherNo.toString();
-                                          var depositDate = payList.paymentDate.toString();
+                                          var paidDate = payList.paidDate.toString();
                                           var paymentMode = payList.paymentMode.toString();
-                                          var paymentToId = payList.paymentTo.toString();
                                           var staffName = payList.staffName.toString();
                                           var staffId = payList.staffId.toString();
-                                          var vendorId = payList.vendorId.toString();
-                                          var vehId = payList.vehId.toString();
-                                          var vehicleNo = payList.vehicleNo.toString();
-                                          var amountTotal = payList.amount.toString();
-                                          var expHeadId = payList.expHeadId.toString();
-                                          var payRemark = payList.payRemark.toString();
-                                          var transTime = payList.transTime.toString();
-                                          var transationCode = payList.transationCode.toString();
-                                          var transRemark = payList.transRemark.toString();
-                                          var expHeadName = payList.expHeadName.toString();
+                                          var paidAgainst = payList.paidAgainst.toString();
+                                          var amountTotal = payList.paidSalaryAmt.toString();
+                                          var transTime = payList.transactionTime.toString();
+                                          var transationCode = payList.transactionCode.toString();
+                                          var transRemark = payList.transactionRemark.toString();
                                           var bankId = payList.bankId.toString();
-                                          var mappingId = payList.mappingId.toString();
+                                          var itemType = payList.runtimeType.toString();
+                                          var mappingId = payList.bankMappingId.toString();
                                           var accountNo = payList.accountNo.toString();
-                                          var paymentId = payList.paymentId.toString();
-                                          int payId = int.parse(paymentId);
-
+                                          var remark = payList.remark.toString();
+                                          var salaryEntryId = payList.salaryEntryId.toString();
+                                          //int payId = int.parse(salaryEntryId);
                                           // Navigate to the target screen and pass the data
                                           Navigator.pushNamed(
                                             context,
-                                            UpdatePaymentScreen.screenName,
+                                           SalaryPaymentScreen.screenName,
                                             arguments: {
-                                              'payVoucherNoV': payVoucherNo,
-                                              'depositDateV': depositDate,
+                                              'depositDateV': paidDate,
                                               'paymentModeV': paymentMode,
-                                              'paymentToIDV': paymentToId,
                                               'staffNameV' : staffName,
                                               'staffIdV': staffId,
-                                              'vendorIdV': vendorId,
-                                              'vehIdV': vehId,
-                                              'vehicleNoV': vehicleNo,
+                                              'paidModeV': paidAgainst,
                                               'amountTotalV': amountTotal,
-                                              'expHeadId': expHeadId,
-                                              'payRemarkV': payRemark,
+                                              'payRemarkV': remark,
                                               'transTimeV': transTime,
                                               'transationCodeV': transationCode,
                                               'transRemarkV': transRemark,
-                                              'expHeadNameV': expHeadName,
                                               'bankIdV': bankId,
+                                              'ItemTypeV': itemType,
                                               'mappingIdV': mappingId,
                                               'accountNoV': accountNo,
-                                              'paymentIdV': paymentId,
+                                              'salaryEntryIDV': salaryEntryId,
                                               'modeChange': "EDIT"
                                             },
                                           );
@@ -1250,8 +1102,8 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
                                     IconButton(
                                       icon: Icon(Icons.delete, color: Colors.red), // Icon for delete
                                       onPressed: () async {
-                                        int? pId = (payList.paymentId)?.toInt();
-                                        print('Delete button pressedd${payList.paymentId}');
+                                        int? pId = (payList.salaryEntryId)?.toInt();
+                                        print('Delete button pressedd${payList.salaryEntryId}');
                                         // Show confirmation dialog
                                         bool? confirmDelete = await showDialog<bool>(
                                           context: context,
@@ -1280,7 +1132,7 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
                                         // If user confirmed deletion
                                         if (confirmDelete == true) {
                                           if (pId != null) {
-                                            paymentDetailAddEditForMob(pId, "DELETE");
+                                            SalaryIncentiveEntryAddEdit(pId, "DELETE");
                                             print('Delete button pressed$pId');
                                           } else {
                                             print("Receipt ID is null.");
@@ -1298,27 +1150,25 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
                           SizedBox(height: 2),
                           Row(
                             children: [
-                              Expanded(flex:1,child: countTextWidgetText(context,"Account No.", payList.accountNo ?? '')),
-
+                              Expanded(flex:1,child: countTextWidgetText(context,"Paid Against", payList.paidAgainst ?? '')),
                             ],
                           ),
                           SizedBox(height: 2),
                           Row(
                             children: [
-                              Expanded(flex:1,child: countTextWidgetText(context,"Staff/Vendor Name", payList.staffName ?? '')),
+                              Expanded(flex:1,child: countTextWidgetText(context,"Paid Salary Amount", payList.paidSalaryAmt.toString())),
                             ],
                           ),
                           SizedBox(height: 2),
                           Row(
                             children: [
-                              Expanded(flex:1,child: countTextWidgetText(context,"Expense Type", payList.expHeadName ?? '')),
-                            ],
-                          ),
-                          SizedBox(height: 2),
-                          Row(
-                            children: [
-                              Expanded(flex:1,child: countTextWidgetText(context,"Total Amount", payList.amount.toString())),
                               Expanded(flex:1,child: countTextWidgetText(context,"Payment Mode", payList.paymentMode ?? '')),
+                            ],
+                          ),
+                          SizedBox(height: 2),
+                          Row(
+                            children: [
+                              Expanded(flex:1,child: countTextWidgetText(context,"Remark", payList.remark.toString())),
                             ],
                           ),
                           Divider(
@@ -1365,7 +1215,6 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
             'Authorization': 'Bearer $bearerToken',
           },
         );
-
         debugPrint(
             "Response body GetCashDenominationItemList: ${response.body}");
         debugPrint(
@@ -1542,7 +1391,8 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
               if (item.staffId.toString() == userId) {
                 // debugPrint("userId $userId item.staffId.toString() ${item.staffId.toString()}");
                 print("Matched Staff Total Amount: ${item.totalAmt}");
-                totalamt = (item.totalAmt ?? 0.0).toDouble();
+                totalAmt = (item.totalAmt ?? 0.0).toDouble();
+
                 break; // Exit loop after finding the match
               }
             }
@@ -1556,158 +1406,6 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
         debugPrint("Error: $error");
         // Return an empty list in case of an error
       }
-    }
-  }
-
-  Future<void> getStaffDetailsList() async {
-    EasyLoading.show();
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? distributorId = prefs.getString('DistributorId');
-    String? bearerToken =
-    prefs.getString('token'); // Assuming the token is stored here
-
-    if (bearerToken == null) {
-      throw Exception('Bearer token is missing');
-    }
-    Map<String, dynamic> requestBody = {
-      "DistributorId": distributorId,
-    };
-
-    final response = await http.get(
-      Uri.parse('${AppUrl.GetStaffDetailsList}/$distributorId/1/0'),
-      headers: {
-        'Authorization': 'Bearer $bearerToken', // Add Bearer token here
-      },
-    );
-    debugPrint("GetStaffDetailsList : " +
-        '${AppUrl.GetStaffDetailsList}/$distributorId/1/0');
-    debugPrint("GetStaffDetailsList : " + '${response.body}');
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-
-      setState(() {
-        staffmodel = data.map((json) {
-          return GetStaffDetailsListModel.fromJson(json);
-        }).toList();
-        EasyLoading.dismiss();
-      });
-    } else {
-      EasyLoading.dismiss();
-      throw Exception('Failed to load items');
-    }
-  }
-
-  Future<void> getVendorMasterList() async {
-    EasyLoading.show();
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? distributorId = prefs.getString('DistributorId');
-    String? bearerToken =
-    prefs.getString('token'); // Assuming the token is stored here
-
-    if (bearerToken == null) {
-      throw Exception('Bearer token is missing');
-    }
-    Map<String, dynamic> requestBody = {
-      "DistributorId": distributorId,
-    };
-
-    final response = await http.get(
-      Uri.parse('${AppUrl.GetVendorMasterList}/$distributorId/1'),
-      headers: {
-        'Authorization': 'Bearer $bearerToken', // Add Bearer token here
-      },
-    );
-    debugPrint("GetVendorMasterList : " +
-        '${AppUrl.GetVendorMasterList}/$distributorId/1');
-    debugPrint("GetVendorMasterList : " + '${response.body}');
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-
-      setState(() {
-        vendorModel = data.map((json) {
-          return GetVendorMasterListModel.fromJson(json);
-        }).toList();
-        EasyLoading.dismiss();
-      });
-    } else {
-      EasyLoading.dismiss();
-      throw Exception('Failed to load items');
-    }
-  }
-
-  Future<void> getPaymentdetailCashDenominationDtl(int paymentId) async {
-    EasyLoading.show();
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? distributorId = prefs.getString('DistributorId');
-    String? bearerToken =
-    prefs.getString('token'); // Assuming the token is stored here
-
-    if (bearerToken == null) {
-      throw Exception('Bearer token is missing');
-    }
-    Map<String, dynamic> requestBody = {
-      "DistributorId": distributorId,
-    };
-
-    final response = await http.get(
-      Uri.parse('${AppUrl.GetPaymentdetailCashDenominationDtl}/$paymentId/$distributorId'),
-      headers: {
-        'Authorization': 'Bearer $bearerToken', // Add Bearer token here
-      },
-    );
-    debugPrint("GetPaymentdetailCashDenominationDtl : " +
-        '${AppUrl.GetPaymentdetailCashDenominationDtl}/$paymentId/$distributorId');
-
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      debugPrint("GetPaymentdetailCashDenominationDtl : " + '${response.body}');
-      setState(() {
-        denominationModel = data.map((json) {
-          return GetPaymentdetailCashDenominationDtlModel.fromJson(json);
-        }).toList();
-        EasyLoading.dismiss();
-      });
-    } else {
-      EasyLoading.dismiss();
-      throw Exception('Failed to load items');
-    }
-  }
-
-  Future<void> getExpenseHeaderList() async {
-    EasyLoading.show();
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? distributorId = prefs.getString('DistributorId');
-    String? bearerToken =
-    prefs.getString('token'); // Assuming the token is stored here
-
-    if (bearerToken == null) {
-      throw Exception('Bearer token is missing');
-    }
-    Map<String, dynamic> requestBody = {
-      "DistributorId": distributorId,
-    };
-
-    final response = await http.get(
-      Uri.parse('${AppUrl.GetExpenseHeaderList}/$distributorId/1'),
-      headers: {
-        'Authorization': 'Bearer $bearerToken', // Add Bearer token here
-      },
-    );
-    debugPrint("GetExpenseHeaderList : " +
-        '${AppUrl.GetExpenseHeaderList}/$distributorId/1');
-    debugPrint("GetExpenseHeaderList : " + '${response.body}');
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-
-      setState(() {
-        expenseModel = data.map((json) {
-          return GetExpenseHeaderListModel.fromJson(json);
-        }).toList();
-        EasyLoading.dismiss();
-      });
-    } else {
-      EasyLoading.dismiss();
-      throw Exception('Failed to load items');
     }
   }
 
@@ -1731,8 +1429,8 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
       setState(() {
-        balancemodel = data.map((json) => GetBalanceByStaffIdModel.fromJson(json)).toList();
-        balanceAmount = balancemodel.isNotEmpty ? balancemodel.first.balanceAmt.toString() : '';
+       // balancemodel = data.map((json) => GetBalanceByStaffIdModel.fromJson(json)).toList();
+      //  balanceAmount = balancemodel.isNotEmpty ? balancemodel.first.balanceAmt.toString() : '';
         EasyLoading.dismiss();
       });
     } else {
@@ -1761,9 +1459,9 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
       setState(() {
-        vehiclemodel = data.map((json) => GetVehicleDetailsByStaffIdModel.fromJson(json)).toList();
-        vehicleNumber = vehiclemodel.isNotEmpty ? vehiclemodel.first.vehicleNo ?? '' : '';
-        vehicleId = (vehiclemodel.isNotEmpty ? vehiclemodel.first.vehicleId ?? 0 : 0) as int?;
+       // vehiclemodel = data.map((json) => GetVehicleDetailsByStaffIdModel.fromJson(json)).toList();
+       // vehicleNumber = vehiclemodel.isNotEmpty ? vehiclemodel.first.vehicleNo ?? '' : '';
+      //  vehicleId = (vehiclemodel.isNotEmpty ? vehiclemodel.first.vehicleId ?? 0 : 0) as int?;
         EasyLoading.dismiss();
       });
     } else {
@@ -1791,7 +1489,7 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
     }
   }
 
-  Future<void> getPaymentDetailList() async {
+  Future<void> getSalaryPaymentList() async {
     EasyLoading.show();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? distributorId = prefs.getString('DistributorId');
@@ -1806,20 +1504,58 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
     };
 
     final response = await http.get(
-      Uri.parse('${AppUrl.GetPaymentDetailList}/$distributorId'),
+      Uri.parse('${AppUrl.GetSalaryIncentiveEntryList}/$distributorId'),
       headers: {
         'Authorization': 'Bearer $bearerToken', // Add Bearer token here
       },
     );
-    debugPrint("GetPaymentDetailListModel : " + '${AppUrl.GetPaymentDetailList}/$distributorId');
-    debugPrint("GetPaymentDetailListModel : " + '${response.body}');
+    debugPrint("GetSalaryIncentiveEntryList : " + '${AppUrl.GetSalaryIncentiveEntryList}/$distributorId');
+    debugPrint("GetSalaryIncentiveEntryList : " + '${response.body}');
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
 
       setState(() {
-        paymentModel = data.map((json) => GetPaymentDetailListModel.fromJson(json)).toList();
-        // EasyLoading.dismiss();
+        listModel = data.map((json) => GetSalaryIncentiveEntryListModel.fromJson(json)).toList();
+         EasyLoading.dismiss();
         isLoading = false;
+      });
+    } else {
+      EasyLoading.dismiss();
+      throw Exception('Failed to load items');
+    }
+  }
+
+  Future<void> getStaffDetailsList() async {
+    EasyLoading.show();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? distributorId = prefs.getString('DistributorId');
+    String? bearerToken =
+    prefs.getString('token'); // Assuming the token is stored here
+
+    if (bearerToken == null) {
+      throw Exception('Bearer token is missing');
+    }
+    Map<String, dynamic> requestBody = {
+      "DistributorId": distributorId,
+    };
+
+    final response = await http.get(
+      Uri.parse('${AppUrl.GetStaffDetailsList}/$distributorId/0/0'),
+      headers: {
+        'Authorization': 'Bearer $bearerToken', // Add Bearer token here
+      },
+    );
+    debugPrint("GetStaffDetailsList : " +
+        '${AppUrl.GetStaffDetailsList}/$distributorId/0/0');
+    debugPrint("GetStaffDetailsList : " + '${response.body}');
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+
+      setState(() {
+        staffmodel = data.map((json) {
+          return GetStaffDetailsListModel.fromJson(json);
+        }).toList();
+        EasyLoading.dismiss();
       });
     } else {
       EasyLoading.dismiss();
@@ -1844,137 +1580,6 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
     return formattedAmount;
   }
 
-  void _showAddVendorPopup() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setDialogState) {
-            return AlertDialog(
-              title: Text("Add Vendor Name"),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  TextField(
-                    controller: vendorNameController,
-                    maxLengthEnforcement: MaxLengthEnforcement.enforced, // Enforce max length
-                    inputFormatters: <TextInputFormatter>[
-                    ],
-                    decoration: InputDecoration(
-                      errorText: _isVendorName ? 'Vendor Name Is Required' : null,
-
-                      label: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          countTextWidgetTextStar(
-                            context,
-                            'Vendor Name',
-                            showAsterisk: true,
-                          ),
-                        ],
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                          vertical: 8.0, horizontal: 12.0),
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        _isVendorName = value.isEmpty;
-                      });
-                    },
-                  ),
-                  SizedBox(height: 10),
-                  TextField(
-                    controller: mobileNumberController,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(10),
-                    ],
-                    decoration: InputDecoration(
-                      errorText: _isConCOntactEmpty
-                          ? 'Mobile No Is Required'
-                          : _isInvalidMobile
-                          ? 'Please Enter A Valid Consumer Contact No.'
-                          : _isShortLength
-                          ? 'Consumer Contact No. must be 10 digits'
-                          : null,
-                      label: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          countTextWidgetTextStar(
-                            context,
-                            'Mobile No',
-                            showAsterisk: true,
-                          ),
-                        ],
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                          vertical: 8.0, horizontal: 12.0),
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        _isConCOntactEmpty = value.isEmpty;
-                        if (value.isNotEmpty) {
-                          _isInvalidMobile = !RegExp(r'^[6789]').hasMatch(value); // Check first digit
-                          _isShortLength = value.length < 10;
-                        } else {
-                          _isInvalidMobile = false; // Reset the error if the input is empty
-                          _isShortLength = false;
-                        }
-                      });
-                    },
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    vendorNameController.clear();
-                    mobileNumberController.clear();
-                    //Navigator.of(context).pop(); // Close popup
-                  },
-                  child: Text("Cancel"),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    String vendorName = vendorNameController.text.trim();
-                    String mobileNumber = mobileNumberController.text.trim();
-
-                    // Check if the mobile number is valid
-                    if (_isConCOntactEmpty || _isInvalidMobile || _isShortLength) {
-                      showFlushBar(context, "Invalid mobile number.");
-                      return;
-                    }
-
-                    // Check if both fields are empty
-                    if (vendorName.isEmpty || mobileNumber.isEmpty) {
-                      showFlushBar(context, "Both fields are required.");
-                      return;
-                    }
-
-                    // Proceed with saving
-                    saveVendorPopupForMob();
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(
-                    "Save",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-
   void cancelAction(){
     setState(() {
       _selectedItem = '';
@@ -1984,19 +1589,14 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
       totalAmount = 0.0;
       selectedTransMode = null;
       selectedBankId = null;
-      selectedTransMode = null;
-      selectedExpense = null;
       selectedstaff = null;
       selectedItemId = null;
       _selectBankModel = null;
-      selectedTransMode = null;
-      _selectVendor = null;
+      selectedpaidAgainstSalary = null;
       _balanceController.clear();
       TranCodeController.clear();
       timeController.clear();
       remarkController.clear();
-      TranCodeController.clear();
-      timeController.clear();
       transReviewController.clear();
       modes = "Save";
     });
@@ -2053,7 +1653,7 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
       EasyLoading.showToast(Constants.expenseSendMgr,
           duration: const Duration(milliseconds: 3000));
       setState(() {
-        getCashHandOverDtlsList(selectedDate);
+        //getCashHandOverDtlsList(selectedDate);
       });
     } else {
       // Error response
@@ -2061,14 +1661,13 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
     }
   }
 
-  Future<void> paymentDetailAddEditForMob(int paymentId,String action) async {
+  Future<void> SalaryIncentiveEntryAddEdit(int salaryEntryId,String action) async {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? distributorId = prefs.getString('DistributorId');
     String? bearerToken = prefs.getString('token');
     String? staffId = prefs.getString('StaffId');
     String? userId = prefs.getString("UserId");
-    int? addedBys = int.parse(staffId!);
     int? distributorIds = int.parse(distributorId!);
     final DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
@@ -2080,7 +1679,7 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
     String? remark;
     int? bankId;
     int? accMappingIds;
-    int? paidTo;
+
     final List<Map<String, dynamic>> dataCashDenomination = getNoteTypeAndIdFroDenominationListModel.asMap().entries.map((entry) {
       int index = entry.key;
       var data = entry.value;
@@ -2100,37 +1699,61 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
 
       if (TranCodeController.text.isNotEmpty) {
         tranCode = TranCodeController.text;
-      } else {
+      }else {
         tranCode = "";
       }
+
       if (timeController.text.isNotEmpty) {
         tranTime = timeController.text;
-      } else {
+      }else {
         tranTime = "";
       }
+
       if (transReviewController.text.isNotEmpty) {
         tranReview = transReviewController.text;
-      } else {
+      }else {
         tranReview = "";
       }
+
       if (remarkController.text.isNotEmpty) {
         remark = remarkController.text;
-      } else {
+      }else {
         remark = "";
       }
 
-      //Condition On Save Button
-      if ((selectedTransMode == null || selectedTransMode!.isEmpty) ||
-          (selectedStaff == null || selectedStaff!.isEmpty) ||
-          (selectedExpense == null)) {
-        showFlushBar(context, Constants.reqfield);
+      if (selectedBankName != null) {
+        bankId = selecteBankIDApi;
+        accMappingIds = accMappingId;
+      }else {
+        bankId = 0;
+        accMappingIds = 0;
+      }
+
+      if (selectedTransMode == null || selectedTransMode!.isEmpty)
+      {
+        showFlushBar(context, Constants.TransMode);
         return;
       }
 
-      // Conditional check for cash payment mode
-      if (selectedTransMode == 'Cash') {
-        if (discountAmt != totalAmount || discountAmt <= 0) {
-          showFlushBar(context, Constants.denominationAmount);
+      if (selectedstaff == null || selectedstaff!.staffName == null ||
+          selectedstaff!.staffName!.isEmpty) {
+        showFlushBar(context, Constants.selStaff);
+        return;
+      }
+
+
+      if((selectedpaidAgainstSalary == null || selectedpaidAgainstSalary!.isEmpty)){
+        showFlushBar(context, Constants.pedagainst);
+        return;
+      }
+
+      if (!_balanceController.text.isNotEmpty) {
+        showFlushBar(context, Constants.salaryAmt);
+        return;
+      }
+      if(selectedTransMode == 'Cash'){
+        if (discountAmt > totalAmt!) {
+          showFlushBar(context, "Salary Amount Can Not Be Greater Than Cash In Hand Amount.");
           return;
         }
       }
@@ -2139,7 +1762,7 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
         if (_selectBankModel == null || _selectBankModel!.accountNo == null ||
             _selectBankModel!.accountNo!.isEmpty
         ) {
-          showFlushBar(context, Constants.bankname);
+          showFlushBar(context, Constants.selStaff);
           return;
         }
 
@@ -2148,51 +1771,35 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
           return;
         }
       }
-
-
-      if (_selectBankModel != null) {
-        bankId = selecteBankIDApi;
-        accMappingIds = accMappingId;
-      }
-      else {
-        bankId = 0;
-        accMappingIds = 0;
-      }
-
-      if (selectedStaff == "Vendor") {
-        paidTo = 2;
-        staffId = 0.toString();
-      } else {
-        paidTo = 1;
-        vendorId = 0;
+      // Conditional check for cash payment mode
+      if (selectedTransMode == 'Cash'){
+        if(discountAmt != totalAmount || discountAmt <= 0) {
+          showFlushBar(context, Constants.denominationAmount);
+          return;
+        }
       }
     }
 
 
+
     final Map<String, dynamic> requestBody =
     {
-      "PaymentId": paymentId,
-      "DistributorId":distributorIds,
-      "VoucherNo":receiptNoText ?? '',
-      "PaymentDate": formattedDate,
+      "SalaryEntryId": salaryEntryId,
+      "DistributorId":distributorId,
+      "PaidDate":formattedDate,
+      "StaffId": selectedItemId ?? '',
+      "PaidAgainst": selectedpaidAgainstSalary ?? '',
+      "PaidSalaryAmt":discountAmt ?? '',
       "PaymentMode": selectedTransMode ?? '',
-      "PaymentTo":paidTo ?? '',
-      "VendorId": vendorId ?? '',
-      "StaffId":selectedItemId ?? '',
-      "VehId":vehicleId ?? '',
-      "ExpHeadId": selectedExpId ?? '',
-      "TotalAmtPaid":discountAmt ?? '',
-      "PaidFor": 0,
-      "PaidForId": 0,
-      "TransationCode": tranCode ?? '',
-      "TransTime": tranTime ?? '',
-      "TransRemark": tranReview ?? '',
-      "PayRemark": remark ?? '',
+      "TransactionCode":tranCode ?? '',
+      "TransactionTime": tranTime ?? '',
+      "TransactionRemark": tranReview ?? '',
+      "Remark": remark ?? '',
       "BankMappingId": accMappingIds ?? '',
       "BankId": bankId ?? '',
       "AddedBy": userId ?? '',
       "Action": action,
-      "DenomAllList": dataCashDenomination,
+      "DenomDtList": dataCashDenomination,
     };
     print("DepositCashAddEdit: ${requestBody}");
     requestBody.forEach((key, value) {
@@ -2200,7 +1807,7 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
     });
     // try {
     final response = await http.post(
-      Uri.parse('${AppUrl.PaymentDetailAddEdit}'),
+      Uri.parse('${AppUrl.SalaryIncentiveEntryAddEdit}'),
       headers: {
         "Content-Type": "application/json",
         "Authorization": "Bearer $bearerToken",
@@ -2208,23 +1815,29 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
       body: json.encode(requestBody),
     );
     print(
-        "requestBody UpdateSaleAddEditForMob: ${response.statusCode} - ${response.request}${requestBody}");
+        "requestBody SalaryIncentiveEntryAddEdit: ${response.statusCode} - ${response.request}${requestBody}");
 
     print("Response Status Code: ${response.statusCode}");
+
     if (response.statusCode == 200) {
       if (response.body == '0') {
         // Show a user-friendly error if the response body is 0
         EasyLoading.showToast("Something went wrong. Please try again.", duration: const Duration(milliseconds: 3000));
         print("Error: Response returned 0");
-      } else {
-        // totalAmount = totalAmount - discountAmt;
-
+      }
+      else if (response.body == '-1') {
+        EasyLoading.showToast(
+          Constants.expenseExistMgr,
+          duration: const Duration(milliseconds: 3000),
+        );
+      }
+      else {
         // Process the valid response (JSON or data)
         print("Response PaymentDetailAddEdit: ${response.body}");
 
         Navigator.pushNamed(
           context,
-          UpdatePaymentScreen.screenName,
+          ManagerMoreScree.screenName,
         );
 
         Future.delayed(Duration(milliseconds: 300), () {
@@ -2238,48 +1851,95 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
               Constants.expenseSendMgrEdit,
               duration: const Duration(milliseconds: 3000),
             );
-          }else {
+          }
+          else {
             EasyLoading.showToast(
               Constants.expenseSendMgr,
               duration: const Duration(milliseconds: 3000),
             );
           }
         });
-
         setState(() {
-          getPaymentDetailList();
+          getSalaryPaymentList();
         });
       }
     } else {
-      print("Error PaymentDetailAddEdit: ${response.statusCode} - ${response.body}");
+      print("Error SalaryIncentiveEntryAddEdit: ${response.statusCode} - ${response.body}");
       EasyLoading.showToast("Request failed. Please try again.", duration: const Duration(milliseconds: 3000));
     }
   }
 
+  Future<void> getReceiptCashDenominationDtl(int ReceiptId) async {
+    EasyLoading.show();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? distributorId = prefs.getString('DistributorId');
+    String? bearerToken =
+    prefs.getString('token'); // Assuming the token is stored here
+
+    if (bearerToken == null) {
+      throw Exception('Bearer token is missing');
+    }
+    Map<String, dynamic> requestBody = {
+      "DistributorId": distributorId,
+    };
+
+    final response = await http.get(
+      Uri.parse('${AppUrl.GetCashDenominationDtlsById}/$ReceiptId/$distributorId'),
+      headers: {
+        'Authorization': 'Bearer $bearerToken', // Add Bearer token here
+      },
+    );
+    debugPrint("GetCashDenominationDtlsById : " +
+        '${AppUrl.GetCashDenominationDtlsById}/$ReceiptId/$distributorId');
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      debugPrint("GetCashDenominationDtlsById : " + '${response.body}');
+      setState(() {
+        returndenominationModel = data.map((json) {
+          return GetCashDenominationDtlsByIdModel.fromJson(json);
+        }).toList();
+        EasyLoading.dismiss();
+      });
+    } else {
+      EasyLoading.dismiss();
+      throw Exception('Failed to load items');
+    }
+  }
+
   void initializeControllers() {
-    qtyController = List.generate(denominationModel.length, (index) {
+    qtyController = List.generate(returndenominationModel.length, (index) {
       return TextEditingController(
-        text: denominationModel[index].qty?.toString() ?? "0",
+        text: returndenominationModel[index].qty?.toString() ?? "0",
       );
     });
 
-    amounts = List.generate(denominationModel.length, (index) {
-      final qty = denominationModel[index].qty?.toDouble() ?? 0.0;
-      final noteType = denominationModel[index].noteType?.toDouble() ?? 0.0;
+    amounts = List.generate(returndenominationModel.length, (index) {
+      final qty = returndenominationModel[index].qty?.toDouble() ?? 0.0;
+      final noteType = returndenominationModel[index].noteType?.toDouble() ?? 0.0;
       return qty * noteType; // Now returns double
     });
 
-
     totalAmount = amounts.fold(0.0, (sum, item) => sum + item);
 
-
     isQtyFilled = Map.fromIterable(
-      List.generate(denominationModel.length, (index) => index),
+      List.generate(returndenominationModel.length, (index) => index),
       key: (index) => index,
-      value: (index) => (denominationModel[index].qty ?? 0) > 0,
+      value: (index) => (returndenominationModel[index].qty ?? 0) > 0,
     );
 
   }
+
+  List<String> get filteredPaidAgainstSalary {
+    if (selectedItemType == 0) {
+      return ["Salary", "Incentive", "Advance"];
+    } else if (selectedItemType == 1) {
+      return ["Commission Charges", "Incentive", "Advance"];
+    } else {
+      return getpaidAgainstSalary; // fallback in case of invalid type
+    }
+  }
+
 
 }
 

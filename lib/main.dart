@@ -33,6 +33,9 @@ import 'Screen/ManagerScreen/DashboardItemClickUI/DashboardPostPaidVerifPendDeta
 import 'Screen/ManagerScreen/DashboardItemClickUI/DashboardPrepaidDetails.dart';
 import 'Screen/ManagerScreen/DashboardItemClickUI/DashboardSVDetails.dart';
 import 'Screen/ManagerScreen/DashboardItemClickUI/DashboardTVDetails.dart';
+import 'Screen/ManagerScreen/DashboardItemClickUI/ImbalanceCountClickUI.dart';
+import 'Screen/ManagerScreen/DashboardItemClickUI/TodaysCashSummaryOnAccountList.dart';
+import 'Screen/ManagerScreen/DashboardItemClickUI/UnsettledSaleDetailList.dart';
 import 'Screen/ManagerScreen/DeliveryBoyWiseListShow.dart';
 import 'Screen/ManagerScreen/ManagerDSRReportScreen.dart';
 import 'Screen/ManagerScreen/ManagerDashboard.dart';
@@ -42,6 +45,8 @@ import 'Screen/ManagerScreen/ManagerUpdateSaleScreen.dart';
 import 'Screen/ManagerScreen/PaymentReceiptScreen/PaymentReceiptScreen.dart';
 import 'Screen/ManagerScreen/RegulatorItemReceiptScreen.dart';
 import 'Screen/ManagerScreen/SVSaleReportScreen.dart';
+import 'Screen/ManagerScreen/SalaryPaymentScreen/SalaryPaymentScreen.dart';
+import 'Screen/ManagerScreen/TVSaleScreen/TVSalesScreen.dart';
 import 'Screen/ManagerScreen/UpdatePaymentsScreen/UpdatePaymentScreen.dart';
 import 'Screen/User/Login/Screen/MyLogin.dart';
 import 'Screen/User/Login/Screen/VerifyOTP.dart';
@@ -197,6 +202,11 @@ class MyApp extends StatelessWidget {
             SVSaleReportScreen.screenName: (context) => SVSaleReportScreen(),
             PaymentReceiptScreen.screenName: (context) => PaymentReceiptScreen(),
             UpdatePaymentScreen.screenName: (context) => UpdatePaymentScreen(),
+            TodaysCashSummaryOnAccountList.screenName: (context) => TodaysCashSummaryOnAccountList(),
+            UnsettledSaleDetailList.screenName: (context) => UnsettledSaleDetailList(),
+            ImbalanceCountClickUI.screenName: (context) => ImbalanceCountClickUI(),
+            TVSalesScreen.screenName: (context) => TVSalesScreen(),
+            SalaryPaymentScreen.screenName: (context) => SalaryPaymentScreen(),
             //ManagerCashInHandScreenDetails.screenName: (context) => ManagerCashInHandScreenDetails(),
 
 

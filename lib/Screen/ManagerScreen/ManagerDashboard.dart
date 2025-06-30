@@ -28,6 +28,8 @@ import 'DashboardItemClickUI/DashboardPrepaidDetailUI.dart';
 import 'DashboardItemClickUI/DashboardPrepaidDetails.dart';
 import 'DashboardItemClickUI/DashboardSVDetails.dart';
 import 'DashboardItemClickUI/DashboardTVDetails.dart';
+import 'DashboardItemClickUI/TodaysCashSummaryOnAccountList.dart';
+import 'DashboardItemClickUI/UnsettledSaleDetailList.dart';
 import 'ManagerModelClass/GetCurrentStockDetailManagerModel.dart';
 import 'ManagerModelClass/GetManagerDashboarDetailModel.dart';
 
@@ -471,31 +473,52 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                             "(Pending) : ",
                                             style: Styling.textFormText,
                                           ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(left:5.0,right:5),
-                                            child: Text(
-                                              deliveryMenCount
-                                                  .toString(),
-                                              // Replace this with your dynamic data
-                                              style: Styling
-                                                  .countNumber,
-                                              textAlign:
-                                              TextAlign
-                                                  .center,
-                                            ),
-                                          ),
-                                          verticalDividerSmallest(),
-                                          Padding(
-                                            padding: const EdgeInsets.only(left:5.0,right:5),
-                                            child: Text(
-                                              formatCurrency(
-                                                  totalAmount ?? 0),
-                                              // Replace this with your dynamic data
-                                              style: Styling
-                                                  .countNumber,
-                                              textAlign:
-                                              TextAlign
-                                                  .center,
+                                          GestureDetector(
+                                              onTap:
+                                                () {
+                                              Navigator.pushNamed(
+                                                  context,
+                                                  UnsettledSaleDetailList.screenName
+                                              );
+                                            },
+                                            // No action when count is 0 or less
+                                            behavior: HitTestBehavior.opaque,
+                                            child: Row(
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.only(left:5.0,right:5),
+                                                  child: Text(
+                                                    deliveryMenCount
+                                                        .toString(),
+                                                    // Replace this with your dynamic data
+                                                    style:  Styling.countNumber.copyWith(
+                                                      color: Colors.blue,
+                                                      decoration: TextDecoration.underline,
+                                                      decorationColor: Colors.blue,
+                                                    ),
+                                                    textAlign:
+                                                    TextAlign
+                                                        .center,
+                                                  ),
+                                                ),
+                                                verticalDividerSmallestRed(),
+                                                Padding(
+                                                  padding: const EdgeInsets.only(left:5.0,right:5),
+                                                  child: Text(
+                                                    formatCurrency(
+                                                        totalAmount ?? 0),
+                                                    // Replace this with your dynamic data
+                                                    style:  Styling.countNumber.copyWith(
+                                                      color: Colors.blue,
+                                                      decoration: TextDecoration.underline,
+                                                      decorationColor: Colors.blue,
+                                                    ),
+                                                    textAlign:
+                                                    TextAlign
+                                                        .center,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ],
@@ -611,42 +634,62 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                               ),
                                                               Column(
                                                                 children: [
-                                                                  Row(
-                                                                    children: [
-                                                                      Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .only(
-                                                                            right:
-                                                                            8.0),
-                                                                        child:
-                                                                        Text(
-                                                                          formatCurrency(
-                                                                              onAccountToday!),
-                                                                          // Replace this with your dynamic data
-                                                                          style:
-                                                                          Styling.textFormText,
-                                                                          textAlign:
-                                                                          TextAlign.center,
+                                                                  GestureDetector(
+                                                                    onTap:
+                                                                        () {
+                                                                      Navigator.pushNamed(
+                                                                        context,
+                                                                        TodaysCashSummaryOnAccountList.screenName
+                                                                      );
+                                                                    },
+                                                                   // No action when count is 0 or less
+                                                                    behavior: HitTestBehavior.opaque,
+                                                                    child: Row(
+                                                                      children: [
+                                                                        Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .only(
+                                                                              right:
+                                                                              8.0),
+                                                                          child:
+                                                                          Text(
+                                                                            formatCurrency(
+                                                                                onAccountToday!),
+                                                                            // Replace this with your dynamic data
+                                                                            style:
+                                                                            // Styling.textFormText,
+                                                                            Styling.textFormText.copyWith(
+                                                                              color: Colors.blue,
+                                                                              decoration: TextDecoration.underline,
+                                                                              decorationColor: Colors.blue,
+                                                                            ),
+                                                                            textAlign:
+                                                                            TextAlign.center,
+                                                                          ),
                                                                         ),
-                                                                      ),
-                                                                      verticalDividerSmallest(),
-                                                                      Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .only(
-                                                                            left:
-                                                                            8.0),
-                                                                        child:
-                                                                        Text(
-                                                                          formatCurrency(
-                                                                              onAccountAsOfDate!),
-                                                                          // Replace this with your dynamic data
-                                                                          style:
-                                                                          Styling.textFormText,
-                                                                          textAlign:
-                                                                          TextAlign.center,
+                                                                        verticalDividerSmallestRed(),
+                                                                        Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .only(
+                                                                              left:
+                                                                              8.0),
+                                                                          child:
+                                                                          Text(
+                                                                            formatCurrency(
+                                                                                onAccountAsOfDate!),
+                                                                            // Replace this with your dynamic data
+                                                                            style:Styling.textFormText.copyWith(
+                                                                              color: Colors.blue,
+                                                                              decoration: TextDecoration.underline,
+                                                                              decorationColor: Colors.blue,
+                                                                            ),
+                                                                            // Styling.textFormText,
+                                                                            textAlign:
+                                                                            TextAlign.center,
+                                                                          ),
                                                                         ),
-                                                                      ),
-                                                                    ],
+                                                                      ],
+                                                                    ),
                                                                   ),
                                                                   SizedBox(
                                                                       height:
@@ -1161,85 +1204,94 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                                     ),
                                                                   ],
                                                                 ),
-                                                                Column(
-                                                                  children: [
-                                                                    GestureDetector(
-                                                                      onTap: totalPendingSettCnt! > 0
-                                                                          ? (){
-                                                                        Navigator.pushNamed(
-                                                                            context,
-                                                                            DashboardPrepaidDetails
-                                                                                .screenName,
-                                                                            arguments: {
-                                                                              "flag":"TotalOutstanding",
-                                                                            }
-                                                                        );
-                                                                      } : null,
-                                                                      behavior: HitTestBehavior.opaque,
-                                                                      child:
-                                                                      // Text(
-                                                                      //   settlDelPayPendC.toString(),
-                                                                      //   // Replace this with your dynamic data
-                                                                      //   style: Styling
-                                                                      //       .countNumber.copyWith(
-                                                                      //     color: Colors.blue, // Make the text blue like a link
-                                                                      //     decoration: TextDecoration.underline,// Underline the text
-                                                                      //     decorationColor: Colors.blue,
-                                                                      //   ),
-                                                                      //   textAlign:
-                                                                      //   TextAlign.center,
-                                                                      // ),
-                                                                      Row(
-                                                                        children: [
-                                                                          Text(
-                                                                            '${totalPendingSettCnt.toString()}', // Use 'N/A' if cDCMDPendSince is null
-                                                                            style: Styling.countNumber.copyWith(
-                                                                              color: Colors.blue,  // Make the text blue like a link
-                                                                              decoration: TextDecoration.underline, // Underline the text
-                                                                              decorationColor: Colors.blue,  // Underline color
-                                                                            ),
-                                                                            textAlign: TextAlign.center,
-                                                                          ),
-                                                                          Padding(
-                                                                            padding: const EdgeInsets.only(left:5.0,right:5),
-                                                                            child: verticalDividerSmallestRed(),
-                                                                          ),
-                                                                          Text(
-                                                                            '${totalPendingSettAmt?.toStringAsFixed(2)}', // Use 'N/A' if cDCMDPendSince is null
-                                                                            style: Styling.countNumber.copyWith(
-                                                                              color: Colors.black,  // Make the text blue like a link
-                                                                            ),
-                                                                            textAlign: TextAlign.center,
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                      //print('cDCMDPendSince value: $cDCMDPendSince');
-                                                                    ),
-                                                                    SizedBox(
-                                                                        height: 4),
-                                                                    // Space between count and label
-                                                                    Text(
-                                                                      "Since ($totalPendingSettSinceDate)",
-                                                                      // Label for emptyDiff
-                                                                      style: Styling
-                                                                          .textFormText,
-                                                                      textAlign:
-                                                                      TextAlign.center,
-                                                                    ),
-                                                                    Text(
-                                                                      'Total Outstanding,\npayment pending',
-                                                                      // Label for emptyDiff
-                                                                      style: Styling
-                                                                          .textFormText,
-                                                                      textAlign:
-                                                                      TextAlign.center,
-                                                                    ),
-                                                                  ],
-                                                                ),
                                                               ],
                                                             ),
+                                                            SizedBox(height: 5),
+                                                            Row(
+                                                                    mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceEvenly,
+                                                                children:[
+                                                              Column(
+                                                                children: [
+                                                                  GestureDetector(
+                                                                    onTap: totalPendingSettCnt! > 0
+                                                                        ? (){
+                                                                      Navigator.pushNamed(
+                                                                          context,
+                                                                          DashboardPrepaidDetails
+                                                                              .screenName,
+                                                                          arguments: {
+                                                                            "flag":"TotalOutstanding",
+                                                                          }
+                                                                      );
+                                                                    } : null,
+                                                                    behavior: HitTestBehavior.opaque,
+                                                                    child:
+                                                                    // Text(
+                                                                    //   settlDelPayPendC.toString(),
+                                                                    //   // Replace this with your dynamic data
+                                                                    //   style: Styling
+                                                                    //       .countNumber.copyWith(
+                                                                    //     color: Colors.blue, // Make the text blue like a link
+                                                                    //     decoration: TextDecoration.underline,// Underline the text
+                                                                    //     decorationColor: Colors.blue,
+                                                                    //   ),
+                                                                    //   textAlign:
+                                                                    //   TextAlign.center,
+                                                                    // ),
+                                                                    Row(
+                                                                      children: [
+                                                                        Text(
+                                                                          '${totalPendingSettCnt.toString()}', // Use 'N/A' if cDCMDPendSince is null
+                                                                          style: Styling.countNumber.copyWith(
+                                                                            color: Colors.blue,  // Make the text blue like a link
+                                                                            decoration: TextDecoration.underline, // Underline the text
+                                                                            decorationColor: Colors.blue,  // Underline color
+                                                                          ),
+                                                                          textAlign: TextAlign.center,
+                                                                        ),
+                                                                        Padding(
+                                                                          padding: const EdgeInsets.only(left:5.0,right:5),
+                                                                          child: verticalDividerSmallestRed(),
+                                                                        ),
+                                                                        Text(
+                                                                          '${totalPendingSettAmt?.toStringAsFixed(2)}', // Use 'N/A' if cDCMDPendSince is null
+                                                                          style: Styling.countNumber.copyWith(
+                                                                            color: Colors.black,  // Make the text blue like a link
+                                                                          ),
+                                                                          textAlign: TextAlign.center,
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    //print('cDCMDPendSince value: $cDCMDPendSince');
+                                                                  ),
+                                                                  SizedBox(
+                                                                      height: 4),
+                                                                  // Space between count and label
+                                                                  Text(
+                                                                    "Since ($totalPendingSettSinceDate)",
+                                                                    // Label for emptyDiff
+                                                                    style: Styling
+                                                                        .textFormText,
+                                                                    textAlign:
+                                                                    TextAlign.center,
+                                                                  ),
+                                                                  Text(
+                                                                    'Total Outstanding,\npayment pending',
+                                                                    // Label for emptyDiff
+                                                                    style: Styling
+                                                                        .textFormText,
+                                                                    textAlign:
+                                                                    TextAlign.center,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                             ]
+                                                                ),
                                                           ],
-                                                        )),
+                                                        )
+                                                             ),
                                                   ],
                                                 ),
                                                 // ),
@@ -3452,7 +3504,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
       String? addedBy = prefs.getString('StaffId');
       String? godownKeeperId = prefs.getString('godownKeeperId');
       String? token = prefs.getString('token'); // This is your bearer token
-
+      print("StaffId $addedBy'}");
       try {
         final response = await http.get(
           Uri.parse(

@@ -110,7 +110,8 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                       orElse: () => GetCurrentStcOfGodownKeeperModel(), // Default value if not found
                     );
                     return value.returnOn == "0001-01-01T00:00:00"
-                        ? Container(
+                        ?
+                    Container(
                       margin: EdgeInsets.all(2.0),
                       child: ListTile(
                         title: Padding(
@@ -183,7 +184,9 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                                Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
+                                  // item.emptyReturnQty! > 0?
                                   Text('Empty Return Qty'),
+                                  // Text('EMR Qty'),
                                   Text('Defective Return Qty'),
                                 ],
                               ),
@@ -192,7 +195,9 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
+                                    // item.emptyReturnQty! > 0?
                                     Text('${item.emptyReturnQty}',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
+                                    // Text('${item.eMRQty}',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
                                     Text('${item.defectiveReturnQty}',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16)),
                                   ],
                                 ),
@@ -251,50 +256,52 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                               var itemsToShow = value.itemDetails?.where(
                                     (item) => item.filledQty != 0,
                               ).toList();
-                              if (itemsToShow != null && itemsToShow.isNotEmpty) {
-                                // List to store names of items where filledQty > current stock
-                                List<String> invalidItems = [];
-                                // Loop through items and check if filledQty is greater than stock
-                                for (var item in itemsToShow) {
-                                  final stockInfo = getCurrentStcOfGodownKeeper.firstWhere(
-                                        (stock) => stock.itemId == item.itemId,
-                                    orElse: () => GetCurrentStcOfGodownKeeperModel(), // Default if not found
-                                  );
-                                  if (item.filledQty! > (stockInfo.currentStkEmpty ?? 0)) {
-                                    invalidItems.add(item.itemName ?? "Unknown Item");
-                                  }
-                                }
-                                if (invalidItems.isNotEmpty) {
-                                  // Show AlertDialog if there are items with invalid quantity
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return
-                                        AlertDialog(
-                                        title: Text(""),
-                                        content: Text(
-                                          "The following items have a quantity greater than the available stock:\n\n" +
-                                              invalidItems.join("\n"),
-                                        ),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () {
-                                              Navigator.pop(context); // Close the dialog
-                                            },
-                                            child: Text("OK"),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  );
-                                } else {
-                                  // Proceed with showing details dialog if no invalid qty
-                                  var receiptId = value.receiptId;
-                                  showDetailsDialog(context, itemsToShow, receiptId);
-                                }
-                              } else {
-                                showFlushBar(context, Constants.nodataFound);
-                              }
+                              var receiptId = value.receiptId;
+                              showDetailsDialog(context, itemsToShow!, receiptId);
+                              // if (itemsToShow != null && itemsToShow.isNotEmpty) {
+                              //   // List to store names of items where filledQty > current stock
+                              //   List<String> invalidItems = [];
+                              //   // Loop through items and check if filledQty is greater than stock
+                              //   for (var item in itemsToShow) {
+                              //     final stockInfo = getCurrentStcOfGodownKeeper.firstWhere(
+                              //           (stock) => stock.itemId == item.itemId,
+                              //       orElse: () => GetCurrentStcOfGodownKeeperModel(), // Default if not found
+                              //     );
+                              //     if (item.filledQty! > (stockInfo.currentStkEmpty ?? 0)) {
+                              //       invalidItems.add(item.itemName ?? "Unknown Item");
+                              //     }
+                              //   }
+                              //   if (invalidItems.isNotEmpty) {
+                              //     // Show AlertDialog if there are items with invalid quantity
+                              //     showDialog(
+                              //       context: context,
+                              //       builder: (BuildContext context) {
+                              //         return
+                              //           AlertDialog(
+                              //           title: Text(""),
+                              //           content: Text(
+                              //             "The following items have a quantity greater than the available stock:\n\n" +
+                              //                 invalidItems.join("\n"),
+                              //           ),
+                              //           actions: [
+                              //             TextButton(
+                              //               onPressed: () {
+                              //                 Navigator.pop(context); // Close the dialog
+                              //               },
+                              //               child: Text("OK"),
+                              //             ),
+                              //           ],
+                              //         );
+                              //       },
+                              //     );
+                              //   } else {
+                              //     // Proceed with showing details dialog if no invalid qty
+                              //     var receiptId = value.receiptId;
+                              //     showDetailsDialog(context, itemsToShow, receiptId);
+                              //   }
+                              // } else {
+                              //   showFlushBar(context, Constants.nodataFound);
+                              // }
                             }else{
                               CustomAlertDialog.showCustomAlert(context, Constants.stockNotAccepted);
                             }
@@ -371,12 +378,10 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
     List<TextEditingController> returnQtyControllers = [];
     List<TextEditingController> defectiveQtyControllers = [];
 
-
     // Initialize controllers for each item
     for (var item in items) {
       returnQtyControllers.add(TextEditingController(text: item.filledQty.toString()));
       defectiveQtyControllers.add(TextEditingController(text: "0"));
-
     }
 
     showDialog(
@@ -421,6 +426,7 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                           } else if (defectiveQty > 0) {
                             int? f = filledQty?.toInt();
                             if(defectiveQty>filledQty!){
+                              debugPrint("def3");
                               showFlushBar(context, Constants.defectiveQtyItemReturn);
                             }else{
                               // If defective quantity is a valid number, subtract it from the filled quantity
@@ -432,13 +438,10 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                             // Handle invalid inputs, revert to filled quantity if input is invalid
                             returnQtyControllers[index].text = filledQty.toString();
                           }
-
                           // Update the defective quantity controller
                           defectiveQtyControllers[index].text = defectiveQty.toString();
                         },
                       ),
-
-
                       Divider(),
                     ],
                   ),
@@ -460,6 +463,7 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                 List<Map<String, dynamic>> updatedItemDetails = [];
                 bool isValid = true;
                 bool isValidDefStock =  true;
+                bool isValidEmptyStock = true;
                 String errorMessage = "";
 
                 for (int i = 0; i < items.length; i++) {
@@ -475,45 +479,95 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
 
                   // Check if returnQty + emrQty exceeds the current stock (currentStkEmpty)
                   num currentStkDef = currentStock.currentStkDefective ?? 0;
+                  num currentStkEmpty = currentStock.currentStkEmpty ?? 0;
 
-                  if (defectiveQty> currentStkDef) {
-                    isValidDefStock = false;
+                  if(returnQty > currentStkEmpty){
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return
+                          AlertDialog(
+                            title: Text(""),
+                            content: Text(
+                              "The following items have a quantity greater than the available stock:\n\n" +
+                                  (items[i].itemName ?? ''),
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context); // Close the dialog
+                                },
+                                child: Text("OK"),
+                              ),
+                            ],
+                          );
+                      },
+                    );
+                    isValidEmptyStock = false;
+                    debugPrint("def2");
                     errorMessage = "Return quantity and EMR quantity cannot exceed the current stock for ${items[i].itemName}.";
-                    break;
+                    debugPrint("errorMessage$errorMessage");
+                    return;
+                  }else{
+                    if (defectiveQty> currentStkDef) {
+                      debugPrint("def1");
+                      showFlushBar(context, Constants.defectiveSaleQtyDailySale);
+                      isValidDefStock = false;
+                      errorMessage = "Defective qty exceeds current defective stock for this item, kindly check the qty entered or add defective stock.";
+                      return;
+                    }
+
+                    // Check if the sum of returnQty and defectiveQty exceeds the filledQty
+                    if (returnQty + defectiveQty > filledQty!) {
+                      showFlushBar(context, Constants.defectiveQtyItemReturn);
+                      isValid = false;
+                      errorMessage = "Defective quantity must be less than the return quantity.";
+                      return; // Stop the loop if validation fails
+                    }
+                    // if(returnQty < defectiveQty){
+                    //   isValid = false;
+                    //   errorMessage = "Defective quantity cannot exceed the Return quantity for ${items[i].filledQty}.";
+                    //   break;
+                    // }
+
+                    updatedItemDetails.add({
+                      "ItemId": items[i].itemId,
+                      "EmptyReturnQty": returnQty,
+                      "DefectiveQty": defectiveQty,
+                    });
+                  }
+                  // if(!isValidDefStock){
+                  //   showFlushBar(context, Constants.defectiveSaleQtyDailySale);
+                  // }else{
+                  //   // If validation fails, show an error message
+                  //   if (!isValid) {
+                  //     // Display the error message as a SnackBar
+                  //     showFlushBar(context, Constants.defectiveQtyItemReturn);
+                  //   } else {
+                  //     // Send the data to the API if validation is successful
+                  //     await sendItemDetailsToApi(updatedItemDetails, receiptId);
+                  //     // Close the dialog
+                  //     Navigator.of(context).pop();
+                  //   }
+                  // }
                   }
 
-                  // Check if the sum of returnQty and defectiveQty exceeds the filledQty
-                  if (returnQty + defectiveQty > filledQty!) {
-                    isValid = false;
-                    errorMessage = "Return quantity and defective quantity cannot exceed the filled quantity for ${items[i].filledQty}.";
-                    break; // Stop the loop if validation fails
-                  }
-                    if(returnQty < defectiveQty){
-                      isValid = false;
-                      errorMessage = "Defective quantity cannot exceed the Return quantity for ${items[i].filledQty}.";
-                      break;
-                    }
-                  updatedItemDetails.add({
-                    "ItemId": items[i].itemId,
-                    "EmptyReturnQty": returnQty,
-                    "DefectiveQty": defectiveQty,
-                  });
-                }
-                  if(!isValidDefStock){
-                    showFlushBar(context, Constants.defectiveSaleQtyDailySale);
-                  }else{
-                    // If validation fails, show an error message
-                    if (!isValid) {
-                      // Display the error message as a SnackBar
-                      showFlushBar(context, Constants.defectiveQtyItemReturn);
-                    } else {
-                      // Send the data to the API if validation is successful
-                      await sendItemDetailsToApi(updatedItemDetails, receiptId);
-                      // Close the dialog
+                if(!isValidDefStock){
+                  showFlushBar(context, Constants.defectiveSaleQtyDailySale);
+                }else{
+                  // If validation fails, show an error message
+                  if (!isValid) {
+                    // Display the error message as a SnackBar
+                    showFlushBar(context, Constants.defectiveQtyItemReturn);
+                  } else {
+                    // Send the data to the API if validation is successful
+                    await sendItemDetailsToApi(updatedItemDetails, receiptId);
+                    // Close the dialog
+                    if (mounted) {
                       Navigator.of(context).pop();
                     }
                   }
-
+                }
               },
               child: Text("Out",style: TextStyle(color: Colors.white,fontSize: 14,),),
               style: ElevatedButton.styleFrom(
@@ -528,6 +582,170 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
       },
     );
   }
+
+  // void showDetailsDialog(BuildContext context, List<ItemDetails> items, num? receiptId) {
+  //   // Controllers to track changes in text fields
+  //   List<TextEditingController> returnQtyControllers = [];
+  //   List<TextEditingController> defectiveQtyControllers = [];
+  //
+  //
+  //   // Initialize controllers for each item
+  //   for (var item in items) {
+  //     returnQtyControllers.add(TextEditingController(text: item.filledQty.toString()));
+  //     defectiveQtyControllers.add(TextEditingController(text: "0"));
+  //
+  //   }
+  //
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) {
+  //       return AlertDialog(
+  //         title: Text('Details for Items Return'),
+  //         content: SingleChildScrollView(
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             children: items.asMap().map((index, item) {
+  //               return MapEntry(
+  //                 index,
+  //                 Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.start,
+  //                   children: [
+  //                     // Item Name (Non-editable)
+  //                     Text("Item Name: ${item.itemName}"),
+  //                     // Editable Return Qty
+  //                     TextFormField(
+  //                       controller: returnQtyControllers[index],
+  //                       decoration: InputDecoration(labelText: 'Return Qty'),
+  //                       keyboardType: TextInputType.number,
+  //                       enabled: false,
+  //                     ),
+  //                     // Editable Defective Qty
+  //                     // Editable Defective Qty
+  //                     // Editable Defective Qty
+  //                     TextFormField(
+  //                       controller: defectiveQtyControllers[index],
+  //                       decoration: InputDecoration(labelText: 'Defective'),
+  //                       keyboardType: TextInputType.number,
+  //                       onChanged: (newValue) {
+  //                         // Get the current value of return quantity and filled quantity
+  //                         num? filledQty = items[index].filledQty;
+  //                         int defectiveQty = int.tryParse(newValue) ?? 0;
+  //                         int returnQty = int.tryParse(returnQtyControllers[index].text) ?? 0;
+  //
+  //                         if (newValue.isEmpty) {
+  //                           // If the defective quantity is cleared, reset return quantity to filled quantity
+  //                           returnQtyControllers[index].text = filledQty.toString();
+  //                         } else if (defectiveQty > 0) {
+  //                           int? f = filledQty?.toInt();
+  //                           if(defectiveQty>filledQty!){
+  //                             showFlushBar(context, Constants.defectiveQtyItemReturn);
+  //                           }else{
+  //                             // If defective quantity is a valid number, subtract it from the filled quantity
+  //                             int remainingReturnQty = f! - defectiveQty;
+  //                             returnQtyControllers[index].text = remainingReturnQty.toString();
+  //                           }
+  //
+  //                         } else {
+  //                           // Handle invalid inputs, revert to filled quantity if input is invalid
+  //                           returnQtyControllers[index].text = filledQty.toString();
+  //                         }
+  //
+  //                         // Update the defective quantity controller
+  //                         defectiveQtyControllers[index].text = defectiveQty.toString();
+  //                       },
+  //                     ),
+  //
+  //
+  //                     Divider(),
+  //                   ],
+  //                 ),
+  //               );
+  //             }).values.toList(),
+  //           ),
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () {
+  //               Navigator.of(context).pop(); // Close the dialog
+  //             },
+  //             child: Text("Close",style: TextStyle(fontWeight:FontWeight.bold,fontSize: 14),),
+  //           ),
+  //
+  //           ElevatedButton(
+  //             onPressed: () async {
+  //               // Gather the updated item details, including ItemId, EmptyReturnQty, and DefectiveQty
+  //               List<Map<String, dynamic>> updatedItemDetails = [];
+  //               bool isValid = true;
+  //               bool isValidDefStock =  true;
+  //               String errorMessage = "";
+  //
+  //               for (int i = 0; i < items.length; i++) {
+  //                 int returnQty = int.tryParse(returnQtyControllers[i].text) ?? 0;
+  //                 int defectiveQty = int.tryParse(defectiveQtyControllers[i].text) ?? 0;
+  //                 num? filledQty = items[i].filledQty;
+  //
+  //                 // Find the current stock for the item (using the itemId)
+  //                 GetCurrentStcOfGodownKeeperModel? currentStock = getCurrentStcOfGodownKeeper.firstWhere(
+  //                         (stock) => stock.itemId == items[i].itemId,
+  //                     orElse: () => GetCurrentStcOfGodownKeeperModel()
+  //                 );
+  //
+  //                 // Check if returnQty + emrQty exceeds the current stock (currentStkEmpty)
+  //                 num currentStkDef = currentStock.currentStkDefective ?? 0;
+  //
+  //                 if (defectiveQty> currentStkDef) {
+  //                   isValidDefStock = false;
+  //                   errorMessage = "Return quantity and EMR quantity cannot exceed the current stock for ${items[i].itemName}.";
+  //                   break;
+  //                 }
+  //
+  //                 // Check if the sum of returnQty and defectiveQty exceeds the filledQty
+  //                 if (returnQty + defectiveQty > filledQty!) {
+  //                   isValid = false;
+  //                   errorMessage = "Return quantity and defective quantity cannot exceed the filled quantity for ${items[i].filledQty}.";
+  //                   break; // Stop the loop if validation fails
+  //                 }
+  //                 if(returnQty < defectiveQty){
+  //                   isValid = false;
+  //                   errorMessage = "Defective quantity cannot exceed the Return quantity for ${items[i].filledQty}.";
+  //                   break;
+  //                 }
+  //                 updatedItemDetails.add({
+  //                   "ItemId": items[i].itemId,
+  //                   "EmptyReturnQty": returnQty,
+  //                   "DefectiveQty": defectiveQty,
+  //                 });
+  //               }
+  //               if(!isValidDefStock){
+  //                 showFlushBar(context, Constants.defectiveSaleQtyDailySale);
+  //               }else{
+  //                 // If validation fails, show an error message
+  //                 if (!isValid) {
+  //                   // Display the error message as a SnackBar
+  //                   showFlushBar(context, Constants.defectiveQtyItemReturn);
+  //                 } else {
+  //                   // Send the data to the API if validation is successful
+  //                   await sendItemDetailsToApi(updatedItemDetails, receiptId);
+  //                   // Close the dialog
+  //                   Navigator.of(context).pop();
+  //                 }
+  //               }
+  //
+  //             },
+  //             child: Text("Out",style: TextStyle(color: Colors.white,fontSize: 14,),),
+  //             style: ElevatedButton.styleFrom(
+  //               backgroundColor: Colors.blue, // Button expands to fill available width// Text color of the button
+  //               shape: RoundedRectangleBorder( // Optional: Set rounded corners
+  //                 borderRadius: BorderRadius.circular(50),
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
+
 
   Future<void> sendItemDetailsToApi(List<Map<String, dynamic>> itemDetails, num? receiptId) async {
     Constants.isNetworkAvailable =
@@ -556,20 +774,25 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
         body: requestBody,
       );
 
-      print("Request requestBody: ${requestBody}");
+      print("Request requestBodyItemReturnAddEdit: ${requestBody}");
       if (response.statusCode == 200) {
         // Handle successful response
         // Navigator.pushReplacementNamed(context, DashboardScreen.screenName);
         // Navigator.pushReplacementNamed(context, '/godownDashboard');
-        Future.delayed(Duration(milliseconds: 300), () {
-          // Navigator.pushReplacementNamed(context, DashboardScreen.screenName);
-          Navigator.pushReplacementNamed(context, BottomNavigationForGodownKeeper.screenName);
+        // Future.delayed(Duration(milliseconds: 300), () {
+        //   // Navigator.pushReplacementNamed(context, DashboardScreen.screenName);
+        //   Navigator.pushReplacementNamed(context, BottomNavigationForGodownKeeper.screenName);
+        //
+        // });
 
+        Future.delayed(Duration(milliseconds: 300), () {
+          if (!mounted) return; // Prevent accessing context if widget is disposed
+          Navigator.pushReplacementNamed(context, BottomNavigationForGodownKeeper.screenName);
         });
-        print("Request successful: ${response.body}");
+        print("Request successfulItemReturnAddEdit: ${response.body}");
       } else {
         // Handle failure response
-        print("Request failed: ${response.statusCode}");
+        print("Request failedItemReturnAddEdit: ${response.statusCode}");
       }
     }else{
       showFlushBar(context,

@@ -54,7 +54,6 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
   List<GetStockTransferListModel> _stockTransferList = [];
   bool stockTransferFlag = false;
   @override
-
   void initState() {
     super.initState();
     updateRefillSale = UpdateRefillSale();
@@ -1004,12 +1003,15 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
             showFlushBar(context, Constants.dataDeletedFail);
           }
         } else {
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   SnackBar(content: Text('Enter record for that delivery boy..!')),
-          // );
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(Constants.failToInserRecord)),
+          );
         }
       } catch (e) {
         print('Error sending data to API: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(Constants.failToInserRecord)),
+        );
       }
     } else {
       showFlushBar(
@@ -1179,6 +1181,7 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
     // Convert the map values to a list and return
     return groupedDataMap.values.toList();
   }
+
   Future<void> fetchTransactionList() async {
     Constants.isNetworkAvailable =
     await InternetConnectionChecker().hasConnection;

@@ -53,7 +53,7 @@ class _ItemReturnXMIListScreenState extends State<ItemReturnXMIListScreen> {
 
       child: Scaffold(
           appBar: CustomAppBar(
-            title: 'Receive EXMI', // Title or hint text for the text field
+            title: 'Receipt EXMI', // Title or hint text for the text field
           ),
           body: RefreshIndicator(
             onRefresh: _refresh,

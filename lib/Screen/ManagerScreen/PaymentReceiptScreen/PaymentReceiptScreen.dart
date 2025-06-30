@@ -141,19 +141,19 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
         String paymentModeEdit = argValue["paymentModeV"] ?? '0';
         String paymentToIDEdit = argValue["paymentToIDV"] ?? '0';
         String staffNameEdit = argValue["staffNameV"] ?? '0';
-        String customerNameEdit = argValue["customerNameV"] ?? '0';
+        String customerNameEdit = argValue["customerNameV"] ?? '';
 
         selectedItemId = int.tryParse(argValue["staffIdV"] ?? '') ?? 0;
         _selectedCustomerId = int.tryParse(argValue["customerIdV"] ?? '') ?? 0;
 
-
+        debugPrint("selectedItemId $selectedItemId");
+        debugPrint("_selectedCustomerId $_selectedCustomerId");
         if(getTransMode.contains(paymentModeEdit)){
           selectedTransMode = paymentModeEdit;
         }
         else{
           selectedTransMode = null;
         }
-
 
         String vehicleNoEdit = argValue["vehicleNoV"] ?? '0';
         double amountTotalEdit = double.tryParse(argValue["amountTotalV"] ?? '') ?? 0.0;
@@ -209,29 +209,28 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
           );
           debugPrint("Staff selected during edit: ${selectedstaff?.staffId}");
         }else{
-            // Set the staff mode and perform customer lookup
-            if (receiptFromID == 2) {
-              selectedStaffMode = "Reticulated Or ND";
-              getCustomerList().whenComplete(() {
-                selectedCustomer = customerModel.firstWhere(
-                      (item) => item.customerName == staffNameEdit,
-                  orElse: () => GetCustomerListModel(customerName: ''),
-                );
-              });
-              debugPrint("Customer selected in Reticulated Or ND mode: $staffNameEdit");
-            } else if (receiptFromID == 3) {
-              selectedStaffMode = "Other";
-              getCustomerList().whenComplete(() {
-                selectedCustomer = customerModel.firstWhere(
-                      (item) => item.customerName == staffNameEdit,
-                  orElse: () => GetCustomerListModel(customerName: ''),
-                );
-              });
-              debugPrint("Customer selected in Other mode: $staffNameEdit");
-            }
-
+          // Set the staff mode and perform customer lookup
+          if (receiptFromID == 2) {
+            debugPrint("receiptFromID: ${receiptFromID}");
+            selectedStaffMode = "Reticulated Or ND";
+            await getCustomerList();
+            selectedCustomer = customerModel.firstWhere(
+                  (item) => item.customerId == _selectedCustomerId,
+              orElse: () => GetCustomerListModel(customerName: ''),
+            );
+            debugPrint("Customer selected in Reticulated Or ND mode: $selectedCustomer");
+          } else if (receiptFromID == 3) {
+            debugPrint("receiptFromID2: ${receiptFromID}");
+            selectedStaffMode = "Other";
+            await getCustomerList();
+            selectedCustomer = customerModel.firstWhere(
+                  (item) => item.customerId == _selectedCustomerId,
+              orElse: () => GetCustomerListModel(customerName: ''),
+            );
+            debugPrint("Customer selected in Other mode: $selectedCustomer");
+          }
+          debugPrint("receiptFromID3: ${receiptFromID}");
         }
-
 
         // Handle bank and account details
         fetchBank().then((_) {
@@ -254,161 +253,403 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    var argLRAdd = ModalRoute.of(context)?.settings.arguments;
+    return
+      WillPopScope(
+        onWillPop: () async {
+          if (argLRAdd == "fromDrawer") {
+            Navigator.pushReplacementNamed(context, '/bottomNavBarExample');
+            return false;
+          } else {
+            Navigator.pushReplacementNamed(context, '/bottomNavBarExample');
+            return false;
+          }
+        },
+        child: Scaffold(
         appBar:CustomAppBarManager(
-        title: 'Payments Receipt', // Title or hint text for the text field
-    ),
-      body:  Padding(
-        padding: const EdgeInsets.only(left: 5.0,right: 5,top: 15,bottom: 15),
-        child: SingleChildScrollView(
-          child:
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: textWidgetBlueColorWithoutStar(
-                        'Receipt No'),
-                  ),
-                  Flexible(flex: 1,
-                    child:
-                   Text(
-                      modes == "EDIT" ? (receiptNoTextEdit ?? '') : (receiptNoText ?? ''),
-                       style: TextStyle(color: Colors.grey),
-               ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: textWidgetBlueColorWithoutStar('Receipt Date'),
-                  ),
-                  Flexible(flex: 1,
-                    child: Text(''
-                      "$formattedDate",
-                      style: TextStyle(color: Colors.grey),
+          title: 'Payments Receipt', // Title or hint text for the text field
+        ),
+        body:  Padding(
+          padding: const EdgeInsets.only(left: 5.0,right: 5,top: 15,bottom: 15),
+          child: SingleChildScrollView(
+            child:
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: textWidgetBlueColorWithoutStar(
+                          'Receipt No'),
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child:
-                    textWidgetBlueColorWithStar(
-                      'Payment Mode',
-                      "*", // Add a parameter to conditionally show the asterisk
+                    Flexible(flex: 1,
+                      child:
+                      Text(
+                        modes == "EDIT" ? (receiptNoTextEdit ?? '') : (receiptNoText ?? ''),
+                        style: TextStyle(color: Colors.grey),
+                      ),
                     ),
-                  ),
-                  Flexible(flex: 1,
-                    child:
-                    DropdownButtonFormField<String>(
-                      key: formKey1,
-                      decoration: InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 10),
-                      ),
-                      value: selectedTransMode,
-                      // Bind the selected value
-                      items: getTransMode.map((String value) =>
-                          DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          ))
-                          .toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          selectedTransMode =
-                              value;
-                        });
-                      },
-                      isExpanded: true,
-                    ),
-                  ),
-                ],
-              ),
-              if (selectedTransMode == 'Cash')
-                Container(
-                  height: 30,
-                  decoration: BoxDecoration(
-                    color: Colors.blue[200],
-                    borderRadius: BorderRadius.all(Radius.circular(2)),
-                  ),
-                  child: Row(
-                    children: [
-                      // First Half (Cash Denomination)
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _selectedIndex = 0; // Show Container 1
-                            });
-                          },
-                          child: Container(
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: _selectedIndex == 0
-                                  ? Colors.blue
-                                  : Colors.blue[200],
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(2),
-                                bottomLeft: Radius.circular(2),
-                              ),
-                            ),
-                            child: Text(
-                              "Cash Denomination",
-                              style: Styling.buttonTextBlack.copyWith(
-                                color: _selectedIndex == 0
-                                    ? Colors.white
-                                    : Colors.black,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      // Second Half (Cash Return)
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              _selectedIndex = 1; // Show Container 2
-                            });
-                          },
-                          child: Container(
-                            alignment: Alignment.center,
-                            decoration: BoxDecoration(
-                              color: _selectedIndex == 1
-                                  ? Colors.blue
-                                  : Colors.blue[200],
-                              borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(2),
-                                bottomRight: Radius.circular(2),
-                              ),
-                            ),
-                            child: Text(
-                              "Cash Return",
-                              style: Styling.buttonTextBlack.copyWith(
-                                color: _selectedIndex == 1
-                                    ? Colors.white
-                                    : Colors.black,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                  ],
                 ),
-              if (selectedTransMode == 'Cash')
+                SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: textWidgetBlueColorWithoutStar('Receipt Date'),
+                    ),
+                    Flexible(flex: 1,
+                      child: Text(''
+                          "$formattedDate",
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child:
+                      textWidgetBlueColorWithStar(
+                        'Payment Mode',
+                        "*", // Add a parameter to conditionally show the asterisk
+                      ),
+                    ),
+                    Flexible(flex: 1,
+                      child:
+                      DropdownButtonFormField<String>(
+                        key: formKey1,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 10),
+                        ),
+                        value: selectedTransMode,
+                        // Bind the selected value
+                        items: getTransMode.map((String value) =>
+                            DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            ))
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedTransMode =
+                                value;
+                          });
+                        },
+                        isExpanded: true,
+                      ),
+                    ),
+                  ],
+                ),
+                if (selectedTransMode == 'Cash')
+                  Container(
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: Colors.blue[200],
+                      borderRadius: BorderRadius.all(Radius.circular(2)),
+                    ),
+                    child: Row(
+                      children: [
+                        // First Half (Cash Denomination)
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _selectedIndex = 0; // Show Container 1
+                              });
+                            },
+                            child: Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: _selectedIndex == 0
+                                    ? Colors.blue
+                                    : Colors.blue[200],
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(2),
+                                  bottomLeft: Radius.circular(2),
+                                ),
+                              ),
+                              child: Text(
+                                "Cash Denomination",
+                                style: Styling.buttonTextBlack.copyWith(
+                                  color: _selectedIndex == 0
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        // Second Half (Cash Return)
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _selectedIndex = 1; // Show Container 2
+                              });
+                            },
+                            child: Container(
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: _selectedIndex == 1
+                                    ? Colors.blue
+                                    : Colors.blue[200],
+                                borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(2),
+                                  bottomRight: Radius.circular(2),
+                                ),
+                              ),
+                              child: Text(
+                                "Cash Return",
+                                style: Styling.buttonTextBlack.copyWith(
+                                  color: _selectedIndex == 1
+                                      ? Colors.white
+                                      : Colors.black,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                if (selectedTransMode == 'Cash')
+                  Visibility(
+                    visible: _selectedIndex == 0,
+                    child: Column(
+                      children: [
+                        Column(
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                // Background color of the box
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                    width:
+                                    1), // Optional: Add rounded corners
+                              ),
+                              child: Column(
+                                children: [
+                                  // First Row with Vertical Divider
+                                  SizedBox(
+                                    height: 50,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.center,
+                                      // Center the row content
+                                      children: [
+                                        // First Text and Divider inside Expanded to ensure equal size
+                                        Expanded(
+                                          flex: 2,
+                                          child: Center(
+                                              child: Text(
+                                                "Note Type",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 14),
+                                              )), // Centering the text
+                                        ),
+                                        Expanded(
+                                          flex: 3,
+                                          child: Center(
+                                              child: Text(
+                                                "Qty",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 14),
+                                              )), // Centering the text
+                                        ),
+                                        Expanded(
+                                          flex: 3,
+                                          child: Center(
+                                              child: Text(
+                                                "Amount",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 14),
+                                              )), // Centering the text
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  ListView.builder(
+                                    shrinkWrap: true,
+                                    physics: BouncingScrollPhysics(),
+                                    itemCount:
+                                    getNoteTypeAndIdFroDenominationListModel
+                                        .length,
+                                    itemBuilder: (context, index) {
+                                      final data =
+                                      getNoteTypeAndIdFroDenominationListModel[
+                                      index];
+                                      return Column(
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                            children: [
+                                              Expanded(
+                                                flex: 2,
+                                                child: Center(
+                                                  child: Text(
+                                                    "${data.noteType}",
+                                                    style: TextStyle(
+                                                        fontSize: 12),
+                                                    textAlign:
+                                                    TextAlign.left,
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                flex: 1,
+                                                child: Center(
+                                                  child: Text(
+                                                    "X",
+                                                    style: TextStyle(
+                                                        fontSize: 12),
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                flex: 3,
+                                                child: Center(
+                                                  child: TextField(
+                                                    controller:
+                                                    qtyController[
+                                                    index],
+                                                    keyboardType:
+                                                    TextInputType
+                                                        .number,
+                                                    inputFormatters: <TextInputFormatter>[
+                                                      FilteringTextInputFormatter
+                                                          .digitsOnly,
+                                                    ],
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        amounts[
+                                                        index] = (double.tryParse(
+                                                            value) ?? 0.0) *
+                                                            data.noteType!;
+                                                        totalAmount = amounts.fold(
+                                                            0.0, (sum, amount) => sum + amount);
+                                                        finalAmountCashDeno = totalAmount - returnAmount;
+                                                        isQtyFilled[index] = value.isNotEmpty; // Mark index as filled
+                                                        debugPrint(
+                                                            "Collected$totalAmount");
+                                                      });
+                                                    },
+                                                    textAlign:
+                                                    TextAlign.center,
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                flex: 1,
+                                                child: Center(
+                                                  child: Text(
+                                                    "=",
+                                                    style: TextStyle(
+                                                        fontSize: 12),
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                flex: 3,
+                                                child: Center(
+                                                  child: Text(
+                                                    "${amounts[index].toStringAsFixed(2)}",
+                                                    style: TextStyle(
+                                                        fontSize: 12),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Padding(
+                                    padding:
+                                    const EdgeInsets.only(right: 8.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.end,
+                                      children: [
+                                        Column(
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  flex: 0,
+                                                  child: Text(
+                                                    "Collected:",
+                                                    style: Styling
+                                                        .itemBlackTestBold,
+                                                    //textAlign: TextAlign.left,
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  flex: 0,
+                                                  child: Text(
+                                                    totalAmount
+                                                        .toStringAsFixed(
+                                                        2),
+                                                    style: Styling
+                                                        .itemBlackTestBold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(height: 5),
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  flex: 0,
+                                                  child: Text(
+                                                    "Final Total:",
+                                                    style: Styling
+                                                        .itemBlackTestBold,
+                                                    textAlign:
+                                                    TextAlign.left,
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  flex: 0,
+                                                  child: Text(
+                                                    finalAmountCashDeno
+                                                        .toStringAsFixed(2),
+                                                    style: Styling
+                                                        .itemBlackTestBold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                 Visibility(
-                  visible: _selectedIndex == 0,
+                  visible: _selectedIndex == 1,
                   child: Column(
                     children: [
                       Column(
@@ -511,7 +752,7 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
                                               child: Center(
                                                 child: TextField(
                                                   controller:
-                                                  qtyController[
+                                                  qtyControllerReturn[
                                                   index],
                                                   keyboardType:
                                                   TextInputType
@@ -522,20 +763,17 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
                                                   ],
                                                   onChanged: (value) {
                                                     setState(() {
-                                                      amounts[
-                                                      index] = (double.tryParse(
-                                                          value) ?? 0.0) *
+                                                      amountsReturn[index] = (double.tryParse(value) ?? 0.0) *
                                                           data.noteType!;
-                                                      totalAmount = amounts.fold(
-                                                          0.0, (sum, amount) => sum + amount);
+                                                      returnAmount = amountsReturn.fold(0.0, (sum, amount) =>
+                                                      sum + amount);
                                                       finalAmountCashDeno = totalAmount - returnAmount;
-                                                      isQtyFilled[index] = value.isNotEmpty; // Mark index as filled
-                                                      debugPrint(
-                                                          "Collected$totalAmount");
+                                                      debugPrint("return$returnAmount");
                                                     });
                                                   },
-                                                  textAlign:
-                                                  TextAlign.center,
+                                                  textAlign: TextAlign.center,
+                                                  enabled: !isQtyFilled.containsKey(index) ||
+                                                      !isQtyFilled[index]!,
                                                 ),
                                               ),
                                             ),
@@ -553,7 +791,7 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
                                               flex: 3,
                                               child: Center(
                                                 child: Text(
-                                                  "${amounts[index].toStringAsFixed(2)}",
+                                                  "${amountsReturn[index].toStringAsFixed(2)}",
                                                   style: TextStyle(
                                                       fontSize: 12),
                                                 ),
@@ -582,7 +820,7 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
                                               Expanded(
                                                 flex: 0,
                                                 child: Text(
-                                                  "Collected:",
+                                                  "Return:",
                                                   style: Styling
                                                       .itemBlackTestBold,
                                                   //textAlign: TextAlign.left,
@@ -591,7 +829,7 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
                                               Expanded(
                                                 flex: 0,
                                                 child: Text(
-                                                  totalAmount
+                                                  returnAmount
                                                       .toStringAsFixed(
                                                       2),
                                                   style: Styling
@@ -600,6 +838,7 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
                                               ),
                                             ],
                                           ),
+                                          // Final Total section
                                           SizedBox(height: 5),
                                           Row(
                                             children: [
@@ -637,782 +876,578 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
                     ],
                   ),
                 ),
-              Visibility(
-                visible: _selectedIndex == 1,
-                child: Column(
-                  children: [
-                    Column(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            // Background color of the box
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(
-                                width:
-                                1), // Optional: Add rounded corners
-                          ),
-                          child: Column(
-                            children: [
-                              // First Row with Vertical Divider
-                              SizedBox(
-                                height: 50,
-                                child: Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.center,
-                                  // Center the row content
-                                  children: [
-                                    // First Text and Divider inside Expanded to ensure equal size
-                                    Expanded(
-                                      flex: 2,
-                                      child: Center(
-                                          child: Text(
-                                            "Note Type",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14),
-                                          )), // Centering the text
-                                    ),
-                                    Expanded(
-                                      flex: 3,
-                                      child: Center(
-                                          child: Text(
-                                            "Qty",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14),
-                                          )), // Centering the text
-                                    ),
-                                    Expanded(
-                                      flex: 3,
-                                      child: Center(
-                                          child: Text(
-                                            "Amount",
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14),
-                                          )), // Centering the text
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              ListView.builder(
-                                shrinkWrap: true,
-                                physics: BouncingScrollPhysics(),
-                                itemCount:
-                                getNoteTypeAndIdFroDenominationListModel
-                                    .length,
-                                itemBuilder: (context, index) {
-                                  final data =
-                                  getNoteTypeAndIdFroDenominationListModel[
-                                  index];
-                                  return Column(
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                        children: [
-                                          Expanded(
-                                            flex: 2,
-                                            child: Center(
-                                              child: Text(
-                                                "${data.noteType}",
-                                                style: TextStyle(
-                                                    fontSize: 12),
-                                                textAlign:
-                                                TextAlign.left,
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 1,
-                                            child: Center(
-                                              child: Text(
-                                                "X",
-                                                style: TextStyle(
-                                                    fontSize: 12),
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 3,
-                                            child: Center(
-                                              child: TextField(
-                                                controller:
-                                                qtyControllerReturn[
-                                                index],
-                                                keyboardType:
-                                                TextInputType
-                                                    .number,
-                                                inputFormatters: <TextInputFormatter>[
-                                                  FilteringTextInputFormatter
-                                                      .digitsOnly,
-                                                ],
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    amountsReturn[index] = (double.tryParse(value) ?? 0.0) *
-                                                        data.noteType!;
-                                                    returnAmount = amountsReturn.fold(0.0, (sum, amount) =>
-                                                    sum + amount);
-                                                    finalAmountCashDeno = totalAmount - returnAmount;
-                                                    debugPrint("return$returnAmount");
-                                                  });
-                                                },
-                                                textAlign: TextAlign.center,
-                                                enabled: !isQtyFilled.containsKey(index) ||
-                                                    !isQtyFilled[index]!,
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 1,
-                                            child: Center(
-                                              child: Text(
-                                                "=",
-                                                style: TextStyle(
-                                                    fontSize: 12),
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 3,
-                                            child: Center(
-                                              child: Text(
-                                                "${amountsReturn[index].toStringAsFixed(2)}",
-                                                style: TextStyle(
-                                                    fontSize: 12),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  );
-                                },
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Padding(
-                                padding:
-                                const EdgeInsets.only(right: 8.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.end,
-                                  children: [
-                                    Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              flex: 0,
-                                              child: Text(
-                                                "Return:",
-                                                style: Styling
-                                                    .itemBlackTestBold,
-                                                //textAlign: TextAlign.left,
-                                              ),
-                                            ),
-                                            Expanded(
-                                              flex: 0,
-                                              child: Text(
-                                                returnAmount
-                                                    .toStringAsFixed(
-                                                    2),
-                                                style: Styling
-                                                    .itemBlackTestBold,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        // Final Total section
-                                        SizedBox(height: 5),
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              flex: 0,
-                                              child: Text(
-                                                "Final Total:",
-                                                style: Styling
-                                                    .itemBlackTestBold,
-                                                textAlign:
-                                                TextAlign.left,
-                                              ),
-                                            ),
-                                            Expanded(
-                                              flex: 0,
-                                              child: Text(
-                                                finalAmountCashDeno
-                                                    .toStringAsFixed(2),
-                                                style: Styling
-                                                    .itemBlackTestBold,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              if (selectedTransMode == 'Online')
-                Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child:
-                          DropdownButtonFormField<
-                              GetBankMappingDetailsListModel>(
-                            value:bankModel.contains(_selectBankModel)?_selectBankModel:null ,
-                            items: bankModel.map((item) {
-                              return DropdownMenuItem<
-                                  GetBankMappingDetailsListModel>(
-                                value: item,
-                                child: Text(
-                                  '${item.bankName ?? ''} - ${item.accountNo ?? ''}',
-                                ),
-                              );
-                            }).toList(),
-                            onChanged: (selectedItem) {
-                              setState(() {
-                                _selectBankModel = selectedItem;
-                                selectedBankName = selectedItem?.bankName;
-                                selectedBankId = selectedItem?.accountNo;
-                                selecteBankIDApi = selectedItem?.bankId?.toInt();
-                                accMappingId = selectedItem?.mappingId?.toInt();
-                              });
-                            },
-                            hint: Text('Select Acc No'),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child:
-                          TextField(
-                            controller: TranCodeController,
-                            maxLengthEnforcement: MaxLengthEnforcement.enforced, // Enforce max length
-                            inputFormatters: <TextInputFormatter>[
-                              LengthLimitingTextInputFormatter(30), // Limit the length to 30 characters
-                            ],
-                            decoration: InputDecoration(
-                              errorText: _isTranscode
-                                  ? 'Transaction code is Required'
-                                  : null,
-                              label: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  countTextWidgetTextStar(
-                                    context,
-                                    'Transaction Code',
-                                    showAsterisk: true,
-                                  ),
-                                ],
-                              ),
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 8.0, horizontal: 12.0),
-                            ),
-                            onChanged: (value) {
-                              setState(() {
-                                _isTranscode = value.isEmpty;
-                              });
-                            },
-                          ),
-                        ),
-                        SizedBox(width: 8),
-                        Expanded(
-                          child: TextField(
-                            controller: timeController,
-                            inputFormatters: <TextInputFormatter>[
-                              LengthLimitingTextInputFormatter(6),
-                              FilteringTextInputFormatter.digitsOnly,
-                            ],
-                            decoration: InputDecoration(
-                              labelText: 'Time',
-                            ),
-                            onChanged: (value) {
-                              setState(() {});
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child:
-                          TextField(
-                            controller: transReviewController,
-                            decoration: InputDecoration(
-                              labelText: 'Transaction Remark',
-                            ),
-                            maxLines: 2, // Allows multiline remarks
-                            onChanged: (value) {
-                              setState(() {});
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child:
-                    textWidgetBlueColorWithStar(
-                      'Receipt From',
-                      "*", // Add a parameter to conditionally show the asterisk
-                    ),
-                  ),
-                  Flexible(
-                    flex: 1,
-                    child: DropdownButtonFormField<String>(
-                      key: formKey2,
-                      decoration: InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                      ),
-                      //value: selectedStaffMode,
-                      value:getStaff.contains(selectedStaffMode) ? selectedStaffMode : null,
-
-                      items: getStaff.map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          selectedStaffMode = value;  // Updates selectedStaffMode when an item is selected
-                        });
-                      },
-                      isExpanded: true,
-                    ),
-                  ),
-                ],
-              ),
-             if(selectedStaffMode == 'Staff')...[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: textWidgetBlueColorWithStar(
-                          'Staff Name',
-                          "*"
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left:0.0),
-                        child:
-                        DropdownButtonFormField<GetStaffDetailsListModel>(
-                          isExpanded: true,
-                          key: formKey3,
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                          ),
-                          value:staffmodel.contains(selectedstaff)?selectedstaff:null ,
-                          items: staffmodel.map((item) {
-                            return DropdownMenuItem<GetStaffDetailsListModel>(
-                              value: item,
-                              child: Text(
-                                item.staffName ?? '',
-                                style: Styling.itemBlackTest,
-                              ),
-                            );
-                          }).toList(),
-                          onChanged: (selectedItem) {
-                            setState(() {
-                              selectedstaff = selectedItem;
-                              _selectedItem = selectedItem?.staffName ?? '';
-                              selectedItemId = selectedItem?.staffId?.toInt();
-                            });
-
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 15),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: textWidgetBlueColorWithoutStar(
-                          'Balance'),
-                    ),
-                    Flexible(
-                      flex: 1,
-                      child: Text(
-                        '2,34,519',
-                        style: TextStyle(color: Colors.grey),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-              if(selectedStaffMode == 'Reticulated Or ND' || selectedStaffMode == 'Other')...[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    textWidgetBlueColorWithStar(
-                      'Customer Name',
-                      "*",
-                    ),
-                    SizedBox(width: 10,),
-                    ElevatedButton(
-                      onPressed: (){
-                        setState(() {
-                          _showAddCustomerPopup();
-                        });
-                      },
-                      // onPressed: _addNewItem,
-                      child: Icon(
-                        Icons.add,
-                        color: Colors.white,
-                      ),
-                      style: ElevatedButton.styleFrom(
-                          shape: CircleBorder(),
-                          padding: EdgeInsets.all(12),
-                          backgroundColor: Colors.blue),
-                    ),
-                    SizedBox(width: 20,),
-                        Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(left:0.0),
+                if (selectedTransMode == 'Online')
+                  Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
                             child:
-                            DropdownButtonFormField<GetCustomerListModel>(
-                              isExpanded: true,
-                              key: formKey4,
-                              decoration: InputDecoration(
-                                contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                              ),
-                              value:customerModel.contains(selectedCustomer)?selectedCustomer:null ,
-                              items: customerModel.map((item) {
-                                return DropdownMenuItem<GetCustomerListModel>(
+                            DropdownButtonFormField<
+                                GetBankMappingDetailsListModel>(
+                              value:bankModel.contains(_selectBankModel)?_selectBankModel:null ,
+                              items: bankModel.map((item) {
+                                return DropdownMenuItem<
+                                    GetBankMappingDetailsListModel>(
                                   value: item,
                                   child: Text(
-                                    item.customerName ?? '',
-                                    style: Styling.itemBlackTest,
+                                    '${item.bankName ?? ''} - ${item.accountNo ?? ''}',
                                   ),
                                 );
                               }).toList(),
                               onChanged: (selectedItem) {
                                 setState(() {
-                                  selectedCustomer = selectedItem;
-                                  _selectedCustomer = selectedItem?.customerName ?? '';
-                                  _selectedCustomerId = selectedItem?.customerId!.toInt();
+                                  _selectBankModel = selectedItem;
+                                  selectedBankName = selectedItem?.bankName;
+                                  selectedBankId = selectedItem?.accountNo;
+                                  selecteBankIDApi = selectedItem?.bankId?.toInt();
+                                  accMappingId = selectedItem?.mappingId?.toInt();
+                                });
+                              },
+                              hint: Text('Select Acc No'),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child:
+                            TextField(
+                              controller: TranCodeController,
+                              maxLengthEnforcement: MaxLengthEnforcement.enforced, // Enforce max length
+                              // inputFormatters: <TextInputFormatter>[
+                              //   LengthLimitingTextInputFormatter(30), // Limit the length to 30 characters
+                              // ],
+                              inputFormatters: <TextInputFormatter>[
+                                LengthLimitingTextInputFormatter(30), // Limit to 30 characters
+                                FilteringTextInputFormatter.deny(
+                                  RegExp(r'[^\u0000-\u007F]'), // Block emojis and non-ASCII characters
+                                ),
+                                FilteringTextInputFormatter.deny(
+                                  RegExp(r'\s'), // Block all whitespace including space, tab, etc.
+                                ),
+                              ],
+                              decoration: InputDecoration(
+                                errorText: _isTranscode
+                                    ? 'Transaction code is Required'
+                                    : null,
+                                label: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    countTextWidgetTextStar(
+                                      context,
+                                      'Transaction Code',
+                                      showAsterisk: true,
+                                    ),
+                                  ],
+                                ),
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 8.0, horizontal: 12.0),
+                              ),
+                              onChanged: (value) {
+                                setState(() {
+                                  _isTranscode = value.isEmpty;
                                 });
                               },
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                SizedBox(height: 5),
-               ],
-              // SizedBox(height: 5),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: textWidgetBlueColorWithStar(
-                      'Amount',
-                      "*",
-                    ),
+                          SizedBox(width: 8),
+                          Expanded(
+                            child: TextField(
+                              controller: timeController,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.allow(RegExp(r'^\d{0,2}:?\d{0,2}$')),
+                                LengthLimitingTextInputFormatter(5),
+                              ],
+                              decoration: InputDecoration(
+                                labelText: 'Time',
+                              ),
+                              onChanged: (value) {
+                                setState(() {});
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child:
+                            TextField(
+                              controller: transReviewController,
+                              inputFormatters: [
+                                LengthLimitingTextInputFormatter(250), // Limit to 250 characters
+                              ],
+                              decoration: InputDecoration(
+                                labelText: 'Transaction Remark',
+                              ),
+                              maxLines: 2, // Allows multiline remarks
+                              onChanged: (value) {
+                                setState(() {});
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
-                  Flexible(
-                    flex: 1,
-                    child: TextField(
-                      controller: amountController,
-                      keyboardType: TextInputType.number,
-                      onChanged: (value) {
-                        setState(() {
-                          _isDepositEmpty = value.isEmpty;
-                          double val = double.tryParse(value.replaceAll(',', '')) ?? 0;
-                          if (val > totalAmount!) {
-                            amountController.clear();
-                          }
-                          // if (val > totalAmount || val < totalAmount) {
-                          //   amountController.clear();
-                          // }
-                        });
+                SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child:
+                      textWidgetBlueColorWithStar(
+                        'Receipt From',
+                        "*", // Add a parameter to conditionally show the asterisk
+                      ),
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: DropdownButtonFormField<String>(
+                        key: formKey2,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                        ),
+                        //value: selectedStaffMode,
+                        value:getStaff.contains(selectedStaffMode) ? selectedStaffMode : null,
+
+                        items: getStaff.map((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedStaffMode = value;  // Updates selectedStaffMode when an item is selected
+                          });
+                        },
+                        isExpanded: true,
+                      ),
+                    ),
+                  ],
+                ),
+                if(selectedStaffMode == 'Staff')...[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: textWidgetBlueColorWithStar(
+                            'Staff Name',
+                            "*"
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left:0.0),
+                          child:
+                          DropdownButtonFormField<GetStaffDetailsListModel>(
+                            isExpanded: true,
+                            key: formKey3,
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                            ),
+                            value:staffmodel.contains(selectedstaff)?selectedstaff:null ,
+                            items: staffmodel.map((item) {
+                              return DropdownMenuItem<GetStaffDetailsListModel>(
+                                value: item,
+                                child: Text(
+                                  item.staffName ?? '',
+                                  style: Styling.itemBlackTest,
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (selectedItem) {
+                              setState(() {
+                                selectedstaff = selectedItem;
+                                _selectedItem = selectedItem?.staffName ?? '';
+                                selectedItemId = selectedItem?.staffId?.toInt();
+                              });
+
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 15),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: textWidgetBlueColorWithoutStar(
+                            'Balance'),
+                      ),
+                      Flexible(
+                        flex: 1,
+                        child: Text(
+                          '0',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+                if(selectedStaffMode == 'Reticulated Or ND' || selectedStaffMode == 'Other')...[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      textWidgetBlueColorWithStar(
+                        'Customer Name',
+                        "*",
+                      ),
+                      SizedBox(width: 10,),
+                      ElevatedButton(
+                        onPressed: (){
+                          setState(() {
+                            _showAddCustomerPopup();
+                          });
+                        },
+                        // onPressed: _addNewItem,
+                        child: Icon(
+                          Icons.add,
+                          color: Colors.white,
+                        ),
+                        style: ElevatedButton.styleFrom(
+                            shape: CircleBorder(),
+                            padding: EdgeInsets.all(12),
+                            backgroundColor: Colors.blue),
+                      ),
+                      SizedBox(width: 20,),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left:0.0),
+                          child:
+                          DropdownButtonFormField<GetCustomerListModel>(
+                            isExpanded: true,
+                            key: formKey4,
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                            ),
+                            value:customerModel.contains(selectedCustomer)?selectedCustomer:null ,
+                            items: customerModel.map((item) {
+                              return DropdownMenuItem<GetCustomerListModel>(
+                                value: item,
+                                child: Text(
+                                  item.customerName ?? '',
+                                  style: Styling.itemBlackTest,
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (selectedItem) {
+                              setState(() {
+                                selectedCustomer = selectedItem;
+                                _selectedCustomer = selectedItem?.customerName ?? '';
+                                _selectedCustomerId = selectedItem?.customerId!.toInt();
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 5),
+                ],
+                // SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: textWidgetBlueColorWithStar(
+                        'Amount',
+                        "*",
+                      ),
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: TextField(
+                        controller: amountController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.deny(RegExp(r'\s')), // Disallow spaces
+                          FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')), // Allow digits and one decimal
+                          LengthLimitingTextInputFormatter(9), // Limit to 9 characters total
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            _isDepositEmpty = value.isEmpty;
+                            double val = double.tryParse(value.replaceAll(',', '')) ?? 0;
+                            if(selectedTransMode == "Cash") {
+                              if (val > totalAmount) {
+                                amountController.clear();
+                              }
+                            }
+                            // if (val > totalAmount || val < totalAmount) {
+                            //   amountController.clear();
+                            // }
+                          });
+                        },
+                        decoration: InputDecoration(
+                          hintText: 'Amount',
+                          errorText: _isDepositEmpty ? 'Amount is required' : null,
+                          errorStyle: TextStyle(color: Colors.red),
+                          focusedErrorBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.red),
+                          ),
+                          errorBorder: UnderlineInputBorder(
+                            borderSide: BorderSide(color: Colors.red),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: textWidgetBlueColorWithoutStar(
+                          'Remark'
+                      ),
+                    ),
+                    Flexible(flex: 1,
+                      child:
+                      TextField(
+                        controller: remarkController,
+                        inputFormatters: [
+                          LengthLimitingTextInputFormatter(250), // Limit to 250 characters
+                        ],
+                        decoration: InputDecoration(
+                          labelText: 'Enter your remarks',
+                          // border: OutlineInputBorder(),
+                        ),
+                        maxLines: 2, // Allows multiline remarks
+
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        cancelAction();
                       },
-                      decoration: InputDecoration(
-                        hintText: 'Amount',
-                        errorText: _isDepositEmpty ? 'Amount is required' : null,
-                        errorStyle: TextStyle(color: Colors.red),
-                        focusedErrorBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.red),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
                         ),
-                        errorBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.red),
+                        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      ),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: textWidgetBlueColorWithoutStar(
-                        'Remark'
-                    ),
-                  ),
-                  Flexible(flex: 1,
-                    child:
-                    TextField(
-                      controller: remarkController,
-                      decoration: InputDecoration(
-                        labelText: 'Enter your remarks',
-                        // border: OutlineInputBorder(),
-                      ),
-                      maxLines: 2, // Allows multiline remarks
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      cancelAction();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                    ),
-                    child: Text(
-                      'Cancel',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
 
-                  SizedBox(width: 10), // Adds space between buttons
+                    SizedBox(width: 10), // Adds space between buttons
 
-                  ElevatedButton(
-                    onPressed: () {
-                      if (modes == "EDIT") {
-                        // Null check for paymentIdEdit
+                    ElevatedButton(
+                      onPressed: () {
+                        if (modes == "EDIT") {
+                          // Null check for paymentIdEdit
                           customerAddEditForMob(receiptId!, "EDIT");
-                      } else {
-                        customerAddEditForMob(0, "ADD");
-                      }
-                      //customerAddEditForMob(0, "ADD");
-                    },
-                    style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey,
-                      //backgroundColor: modes == "EDIT" ? Colors.blue : Colors.grey,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
+                        } else {
+                          customerAddEditForMob(0, "ADD");
+                        }
+                        //customerAddEditForMob(0, "ADD");
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        //backgroundColor: modes == "EDIT" ? Colors.blue : Colors.grey,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 10, // Adjust padding to make button smaller
+                        ),
                       ),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 20,
-                        vertical: 10, // Adjust padding to make button smaller
+                      child: Text(
+                        modes == "EDIT" ? 'Update' : 'Save',
+                        // 'Save',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
-                    child: Text(
-                      modes == "EDIT" ? 'Update' : 'Save',
-                     // 'Save',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-             SizedBox(height: 10),
-              Card(
-                child: customerListModel.isNotEmpty
-                    ? ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: customerListModel.length,
-                  itemBuilder: (context, index) {
-                    GetBankcashReceiptListModel? payList = customerListModel[index];
-                    return  Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Expanded(child: Text(payList.receiptDate ?? '', style: TextStyle(color: Colors.blue),),),
-                            Expanded(child: Text(payList.receiptNo ?? '', style: TextStyle(color: Colors.blue),),),
-                            Expanded(
-                              flex: 0,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,  // Align the icons to the right
-                                children: [
-                                  // Edit Icon
-                                  IconButton(
-                                    icon: Icon(Icons.edit, color: Colors.blue),  // Icon for edit
-                                    onPressed: () {
-                                      setState(() {
-                                        var payVoucherNo = payList.receiptNo.toString();
-                                        var depositDate = payList.receiptDate.toString();
-                                        var paymentMode = payList.receiptMode.toString();
-                                        var paymentToId = payList.receiptFrom.toString();
-                                        var staffName = payList.staffName.toString();
-                                        var staffId = payList.staffId.toString();
-                                        var customerId = payList.customerId.toString();
-                                        var customerName = payList.vendorName.toString();
-                                        var amountTotal = payList.amount.toString();
-                                        var payRemark = payList.remarkForVendor.toString();
-                                        var transTime = payList.transTime.toString();
-                                        var transationCode = payList.transationCode.toString();
-                                        var transRemark = payList.transRemark.toString();
-                                        var bankId = payList.bankId.toString();
-                                        var mappingId = payList.mappingId.toString();
-                                        var accountNo = payList.accountNo.toString();
-                                        //var remark = payList.remarkForVendor.toString();
-                                        var receiptId = payList.receiptId.toString();
-                                        var receiptFromID = payList.receiptFrom.toString();
-                                        int payId = int.parse(receiptId);
-                                        Navigator.pushNamed(
-                                          context,
-                                          PaymentReceiptScreen.screenName,
-                                          arguments: {
+                  ],
+                ),
+                SizedBox(height: 10),
+                Card(
+                  child: customerListModel.isNotEmpty
+                      ? ListView.builder(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: customerListModel.length,
+                    itemBuilder: (context, index) {
+                      GetBankcashReceiptListModel? payList = customerListModel[index];
+                      return  Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Expanded(child: Text(payList.receiptDate ?? '', style: TextStyle(color: Colors.blue),),),
+                              Expanded(child: Text(payList.receiptNo ?? '', style: TextStyle(color: Colors.blue),),),
+                              Expanded(
+                                flex: 0,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,  // Align the icons to the right
+                                  children: [
+                                    // Edit Icon
+                                    IconButton(
+                                      icon: Icon(Icons.edit, color: Colors.blue),  // Icon for edit
+                                      onPressed: () {
+                                        setState(() {
+                                          var payVoucherNo = payList.receiptNo.toString();
+                                          var depositDate = payList.receiptDate.toString();
+                                          var paymentMode = payList.receiptMode.toString();
+                                          var paymentToId = payList.receiptFrom.toString();
+                                          var staffName = payList.staffName.toString();
+                                          var staffId = payList.staffId.toString();
+                                          var customerId = payList.customerId.toString();
+                                          var customerName = payList.vendorName.toString();
+                                          var amountTotal = payList.amount.toString();
+                                          var payRemark = payList.remarkForVendor.toString();
+                                          var transTime = payList.transTime.toString();
+                                          var transationCode = payList.transationCode.toString();
+                                          var transRemark = payList.transRemark.toString();
+                                          var bankId = payList.bankId.toString();
+                                          var mappingId = payList.mappingId.toString();
+                                          var accountNo = payList.accountNo.toString();
+                                          //var remark = payList.remarkForVendor.toString();
+                                          var receiptId = payList.receiptId.toString();
+                                          var receiptFromID = payList.receiptFrom.toString();
+                                          int payId = int.parse(receiptId);
+                                          Navigator.pushNamed(
+                                            context,
+                                            PaymentReceiptScreen.screenName,
+                                            arguments: {
 
-                                        'receiptNoV': payVoucherNo,
-                                        'depositDateV': depositDate,
-                                        'paymentModeV': paymentMode,
-                                        'paymentToIDV': paymentToId,
-                                        'staffNameV' : staffName,
-                                        'customerIdV' : customerId,
-                                        'customerNameV' : customerName,
-                                        'staffIdV': staffId,
-                                        'remarkEditV': payRemark,
-                                        'amountTotalV': amountTotal,
-                                        'payRemarkV': payRemark,
-                                        'transTimeV': transTime,
-                                        'transationCodeV': transationCode,
-                                        'transRemarkV': transRemark,
-                                        'bankIdV': bankId,
-                                        'mappingIdV': mappingId,
-                                        'accountNoV': accountNo,
-                                        'receiptIdEdit': receiptId,
-                                        'receiptFromIDs': receiptFromID,
-                                        'modeChange': "EDIT"
+                                              'receiptNoV': payVoucherNo,
+                                              'depositDateV': depositDate,
+                                              'paymentModeV': paymentMode,
+                                              'paymentToIDV': paymentToId,
+                                              'staffNameV' : staffName,
+                                              'customerIdV' : customerId,
+                                              'customerNameV' : customerName,
+                                              'staffIdV': staffId,
+                                              'remarkEditV': payRemark,
+                                              'amountTotalV': amountTotal,
+                                              'payRemarkV': payRemark,
+                                              'transTimeV': transTime,
+                                              'transationCodeV': transationCode,
+                                              'transRemarkV': transRemark,
+                                              'bankIdV': bankId,
+                                              'mappingIdV': mappingId,
+                                              'accountNoV': accountNo,
+                                              'receiptIdEdit': receiptId,
+                                              'receiptFromIDs': receiptFromID,
+                                              'modeChange': "EDIT"
+                                            },
+                                          );
+                                        });
+                                      },
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.delete, color: Colors.red), // Icon for delete
+                                      onPressed: () async {
+                                        int? pId = (payList.receiptId)?.toInt();
+                                        print('Delete button pressedd${payList.receiptId}');
+                                        // Show confirmation dialog
+                                        bool? confirmDelete = await showDialog<bool>(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text('Are you sure?'),
+                                              content: const Text('You want to delete?'),
+                                              actions: <Widget>[
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop(false); // User pressed Cancel
+                                                  },
+                                                  child: const Text('Cancel'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop(true); // User pressed Delete
+                                                  },
+                                                  child: const Text('Delete'),
+                                                ),
+                                              ],
+                                            );
                                           },
                                         );
-                                      });
-                                    },
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.delete, color: Colors.red), // Icon for delete
-                                    onPressed: () async {
-                                      int? pId = (payList.receiptId)?.toInt();
-                                      print('Delete button pressedd${payList.receiptId}');
-                                      // Show confirmation dialog
-                                      bool? confirmDelete = await showDialog<bool>(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: const Text('Are you sure?'),
-                                            content: const Text('You want to delete?'),
-                                            actions: <Widget>[
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.of(context).pop(false); // User pressed Cancel
-                                                },
-                                                child: const Text('Cancel'),
-                                              ),
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.of(context).pop(true); // User pressed Delete
-                                                },
-                                                child: const Text('Delete'),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
 
-                                      // If user confirmed deletion
-                                      if (confirmDelete == true) {
-                                        // Check if receiptId is not null
-                                        // int? pId = payList.receiptId;
-                                        if (pId != null) {
-                                          selectedItemId  = payList.staffId?.toInt()?? 0;
-                                          _selectedCustomerId  = payList.customerId?.toInt()?? 0;
-                                          customerAddEditForMob(pId, "DELETE");
-                                          print('Delete button pressed$pId');
+                                        // If user confirmed deletion
+                                        if (confirmDelete == true) {
+                                          // Check if receiptId is not null
+                                          // int? pId = payList.receiptId;
+                                          if (pId != null) {
+                                            selectedItemId  = payList.staffId?.toInt()?? 0;
+                                            _selectedCustomerId  = payList.customerId?.toInt()?? 0;
+                                            customerAddEditForMob(pId, "DELETE");
+                                            print('Delete button pressed$pId');
+                                          } else {
+                                            print("Receipt ID is null.");
+                                          }
                                         } else {
-                                          print("Receipt ID is null.");
+                                          print('Delete action was canceled');
                                         }
-                                      } else {
-                                        print('Delete action was canceled');
-                                      }
-                                    },
-                                  ),
-                                ],
+                                      },
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 2),
-                        Row(
-                          children: [
-                            Expanded(flex:1,child: countTextWidgetText(context,"Staff/Vendor Name", payList.staffName ?? '')),
-                          ],
-                        ),
-                        SizedBox(height: 2),
-                        Row(
-                          children: [
-                            Expanded(flex:1,child: countTextWidgetText(context,"Receipt Mode", payList.receiptMode ?? '')),
-                            Expanded(flex:1,child: countTextWidgetText(context,"Amount", payList.amount.toString()  )),
-                          ],
-                        ),
-                        SizedBox(height: 2),
-                        Row(
-                          children: [
-                            Expanded(flex:1,child: countTextWidgetText(context,"Account No", payList.accountNo ?? '')),
-                          ],
-                        ),
-                        Divider(
-                            color: Colors.white70, thickness: 3
-                        ),
-                      ],
-                    );
-                  },
-                )
-                    : Center(
-                  child: Text('No Records Found'),
+                            ],
+                          ),
+                          SizedBox(height: 2),
+                          Row(
+                            children: [
+                              Expanded(flex:1,child: countTextWidgetText(context,"Staff/Vendor Name", payList.staffName ?? '')),
+                            ],
+                          ),
+                          SizedBox(height: 2),
+                          Row(
+                            children: [
+                              Expanded(flex:1,child: countTextWidgetText(context,"Receipt Mode", payList.receiptMode ?? '')),
+                              Expanded(flex:1,child: countTextWidgetText(context,"Amount", payList.amount.toString()  )),
+                            ],
+                          ),
+                          SizedBox(height: 2),
+                          Row(
+                            children: [
+                              Expanded(flex:1,child: countTextWidgetText(context,"Account No", payList.accountNo ?? '')),
+                            ],
+                          ),
+                          Divider(
+                              color: Colors.white70, thickness: 3
+                          ),
+                        ],
+                      );
+                    },
+                  )
+                      : Center(
+                    child: Text('No Records Found'),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-   );
+            ),
+      );
   }
 
   Future<void> getNoteTypeAndIDList() async {
@@ -1624,140 +1659,140 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
               title: Text("Add Vendor Name"),
               content: SingleChildScrollView(
                 child:
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Flexible(
-                    flex: 1,
-                    child:
-                    Padding(
-                      padding: const EdgeInsets.only(left:0.0),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      flex: 1,
                       child:
-                    DropdownButtonFormField<GetCustTypeListModel>(
-                      isExpanded: true,
-                      key: formKey5,
-                      decoration: InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                      ),
-                      value:customerTypeModel.contains(selectedCustomerType)?selectedCustomerType:null ,
-                      items: customerTypeModel.map((item) {
-                        return DropdownMenuItem<GetCustTypeListModel>(
-                          value: item,
-                          child: Text(
-                            item.customerType ?? '',
-                            style: Styling.itemBlackTest,
+                      Padding(
+                        padding: const EdgeInsets.only(left:0.0),
+                        child:
+                        DropdownButtonFormField<GetCustTypeListModel>(
+                          isExpanded: true,
+                          key: formKey5,
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
                           ),
-                        );
-                      }).toList(),
-                      onChanged: (selectedItem) {
+                          value:customerTypeModel.contains(selectedCustomerType)?selectedCustomerType:null ,
+                          items: customerTypeModel.map((item) {
+                            return DropdownMenuItem<GetCustTypeListModel>(
+                              value: item,
+                              child: Text(
+                                item.customerType ?? '',
+                                style: Styling.itemBlackTest,
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (selectedItem) {
+                            setState(() {
+                              selectedCustomerType = selectedItem;
+                              _selectedCustomerType = selectedItem?.customerType ?? '';
+                              _selectedCustomerTypeId = selectedItem?.custTypeId?.toString();
+                            });
+                          },
+                          hint: Text('Customer Type'),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    TextField(
+                      controller: customerNameController,
+                      maxLengthEnforcement: MaxLengthEnforcement.enforced, // Enforce max length
+                      inputFormatters: <TextInputFormatter>[
+                      ],
+                      decoration: InputDecoration(
+                        errorText: _isCustomerName ? 'Customer Name Is Required' : null,
+
+                        label: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            countTextWidgetTextStar(
+                              context,
+                              'Customer Name',
+                              showAsterisk: true,
+                            ),
+                          ],
+                        ),
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
+                      ),
+                      onChanged: (value) {
                         setState(() {
-                          selectedCustomerType = selectedItem;
-                          _selectedCustomerType = selectedItem?.customerType ?? '';
-                          _selectedCustomerTypeId = selectedItem?.custTypeId?.toString();
+                          _isCustomerName = value.isEmpty;
                         });
                       },
-                      hint: Text('Customer Type'),
                     ),
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  TextField(
-                    controller: customerNameController,
-                    maxLengthEnforcement: MaxLengthEnforcement.enforced, // Enforce max length
-                    inputFormatters: <TextInputFormatter>[
-                    ],
-                    decoration: InputDecoration(
-                      errorText: _isCustomerName ? 'Customer Name Is Required' : null,
-
-                      label: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          countTextWidgetTextStar(
-                            context,
-                            'Customer Name',
-                            showAsterisk: true,
-                          ),
-                        ],
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                          vertical: 8.0, horizontal: 12.0),
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        _isCustomerName = value.isEmpty;
-                      });
-                    },
-                  ),
-                  SizedBox(height: 10),
-                  TextField(
-                    controller: mobileNumberController,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.digitsOnly,
-                      LengthLimitingTextInputFormatter(10),
-                    ],
-                    decoration: InputDecoration(
-                      errorText: _isConContactEmpty
-                          ? 'Mobile No Is Required'
-                          : _isInvalidMobile
-                          ? 'Please Enter A Valid Consumer Contact No.'
-                          : _isShortLength
-                          ? 'Consumer Contact No. must be 10 digits'
-                          : null,
-                      label: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          countTextWidgetTextStar(
-                            context,
-                            'Customer Contact No',
-                            showAsterisk: true,
-                          ),
-                        ],
-                      ),
-                      contentPadding: EdgeInsets.symmetric(
-                          vertical: 8.0, horizontal: 12.0),
-                    ),
-                    onChanged: (value) {
-                      setState(() {
-                        _isConContactEmpty = value.isEmpty;
-                        if (value.isNotEmpty) {
-                          _isInvalidMobile = !RegExp(r'^[6789]').hasMatch(value); // Check first digit
-                          _isShortLength = value.length < 10;
-                        } else {
-                          _isInvalidMobile = false; // Reset the error if the input is empty
-                          _isShortLength = false;
-                        }
-                      });
-                    },
-                  ),
-                  SizedBox(height: 10),
-                TextField(
-                  controller: customerEmailController,
-                  maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                  inputFormatters: <TextInputFormatter>[],
-                  decoration: InputDecoration(
-                    errorText: _isCustomerEmailInvalid ? 'Enter a valid email address' : null,
-                    label: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        countTextWidgetTextStar(
-                          context,
-                          'Customer Email',
-                          showAsterisk: true,
-                        ),
+                    SizedBox(height: 10),
+                    TextField(
+                      controller: mobileNumberController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(10),
                       ],
+                      decoration: InputDecoration(
+                        errorText: _isConContactEmpty
+                            ? 'Mobile No Is Required'
+                            : _isInvalidMobile
+                            ? 'Please Enter A Valid Consumer Contact No.'
+                            : _isShortLength
+                            ? 'Consumer Contact No. must be 10 digits'
+                            : null,
+                        label: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            countTextWidgetTextStar(
+                              context,
+                              'Customer Contact No',
+                              showAsterisk: true,
+                            ),
+                          ],
+                        ),
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 8.0, horizontal: 12.0),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          _isConContactEmpty = value.isEmpty;
+                          if (value.isNotEmpty) {
+                            _isInvalidMobile = !RegExp(r'^[6789]').hasMatch(value); // Check first digit
+                            _isShortLength = value.length < 10;
+                          } else {
+                            _isInvalidMobile = false; // Reset the error if the input is empty
+                            _isShortLength = false;
+                          }
+                        });
+                      },
                     ),
-                    contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                  ),
-                  onChanged: (value) {
-                    setState(() {
-                      _isCustomerEmailInvalid = value.isEmpty || !_isValidEmail(value);
-                    });
-                  },
+                    SizedBox(height: 10),
+                    TextField(
+                      controller: customerEmailController,
+                      maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                      inputFormatters: <TextInputFormatter>[],
+                      decoration: InputDecoration(
+                        errorText: _isCustomerEmailInvalid ? 'Enter a valid email address' : null,
+                        label: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            countTextWidgetTextStar(
+                              context,
+                              'Customer Email',
+                              showAsterisk: true,
+                            ),
+                          ],
+                        ),
+                        contentPadding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          _isCustomerEmailInvalid = value.isEmpty || !_isValidEmail(value);
+                        });
+                      },
+                    ),
+                  ],
                 ),
-                ],
               ),
-             ),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -1765,7 +1800,6 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
                     mobileNumberController.clear();
                     customerEmailController.clear();
                     selectedCustomerType = null;
-                    // Navigator.of(context).pop(); // Close popup
                   },
                   child: Text("Cancel"),
                 ),
@@ -2101,14 +2135,84 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
         remark = "";
       }
 
-      if (selectedTransMode == null || selectedTransMode!.isEmpty)  {
+      if (selectedTransMode == null || selectedTransMode!.isEmpty
+      //&&
+      //selectedStaffMode == null || selectedStaffMode!.isEmpty &&
+      // _selectedItem == null &&
+      //amountController.text.isEmpty
+      )  {
         showFlushBar(context, Constants.reqfield);
         return;
       }
 
+      if (selectedTransMode == null || selectedTransMode!.isEmpty)
+      {
+        showFlushBar(context, Constants.TransMode);
+        return;
+      }
+
+      if (!amountController.text.isNotEmpty) {
+        showFlushBar(context, Constants.salaryAmt);
+        return;
+      }
+
+      if (selectedStaffMode == null || selectedStaffMode!.isEmpty) {
+        showFlushBar(context, Constants.selStaff);
+        return;
+      }
+
+      // Check if selectedStaffMode is 'Staff' and _selectedItem is mandatory
+      //    if (selectedStaffMode == 'Staff') {
+      //      if (selectedstaff == null || selectedstaff!.isEmpty) {
+      //        showFlushBar(context, 'Item selection is mandatory for Staff.');
+      //        return;
+      //      }
+      //    }
+      if (selectedStaffMode == 'Staff') {
+        if (selectedstaff == null || selectedstaff!.staffName == null || selectedstaff!.staffName!.isEmpty) {
+          showFlushBar(context, 'Item selection is mandatory for Staff.');
+          return;
+        }
+      }
+
+      // Check if selectedStaffMode is 'Reticulated', 'ND', or 'Other' and _selectedCustomer is mandatory
+      if (['Reticulated Or ND', 'Other'].contains(selectedStaffMode)) {
+        if (_selectedCustomerId == null) {
+          showFlushBar(context, 'Customer selection is mandatory for the selected mode.');
+          return;
+        }
+      }
+      //
+      // if ((selectedStaffMode == 'Reticulated Or ND' ||
+      //     selectedStaffMode == 'Other')
+      //     &&
+      //     (_selectedCustomer == null)
+      // ) {
+      //   showFlushBar(context, 'Customer selection is mandatory for the selected Staff Mode.');
+      //   return;
+      // }
+
+      if (selectedTransMode == 'Online') {
+        // if (_selectBankModel == null || _selectBankModel!.isEmpty) {
+        //   showFlushBar(context, Constants.bankname);
+        //   return;
+        // }
+        if (_selectBankModel == null || _selectBankModel!.accountNo == null ||
+            _selectBankModel!.accountNo!.isEmpty
+        ) {
+          showFlushBar(context, Constants.bankname);
+          return;
+        }
+
+        if (!TranCodeController.text.isNotEmpty) {
+          showFlushBar(context, Constants.transCode);
+          return;
+        }
+      }
+
       // Conditional check for cash payment mode
       if (selectedTransMode == 'Cash'){
-        if(amtController != totalAmount) {
+        if(amtController != totalAmount || amtController <= 0) {
           showFlushBar(context, Constants.denominationAmount);
           return;
         }
@@ -2125,7 +2229,7 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
         selectedItemId = 0;
       }
 
-      if(selectedBankName != null) {
+      if(_selectBankModel != null) {
         bankId = selecteBankIDApi;
         accMappingIds = accMappingId;
       }
@@ -2191,10 +2295,15 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
         Future.delayed(Duration(milliseconds: 300), () {
           if (action == "DELETE") {
             EasyLoading.showToast(
-              Constants.expenseSendMgr1,
+              Constants.expenseSendMgrDelete,
               duration: const Duration(milliseconds: 3000),
             );
-          } else {
+          } else if(action == "EDIT") {
+            EasyLoading.showToast(
+              Constants.expenseSendMgrEdit,
+              duration: const Duration(milliseconds: 3000),
+            );
+          }else {
             EasyLoading.showToast(
               Constants.expenseSendMgr,
               duration: const Duration(milliseconds: 3000),
@@ -2248,9 +2357,7 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
       return qty * noteType; // Now returns double
     });
 
-
     totalAmount = amounts.fold(0.0, (sum, item) => sum + item);
-
 
     isQtyFilled = Map.fromIterable(
       List.generate(denominationModel.length, (index) => index),

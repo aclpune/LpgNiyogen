@@ -114,6 +114,16 @@ BranchAdminAH	cnf@1234*/
   static String expenseSendMgr1 = "Data deleted successfully.";
   static String selectConsumerTypeMode = "Please select consumer type.";
   static String amountEqual = 'The Entered Payment Amount cannot exceed the total amount';
+
+  static String TransMode = "Please select payment mode";
+  static String selStaff = "Please select staff name";
+  static String selCust = "Please select customer name";
+  static String pedagainst = "Please select paid against value";
+  static String salaryAmt = "Amount is required";
+  static String bankname = "Bank Account No is required";
+  static String transCode = "Transaction Code is required";
+  static String expenseSendMgrEdit = "Data Updated successfully.";
+  static String expenseSendMgrDelete = "Data deleted successfully.";
   //TextSizes
   static double size20 = 20;
   static double size18 = 18;

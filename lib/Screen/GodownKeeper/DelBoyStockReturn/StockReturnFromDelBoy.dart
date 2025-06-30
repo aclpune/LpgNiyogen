@@ -2864,8 +2864,8 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
             //   BottomNavigationForGodownKeeper.screenName,
             //   arguments: 1, // This opens the third tab
             // );
-            // Navigator.pushReplacementNamed(context, BottomNavigationForGodownKeeper.screenName);
-            Navigator.pop(context);
+            Navigator.pushReplacementNamed(context, BottomNavigationForGodownKeeper.screenName);
+            // Navigator.pop(context);
             // Safely extract ItemIds (ensure they're integers)
             List<int> itemIds = apiItemList.map<int>((item) {
               // Try to safely parse the ItemId string as an integer
@@ -4100,7 +4100,6 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
     });
   }
 
-
 // Function to update the SV cylinder and trigger the calculation
   void updateSvCylinderAndRecalculate(int svQty) {
     // Update the controller with the new SV quantity
@@ -4266,7 +4265,6 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
       },
     );
   }
-
 
   Widget buildConsumerNumberTVDropdown(StateSetter setState, List<String> selectedConsumerNumbersInDialog, Function setShowAddedConsumers) {
     return Row(

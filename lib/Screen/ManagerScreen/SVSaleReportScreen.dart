@@ -8,6 +8,7 @@ import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../ConstantScreen/widgets.dart';
+import '../Utils/CustomAppBarManager.dart';
 import '../Utils/Styling.dart';
 import '../Utils/Widget.dart';
 import '../Utils/app_url.dart';
@@ -137,11 +138,208 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
   var argValue;
   String? modes;
   int? psvIdEdit;
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _addNewItem();
+  //   // fetchItems();
+  //   getNoteTypeAndIDList();
+  //   getStaffDetailsList();
+  //   getItemMasterList();
+  //   getDistStampDuty();
+  //   fetchBank();
+  //   getArbCurrentStockList();
+  //   getArbItemMasterListModel();
+  //   getRspDetailsListModel();
+  //   fetchItemSvAddEditList();
+  //
+  //   Future.delayed(Duration.zero, () {
+  //     setState(() async {
+  //       argValue = ModalRoute.of(context)?.settings.arguments as Map;
+  //       modes = argValue?["modeChange"]?? '';
+  //       if (argValue != null) {
+  //         final itemsToShow = argValue["itemsToShow"] ?? [];
+  //          psvIdEdit = int.tryParse(argValue["psvIDV"] ?? 0);
+  //          String sVDateEdit = argValue["sVDateV"] ?? 0;
+  //          String referredByIdEdit = argValue["referredByIdV"] ?? 0;
+  //          String referredByNameEdit = argValue["referredByNameV"] ?? 0;
+  //          String otherNameEdit = argValue["otherNameV"] ?? 0;
+  //          String productIdEdit = argValue["productIdV"] ?? 0;
+  //          String productNameEdit = argValue["productNameV"] ?? 0;
+  //          String isUndocumentEdit = argValue["isUndocumentV"] ?? 0;
+  //          String sVTypeEdit = argValue["sVTypeV"] ?? 0;
+  //          String cylQtyEdit = argValue["cylQtyV"] ?? 0;
+  //          String sCRegulatorEdit = argValue["sCRegulatorV"] ?? 0;
+  //          String depositCylEdit = argValue["depositCylV"] ?? 0;
+  //          String cylRefillRSPEdit = argValue["cylRefillRSPV"] ?? 0;
+  //          String regulatorDepositEdit = argValue["regulatorDepositV"] ?? 0;
+  //          String stampDutyEdit = argValue["stampDutyV"] ?? 0;
+  //          String fTLRegulatorEdit = argValue["fTLRegulatorV"] ?? 0;
+  //          String basicAmtEdit = argValue["basicAmtV"] ?? 0;
+  //          String consuDCNoEdit = argValue["consuDCNoV"] ?? 0;
+  //          String consumerNameEdit = argValue["consumerNameV"] ?? 0;
+  //          String consuContactNoEdit = argValue["consuContactNoV"] ?? 0;
+  //          String totalAmountEdit = argValue["totalAmountV"] ?? 0;
+  //          String receiptAmtEdit = argValue["receiptAmtV"] ?? 0;
+  //          String paymentModeEdit = argValue["paymentModeV"] ?? 0;
+  //          String transactionCodeEdit = argValue["transactionCodeV"] ?? 0;
+  //          String transactionTimeEdit = argValue["transactionTimeV"] ?? 0;
+  //          String transactionRemarkEdit = argValue["transactionRemarkV"] ?? 0;
+  //          String addedByEdit = argValue["addedByV"] ?? 0;
+  //          String actionEdit = argValue["actionV"] ?? 0;
+  //          String itemIdEdit = argValue["itemIdV"] ?? 0;
+  //          String itemNameEdit = argValue["itemNameV"] ?? 0;
+  //          String rateEdit = argValue["rateV"] ?? 0;
+  //          String itemQtyEdit = argValue["itemQtyV"] ?? 0;
+  //          String discountAmtEdit = argValue["discountAmtV"] ?? 0;
+  //          String aRBAmountEdit = argValue["aRBAmountV"] ?? 0;
+  //          String amtChargesEdit = argValue["amtChargesV"] ?? 0;
+  //          String categoryNameEdit = argValue["categoryNameV"] ?? 0;
+  //          String bankIdEdit = argValue["bankIdV"] ?? 0;
+  //          String bankMappingIdEdit = argValue["bankMappingIdV"] ?? 0;
+  //          String accountNoEdit = argValue["accountNoV"] ?? 0;
+  //          String bankNameEdit = argValue["bankNameV"] ?? 0;
+  //          String isExemptRetiEdit = argValue["isExemptRetiV"] ?? 0;
+  //          String sVDiscountAmtEdit = argValue["sVDiscountAmtV"] ?? 0;
+  //         selectedProductID = int.parse(productIdEdit);
+  //         cylinderQty = int.parse(cylQtyEdit);
+  //
+  //         depositCylinderAmountController.text = depositCylEdit;
+  //         refillCylinderAmountController.text = cylRefillRSPEdit;
+  //         regulatorDepositAmountController.text = regulatorDepositEdit;
+  //         stampDutyController.text = stampDutyEdit;
+  //         regulatorDiscountAmountController.text = discountAmtEdit;
+  //         regulatorBasicAmountController.text = basicAmtEdit;
+  //         conNoController.text = consuDCNoEdit;
+  //         conNameController.text = consumerNameEdit;
+  //         conContactController.text = consuContactNoEdit;
+  //         recPaymentController.text = receiptAmtEdit;
+  //         TranCodeController.text = transactionCodeEdit;
+  //         timeController.text = transactionTimeEdit;
+  //         transReviewController.text = transactionRemarkEdit;
+  //         totalAmountController.text = totalAmountEdit;
+  //
+  //         if (getTransMode.contains(paymentModeEdit)) {
+  //           selectedTransMode = paymentModeEdit;
+  //         } else if(paymentModeEdit == "Bank") {
+  //           selectedTransMode = 'Online';// fallback or handle invalid values
+  //         }else{
+  //           selectedTransMode = null;
+  //         }
+  //         await getStaffDetailsList();
+  //         getStaffDetailsList().whenComplete((){
+  //           debugPrint("referredByNameEdit:$referredByNameEdit");
+  //           if(referredByNameEdit != "null" && referredByNameEdit.isNotEmpty && referredByNameEdit != null){
+  //             setState(() {
+  //               selectedStaff = staffdetailsmodel.firstWhere(
+  //                     (item) => item.staffName == referredByNameEdit,
+  //                 orElse: () => GetStaffDetailsListModel(staffName: ''),
+  //               );
+  //               selectedReferredID = int.parse(referredByIdEdit);
+  //               selectedReferredName = referredByNameEdit;
+  //             }
+  //             );
+  //           }
+  //         });
+  //
+  //         // fetchBank().whenComplete((){
+  //         //   debugPrint("empty:$accountNoEdit");
+  //         //   if(accountNoEdit != "null" && accountNoEdit.isNotEmpty && accountNoEdit != null){
+  //         //     setState(() {
+  //         //       _selectBankModel = bankModel.firstWhere(
+  //         //             (item) => item.accountNo == accountNoEdit,
+  //         //         orElse: () => GetBankMappingDetailsListModel(accountNo:'', ),
+  //         //       );
+  //         //     });
+  //         //   }
+  //         // });
+  //         await fetchBank(); // wait for data first
+  //         if (accountNoEdit.isNotEmpty && accountNoEdit != "null") {
+  //           final match = bankModel.firstWhere(
+  //                 (item) => item.accountNo?.trim() == accountNoEdit.trim(),
+  //             orElse: () => GetBankMappingDetailsListModel(), // fallback empty object
+  //           );
+  //
+  //           // Only set if a valid match found
+  //           if ((match.accountNo ?? '').isNotEmpty) {
+  //             setState(() {
+  //               _selectBankModel = match;
+  //               selectedBankName = match.bankName;
+  //               selectedBankId = match.accountNo;
+  //               selecteBankIDApi = match.bankId?.toInt();
+  //               accMappingId = match.mappingId?.toInt();
+  //             });
+  //           }
+  //         }
+  //         // await getItemMasterList();
+  //         getItemMasterList().whenComplete((){
+  //           debugPrint("productNameEdit:$productNameEdit");
+  //           if(productNameEdit != "null" && productNameEdit.isNotEmpty && productNameEdit != null){
+  //             setState(() {
+  //               selectedMaster = masterListModel.firstWhere(
+  //                     (item) => item.itemName == productNameEdit,
+  //                 orElse: () => GetItemMasterListModel(itemId: 0, itemName: ''),
+  //               );
+  //               selectedTranssvItemName = productNameEdit;
+  //             });
+  //           }
+  //         });
+  //         if(isUndocumentEdit == "true"){
+  //           isSVPending = true;
+  //         }else{
+  //           isSVPending =  false;
+  //         }
+  //         debugPrint("isExemptRetiEdit$isExemptRetiEdit");
+  //         if(isExemptRetiEdit == "1"){
+  //           isExemptedReticulated = true;
+  //           debugPrint("isExemptRetiEdittrue");
+  //         }else{
+  //           isExemptedReticulated =  false;
+  //           debugPrint("isExemptRetiEditfalse");
+  //         }
+  //
+  //         if (getTransacc.contains(sVTypeEdit)) {
+  //           selectedTransacc = sVTypeEdit;
+  //         } else {
+  //           selectedTransacc = null; // fallback or handle invalid values
+  //         }
+  //         if(productNameEdit != "14.2 KG" || isExemptRetiEdit == "1"){
+  //           cylinderQtyAddController.text = cylQtyEdit;
+  //         }else{
+  //           if (getTransqty.contains(cylQtyEdit)) {
+  //             selectedTranqty = cylQtyEdit;
+  //           } else {
+  //             selectedTranqty = null; // fallback or handle invalid values
+  //           }
+  //         }
+  //
+  //         if (getSelectedFTLRegulatorQty.contains(fTLRegulatorEdit)) {
+  //           getSelectedFTLRegulatorQtyString = fTLRegulatorEdit;
+  //         } else {
+  //           getSelectedFTLRegulatorQtyString = null; // fallback or handle invalid values
+  //         }
+  //
+  //         loadDenominationData(psvIdEdit!);
+  //         // _initializeItems(itemsToShow);
+  //         if (itemsToShow.isNotEmpty) {
+  //           _initializeItems(itemsToShow);
+  //         } else {
+  //           // If no initial data, start with an empty list or default values
+  //           _initializeItems([]);
+  //         }
+  //         if(getDenominationLis.isNotEmpty){
+  //           initializeControllers();
+  //         }else{
+  //           debugPrint("empty");
+  //         }
+  //       }
+  //     });
+  //   });
+  // }
   @override
   void initState() {
     super.initState();
     _addNewItem();
-    fetchItems();
     getNoteTypeAndIDList();
     getStaffDetailsList();
     getItemMasterList();
@@ -152,187 +350,191 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     getRspDetailsListModel();
     fetchItemSvAddEditList();
 
-    Future.delayed(Duration.zero, () {
-      setState(() async {
-        argValue = ModalRoute.of(context)?.settings.arguments as Map;
-        modes = argValue?["modeChange"]?? '';
-        if (argValue != null) {
-          final itemsToShow = argValue["itemsToShow"] ?? [];
-           psvIdEdit = int.tryParse(argValue["psvIDV"] ?? 0);
-           String sVDateEdit = argValue["sVDateV"] ?? 0;
-           String referredByIdEdit = argValue["referredByIdV"] ?? 0;
-           String referredByNameEdit = argValue["referredByNameV"] ?? 0;
-           String otherNameEdit = argValue["otherNameV"] ?? 0;
-           String productIdEdit = argValue["productIdV"] ?? 0;
-           String productNameEdit = argValue["productNameV"] ?? 0;
-           String isUndocumentEdit = argValue["isUndocumentV"] ?? 0;
-           String sVTypeEdit = argValue["sVTypeV"] ?? 0;
-           String cylQtyEdit = argValue["cylQtyV"] ?? 0;
-           String sCRegulatorEdit = argValue["sCRegulatorV"] ?? 0;
-           String depositCylEdit = argValue["depositCylV"] ?? 0;
-           String cylRefillRSPEdit = argValue["cylRefillRSPV"] ?? 0;
-           String regulatorDepositEdit = argValue["regulatorDepositV"] ?? 0;
-           String stampDutyEdit = argValue["stampDutyV"] ?? 0;
-           String fTLRegulatorEdit = argValue["fTLRegulatorV"] ?? 0;
-           String basicAmtEdit = argValue["basicAmtV"] ?? 0;
-           String consuDCNoEdit = argValue["consuDCNoV"] ?? 0;
-           String consumerNameEdit = argValue["consumerNameV"] ?? 0;
-           String consuContactNoEdit = argValue["consuContactNoV"] ?? 0;
-           String totalAmountEdit = argValue["totalAmountV"] ?? 0;
-           String receiptAmtEdit = argValue["receiptAmtV"] ?? 0;
-           String paymentModeEdit = argValue["paymentModeV"] ?? 0;
-           String transactionCodeEdit = argValue["transactionCodeV"] ?? 0;
-           String transactionTimeEdit = argValue["transactionTimeV"] ?? 0;
-           String transactionRemarkEdit = argValue["transactionRemarkV"] ?? 0;
-           String addedByEdit = argValue["addedByV"] ?? 0;
-           String actionEdit = argValue["actionV"] ?? 0;
-           String itemIdEdit = argValue["itemIdV"] ?? 0;
-           String itemNameEdit = argValue["itemNameV"] ?? 0;
-           String rateEdit = argValue["rateV"] ?? 0;
-           String itemQtyEdit = argValue["itemQtyV"] ?? 0;
-           String discountAmtEdit = argValue["discountAmtV"] ?? 0;
-           String aRBAmountEdit = argValue["aRBAmountV"] ?? 0;
-           String amtChargesEdit = argValue["amtChargesV"] ?? 0;
-           String categoryNameEdit = argValue["categoryNameV"] ?? 0;
-           String bankIdEdit = argValue["bankIdV"] ?? 0;
-           String bankMappingIdEdit = argValue["bankMappingIdV"] ?? 0;
-           String accountNoEdit = argValue["accountNoV"] ?? 0;
-           String bankNameEdit = argValue["bankNameV"] ?? 0;
-           String isExemptRetiEdit = argValue["isExemptRetiV"] ?? 0;
-           String sVDiscountAmtEdit = argValue["sVDiscountAmtV"] ?? 0;
-          selectedProductID = int.parse(productIdEdit);
-          cylinderQty = int.parse(cylQtyEdit);
+    Future.delayed(Duration.zero, ()  async {
+      argValue = ModalRoute.of(context)?.settings.arguments as Map?;
+      modes = argValue?["modeChange"] ?? '';
+      if (argValue != null) {
+        final itemsToShow = argValue["itemsToShow"] ?? [];
+        psvIdEdit = int.tryParse(argValue["psvIDV"] ?? 0);
+        String sVDateEdit = argValue["sVDateV"] ?? 0;
+        String referredByIdEdit = argValue["referredByIdV"] ?? 0;
+        String referredByNameEdit = argValue["referredByNameV"] ?? 0;
+        String otherNameEdit = argValue["otherNameV"] ?? 0;
+        String productIdEdit = argValue["productIdV"] ?? 0;
+        String productNameEdit = argValue["productNameV"] ?? 0;
+        String isUndocumentEdit = argValue["isUndocumentV"] ?? 0;
+        String sVTypeEdit = argValue["sVTypeV"] ?? 0;
+        String cylQtyEdit = argValue["cylQtyV"] ?? 0;
+        String sCRegulatorEdit = argValue["sCRegulatorV"] ?? 0;
+        String depositCylEdit = argValue["depositCylV"] ?? 0;
+        String cylRefillRSPEdit = argValue["cylRefillRSPV"] ?? 0;
+        String regulatorDepositEdit = argValue["regulatorDepositV"] ?? 0;
+        String stampDutyEdit = argValue["stampDutyV"] ?? 0;
+        String fTLRegulatorEdit = argValue["fTLRegulatorV"] ?? 0;
+        String basicAmtEdit = argValue["basicAmtV"] ?? 0;
+        String consuDCNoEdit = argValue["consuDCNoV"] ?? 0;
+        String consumerNameEdit = argValue["consumerNameV"] ?? 0;
+        String consuContactNoEdit = argValue["consuContactNoV"] ?? 0;
+        String totalAmountEdit = argValue["totalAmountV"] ?? 0;
+        String receiptAmtEdit = argValue["receiptAmtV"] ?? 0;
+        String paymentModeEdit = argValue["paymentModeV"] ?? 0;
+        String transactionCodeEdit = argValue["transactionCodeV"] ?? 0;
+        String transactionTimeEdit = argValue["transactionTimeV"] ?? 0;
+        String transactionRemarkEdit = argValue["transactionRemarkV"] ?? 0;
+        String addedByEdit = argValue["addedByV"] ?? 0;
+        String actionEdit = argValue["actionV"] ?? 0;
+        String itemIdEdit = argValue["itemIdV"] ?? 0;
+        String itemNameEdit = argValue["itemNameV"] ?? 0;
+        String rateEdit = argValue["rateV"] ?? 0;
+        String itemQtyEdit = argValue["itemQtyV"] ?? 0;
+        String discountAmtEdit = argValue["discountAmtV"] ?? 0;
+        String aRBAmountEdit = argValue["aRBAmountV"] ?? 0;
+        String amtChargesEdit = argValue["amtChargesV"] ?? 0;
+        String categoryNameEdit = argValue["categoryNameV"] ?? 0;
+        String bankIdEdit = argValue["bankIdV"] ?? 0;
+        String bankMappingIdEdit = argValue["bankMappingIdV"] ?? 0;
+        String accountNoEdit = argValue["accountNoV"] ?? 0;
+        String bankNameEdit = argValue["bankNameV"] ?? 0;
+        String isExemptRetiEdit = argValue["isExemptRetiV"] ?? 0;
+        String sVDiscountAmtEdit = argValue["sVDiscountAmtV"] ?? 0;
+        selectedProductID = int.parse(productIdEdit);
+        cylinderQty = int.parse(cylQtyEdit);
 
-          depositCylinderAmountController.text = depositCylEdit;
-          refillCylinderAmountController.text = cylRefillRSPEdit;
+        depositCylinderAmountController.text = depositCylEdit;
+        refillCylinderAmountController.text = cylRefillRSPEdit;
+        debugPrint("regulatorDepositEdit $regulatorDepositEdit");
+        if(regulatorDepositEdit.isEmpty || regulatorDepositEdit == null || regulatorDepositEdit == "null"){
+          regulatorDepositAmountController.text = "0";
+        }else{
           regulatorDepositAmountController.text = regulatorDepositEdit;
-          stampDutyController.text = stampDutyEdit;
-          regulatorDiscountAmountController.text = discountAmtEdit;
-          regulatorBasicAmountController.text = basicAmtEdit;
-          conNoController.text = consuDCNoEdit;
-          conNameController.text = consumerNameEdit;
-          conContactController.text = consuContactNoEdit;
-          recPaymentController.text = receiptAmtEdit;
-          TranCodeController.text = transactionCodeEdit;
-          timeController.text = transactionTimeEdit;
-          transReviewController.text = transactionRemarkEdit;
-          totalAmountController.text = totalAmountEdit;
+        }
 
-          if (getTransMode.contains(paymentModeEdit)) {
-            selectedTransMode = paymentModeEdit;
-          } else if(paymentModeEdit == "Bank") {
-            selectedTransMode = 'Online';// fallback or handle invalid values
-          }else{
-            selectedTransMode = null;
-          }
-          // await getStaffDetailsList();
-          getStaffDetailsList().whenComplete((){
-            debugPrint("empty:$referredByNameEdit");
-            if(referredByNameEdit != "null" && referredByNameEdit.isNotEmpty && referredByNameEdit != null){
-              setState(() {
-                selectedStaff = staffdetailsmodel.firstWhere(
-                      (item) => item.staffName == referredByNameEdit,
-                  orElse: () => GetStaffDetailsListModel(staffName: ''),
-                );
-                selectedReferredID = int.parse(referredByIdEdit);
-                selectedReferredName = referredByNameEdit;
-              }
+        stampDutyController.text = stampDutyEdit;
+        regulatorDiscountAmountController.text = sVDiscountAmtEdit;
+        regulatorBasicAmountController.text = basicAmtEdit;
+        conNoController.text = consuDCNoEdit;
+        conNameController.text = consumerNameEdit;
+        conContactController.text = consuContactNoEdit;
+        recPaymentController.text = receiptAmtEdit;
+        TranCodeController.text = transactionCodeEdit;
+        timeController.text = transactionTimeEdit;
+        transReviewController.text = transactionRemarkEdit;
+        totalAmountController.text = totalAmountEdit;
+
+        if (getTransMode.contains(paymentModeEdit)) {
+          selectedTransMode = paymentModeEdit;
+        } else if(paymentModeEdit == "Bank") {
+          selectedTransMode = 'Online';// fallback or handle invalid values
+        }else{
+          selectedTransMode = null;
+        }
+        await getStaffDetailsList();
+        getStaffDetailsList().whenComplete((){
+          debugPrint("referredByNameEdit:$referredByNameEdit");
+          if(referredByNameEdit != "null" && referredByNameEdit.isNotEmpty && referredByNameEdit != null){
+            setState(() {
+              selectedStaff = staffdetailsmodel.firstWhere(
+                    (item) => item.staffName == referredByNameEdit,
+                orElse: () => GetStaffDetailsListModel(staffName: ''),
               );
+              selectedReferredID = int.parse(referredByIdEdit);
+              selectedReferredName = referredByNameEdit;
             }
-          });
-
-          // fetchBank().whenComplete((){
-          //   debugPrint("empty:$accountNoEdit");
-          //   if(accountNoEdit != "null" && accountNoEdit.isNotEmpty && accountNoEdit != null){
-          //     setState(() {
-          //       _selectBankModel = bankModel.firstWhere(
-          //             (item) => item.accountNo == accountNoEdit,
-          //         orElse: () => GetBankMappingDetailsListModel(accountNo:'', ),
-          //       );
-          //     });
-          //   }
-          // });
-          await fetchBank(); // wait for data first
-          if (accountNoEdit.isNotEmpty && accountNoEdit != "null") {
-            final match = bankModel.firstWhere(
-                  (item) => item.accountNo?.trim() == accountNoEdit.trim(),
-              orElse: () => GetBankMappingDetailsListModel(), // fallback empty object
             );
+          }
+        });
 
-            // Only set if a valid match found
-            if ((match.accountNo ?? '').isNotEmpty) {
-              setState(() {
-                _selectBankModel = match;
-                selectedBankName = match.bankName;
-                selectedBankId = match.accountNo;
-                selecteBankIDApi = match.bankId?.toInt();
-                accMappingId = match.mappingId?.toInt();
-              });
-            }
-          }
-          // await getItemMasterList();
-          getItemMasterList().whenComplete((){
-            debugPrint("productNameEdit:$productNameEdit");
-            if(productNameEdit != "null" && productNameEdit.isNotEmpty && productNameEdit != null){
-              setState(() {
-                selectedMaster = masterListModel.firstWhere(
-                      (item) => item.itemName == productNameEdit,
-                  orElse: () => GetItemMasterListModel(itemId: 0, itemName: ''),
-                );
-                selectedTranssvItemName = productNameEdit;
-              });
-            }
-          });
-          if(isUndocumentEdit == "true"){
-            isSVPending = true;
-          }else{
-            isSVPending =  false;
-          }
-          debugPrint("isExemptRetiEdit$isExemptRetiEdit");
-          if(isExemptRetiEdit == "1"){
-            isExemptedReticulated = true;
-            debugPrint("isExemptRetiEdittrue");
-          }else{
-            isExemptedReticulated =  false;
-            debugPrint("isExemptRetiEditfalse");
-          }
+        // fetchBank().whenComplete((){
+        //   debugPrint("empty:$accountNoEdit");
+        //   if(accountNoEdit != "null" && accountNoEdit.isNotEmpty && accountNoEdit != null){
+        //     setState(() {
+        //       _selectBankModel = bankModel.firstWhere(
+        //             (item) => item.accountNo == accountNoEdit,
+        //         orElse: () => GetBankMappingDetailsListModel(accountNo:'', ),
+        //       );
+        //     });
+        //   }
+        // });
+        await fetchBank(); // wait for data first
+        if (accountNoEdit.isNotEmpty && accountNoEdit != "null") {
+          final match = bankModel.firstWhere(
+                (item) => item.accountNo?.trim() == accountNoEdit.trim(),
+            orElse: () => GetBankMappingDetailsListModel(), // fallback empty object
+          );
 
-          if (getTransacc.contains(sVTypeEdit)) {
-            selectedTransacc = sVTypeEdit;
-          } else {
-            selectedTransacc = null; // fallback or handle invalid values
-          }
-          if(productNameEdit != "14.2 KG" || isExemptRetiEdit == "1"){
-            cylinderQtyAddController.text = cylQtyEdit;
-          }else{
-            if (getTransqty.contains(cylQtyEdit)) {
-              selectedTranqty = cylQtyEdit;
-            } else {
-              selectedTranqty = null; // fallback or handle invalid values
-            }
-          }
-
-          if (getSelectedFTLRegulatorQty.contains(fTLRegulatorEdit)) {
-            getSelectedFTLRegulatorQtyString = fTLRegulatorEdit;
-          } else {
-            getSelectedFTLRegulatorQtyString = null; // fallback or handle invalid values
-          }
-
-          loadDenominationData(psvIdEdit!);
-          // _initializeItems(itemsToShow);
-          if (itemsToShow.isNotEmpty) {
-            _initializeItems(itemsToShow);
-          } else {
-            // If no initial data, start with an empty list or default values
-            _initializeItems([]);
-          }
-          if(getDenominationLis.isNotEmpty){
-            initializeControllers();
-          }else{
-            debugPrint("empty");
+          // Only set if a valid match found
+          if ((match.accountNo ?? '').isNotEmpty) {
+            setState(() {
+              _selectBankModel = match;
+              selectedBankName = match.bankName;
+              selectedBankId = match.accountNo;
+              selecteBankIDApi = match.bankId?.toInt();
+              accMappingId = match.mappingId?.toInt();
+            });
           }
         }
-      });
+        // await getItemMasterList();
+        getItemMasterList().whenComplete((){
+          debugPrint("productNameEdit:$productNameEdit");
+          if(productNameEdit != "null" && productNameEdit.isNotEmpty && productNameEdit != null){
+            setState(() {
+              selectedMaster = masterListModel.firstWhere(
+                    (item) => item.itemName == productNameEdit,
+                orElse: () => GetItemMasterListModel(itemId: 0, itemName: ''),
+              );
+              selectedTranssvItemName = productNameEdit;
+            });
+          }
+        });
+        if(isUndocumentEdit == "true"){
+          isSVPending = true;
+        }else{
+          isSVPending =  false;
+        }
+        debugPrint("isExemptRetiEdit$isExemptRetiEdit");
+        if(isExemptRetiEdit == "1"){
+          isExemptedReticulated = true;
+          debugPrint("isExemptRetiEdittrue");
+        }else{
+          isExemptedReticulated =  false;
+          debugPrint("isExemptRetiEditfalse");
+        }
+
+        if (getTransacc.contains(sVTypeEdit)) {
+          selectedTransacc = sVTypeEdit;
+        } else {
+          selectedTransacc = null; // fallback or handle invalid values
+        }
+        if(productNameEdit != "14.2 KG" || isExemptRetiEdit == "1"){
+          cylinderQtyAddController.text = cylQtyEdit;
+        }else{
+          if (getTransqty.contains(cylQtyEdit)) {
+            selectedTranqty = cylQtyEdit;
+          } else {
+            selectedTranqty = null; // fallback or handle invalid values
+          }
+        }
+          debugPrint("fTLRegulatorEdit $fTLRegulatorEdit");
+        if (getSelectedFTLRegulatorQty.contains(fTLRegulatorEdit)) {
+          getSelectedFTLRegulatorQtyString = fTLRegulatorEdit;
+        } else {
+          getSelectedFTLRegulatorQtyString = null; // fallback or handle invalid values
+        }
+
+        loadDenominationData(psvIdEdit!);
+        // _initializeItems(itemsToShow);
+        if (itemsToShow.isNotEmpty) {
+          _initializeItems(itemsToShow);
+        } else {
+          // If no initial data, start with an empty list or default values
+          _initializeItems([]);
+        }
+        if(getDenominationLis.isNotEmpty){
+          initializeControllers();
+        }else{
+          debugPrint("empty");
+        }
+      }
     });
   }
 
@@ -408,7 +610,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
               : entry;
         }),
       );
-
+      calculateGrandTotalAmount();
       // Debugging: Print after removing
       print('Selected Items After: $_selectedItems');
     });
@@ -450,487 +652,489 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('SV Sale'), // Title or hint text for the text field
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding:
-              const EdgeInsets.only(left: 5.0, right: 5, top: 15, bottom: 15),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Expanded(child: countTextWidgetTextcash(context, 'SV Date')),
-                  Flexible(flex: 1, child: Text("$formattedDate")),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                      child: countTextWidgetTextcash(context, 'Referred By')),
-                  Flexible(
-                    flex: 1,
-                    child: DropdownButtonFormField<GetStaffDetailsListModel>(
-                      key: formKey1,
-                      // value: selectedStaff,
-                      value: staffdetailsmodel.contains(selectedStaff) ? selectedStaff : null,
-                      // This should be a GetStaffDetailsListModel? variable
-                      items: staffdetailsmodel
-                          .map((GetStaffDetailsListModel staff) {
-                        return DropdownMenuItem<GetStaffDetailsListModel>(
-                          value: staff,
-                          child: Text(
-                              staff.staffName ?? ''), // Use a default if null
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          selectedStaff = value;
-                          selectedReferredID = value?.staffId!.toInt();// value is of type GetStaffDetailsListModel?
-                          selectedReferredName = value?.staffName!.toString();// value is of type GetStaffDetailsListModel?
-                        });
-                      },
-                      isExpanded: true,
+    var argLRAdd = ModalRoute.of(context)?.settings.arguments;
+    return
+      WillPopScope(
+        onWillPop: () async {
+          if (argLRAdd == "fromDrawer") {
+            Navigator.pushReplacementNamed(context, '/bottomNavBarExample');
+            return false;
+          } else {
+            Navigator.pushReplacementNamed(context, '/bottomNavBarExample');
+            return false;
+          }
+        },
+        child: Scaffold(
+        appBar: CustomAppBarManager(
+          title: 'SV Sale', // Title or hint text for the text field
+        ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding:
+                const EdgeInsets.only(left: 5.0, right: 5, top: 15, bottom: 15),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(child: countTextWidgetTextcash(context, 'SV Date')),
+                    Flexible(flex: 1, child: Text("$formattedDate")),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                        child: countTextWidgetTextcash(context, 'Referred By')),
+                    Flexible(
+                      flex: 1,
+                      child: DropdownButtonFormField<GetStaffDetailsListModel>(
+                        key: formKey1,
+                        // value: selectedStaff,
+                        value: staffdetailsmodel.contains(selectedStaff) ? selectedStaff : null,
+                        // This should be a GetStaffDetailsListModel? variable
+                        items: staffdetailsmodel
+                            .map((GetStaffDetailsListModel staff) {
+                          return DropdownMenuItem<GetStaffDetailsListModel>(
+                            value: staff,
+                            child: Text(
+                                staff.staffName ?? ''), // Use a default if null
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedStaff = value;
+                            selectedReferredID = value?.staffId!.toInt();// value is of type GetStaffDetailsListModel?
+                            selectedReferredName = value?.staffName!.toString();// value is of type GetStaffDetailsListModel?
+                         debugPrint("selectedReferredID $selectedReferredID");
+                          });
+                        },
+                        isExpanded: true,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: countTextWidgetTextStar(
-                      context,
-                      'Select Product',
-                      showAsterisk:
-                          true, // Add a parameter to conditionally show the asterisk
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: countTextWidgetTextStar(
+                        context,
+                        'Select Product',
+                        showAsterisk:
+                            true, // Add a parameter to conditionally show the asterisk
+                      ),
                     ),
-                  ),
-                  Flexible(
-                    flex: 1,
-                    child:
-                        // DropdownButtonFormField<GetItemMasterListModel>(
-                        //   key: formKey2,
-                        //   value: selectedMaster,
-                        //   // This should be a GetStaffDetailsListModel? variable
-                        //   items:
-                        //   masterListModel.map((GetItemMasterListModel staff) {
-                        //     return DropdownMenuItem<GetItemMasterListModel>(
-                        //       value: staff,
-                        //       child: Text(
-                        //           staff.itemName ?? ''), // Use a default if null
-                        //     );
-                        //   }).toList(),
-                        //   onChanged: (value) {
-                        //     setState(() {
-                        //       selectedMaster = value!;
-                        //       debugPrint("selectedMasteritemType: ${selectedMaster?.itemSubType}");// value is of type GetStaffDetailsListModel?
-                        //     });
-                        //   },
-                        //   isExpanded: true,
-                        // )
-                        // Dropdown 1 - for selectedMaster
-                        DropdownButtonFormField<GetItemMasterListModel>(
-                      key: formKey2,
-                      value: masterListModel.contains(selectedMaster) ? selectedMaster : null,
+                    Flexible(
+                      flex: 1,
+                      child:
+                          // DropdownButtonFormField<GetItemMasterListModel>(
+                          //   key: formKey2,
+                          //   value: selectedMaster,
+                          //   // This should be a GetStaffDetailsListModel? variable
+                          //   items:
+                          //   masterListModel.map((GetItemMasterListModel staff) {
+                          //     return DropdownMenuItem<GetItemMasterListModel>(
+                          //       value: staff,
+                          //       child: Text(
+                          //           staff.itemName ?? ''), // Use a default if null
+                          //     );
+                          //   }).toList(),
+                          //   onChanged: (value) {
+                          //     setState(() {
+                          //       selectedMaster = value!;
+                          //       debugPrint("selectedMasteritemType: ${selectedMaster?.itemSubType}");// value is of type GetStaffDetailsListModel?
+                          //     });
+                          //   },
+                          //   isExpanded: true,
+                          // )
+                          // Dropdown 1 - for selectedMaster
+                          DropdownButtonFormField<GetItemMasterListModel>(
+                        key: formKey2,
+                        value: masterListModel.contains(selectedMaster) ? selectedMaster : null,
 
-                      items:
-                          masterListModel.map((GetItemMasterListModel staff) {
-                        return DropdownMenuItem<GetItemMasterListModel>(
-                          value: staff,
-                          child: Text(staff.itemName ?? ''),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          selectedMaster = value!;
-                          selectedTranssvItemName = selectedMaster?.itemName;
-                          selectedProductID = selectedMaster?.itemId?.toInt();
-                          int? itemIds = selectedMaster?.itemId?.toInt();
-                          depositAmount = getDepositAmountByItemId(itemIds)?.toDouble();
-                          refillAmountCyl = getRefillAmountByItemId(itemIds)?.toDouble();
-                          debugPrint(
-                              "selectedMaster itemSubType: ${selectedMaster?.itemSubType}");
-                          debugPrint("depositAmount: ${depositAmount}");
-                          depositCylinderAmountController.text = depositAmount.toString();
-                          refillCylinderAmountController.text = refillAmountCyl.toString();
-                          // Based on selectedMaster's itemSubType, adjust the value of selectedTransacc
-                          if (selectedMaster?.itemSubType == "ND" || selectedTranssvItemName == "5 KG DOM") {
-                            selectedTransacc =
-                                "NC"; // Automatically set "NC" when "ND" is selected
-                          } else {
-                            selectedTransacc =
-                                null; // Clear the selected value in selectedTransacc for other itemSubType
-                          }
-                          calculateBasicAmountSum();
-                          calculateGrandTotalAmount();
-                          regulatorDepositAmountController.text = getRegulatorDepositAmountFromApi.toString();
-
-                          // if(selectedTranssvItemName == "19 KG"){
-                          //   regulatorDepositAmountController.text = "0.0";
-                          //   calculateBasicAmountSum();
-                          //   calculateGrandTotalAmount();
-                          // }else{
-                          //   calculateBasicAmountSum();
-                          //   calculateGrandTotalAmount();
-                          //   regulatorDepositAmountController.text = getRegulatorDepositAmountFromApi.toString();
-                          // }
-                        });
-                      },
-                      isExpanded: true,
+                        items:
+                            masterListModel.map((GetItemMasterListModel staff) {
+                          return DropdownMenuItem<GetItemMasterListModel>(
+                            value: staff,
+                            child: Text(staff.itemName ?? ''),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedMaster = value!;
+                            selectedTranssvItemName = selectedMaster?.itemName;
+                            selectedProductID = selectedMaster?.itemId?.toInt();
+                            int? itemIds = selectedMaster?.itemId?.toInt();
+                            depositAmount = getDepositAmountByItemId(itemIds)?.toDouble();
+                            refillAmountCyl = getRefillAmountByItemId(itemIds)?.toDouble();
+                            debugPrint(
+                                "selectedMaster itemSubType: ${selectedMaster?.itemSubType}");
+                            debugPrint("depositAmount: ${depositAmount}");
+                            depositCylinderAmountController.text = depositAmount.toString();
+                            refillCylinderAmountController.text = refillAmountCyl.toString();
+                            // Based on selectedMaster's itemSubType, adjust the value of selectedTransacc
+                            if (selectedMaster?.itemSubType == "ND" || selectedTranssvItemName == "5 KG DOM") {
+                              selectedTransacc =
+                                  "NC"; // Automatically set "NC" when "ND" is selected
+                            } else {
+                              selectedTransacc =
+                                  null; // Clear the selected value in selectedTransacc for other itemSubType
+                            }
+                            // ✅ Clear list view data
+                            items.clear();
+                            _selectedItems.clear();
+                            _itemStockByIndex.clear();
+                            _selectedItemIds.clear();
+                            _addNewItem();
+                            cylinderQtyAddController.clear();
+                            selectedTranqty = null;
+                            debugPrint("getRegulatorDepositAmountFromApi.toString()${getRegulatorDepositAmountFromApi.toString()}");
+                            if(modes == "Edit"){
+                              getRegulatorDepositAmountFromApi =
+                                  getRefillAmountByItemName("SC REGULATOR")?.toDouble();
+                              calculateBasicAmountSum();
+                              calculateGrandTotalAmount();
+                            }else{
+                              calculateBasicAmountSum();
+                              calculateGrandTotalAmount();
+                              regulatorDepositAmountController.text = getRegulatorDepositAmountFromApi.toString();
+                            }
+                            // if(selectedTranssvItemName == "19 KG"){
+                            //   regulatorDepositAmountController.text = "0.0";
+                            //   calculateBasicAmountSum();
+                            //   calculateGrandTotalAmount();
+                            // }else{
+                            //   calculateBasicAmountSum();
+                            //   calculateGrandTotalAmount();
+                            //   regulatorDepositAmountController.text = getRegulatorDepositAmountFromApi.toString();
+                            // }
+                          });
+                        },
+                        isExpanded: true,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                // You can adjust this to fit your layout
-                children: [
-                  Expanded(
-                    child: countTextWidgetTextStar(
-                      context,
-                      'Select SV Type',
-                      showAsterisk:
-                          true, // Add a parameter to conditionally show the asterisk
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  // You can adjust this to fit your layout
+                  children: [
+                    Expanded(
+                      child: countTextWidgetTextStar(
+                        context,
+                        'Select SV Type',
+                        showAsterisk:
+                            true, // Add a parameter to conditionally show the asterisk
+                      ),
                     ),
-                  ),
-                  Flexible(
-                    flex: 1,
-                    child:
-                        // DropdownButtonFormField<String>(
-                        //   key: formKey5,
-                        //   value: selectedTransacc,
-                        //   // Bind the selected value
-                        //   items: getTransacc
-                        //       .map((String value) => DropdownMenuItem<String>(
-                        //     value: value,
-                        //     child: Text(value),
-                        //   ))
-                        //       .toList(),
-                        //   onChanged: (value) {
-                        //     setState(() {
-                        //       selectedTransacc =
-                        //           value;
-                        //       debugPrint("selectedTransacc: $selectedTransacc");// Update the selected value
-                        //     });
-                        //   },
-                        //   isExpanded: true,
-                        // ),
-                        DropdownButtonFormField<String>(
-                      key: formKey5,
-                      value: selectedTransacc ??
-                          ((selectedMaster?.itemSubType == "ND" || selectedTranssvItemName == "5 KG DOM") ? "NC" : null),
-                      items: getTransacc
-                          .map((String value) => DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              ))
-                          .toList(),
-                      onChanged: (selectedMaster?.itemSubType == "ND" || selectedTranssvItemName == "5 KG DOM")
-                          ? null // disables dropdown when itemSubType is "ND"
-                          : (value) {
-                              setState(() {
-                                selectedTransacc = value;
-                                debugPrint(
-                                    "selectedTransacc: $selectedTransacc");
-                                calculateBasicAmountSum();
-                                calculateGrandTotalAmount();
-
-                                if(selectedTransacc == "RC"){
-                                  regulatorDepositAmountController.text = '';
-                                  depositCylinderAmountController.text = '';
+                    Flexible(
+                      flex: 1,
+                      child:
+                          // DropdownButtonFormField<String>(
+                          //   key: formKey5,
+                          //   value: selectedTransacc,
+                          //   // Bind the selected value
+                          //   items: getTransacc
+                          //       .map((String value) => DropdownMenuItem<String>(
+                          //     value: value,
+                          //     child: Text(value),
+                          //   ))
+                          //       .toList(),
+                          //   onChanged: (value) {
+                          //     setState(() {
+                          //       selectedTransacc =
+                          //           value;
+                          //       debugPrint("selectedTransacc: $selectedTransacc");// Update the selected value
+                          //     });
+                          //   },
+                          //   isExpanded: true,
+                          // ),
+                          DropdownButtonFormField<String>(
+                        key: formKey5,
+                        value: selectedTransacc ??
+                            ((selectedMaster?.itemSubType == "ND" || selectedTranssvItemName == "5 KG DOM") ? "NC" : null),
+                        items: getTransacc
+                            .map((String value) => DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                ))
+                            .toList(),
+                        onChanged: (selectedMaster?.itemSubType == "ND" || selectedTranssvItemName == "5 KG DOM")
+                            ? null // disables dropdown when itemSubType is "ND"
+                            : (value) {
+                                setState(() {
+                                  selectedTransacc = value;
+                                  debugPrint(
+                                      "selectedTransacc: $selectedTransacc");
                                   calculateBasicAmountSum();
                                   calculateGrandTotalAmount();
-                                }else{
-                                  if(modes == "Edit"){
-                                    depositAmount = getDepositAmountByItemId(selectedProductID)?.toDouble();
+
+                                  if(selectedTransacc == "RC"){
+                                    regulatorDepositAmountController.text = '';
+                                    depositCylinderAmountController.text = '';
+                                    double refillamount = refillAmountCyl! * 1;
+                                    refillCylinderAmountController.text = refillamount.toString();
+                                    calculateBasicAmountSum();
+                                    calculateGrandTotalAmount();
+
+                                  }else{
+                                    if(selectedTransacc == "DBC"){
+                                      depositCylinderAmountController.text = depositAmount.toString();
+                                      regulatorDepositAmountController.text = '';
+                                      selectedTranqty = "1";
+                                      double refillamount = refillAmountCyl! * 1;
+                                      refillCylinderAmountController.text = refillamount.toString();
+                                      calculateBasicAmountSum();
+                                      calculateGrandTotalAmount();
+                                    }
+                                    if(modes == "Edit"){
+                                      depositAmount = getDepositAmountByItemId(selectedProductID)?.toDouble();
+                                      depositCylinderAmountController.text = depositAmount.toString();
+                                      getRegulatorDepositAmountFromApi = getRefillAmountByItemName("SC REGULATOR")?.toDouble();
+                                      regulatorDepositAmountController.text = getRegulatorDepositAmountFromApi.toString();
+                                    }
                                     depositCylinderAmountController.text = depositAmount.toString();
-                                    getRegulatorDepositAmountFromApi = getRefillAmountByItemName("SC REGULATOR")?.toDouble();
                                     regulatorDepositAmountController.text = getRegulatorDepositAmountFromApi.toString();
                                   }
-                                  depositCylinderAmountController.text = depositAmount.toString();
-                                  regulatorDepositAmountController.text = getRegulatorDepositAmountFromApi.toString();
-                                }
-                              });
-                            },
-                      isExpanded: true,
+                                });
+                              },
+                        isExpanded: true,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              if ((selectedTransacc == "NC" ||
-                  selectedTransacc == "RC" ||
-                  selectedTransacc == "DBC")) ...[
-                Padding(
-                  padding: const EdgeInsets.only(left: 2.0),
-                  child: Form(
-                    key: formKey7,
-                    child: Wrap(
-                      spacing: 0.0, // Horizontal spacing between fields
-                      runSpacing: 0.0, // Vertical spacing between rows
-                      children: [
-                        if (selectedTransacc != "RC" &&
-                            selectedTransacc != "DBC") ...[
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            // Align children to the left
-                            children: [
-                              Checkbox(
-                                value: isSVPending,
-                                onChanged: (bool? value) {
-                                  setState(() {
-                                    isSVPending = value!;
-                                    debugPrint("isSVPending$isSVPending");
-                                  });
-                                },
-                              ),
-                              Text('SV Pending'),
-                              if ((selectedTransacc != "RC" &&
-                                      selectedTransacc != "DBC") &&
-                                  (selectedTranssvItemName == "14.2 KG")) ...[
+                  ],
+                ),
+                if ((selectedTransacc == "NC" ||
+                    selectedTransacc == "RC" ||
+                    selectedTransacc == "DBC")) ...[
+                  Padding(
+                    padding: const EdgeInsets.only(left: 2.0),
+                    child: Form(
+                      key: formKey7,
+                      child: Wrap(
+                        spacing: 0.0, // Horizontal spacing between fields
+                        runSpacing: 0.0, // Vertical spacing between rows
+                        children: [
+                          if (selectedTransacc != "RC" &&
+                              selectedTransacc != "DBC") ...[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              // Align children to the left
+                              children: [
                                 Checkbox(
-                                  value: isExemptedReticulated,
+                                  value: isSVPending,
                                   onChanged: (bool? value) {
                                     setState(() {
-                                      isExemptedReticulated = value!;
-
+                                      isSVPending = value!;
+                                      debugPrint("isSVPending$isSVPending");
                                     });
                                   },
                                 ),
-                                // ),
-                                Text('Exempted/Reticulated'),
-                              ]
-                            ],
-                          ),
-                        ],
-                        SizedBox(
-                          width: 5,
-                        ),
-                        if(selectedTranssvItemName == "14.2 KG" && !isExemptedReticulated) ...[
-                          SizedBox(
-                            width: (MediaQuery.of(context).size.width - 32) / 2,
-                            child: DropdownButtonFormField<String>(
-                              // value: selectedTranqty,
-                              value: selectedTranqty ??
-                                  (selectedTransacc == "DBC" ? "1" : null),
-                              items: getTransqty.map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                              // onChanged: (value)
-                              onChanged: selectedTransacc == "DBC"
-                                  ? null // disables dropdown when itemSubType is "ND"
-                                  : (value) {
-                                setState(() {
-                                  selectedTranqty = value;// Update the selected value
-                                  cylinderQty = int.parse(selectedTranqty!);
-                                  int? qtyV = int.parse(selectedTranqty!);
-                                  double depositamount = depositAmount! * qtyV!;
-                                  double refillamount = refillAmountCyl! * qtyV!;
-                                  depositCylinderAmountController.text = depositamount.toString();
-                                  refillCylinderAmountController.text = refillamount.toString();
-                                  calculateBasicAmountSum();
-                                  calculateGrandTotalAmount();
-                                }
-                                );
-                              },
-                              isExpanded: true,
-                              decoration: InputDecoration(
-                                //errorText: selectedTranqty ? 'Deposit Amt. is Required' : null, // Show error if required
-                                errorText: (selectedTranqty == null ||
-                                    selectedTranqty!.isEmpty)
-                                    ? 'Cyl. Qty Is Required'
-                                    : null,
-                                label: countTextWidgetTextStarverysmall(
-                                  context,
-                                  'Select Cyl. Qty',
-                                  showAsterisk:
-                                  true, // Add a parameter to conditionally show the asterisk
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                        if(selectedTranssvItemName != "14.2 KG" || isExemptedReticulated) ...[
-                          SizedBox(
-                            width: (MediaQuery.of(context).size.width - 32) / 2,
-                            child: TextField(
-                              controller: cylinderQtyAddController,
-                              decoration: InputDecoration(
-                                // labelText: 'Cyl.Qty',
-                                // labelStyle: TextStyle(fontSize: 12),
-                                label: countTextWidgetTextStarverysmall(
-                                  context,
-                                  'Cyl.Qty',
-                                  showAsterisk:
-                                  true, // Add a parameter to conditionally show the asterisk
-                                ),
-                              ),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                                // Only digits allowed
-                                LengthLimitingTextInputFormatter(2),
-                                // Limit to 6 characters
+                                Text('SV Pending'),
+                                if ((selectedTransacc != "RC" &&
+                                        selectedTransacc != "DBC") &&
+                                    (selectedTranssvItemName == "14.2 KG")) ...[
+                                  Checkbox(
+                                    value: isExemptedReticulated,
+                                    onChanged: (bool? value) {
+                                      setState(() {
+                                        isExemptedReticulated = value!;
+                                        regulatorDepositAmountController.text = "0";
+                                      });
+                                    },
+                                  ),
+                                  // ),
+                                  Text('Exempted/Reticulated'),
+                                ]
                               ],
-                              onChanged: (value) {
-                                setState(() {
-                                  String? valueQty = value;
-                                  cylinderQty = int.tryParse(valueQty);
-                                  int? qtyVs= int.tryParse(valueQty);
-                                  double depositamounts = depositAmount! * qtyVs!;
-                                  depositCylinderAmountController.text =
-                                      depositamounts.toString();
-                                  double refillamounts = refillAmountCyl! * qtyVs!;
-                                  refillCylinderAmountController.text = refillamounts.toString();
-                                  calculateBasicAmountSum();
-                                  calculateGrandTotalAmount();
-                                });
-                              },
                             ),
-                          ),
-                        ],
-                          if ((selectedTransacc != "DBC") &&
-                            (selectedTranssvItemName == "14.2 KG")) ...[
+                          ],
                           SizedBox(
-                            width: (MediaQuery.of(context).size.width - 32) / 2,
-                            child: TextField(
-                              controller: scRegulatorController,
-                              decoration: InputDecoration(
-                                labelText: 'SC Regulator',
-                                labelStyle: TextStyle(fontSize: 12),
+                            width: 5,
+                          ),
+                          if(selectedTranssvItemName == "14.2 KG" && !isExemptedReticulated) ...[
+                            SizedBox(
+                              width: (MediaQuery.of(context).size.width - 32) / 2,
+                              child:
+                              DropdownButtonFormField<String>(
+                                // value: selectedTranqty,
+                                value: selectedTranqty ??
+                                    (selectedTransacc == "DBC" ? "1" : selectedTranqty),
+                                items: getTransqty.map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                                // onChanged: (value)
+                                onChanged: selectedTransacc == "DBC"
+                                    ? null // disables dropdown when itemSubType is "ND"
+                                    : (value) {
+                                  setState(() {
+                                    selectedTranqty = value;// Update the selected value
+                                    cylinderQty = int.parse(selectedTranqty!);
+                                    int? qtyV = int.parse(selectedTranqty!);
+                                    double depositamount = depositAmount! * qtyV!;
+                                    double refillamount = refillAmountCyl! * qtyV!;
+                                    if(selectedTransacc == "RC"){
+                                      refillCylinderAmountController.text = refillamount.toString();
+                                      calculateBasicAmountSum();
+                                      calculateGrandTotalAmount();
+                                    }else{
+                                      depositCylinderAmountController.text = depositamount.toString();
+                                      refillCylinderAmountController.text = refillamount.toString();
+                                      calculateBasicAmountSum();
+                                      calculateGrandTotalAmount();
+                                    }
+                                  }
+                                  );
+                                },
+                                isExpanded: true,
+                                decoration: InputDecoration(
+                                  //errorText: selectedTranqty ? 'Deposit Amt. is Required' : null, // Show error if required
+                                  errorText: (selectedTranqty == null ||
+                                      selectedTranqty!.isEmpty)
+                                      ? 'Cyl. Qty Is Required'
+                                      : null,
+                                  label: countTextWidgetTextStarverysmall(
+                                    context,
+                                    'Select Cyl. Qty',
+                                    showAsterisk:
+                                    true, // Add a parameter to conditionally show the asterisk
+                                  ),
+                                ),
                               ),
-                              enabled: false,
                             ),
-                          ),
-                        ],
-                        if ((selectedTranssvItemName != "14.2 KG")) ...[
-                          SizedBox(
-                            width: (MediaQuery.of(context).size.width - 32) / 2,
-                            child: DropdownButtonFormField<String>(
-                              value: getSelectedFTLRegulatorQtyString,
-                              items: getSelectedFTLRegulatorQty
-                                  .map((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  getSelectedFTLRegulatorQtyString = value;// Update the selected value
-                                  selectedFTLRegQty = int.parse(getSelectedFTLRegulatorQtyString!);
-                                  if(selectedFTLRegQty == 0){
-                                    calculateBasicAmountSumDepositMinus();
-                                    calculateGrandTotalAmountDepositMinus();
-                                    regulatorDepositAmountController.text == "0.0";
-                                  }else{
+                          ],
+                          if(selectedTranssvItemName != "14.2 KG" || isExemptedReticulated) ...[
+                            SizedBox(
+                              width: (MediaQuery.of(context).size.width - 32) / 2,
+                              child: TextField(
+                                controller: cylinderQtyAddController,
+                                decoration: InputDecoration(
+                                  // labelText: 'Cyl.Qty',
+                                  // labelStyle: TextStyle(fontSize: 12),
+                                  label: countTextWidgetTextStarverysmall(
+                                    context,
+                                    'Cyl.Qty',
+                                    showAsterisk:
+                                    true, // Add a parameter to conditionally show the asterisk
+                                  ),
+                                ),
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  // Only digits allowed
+                                  LengthLimitingTextInputFormatter(2),
+                                  // Limit to 6 characters
+                                ],
+                                onChanged: (value) {
+                                  setState(() {
+                                    String? valueQty = value;
+                                    cylinderQty = int.tryParse(valueQty);
+                                    int? qtyVs= int.tryParse(valueQty);
+                                    double depositamounts = depositAmount! * qtyVs!;
+                                    depositCylinderAmountController.text =
+                                        depositamounts.toString();
+                                    double refillamounts = refillAmountCyl! * qtyVs!;
+                                    refillCylinderAmountController.text = refillamounts.toString();
                                     calculateBasicAmountSum();
                                     calculateGrandTotalAmount();
-                                    regulatorDepositAmountController.text = getRegulatorDepositAmountFromApi.toString();
-                                  }
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
+                            if ((selectedTransacc != "DBC") &&
+                              (selectedTranssvItemName == "14.2 KG")) ...[
+                            SizedBox(
+                              width: (MediaQuery.of(context).size.width - 32) / 2,
+                              child: TextField(
+                                controller: scRegulatorController,
+                                decoration: InputDecoration(
+                                  labelText: 'SC Regulator',
+                                  labelStyle: TextStyle(fontSize: 12),
+                                ),
+                                enabled: false,
+                              ),
+                            ),
+                          ],
+                          if ((selectedTranssvItemName != "14.2 KG")) ...[
+                            SizedBox(
+                              width: (MediaQuery.of(context).size.width - 32) / 2,
+                              child: DropdownButtonFormField<String>(
+                                value: getSelectedFTLRegulatorQtyString,
+                                items: getSelectedFTLRegulatorQty
+                                    .map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    getSelectedFTLRegulatorQtyString = value;// Update the selected value
+                                    selectedFTLRegQty = int.parse(getSelectedFTLRegulatorQtyString!);
+                                    if(selectedFTLRegQty == 0 || selectedFTLRegQty == "0"){
+                                      debugPrint("selectedFTLRegQty 0");
+                                      calculateBasicAmountSumDepositMinus();
+                                      calculateGrandTotalAmountDepositMinus();
+                                      regulatorDepositAmountController.text = "0";
+                                    }else{
+                                      debugPrint("selectedFTLRegQty 1");
+                                      if(modes == "Edit"){
+                                        getRegulatorDepositAmountFromApi = getRefillAmountByItemName("SC REGULATOR")?.toDouble();
+                                        regulatorDepositAmountController.text = getRegulatorDepositAmountFromApi.toString();
+                                        debugPrint("selectedFTLRegQty ${getRefillAmountByItemName("SC REGULATOR")?.toDouble()}");
+                                        calculateBasicAmountSum();
+                                        calculateGrandTotalAmount();
+                                      }else{
+                                        regulatorDepositAmountController.text = getRegulatorDepositAmountFromApi.toString();
+                                        calculateBasicAmountSum();
+                                        calculateGrandTotalAmount();
+                                      }
+                                    }
 
-                                });
-                              },
-                              isExpanded: true,
+                                  });
+                                },
+                                isExpanded: true,
+                                decoration: InputDecoration(
+                                  //errorText: selectedTranqty ? 'Deposit Amt. is Required' : null, // Show error if required
+                                  errorText:
+                                      (getSelectedFTLRegulatorQtyString == null ||
+                                              getSelectedFTLRegulatorQtyString!
+                                                  .isEmpty)
+                                          ? 'FTL Regulator Is Required'
+                                          : null,
+                                  label: countTextWidgetTextStarverysmall(
+                                    context,
+                                    'Select FTL Regulator',
+                                    showAsterisk:
+                                        true, // Add a parameter to conditionally show the asterisk
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          SizedBox(
+                            width: (MediaQuery.of(context).size.width - 32) / 2,
+                            child: TextField(
+                              controller: depositCylinderAmountController,
                               decoration: InputDecoration(
-                                //errorText: selectedTranqty ? 'Deposit Amt. is Required' : null, // Show error if required
                                 errorText:
-                                    (getSelectedFTLRegulatorQtyString == null ||
-                                            getSelectedFTLRegulatorQtyString!
-                                                .isEmpty)
-                                        ? 'FTL Regulator Is Required'
+                                    (depositCylinderAmountController.text.isEmpty)
+                                        ? 'Deposit Cyl. is Required'
                                         : null,
                                 label: countTextWidgetTextStarverysmall(
                                   context,
-                                  'Select FTL Regulator',
+                                  'Deposit Cyl.',
                                   showAsterisk:
                                       true, // Add a parameter to conditionally show the asterisk
                                 ),
                               ),
-                            ),
-                          ),
-                        ],
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        SizedBox(
-                          width: (MediaQuery.of(context).size.width - 32) / 2,
-                          child: TextField(
-                            controller: depositCylinderAmountController,
-                            decoration: InputDecoration(
-                              errorText:
-                                  (depositCylinderAmountController.text.isEmpty)
-                                      ? 'Deposit Cyl. is Required'
-                                      : null,
-                              label: countTextWidgetTextStarverysmall(
-                                context,
-                                'Deposit Cyl.',
-                                showAsterisk:
-                                    true, // Add a parameter to conditionally show the asterisk
-                              ),
-                            ),
-                            keyboardType: TextInputType.numberWithOptions(decimal: true), // Ensure numeric keyboard
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(
-                                  RegExp(r'^\d*\.?\d*$')),
-                              LengthLimitingTextInputFormatter(7),
-                            ],
-                            enabled:selectedTranssvItemName == "14.2 KG" && selectedTransacc == "RC"
-                                ? true
-                                : false,
-                            onChanged: (value){
-                              calculateBasicAmountSum();
-                              calculateGrandTotalAmount();
-                            },
-                          ),
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-
-// Cyl Refill Amt.
-                        SizedBox(
-                          width: (MediaQuery.of(context).size.width - 32) / 2,
-                          child: TextField(
-                            controller: refillCylinderAmountController,
-                            decoration: InputDecoration(
-                              labelText: 'Cyl Refill Amt.',
-                              labelStyle: TextStyle(fontSize: 12),
-                            ),
-                            enabled: false,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-
-// Regulator Deposit (Read-only)
-                        if (selectedTransacc != "DBC") ...[
-                          SizedBox(
-                            width: (MediaQuery.of(context).size.width - 32) / 2,
-                            child: TextField(
-                              // readOnly: true,
-                              controller: regulatorDepositAmountController,
-                              decoration: InputDecoration(
-                                errorText: (regulatorDepositAmountController
-                                        .text.isEmpty)
-                                    ? 'Regulator Deposit is Required'
-                                    : null,
-                                label: countTextWidgetTextStarverysmall(
-                                  context,
-                                  'Regulator Deposit',
-                                  showAsterisk:
-                                      true, // Add a parameter to conditionally show the asterisk
-                                ),
-                              ),
-                              // keyboardType: TextInputType.numberWithOptions(decimal: true),
                               keyboardType: TextInputType.numberWithOptions(decimal: true), // Ensure numeric keyboard
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(
@@ -940,1046 +1144,1345 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                               enabled:selectedTranssvItemName == "14.2 KG" && selectedTransacc == "RC"
                                   ? true
                                   : false,
-
                               onChanged: (value){
                                 calculateBasicAmountSum();
                                 calculateGrandTotalAmount();
                               },
                             ),
                           ),
-                        ],
-                        SizedBox(
-                          width: 5,
-                        ),
-// Stamp Duty
-                        SizedBox(
-                          width: (MediaQuery.of(context).size.width - 32) / 2,
-                          child: TextField(
-                            controller: stampDutyController,
-                            // readOnly: true,
-                            decoration: InputDecoration(
-                              labelText: 'Stamp Duty',
-                              labelStyle: TextStyle(fontSize: 12),
-                            ),
-                            enabled: false,
-                            onChanged: (value) {
-// Handle on change
-                            },
+                          SizedBox(
+                            width: 5,
                           ),
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-// Discount Amount
-                        if(selectedTranssvItemName != "14.2 KG") ...[
+
+        // Cyl Refill Amt.
                           SizedBox(
                             width: (MediaQuery.of(context).size.width - 32) / 2,
                             child: TextField(
-                              controller: regulatorDiscountAmountController,
+                              controller: refillCylinderAmountController,
                               decoration: InputDecoration(
-                                labelText: 'Discount Amount',
+                                labelText: 'Cyl Refill Amt.',
                                 labelStyle: TextStyle(fontSize: 12),
                               ),
-                              keyboardType: TextInputType.numberWithOptions(decimal: true),
-                              onChanged: (value) {
-                                setState(() {
-                                  calculateBasicAmountSum();
-                                  calculateGrandTotalAmount();
-                                });
-                              },
+                              enabled: false,
                             ),
                           ),
-                        ],
-// Basic Amount
-                        SizedBox(
-                          width: 5,
-                        ),
-                        SizedBox(
-                          width: (MediaQuery.of(context).size.width - 32) / 2,
-                          child: TextField(
-                            controller: regulatorBasicAmountController,
-                            decoration: InputDecoration(
-                              labelText: 'Basic Amount',
-                              labelStyle: TextStyle(fontSize: 12),
-                            ),
-                            enabled: false,
-                            onChanged: (value) {
-                              setState(() {});
-                            },
+                          SizedBox(
+                            width: 5,
                           ),
-                        ),
-                        SizedBox(),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-              if (selectedTransacc == "Name Change") ...[
-                SizedBox(
-                  width: (MediaQuery.of(context).size.width - 32) / 2,
-                  child: TextField(
-                    controller: nameChangeAmtChargesController,
-                    decoration: InputDecoration(
-                      errorText: (nameChangeAmtChargesController.text.isEmpty)
-                          ? 'Amount Charges is Required'
-                          : null,
-                      label: countTextWidgetTextStarverysmall(
-                        context,
-                        'Amount Charges',
-                        showAsterisk:
-                            true, // Add a parameter to conditionally show the asterisk
-                      ),
-                    ),
-                    keyboardType: TextInputType.numberWithOptions(decimal: true), // Ensure numeric keyboard
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(
-                          RegExp(r'^\d*\.?\d*$')),
-                      LengthLimitingTextInputFormatter(7),
-                    ],
-                    onChanged: (value) {},
-                  ),
-                ),
-              ],
-              SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: countTextWidgetTextStar(
-                      context,
-                      'Cons No/DC No.',
-                      showAsterisk: true,
-                    ),
-                  ),
-                  Flexible(
-                    flex: 1,
-                    child: TextField(
-                      controller: conNoController,
-                      maxLengthEnforcement: MaxLengthEnforcement.enforced,
-                      inputFormatters: <TextInputFormatter>[
-                        LengthLimitingTextInputFormatter(6),
-                        // Allow only digits
-                      ],
-                      decoration: InputDecoration(
-                        labelText: 'Enter Consumer No./DC No.',
-                        errorText: _isConsumerEmpty
-                            ? 'Consumer No./DC No. Is Required'
-                            : null, // Show error if required
-                      ),
-                      onChanged: (value) {
-                        setState(() {
-                          _isConsumerEmpty = value.isEmpty;
-                          //Please Enter A Valid Consumer Contact No.
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              //SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Expanded(
-                      child: countTextWidgetTextcash(context, 'Consumer Name')),
-                  Flexible(
-                    flex: 1,
-                    child: TextField(
-                      controller: conNameController,
-                      decoration: InputDecoration(
-                        labelText: 'Enter Consumer Name',
-                        //  errorText: _isDepositEmpty ? 'Deposit Amt. is Required' : null, // Show error if required
-                      ),
-                      onChanged: (value) {},
-                    ),
-                  ),
-                  // SizedBox(width: 8),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Expanded(
-                      child: countTextWidgetTextcash(
-                          context, 'Consumer Contact No')),
-                  Flexible(
-                    flex: 1,
-                    child: TextField(
-                      controller: conContactController,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(10),
-                      ],
-                      decoration: InputDecoration(
-                        labelText: 'Enter Consumer Contact No',
-                        errorText: _isConCOntactEmpty
-                            ? 'Please Enter A Valid Consumer Contact No.'
-                            : _isInvalidMobile
-                                ? 'Please Enter A Valid Consumer Contact No.'
-                                : _isShortLength
-                                    ? 'Consumer Contact No. must be 10 digits'
-                                    : null,
-                      ),
-                      onChanged: (value) {
-                        setState(() {
-                          _isConCOntactEmpty = value.isEmpty;
-                          if (value.isNotEmpty) {
-                            _isInvalidMobile = !RegExp(r'^[6789]')
-                                .hasMatch(value); // Check first digit
-                            _isShortLength = value.length < 10;
-                          } else {
-                            _isInvalidMobile =
-                                false; // Reset the error if the input is empty
-                            _isShortLength = false;
-                          }
-                        });
-                        //_validateInput();
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    'Add New Item',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  ElevatedButton(
-                    onPressed: _isAddNewItemEnabled ? _addNewItem : null,
-                    // onPressed: _addNewItem,
-                    child: Icon(
-                      Icons.add,
-                      color: Colors.white,
-                    ),
-                    style: ElevatedButton.styleFrom(
-                        shape: CircleBorder(),
-                        padding: EdgeInsets.all(12),
-                        backgroundColor: Colors.blue),
-                  ),
-                  SizedBox(width: 8),
-                ],
-              ),
-              // ListView.builder(
-              //   // ListView.builder(
-              //   shrinkWrap: true,
-              //   physics: NeverScrollableScrollPhysics(),
-              //   itemCount: items.length,
-              //   itemBuilder: (context, index) {
-              //     return Padding(
-              //       padding: const EdgeInsets.only(bottom: 16.0),
-              //       child: Column(
-              //         children: [
-              //           Row(
-              //             children: [
-              //               // Expanded(
-              //               //   child:
-              //               //
-              //               //       ///working
-              //               //       DropdownButtonFormField<String>(
-              //               //     decoration: InputDecoration(
-              //               //       label: Row(
-              //               //         mainAxisSize: MainAxisSize.min,
-              //               //         children: const [
-              //               //           Text('Select Item',
-              //               //               style: TextStyle(fontSize: 12)),
-              //               //           SizedBox(width: 4),
-              //               //           Icon(Icons.star,
-              //               //               color: Colors.red, size: 10),
-              //               //         ],
-              //               //       ),
-              //               //       // border: const OutlineInputBorder(),
-              //               //       // contentPadding: const EdgeInsets.symmetric(
-              //               //       //     vertical: 8.0, horizontal: 12.0),
-              //               //     ),
-              //               //     items: _items
-              //               //         .where((item) =>
-              //               //             !_selectedItems.values
-              //               //                 .contains(item.itemName) ||
-              //               //             _selectedItems[index] == item.itemName)
-              //               //         .toSet() // Removing duplicates if any
-              //               //         .map((GetArbItemMasterListModel item) {
-              //               //       return DropdownMenuItem<String>(
-              //               //         value: item.itemName,
-              //               //         child: Text(item.itemName ?? 'Unknown'),
-              //               //       );
-              //               //     }).toList(),
-              //               //     onChanged: (selectedItem) {
-              //               //       setState(() {
-              //               //         _selectedItems[index] = selectedItem ?? '';
-              //               //       });
-              //               //
-              //               //     },
-              //               //     value: _selectedItems[index]?.isEmpty ?? true
-              //               //         ? null // If the value is null or empty, set to null
-              //               //         : _selectedItems[index],
-              //               //
-              //               //   ),
-              //               //
-              //               // ),
-              //               Expanded(
-              //                 child: DropdownButtonFormField<GetArbItemMasterListModel>(
-              //                   decoration: InputDecoration(
-              //                     label: Row(
-              //                       mainAxisSize: MainAxisSize.min,
-              //                       children: const [
-              //                         Text('Select Item', style: TextStyle(fontSize: 12)),
-              //                         SizedBox(width: 4),
-              //                         Icon(Icons.star, color: Colors.red, size: 10),
-              //                       ],
-              //                     ),
-              //                     // border: const OutlineInputBorder(),
-              //                     // contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-              //                   ),
-              //                   items: _items
-              //                       .where((item) =>
-              //                   !_selectedItems.values.contains(item.itemName) ||
-              //                       _selectedItems[index] == item.itemName)
-              //                       .toSet() // Removing duplicates if any
-              //                       .map((GetArbItemMasterListModel item) {
-              //                     return DropdownMenuItem<GetArbItemMasterListModel>(
-              //                       value: item, // Entire GetArbItemMasterListModel object
-              //                       child: Text(item.itemName ?? 'Unknown'),
-              //                     );
-              //                   }).toList(),
-              //                   onChanged: (selectedItem) {
-              //                     if (selectedItem != null) {
-              //                       setState(() {
-              //                         _selectedItems[index] = selectedItem.itemName; // Store the selected item's name
-              //                         // You can also store the full model if needed:
-              //                         // _selectedItems[index] = selectedItem;
-              //
-              //                         // Retrieve rate and calculate amount
-              //                         double rate = selectedItem.rate?.toDouble() ?? 0.0;
-              //                         double amount = rate * 0; // Assuming quantity is available (replace `quantity` with your actual quantity value)
-              //
-              //                         // You can use the rate and amount in your UI or other logic
-              //                         print("Selected item: ${selectedItem.itemName}");
-              //                         print("Rate: $rate");
-              //                         print("Amount: $amount");
-              //                       });
-              //                     }
-              //                   },
-              //                   // value: _selectedItems[index]?.isEmpty ?? true
-              //                   //     ? null // If the value is null or empty, set to null
-              //                   //     : _selectedItems[index],
-              //                 ),
-              //               ),
-              //
-              //               ElevatedButton(
-              //                 onPressed: () {
-              //                   _removeItem(index);
-              //                 },
-              //                 child: Icon(Icons.delete, color: Colors.red),
-              //                 style: ElevatedButton.styleFrom(
-              //                   shape: CircleBorder(),
-              //                   padding: EdgeInsets.all(12),
-              //                 ),
-              //               ),
-              //             ],
-              //           ),
-              //           SizedBox(height: 16),
-              //           // Received Qty, EMR, Invoice Fields
-              //           Row(
-              //             children: [
-              //               Expanded(
-              //                 child: TextField(
-              //                   controller: items[index]['rate'],
-              //                   decoration: InputDecoration(
-              //                     label: Row(
-              //                       mainAxisSize: MainAxisSize.min,
-              //                       children: [
-              //                         Text(
-              //                           'Rate',
-              //                         ),
-              //                       ],
-              //                     ),
-              //                     // border: const OutlineInputBorder(),
-              //                     // contentPadding: const EdgeInsets.symmetric(
-              //                     //     vertical: 8.0, horizontal: 12.0),
-              //                   ),
-              //                   onChanged: (value) {
-              //                     // Update the sum when the value changes
-              //                     //_updateSum(index);
-              //                   },
-              //                 ),
-              //               ),
-              //               SizedBox(width: 16),
-              //               Expanded(
-              //                 child: TextField(
-              //                   controller: items[index]['qty'],
-              //                   keyboardType: TextInputType.number,
-              //                   inputFormatters: <TextInputFormatter>[
-              //                     FilteringTextInputFormatter.digitsOnly,
-              //                     LengthLimitingTextInputFormatter(3),
-              //                     // Allow only digits
-              //                   ],
-              //                   decoration: InputDecoration(
-              //                     label: Row(
-              //                       mainAxisSize: MainAxisSize.min,
-              //                       children: [
-              //                         countTextWidgetTextStar(
-              //                           context,
-              //                           'Qty',
-              //                           showAsterisk:
-              //                               true, // Add a parameter to conditionally show the asterisk
-              //                         ),
-              //                       ],
-              //                     ),
-              //                     // border: const OutlineInputBorder(),
-              //                     // contentPadding: const EdgeInsets.symmetric(
-              //                     //     vertical: 8.0, horizontal: 12.0),
-              //                   ),
-              //                   onChanged: (value) {
-              //                     setState(() {
-              //                       _calculateAmount(index);
-              //                     });
-              //                   },
-              //                 ),
-              //               ),
-              //               SizedBox(width: 16),
-              //               Expanded(
-              //                 child: TextField(
-              //                   controller: items[index]['discount'],
-              //                   keyboardType: TextInputType.number,
-              //                   inputFormatters: <TextInputFormatter>[
-              //                     FilteringTextInputFormatter.digitsOnly,
-              //                     LengthLimitingTextInputFormatter(7),
-              //                     // Allow only digits
-              //                   ],
-              //                   decoration: InputDecoration(
-              //                     label: Row(
-              //                       mainAxisSize: MainAxisSize.min,
-              //                       children: const [
-              //                         Text(
-              //                           'Discount',
-              //                           style: TextStyle(fontSize: 12),
-              //                         ),
-              //                       ],
-              //                     ),
-              //                     // border: const OutlineInputBorder(),
-              //                     // contentPadding: const EdgeInsets.symmetric(
-              //                     //     vertical: 8.0, horizontal: 12.0),
-              //                   ),
-              //                   onChanged: (value) {
-              //                     setState(() {
-              //                       _calculateAmount(index);
-              //                     });
-              //                   },
-              //                 ),
-              //               ),
-              //               SizedBox(width: 16),
-              //               Expanded(
-              //                 child: TextField(
-              //                   controller: items[index]['amt'],
-              //                   decoration: InputDecoration(
-              //                     label: Row(
-              //                       mainAxisSize: MainAxisSize.min,
-              //                       children: const [
-              //                         Text(
-              //                           'Amt.',
-              //                           style: TextStyle(fontSize: 12),
-              //                         ),
-              //                       ],
-              //                     ),
-              //                     // border: const OutlineInputBorder(),
-              //                     // contentPadding: const EdgeInsets.symmetric(
-              //                     //     vertical: 8.0, horizontal: 12.0),
-              //                   ),
-              //                   onChanged: (value) {
-              //                     setState(() {
-              //                       _calculateAmount(index);
-              //                     });
-              //                   },
-              //                 ),
-              //               ),
-              //             ],
-              //           ),
-              //         ],
-              //       ),
-              //     );
-              //   },
-              // ),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 16.0),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            // Instead of using Flexible, use Expanded for better layout control
-                            // Expanded(
-                            //                 child:
-                            //
-                            //                     ///working
-                            //                     DropdownButtonFormField<String>(
-                            //                   decoration: InputDecoration(
-                            //                     label: Row(
-                            //                       mainAxisSize: MainAxisSize.min,
-                            //                       children: const [
-                            //                         Text('Select Item',
-                            //                             style: TextStyle(fontSize: 12)),
-                            //                         SizedBox(width: 4),
-                            //                         Icon(Icons.star,
-                            //                             color: Colors.red, size: 10),
-                            //                       ],
-                            //                     ),
-                            //                   ),
-                            //                   items: _items
-                            //                       .where((item) =>
-                            //                           !_selectedItems.values
-                            //                               .contains(item.itemName) ||
-                            //                           _selectedItems[index] == item.itemName)
-                            //                       .toSet() // Removing duplicates if any
-                            //                       .map((GetArbItemMasterListModel item) {
-                            //                     return DropdownMenuItem<String>(
-                            //                       value: item.itemName,
-                            //                       child: Text(item.itemName ?? 'Unknown'),
-                            //                     );
-                            //                   }).toList(),
-                            //                   onChanged: (selectedItem) {
-                            //                     setState(() {
-                            //                       _selectedItems[index] = selectedItem ?? '';
-                            //
-                            //                     });
-                            //
-                            //                   },
-                            //                   value: _selectedItems[index]?.isEmpty ?? true
-                            //                       ? null // If the value is null or empty, set to null
-                            //                       : _selectedItems[index],
-                            //
-                            //                 ),
-                            //
-                            //               ),
-                            //   Expanded(
-                            //     child: DropdownButtonFormField<
-                            //         GetArbItemMasterListModel>(
-                            //       decoration: InputDecoration(
-                            //         label: Row(
-                            //           mainAxisSize: MainAxisSize.min,
-                            //           children: const [
-                            //             Text('Select Item',
-                            //                 style: TextStyle(fontSize: 12)),
-                            //             SizedBox(width: 4),
-                            //             Icon(Icons.star,
-                            //                 color: Colors.red, size: 10),
-                            //           ],
-                            //         ),
-                            //       ),
-                            //       items: _items
-                            //           .where((item) =>
-                            //               !_selectedItems.values
-                            //                   .contains(item.itemName) ||
-                            //               _selectedItems[index] == item.itemName)
-                            //           .toSet() // Removing duplicates if any
-                            //           .map((GetArbItemMasterListModel item) {
-                            //         return DropdownMenuItem<
-                            //             GetArbItemMasterListModel>(
-                            //           value: item,
-                            //           // Entire GetArbItemMasterListModel object
-                            //           child: Text(item.itemName ?? 'Unknown'),
-                            //         );
-                            //       }).toList(),
-                            //       onChanged: (selectedItem) {
-                            //         if (selectedItem != null) {
-                            //           setState(() {
-                            //             _selectedItems[index] = selectedItem.itemName; // Store item name or full model
-                            //             // Retrieve rate and calculate amount
-                            //             double rate =
-                            //                 selectedItem.rate?.toDouble() ?? 0.0;
-                            //             double amount = rate *
-                            //                 0; // Replace with actual quantity
-                            //             items[index]['rate']?.text =
-                            //                 rate.toString();
-                            //             items[index]['amt']?.text =
-                            //                 rate.toString();
-                            //             print(
-                            //                 "Selected item: ${selectedItem.itemName}");
-                            //             print("Rate: $rate");
-                            //             print("Amount: $amount");
-                            //             items[index]['qty']?.clear();
-                            //             items[index]['discount']?.clear();
-                            //           });
-                            //         }
-                            //       },
-                            //       // value: _selectedItems[index]?.isEmpty ?? true
-                            //       //     ? null // If the value is null or empty, set to null
-                            //       //     : _selectedItems[index],
-                            //     ),
-                            //   ),
-                            Expanded(
-                              child: DropdownButtonFormField<String>(
+
+        // Regulator Deposit (Read-only)
+                          if (selectedTransacc != "DBC") ...[
+                            SizedBox(
+                              width: (MediaQuery.of(context).size.width - 32) / 2,
+                              child: TextField(
+                                // readOnly: true,
+                                controller: regulatorDepositAmountController,
                                 decoration: InputDecoration(
-                                  label: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: const [
-                                      Text('Select Item', style: TextStyle(fontSize: 12)),
-                                      SizedBox(width: 4),
-                                      Icon(Icons.star, color: Colors.red, size: 10),
-                                    ],
+                                  errorText: (regulatorDepositAmountController
+                                          .text.isEmpty)
+                                      ? 'Regulator Deposit is Required'
+                                      : null,
+                                  label: countTextWidgetTextStarverysmall(
+                                    context,
+                                    'Regulator Deposit',
+                                    showAsterisk:
+                                        true, // Add a parameter to conditionally show the asterisk
                                   ),
                                 ),
-                                value: _selectedItems[index]?.isEmpty ?? true ? null : _selectedItems[index],
-                                items: _items
-                                    .where((item) =>
-                                !_selectedItems.values.contains(item.itemName) ||
-                                    _selectedItems[index] == item.itemName)
-                                    .toSet()
-                                    .map((item) {
-                                  return DropdownMenuItem<String>(
-                                    value: item.itemName,
-                                    child: Text(item.itemName ?? 'Unknown'),
-                                   );
-                                }).toList(),
-                                onChanged: (selectedItemName) {
-                                  if (selectedItemName != null) {
-                                    setState(() {
-                                      _selectedItems[index] = selectedItemName;
+                                // keyboardType: TextInputType.numberWithOptions(decimal: true),
+                                keyboardType: TextInputType.numberWithOptions(decimal: true), // Ensure numeric keyboard
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp(r'^\d*\.?\d*$')),
+                                  LengthLimitingTextInputFormatter(7),
+                                ],
+                                enabled:selectedTranssvItemName == "14.2 KG" && selectedTransacc == "RC" && !isExemptedReticulated
+                                    ? true
+                                    : false,
 
-                                      final selectedItem = _items.firstWhere(
-                                              (item) => item.itemName == selectedItemName,
-                                          orElse: () => GetArbItemMasterListModel());
-                                      int? currentStock = getArbItemCurrentStock(selectedItem.itemId?.toInt())?.toInt();
-                                      _itemStockByIndex[index] = currentStock; // Store current stock per index
-                                      _selectedItemIds[index] = selectedItem.itemId?.toInt(); // Optional if needed
-                                      debugPrint("usfds ${_itemStockByIndex[index]}");
-                                      double rate = selectedItem.rate?.toDouble() ?? 0.0;
-                                      double amount = rate * 0; // Replace 0 with actual quantity if available
-                                      items[index]['rate']?.text = rate.toString();
-                                      items[index]['amt']?.text = rate.toString();
-                                      items[index]['qty']?.clear();
-                                      items[index]['discount']?.clear();
-                                      print("Selected item: ${selectedItem.itemName}");
-                                      print("Rate: $rate");
-                                      print("Amount: $amount");
-                                      calculateGrandTotalAmount();
-                                    });
-                                  }
+                                onChanged: (value){
+                                  calculateBasicAmountSum();
+                                  calculateGrandTotalAmount();
                                 },
-                              ),
-                            ),
-
-                            ElevatedButton(
-                              onPressed: () {
-                                _removeItem(index);
-                              },
-                              child: Icon(Icons.delete, color: Colors.red),
-                              style: ElevatedButton.styleFrom(
-                                shape: CircleBorder(),
-                                padding: EdgeInsets.all(12),
                               ),
                             ),
                           ],
-                        ),
-                        SizedBox(height: 16),
-                        // Received Qty, EMR, Invoice Fields
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: items[index]['rate'],
-                                decoration: InputDecoration(
-                                  label: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [Text('Rate')],
-                                  ),
-                                ),
-                                enabled: false,
+                          SizedBox(
+                            width: 5,
+                          ),
+        // Stamp Duty
+                          SizedBox(
+                            width: (MediaQuery.of(context).size.width - 32) / 2,
+                            child: TextField(
+                              controller: stampDutyController,
+                              // readOnly: true,
+                              decoration: InputDecoration(
+                                labelText: 'Stamp Duty',
+                                labelStyle: TextStyle(fontSize: 12),
                               ),
+                              enabled: false,
+                              onChanged: (value) {
+        // Handle on change
+                              },
                             ),
-                            SizedBox(width: 16),
-                            Expanded(
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+        // Discount Amount
+                          if(selectedTranssvItemName != "14.2 KG") ...[
+                            SizedBox(
+                              width: (MediaQuery.of(context).size.width - 32) / 2,
                               child: TextField(
-                                controller: items[index]['qty'],
-                                keyboardType: TextInputType.number,
-                                inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.digitsOnly,
-                                  LengthLimitingTextInputFormatter(3),
-                                ],
+                                controller: regulatorDiscountAmountController,
                                 decoration: InputDecoration(
-                                  label: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      countTextWidgetTextStar(context, 'Qty',
-                                          showAsterisk: true),
-                                    ],
-                                  ),
-                                  //errorText: items[index]['qty']?.text.isEmpty ?? true ? 'Qty is required' : null, // Error text check
+                                  labelText: 'Discount Amount',
+                                  labelStyle: TextStyle(fontSize: 12),
                                 ),
+                                keyboardType: TextInputType.numberWithOptions(decimal: true),
                                 onChanged: (value) {
                                   setState(() {
-                                    bool isNotNull = value.isNotEmpty;
-                                    int enteredQty = int.tryParse(value) ?? 0;
-                                    int? stockLimit = _itemStockByIndex[index];
-                                    debugPrint("stockLimit $stockLimit");
-                                    if (isNotNull) {
-                                      if (stockLimit != null && enteredQty > stockLimit) {
-                                        items[index]['qty']?.clear(); // Or retain but show error
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: Text('Entered quantity exceeds current stock: $stockLimit'),
-                                            backgroundColor: Colors.red,
-                                          ),
-                                        );
-                                        _updateSum(index);
-                                        calculateGrandTotalAmount();
-                                        return;
-                                      }
-                                      _updateSum(index);
-                                      calculateGrandTotalAmount();
-                                    } else {
-                                      _updateSum(index);
-                                      calculateGrandTotalAmount();
-                                    }
-                                  });
-                                },
-                              ),
-                            ),
-                            SizedBox(width: 16),
-                            Expanded(
-                              child: TextField(
-                                controller: items[index]['discount'],
-                                keyboardType: TextInputType.number,
-                                inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.digitsOnly,
-                                  LengthLimitingTextInputFormatter(7),
-                                ],
-                                decoration: InputDecoration(
-                                  label: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [Text('Discount')],
-                                  ),
-                                ),
-                                onChanged: (value) {
-                                  setState(() {
-                                    _updateSum(index);
+                                    calculateBasicAmountSum();
                                     calculateGrandTotalAmount();
                                   });
                                 },
                               ),
                             ),
-                            SizedBox(width: 16),
-                            Expanded(
-                              child: TextField(
-                                controller: items[index]['amt'],
-                                decoration: InputDecoration(
-                                  label: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [Text('Amt.')],
-                                  ),
-                                ),
-                                enabled: false,
-                              ),
-                            ),
                           ],
-                        ),
-                      ],
+        // Basic Amount
+                          SizedBox(
+                            width: 5,
+                          ),
+                          SizedBox(
+                            width: (MediaQuery.of(context).size.width - 32) / 2,
+                            child: TextField(
+                              controller: regulatorBasicAmountController,
+                              decoration: InputDecoration(
+                                labelText: 'Basic Amount',
+                                labelStyle: TextStyle(fontSize: 12),
+                              ),
+                              enabled: false,
+                              onChanged: (value) {
+                                setState(() {});
+                              },
+                            ),
+                          ),
+                          SizedBox(),
+                        ],
+                      ),
                     ),
-                  );
-                },
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Expanded(
-                      child: countTextWidgetTextcash(context, 'Total Amount')),
-                  Flexible(
-                    flex: 1,
+                  ),
+                ],
+                if (selectedTransacc == "Name Change") ...[
+                  SizedBox(
+                    width: (MediaQuery.of(context).size.width - 32) / 2,
                     child: TextField(
-                      controller: totalAmountController,
-                      enabled: false,
+                      controller: nameChangeAmtChargesController,
+                      decoration: InputDecoration(
+                        errorText: (nameChangeAmtChargesController.text.isEmpty)
+                            ? 'Amount Charges is Required'
+                            : null,
+                        label: countTextWidgetTextStarverysmall(
+                          context,
+                          'Amount Charges',
+                          showAsterisk:
+                              true, // Add a parameter to conditionally show the asterisk
+                        ),
+                      ),
+                      keyboardType: TextInputType.numberWithOptions(decimal: true), // Ensure numeric keyboard
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                            RegExp(r'^\d*\.?\d*$')),
+                        LengthLimitingTextInputFormatter(7),
+                      ],
                       onChanged: (value) {},
                     ),
                   ),
-                  // SizedBox(width: 8),
                 ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                      child:
-                      countTextWidgetTextStar(context, 'Receipt Payment',showAsterisk: true)),
-                  Flexible(
-                    flex: 1,
-                    child: TextField(
-                      controller: recPaymentController,
-                      decoration: InputDecoration(
-                        labelText: 'Enter Receipt Payment',
-                        errorText: _isConsumerEmpty
-                            ? 'Receipt Payment is Required'
-                            : null, // Show error if required
-                      ),
-                      keyboardType: TextInputType.numberWithOptions(decimal: true),
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,10}')),
-                      ],
-                      onChanged: (value) {
-                        double amt = double.parse(totalAmountController.text);
-                        setState(() {
-                          _isConsumerEmpty = value.isEmpty;
-                          double val = double.parse(value);
-                          if(val > amt){
-
-                          }
-                          //Please Enter A Valid Consumer Contact No.
-                        });
-                      },
-                    ),
-                  ),
-                  // SizedBox(width: 8),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: countTextWidgetTextStar(
-                      context,
-                      'Select Payment Mode',
-                      showAsterisk:
-                          true, // Add a parameter to conditionally show the asterisk
-                    ),
-                  ),
-                  Flexible(
-                    flex: 1,
-                    child: DropdownButtonFormField<String>(
-                      key: formKey3,
-                      decoration: InputDecoration(
-                        contentPadding:
-                            EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                      ),
-                      value: selectedTransMode,
-                      // Bind the selected value
-                      items: getTransMode
-                          .map((String value) => DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              ))
-                          .toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          selectedTransMode =
-                              value; // Update the selected value
-                        });
-                      },
-                      isExpanded: true,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(0.0),
-                child: Column(
+                SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    if (selectedTransMode == 'Online')
-                      Column(
+                    Expanded(
+                      child: countTextWidgetTextStar(
+                        context,
+                        'Cons No/DC No.',
+                        showAsterisk: true,
+                      ),
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: TextField(
+                        controller: conNoController,
+                        maxLengthEnforcement: MaxLengthEnforcement.enforced,
+                        inputFormatters: <TextInputFormatter>[
+                          LengthLimitingTextInputFormatter(6),
+                          // Allow only digits
+                        ],
+                        decoration: InputDecoration(
+                          labelText: 'Enter Consumer No./DC No.',
+                          errorText: _isConsumerEmpty
+                              ? 'Consumer No./DC No. Is Required'
+                              : null, // Show error if required
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            _isConsumerEmpty = value.isEmpty;
+                            //Please Enter A Valid Consumer Contact No.
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                //SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                        child: countTextWidgetTextcash(context, 'Consumer Name')),
+                    Flexible(
+                      flex: 1,
+                      child: TextField(
+                        controller: conNameController,
+                        decoration: InputDecoration(
+                          labelText: 'Enter Consumer Name',
+                          //  errorText: _isDepositEmpty ? 'Deposit Amt. is Required' : null, // Show error if required
+                        ),
+                        onChanged: (value) {},
+                      ),
+                    ),
+                    // SizedBox(width: 8),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                        child: countTextWidgetTextcash(
+                            context, 'Consumer Contact No')),
+                    Flexible(
+                      flex: 1,
+                      child: TextField(
+                        controller: conContactController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: <TextInputFormatter>[
+                          FilteringTextInputFormatter.digitsOnly,
+                          LengthLimitingTextInputFormatter(10),
+                        ],
+                        decoration: InputDecoration(
+                          labelText: 'Enter Consumer Contact No',
+                          errorText: _isConCOntactEmpty
+                              ? 'Please Enter A Valid Consumer Contact No.'
+                              : _isInvalidMobile
+                                  ? 'Please Enter A Valid Consumer Contact No.'
+                                  : _isShortLength
+                                      ? 'Consumer Contact No. must be 10 digits'
+                                      : null,
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            _isConCOntactEmpty = value.isEmpty;
+                            if (value.isNotEmpty) {
+                              _isInvalidMobile = !RegExp(r'^[6789]')
+                                  .hasMatch(value); // Check first digit
+                              _isShortLength = value.length < 10;
+                            } else {
+                              _isInvalidMobile =
+                                  false; // Reset the error if the input is empty
+                              _isShortLength = false;
+                            }
+                          });
+                          //_validateInput();
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Add New Item',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    ElevatedButton(
+                      onPressed: _isAddNewItemEnabled ? _addNewItem : null,
+                      // onPressed: _addNewItem,
+                      child: Icon(
+                        Icons.add,
+                        color: Colors.white,
+                      ),
+                      style: ElevatedButton.styleFrom(
+                          shape: CircleBorder(),
+                          padding: EdgeInsets.all(12),
+                          backgroundColor: Colors.blue),
+                    ),
+                    SizedBox(width: 8),
+                  ],
+                ),
+                // ListView.builder(
+                //   // ListView.builder(
+                //   shrinkWrap: true,
+                //   physics: NeverScrollableScrollPhysics(),
+                //   itemCount: items.length,
+                //   itemBuilder: (context, index) {
+                //     return Padding(
+                //       padding: const EdgeInsets.only(bottom: 16.0),
+                //       child: Column(
+                //         children: [
+                //           Row(
+                //             children: [
+                //               // Expanded(
+                //               //   child:
+                //               //
+                //               //       ///working
+                //               //       DropdownButtonFormField<String>(
+                //               //     decoration: InputDecoration(
+                //               //       label: Row(
+                //               //         mainAxisSize: MainAxisSize.min,
+                //               //         children: const [
+                //               //           Text('Select Item',
+                //               //               style: TextStyle(fontSize: 12)),
+                //               //           SizedBox(width: 4),
+                //               //           Icon(Icons.star,
+                //               //               color: Colors.red, size: 10),
+                //               //         ],
+                //               //       ),
+                //               //       // border: const OutlineInputBorder(),
+                //               //       // contentPadding: const EdgeInsets.symmetric(
+                //               //       //     vertical: 8.0, horizontal: 12.0),
+                //               //     ),
+                //               //     items: _items
+                //               //         .where((item) =>
+                //               //             !_selectedItems.values
+                //               //                 .contains(item.itemName) ||
+                //               //             _selectedItems[index] == item.itemName)
+                //               //         .toSet() // Removing duplicates if any
+                //               //         .map((GetArbItemMasterListModel item) {
+                //               //       return DropdownMenuItem<String>(
+                //               //         value: item.itemName,
+                //               //         child: Text(item.itemName ?? 'Unknown'),
+                //               //       );
+                //               //     }).toList(),
+                //               //     onChanged: (selectedItem) {
+                //               //       setState(() {
+                //               //         _selectedItems[index] = selectedItem ?? '';
+                //               //       });
+                //               //
+                //               //     },
+                //               //     value: _selectedItems[index]?.isEmpty ?? true
+                //               //         ? null // If the value is null or empty, set to null
+                //               //         : _selectedItems[index],
+                //               //
+                //               //   ),
+                //               //
+                //               // ),
+                //               Expanded(
+                //                 child: DropdownButtonFormField<GetArbItemMasterListModel>(
+                //                   decoration: InputDecoration(
+                //                     label: Row(
+                //                       mainAxisSize: MainAxisSize.min,
+                //                       children: const [
+                //                         Text('Select Item', style: TextStyle(fontSize: 12)),
+                //                         SizedBox(width: 4),
+                //                         Icon(Icons.star, color: Colors.red, size: 10),
+                //                       ],
+                //                     ),
+                //                     // border: const OutlineInputBorder(),
+                //                     // contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                //                   ),
+                //                   items: _items
+                //                       .where((item) =>
+                //                   !_selectedItems.values.contains(item.itemName) ||
+                //                       _selectedItems[index] == item.itemName)
+                //                       .toSet() // Removing duplicates if any
+                //                       .map((GetArbItemMasterListModel item) {
+                //                     return DropdownMenuItem<GetArbItemMasterListModel>(
+                //                       value: item, // Entire GetArbItemMasterListModel object
+                //                       child: Text(item.itemName ?? 'Unknown'),
+                //                     );
+                //                   }).toList(),
+                //                   onChanged: (selectedItem) {
+                //                     if (selectedItem != null) {
+                //                       setState(() {
+                //                         _selectedItems[index] = selectedItem.itemName; // Store the selected item's name
+                //                         // You can also store the full model if needed:
+                //                         // _selectedItems[index] = selectedItem;
+                //
+                //                         // Retrieve rate and calculate amount
+                //                         double rate = selectedItem.rate?.toDouble() ?? 0.0;
+                //                         double amount = rate * 0; // Assuming quantity is available (replace `quantity` with your actual quantity value)
+                //
+                //                         // You can use the rate and amount in your UI or other logic
+                //                         print("Selected item: ${selectedItem.itemName}");
+                //                         print("Rate: $rate");
+                //                         print("Amount: $amount");
+                //                       });
+                //                     }
+                //                   },
+                //                   // value: _selectedItems[index]?.isEmpty ?? true
+                //                   //     ? null // If the value is null or empty, set to null
+                //                   //     : _selectedItems[index],
+                //                 ),
+                //               ),
+                //
+                //               ElevatedButton(
+                //                 onPressed: () {
+                //                   _removeItem(index);
+                //                 },
+                //                 child: Icon(Icons.delete, color: Colors.red),
+                //                 style: ElevatedButton.styleFrom(
+                //                   shape: CircleBorder(),
+                //                   padding: EdgeInsets.all(12),
+                //                 ),
+                //               ),
+                //             ],
+                //           ),
+                //           SizedBox(height: 16),
+                //           // Received Qty, EMR, Invoice Fields
+                //           Row(
+                //             children: [
+                //               Expanded(
+                //                 child: TextField(
+                //                   controller: items[index]['rate'],
+                //                   decoration: InputDecoration(
+                //                     label: Row(
+                //                       mainAxisSize: MainAxisSize.min,
+                //                       children: [
+                //                         Text(
+                //                           'Rate',
+                //                         ),
+                //                       ],
+                //                     ),
+                //                     // border: const OutlineInputBorder(),
+                //                     // contentPadding: const EdgeInsets.symmetric(
+                //                     //     vertical: 8.0, horizontal: 12.0),
+                //                   ),
+                //                   onChanged: (value) {
+                //                     // Update the sum when the value changes
+                //                     //_updateSum(index);
+                //                   },
+                //                 ),
+                //               ),
+                //               SizedBox(width: 16),
+                //               Expanded(
+                //                 child: TextField(
+                //                   controller: items[index]['qty'],
+                //                   keyboardType: TextInputType.number,
+                //                   inputFormatters: <TextInputFormatter>[
+                //                     FilteringTextInputFormatter.digitsOnly,
+                //                     LengthLimitingTextInputFormatter(3),
+                //                     // Allow only digits
+                //                   ],
+                //                   decoration: InputDecoration(
+                //                     label: Row(
+                //                       mainAxisSize: MainAxisSize.min,
+                //                       children: [
+                //                         countTextWidgetTextStar(
+                //                           context,
+                //                           'Qty',
+                //                           showAsterisk:
+                //                               true, // Add a parameter to conditionally show the asterisk
+                //                         ),
+                //                       ],
+                //                     ),
+                //                     // border: const OutlineInputBorder(),
+                //                     // contentPadding: const EdgeInsets.symmetric(
+                //                     //     vertical: 8.0, horizontal: 12.0),
+                //                   ),
+                //                   onChanged: (value) {
+                //                     setState(() {
+                //                       _calculateAmount(index);
+                //                     });
+                //                   },
+                //                 ),
+                //               ),
+                //               SizedBox(width: 16),
+                //               Expanded(
+                //                 child: TextField(
+                //                   controller: items[index]['discount'],
+                //                   keyboardType: TextInputType.number,
+                //                   inputFormatters: <TextInputFormatter>[
+                //                     FilteringTextInputFormatter.digitsOnly,
+                //                     LengthLimitingTextInputFormatter(7),
+                //                     // Allow only digits
+                //                   ],
+                //                   decoration: InputDecoration(
+                //                     label: Row(
+                //                       mainAxisSize: MainAxisSize.min,
+                //                       children: const [
+                //                         Text(
+                //                           'Discount',
+                //                           style: TextStyle(fontSize: 12),
+                //                         ),
+                //                       ],
+                //                     ),
+                //                     // border: const OutlineInputBorder(),
+                //                     // contentPadding: const EdgeInsets.symmetric(
+                //                     //     vertical: 8.0, horizontal: 12.0),
+                //                   ),
+                //                   onChanged: (value) {
+                //                     setState(() {
+                //                       _calculateAmount(index);
+                //                     });
+                //                   },
+                //                 ),
+                //               ),
+                //               SizedBox(width: 16),
+                //               Expanded(
+                //                 child: TextField(
+                //                   controller: items[index]['amt'],
+                //                   decoration: InputDecoration(
+                //                     label: Row(
+                //                       mainAxisSize: MainAxisSize.min,
+                //                       children: const [
+                //                         Text(
+                //                           'Amt.',
+                //                           style: TextStyle(fontSize: 12),
+                //                         ),
+                //                       ],
+                //                     ),
+                //                     // border: const OutlineInputBorder(),
+                //                     // contentPadding: const EdgeInsets.symmetric(
+                //                     //     vertical: 8.0, horizontal: 12.0),
+                //                   ),
+                //                   onChanged: (value) {
+                //                     setState(() {
+                //                       _calculateAmount(index);
+                //                     });
+                //                   },
+                //                 ),
+                //               ),
+                //             ],
+                //           ),
+                //         ],
+                //       ),
+                //     );
+                //   },
+                // ),
+                ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: Column(
                         children: [
                           Row(
                             children: [
+                              // Instead of using Flexible, use Expanded for better layout control
+                              // Expanded(
+                              //                 child:
+                              //
+                              //                     ///working
+                              //                     DropdownButtonFormField<String>(
+                              //                   decoration: InputDecoration(
+                              //                     label: Row(
+                              //                       mainAxisSize: MainAxisSize.min,
+                              //                       children: const [
+                              //                         Text('Select Item',
+                              //                             style: TextStyle(fontSize: 12)),
+                              //                         SizedBox(width: 4),
+                              //                         Icon(Icons.star,
+                              //                             color: Colors.red, size: 10),
+                              //                       ],
+                              //                     ),
+                              //                   ),
+                              //                   items: _items
+                              //                       .where((item) =>
+                              //                           !_selectedItems.values
+                              //                               .contains(item.itemName) ||
+                              //                           _selectedItems[index] == item.itemName)
+                              //                       .toSet() // Removing duplicates if any
+                              //                       .map((GetArbItemMasterListModel item) {
+                              //                     return DropdownMenuItem<String>(
+                              //                       value: item.itemName,
+                              //                       child: Text(item.itemName ?? 'Unknown'),
+                              //                     );
+                              //                   }).toList(),
+                              //                   onChanged: (selectedItem) {
+                              //                     setState(() {
+                              //                       _selectedItems[index] = selectedItem ?? '';
+                              //
+                              //                     });
+                              //
+                              //                   },
+                              //                   value: _selectedItems[index]?.isEmpty ?? true
+                              //                       ? null // If the value is null or empty, set to null
+                              //                       : _selectedItems[index],
+                              //
+                              //                 ),
+                              //
+                              //               ),
+                              //   Expanded(
+                              //     child: DropdownButtonFormField<
+                              //         GetArbItemMasterListModel>(
+                              //       decoration: InputDecoration(
+                              //         label: Row(
+                              //           mainAxisSize: MainAxisSize.min,
+                              //           children: const [
+                              //             Text('Select Item',
+                              //                 style: TextStyle(fontSize: 12)),
+                              //             SizedBox(width: 4),
+                              //             Icon(Icons.star,
+                              //                 color: Colors.red, size: 10),
+                              //           ],
+                              //         ),
+                              //       ),
+                              //       items: _items
+                              //           .where((item) =>
+                              //               !_selectedItems.values
+                              //                   .contains(item.itemName) ||
+                              //               _selectedItems[index] == item.itemName)
+                              //           .toSet() // Removing duplicates if any
+                              //           .map((GetArbItemMasterListModel item) {
+                              //         return DropdownMenuItem<
+                              //             GetArbItemMasterListModel>(
+                              //           value: item,
+                              //           // Entire GetArbItemMasterListModel object
+                              //           child: Text(item.itemName ?? 'Unknown'),
+                              //         );
+                              //       }).toList(),
+                              //       onChanged: (selectedItem) {
+                              //         if (selectedItem != null) {
+                              //           setState(() {
+                              //             _selectedItems[index] = selectedItem.itemName; // Store item name or full model
+                              //             // Retrieve rate and calculate amount
+                              //             double rate =
+                              //                 selectedItem.rate?.toDouble() ?? 0.0;
+                              //             double amount = rate *
+                              //                 0; // Replace with actual quantity
+                              //             items[index]['rate']?.text =
+                              //                 rate.toString();
+                              //             items[index]['amt']?.text =
+                              //                 rate.toString();
+                              //             print(
+                              //                 "Selected item: ${selectedItem.itemName}");
+                              //             print("Rate: $rate");
+                              //             print("Amount: $amount");
+                              //             items[index]['qty']?.clear();
+                              //             items[index]['discount']?.clear();
+                              //           });
+                              //         }
+                              //       },
+                              //       // value: _selectedItems[index]?.isEmpty ?? true
+                              //       //     ? null // If the value is null or empty, set to null
+                              //       //     : _selectedItems[index],
+                              //     ),
+                              //   ),
                               Expanded(
-                                child:
-                                DropdownButtonFormField<
-                                    GetBankMappingDetailsListModel>(
+                                child: DropdownButtonFormField<String>(
                                   decoration: InputDecoration(
-                                    label: countTextWidgetTextStarverysmall(
-                                      context,
-                                      'Select Acc No',
-                                      showAsterisk:
-                                      true, // Add a parameter to conditionally show the asterisk
+                                    label: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: const [
+                                        Text('Select Item', style: TextStyle(fontSize: 12)),
+                                        SizedBox(width: 4),
+                                        Icon(Icons.star, color: Colors.red, size: 10),
+                                      ],
                                     ),
                                   ),
-                                  value: bankModel.contains(_selectBankModel) ? _selectBankModel : null,
-
-                                  items: bankModel.map((item) {
-                                    return
-                                      DropdownMenuItem<GetBankMappingDetailsListModel>(
-                                      value: item,
-                                      child: Text(
-                                        '${item.bankName ?? ''} - ${item.accountNo ?? ''}',
-                                      ),
-                                    );
+                                  value: _selectedItems[index]?.isEmpty ?? true ? null : _selectedItems[index],
+                                  items: _items
+                                      .where((item) =>
+                                  !_selectedItems.values.contains(item.itemName) ||
+                                      _selectedItems[index] == item.itemName)
+                                      .toSet()
+                                      .map((item) {
+                                    return DropdownMenuItem<String>(
+                                      value: item.itemName,
+                                      child: Text(item.itemName ?? 'Unknown'),
+                                     );
                                   }).toList(),
-                                  onChanged: (selectedItem) {
-                                    setState(() {
-                                      _selectBankModel = selectedItem;
-                                      selectedBankName = selectedItem?.bankName;
-                                      selectedBankId = selectedItem?.accountNo;
-                                      selecteBankIDApi = selectedItem?.bankId?.toInt();
-                                      accMappingId = selectedItem?.mappingId?.toInt();
-                                    });
-                                  },
-                                  // hint: Text('Select Acc No'),
+                                  onChanged: (selectedItemName) {
+                                    if (selectedItemName != null) {
+                                      setState(() {
+                                        _selectedItems[index] = selectedItemName;
 
+                                        final selectedItem = _items.firstWhere(
+                                                (item) => item.itemName == selectedItemName,
+                                            orElse: () => GetArbItemMasterListModel());
+                                        int? currentStock = getArbItemCurrentStock(selectedItem.itemId?.toInt())?.toInt();
+                                        _itemStockByIndex[index] = currentStock; // Store current stock per index
+                                        _selectedItemIds[index] = selectedItem.itemId?.toInt(); // Optional if needed
+                                        debugPrint("usfds ${_itemStockByIndex[index]}");
+                                        double rate = selectedItem.rate?.toDouble() ?? 0.0;
+                                        double amount = rate * 0; // Replace 0 with actual quantity if available
+                                        items[index]['rate']?.text = rate.toString();
+                                        items[index]['amt']?.text = rate.toString();
+                                        items[index]['qty']?.clear();
+                                        items[index]['discount']?.clear();
+                                        print("Selected item: ${selectedItem.itemName}");
+                                        print("Rate: $rate");
+                                        print("Amount: $amount");
+                                        calculateGrandTotalAmount();
+                                      });
+                                    }
+                                  },
+                                ),
+                              ),
+
+                              ElevatedButton(
+                                onPressed: () {
+                                  _removeItem(index);
+                                },
+                                child: Icon(Icons.delete, color: Colors.red),
+                                style: ElevatedButton.styleFrom(
+                                  shape: CircleBorder(),
+                                  padding: EdgeInsets.all(12),
                                 ),
                               ),
                             ],
                           ),
+                          SizedBox(height: 16),
+                          // Received Qty, EMR, Invoice Fields
                           Row(
                             children: [
                               Expanded(
                                 child: TextField(
-                                  controller: TranCodeController,
-                                  maxLengthEnforcement:
-                                      MaxLengthEnforcement.enforced,
-                                  // Enforce max length
+                                  controller: items[index]['rate'],
+                                  decoration: InputDecoration(
+                                    label: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [Text('Rate')],
+                                    ),
+                                  ),
+                                  enabled: false,
+                                ),
+                              ),
+                              SizedBox(width: 16),
+                              Expanded(
+                                child: TextField(
+                                  controller: items[index]['qty'],
+                                  keyboardType: TextInputType.number,
                                   inputFormatters: <TextInputFormatter>[
-                                    LengthLimitingTextInputFormatter(30),
-                                    // Limit the length to 30 characters
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    LengthLimitingTextInputFormatter(3),
                                   ],
                                   decoration: InputDecoration(
-                                    errorText: _isTranscode
-                                        ? 'Transaction code is Required'
-                                        : null,
                                     label: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        countTextWidgetTextStar(
-                                          context,
-                                          'Transaction Code',
-                                          showAsterisk: true,
-                                        ),
+                                        countTextWidgetTextStar(context, 'Qty',
+                                            showAsterisk: true),
                                       ],
                                     ),
-                                    contentPadding: EdgeInsets.symmetric(
-                                        vertical: 8.0, horizontal: 12.0),
+                                    //errorText: items[index]['qty']?.text.isEmpty ?? true ? 'Qty is required' : null, // Error text check
                                   ),
                                   onChanged: (value) {
                                     setState(() {
-                                      _isTranscode = value.isEmpty;
+                                      bool isNotNull = value.isNotEmpty;
+                                      int enteredQty = int.tryParse(value) ?? 0;
+                                      int? stockLimit = _itemStockByIndex[index];
+                                      debugPrint("stockLimit $stockLimit");
+                                      if (isNotNull) {
+                                        if (stockLimit != null && enteredQty > stockLimit) {
+                                          items[index]['qty']?.clear(); // Or retain but show error
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text('Entered quantity exceeds current stock: $stockLimit'),
+                                              backgroundColor: Colors.red,
+                                            ),
+                                          );
+                                          _updateSum(index);
+                                          calculateGrandTotalAmount();
+                                          return;
+                                        }
+                                        _updateSum(index);
+                                        calculateGrandTotalAmount();
+                                      } else {
+                                        _updateSum(index);
+                                        calculateGrandTotalAmount();
+                                      }
                                     });
                                   },
                                 ),
                               ),
-                              SizedBox(width: 8),
+                              SizedBox(width: 16),
                               Expanded(
                                 child: TextField(
-                                  controller: timeController,
-                                  decoration: InputDecoration(
-                                    labelText: 'Time',
-                                  ),
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.allow(
-                                      RegExp(r'^\d{0,5}:?$'), // up to 5 digits, optional 1 colon at end
-                                    ),
+                                  controller: items[index]['discount'],
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: <TextInputFormatter>[
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    LengthLimitingTextInputFormatter(7),
                                   ],
-
+                                  decoration: InputDecoration(
+                                    label: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [Text('Discount')],
+                                    ),
+                                  ),
                                   onChanged: (value) {
-                                    setState(() {});
+                                    setState(() {
+                                      _updateSum(index);
+                                      calculateGrandTotalAmount();
+                                    });
                                   },
                                 ),
                               ),
-                            ],
-                          ),
-                          Row(
-                            children: [
+                              SizedBox(width: 16),
                               Expanded(
                                 child: TextField(
-                                  controller: transReviewController,
+                                  controller: items[index]['amt'],
                                   decoration: InputDecoration(
-                                    labelText: 'Transaction Remark',
+                                    label: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [Text('Amt.')],
+                                    ),
                                   ),
-                                  inputFormatters: <TextInputFormatter>[
-                                    LengthLimitingTextInputFormatter(250),
-                                    // Limit the length to 30 characters
-                                  ],
-                                  onChanged: (value) {
-                                    setState(() {});
-                                  },
+                                  enabled: false,
                                 ),
                               ),
                             ],
                           ),
                         ],
                       ),
-                    SizedBox(height: 10,),
-                    if (selectedTransMode == 'Cash')
-                      Container(
-                        height: 30,
-                        decoration: BoxDecoration(
-                          color: Colors.blue[200],
-                          borderRadius: BorderRadius.all(Radius.circular(2)),
+                    );
+                  },
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Expanded(
+                        child: countTextWidgetTextcash(context, 'Total Amount')),
+                    Flexible(
+                      flex: 1,
+                      child: TextField(
+                        controller: totalAmountController,
+                        enabled: false,
+                        onChanged: (value) {},
+                      ),
+                    ),
+                    // SizedBox(width: 8),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                        child:
+                        countTextWidgetTextStar(context, 'Receipt Payment',showAsterisk: true)),
+                    Flexible(
+                      flex: 1,
+                      child: TextField(
+                        controller: recPaymentController,
+                        decoration: InputDecoration(
+                          labelText: 'Enter Receipt Payment',
+                          errorText: _isConsumerEmpty
+                              ? 'Receipt Payment is Required'
+                              : null, // Show error if required
                         ),
-                        child: Row(
+                        keyboardType: TextInputType.numberWithOptions(decimal: true),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,10}')),
+                        ],
+                        onChanged: (value) {
+                          double amt = double.parse(totalAmountController.text);
+                          setState(() {
+                            _isConsumerEmpty = value.isEmpty;
+                            // double val = double.parse(value);
+                            // if(val > amt){
+                            //
+                            // }
+                            //Please Enter A Valid Consumer Contact No.
+                          });
+                        },
+                      ),
+                    ),
+                    // SizedBox(width: 8),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: countTextWidgetTextStar(
+                        context,
+                        'Select Payment Mode',
+                        showAsterisk:
+                            true, // Add a parameter to conditionally show the asterisk
+                      ),
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: DropdownButtonFormField<String>(
+                        key: formKey3,
+                        decoration: InputDecoration(
+                          contentPadding:
+                              EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                        ),
+                        value: selectedTransMode,
+                        // Bind the selected value
+                        items: getTransMode
+                            .map((String value) => DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                ))
+                            .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedTransMode =
+                                value; // Update the selected value
+                          });
+                        },
+                        isExpanded: true,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(0.0),
+                  child: Column(
+                    children: [
+                      if (selectedTransMode == 'Online')
+                        Column(
                           children: [
-                            // First Half (Cash Denomination)
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedIndex = 0; // Show Container 1
-                                  });
-                                },
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: _selectedIndex == 0
-                                        ? Colors.blue
-                                        : Colors.blue[200],
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(2),
-                                      bottomLeft: Radius.circular(2),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child:
+                                  DropdownButtonFormField<
+                                      GetBankMappingDetailsListModel>(
+                                    decoration: InputDecoration(
+                                      label: countTextWidgetTextStarverysmall(
+                                        context,
+                                        'Select Acc No',
+                                        showAsterisk:
+                                        true, // Add a parameter to conditionally show the asterisk
+                                      ),
                                     ),
-                                  ),
-                                  child: Text(
-                                    "Cash Denomination",
-                                    style: Styling.buttonTextBlack.copyWith(
-                                      color: _selectedIndex == 0
-                                          ? Colors.white
-                                          : Colors.black,
-                                    ),
+                                    value: bankModel.contains(_selectBankModel) ? _selectBankModel : null,
+
+                                    items: bankModel.map((item) {
+                                      return
+                                        DropdownMenuItem<GetBankMappingDetailsListModel>(
+                                        value: item,
+                                        child: Text(
+                                          '${item.bankName ?? ''} - ${item.accountNo ?? ''}',
+                                        ),
+                                      );
+                                    }).toList(),
+                                    onChanged: (selectedItem) {
+                                      setState(() {
+                                        _selectBankModel = selectedItem;
+                                        selectedBankName = selectedItem?.bankName;
+                                        selectedBankId = selectedItem?.accountNo;
+                                        selecteBankIDApi = selectedItem?.bankId?.toInt();
+                                        accMappingId = selectedItem?.mappingId?.toInt();
+                                      });
+                                    },
+                                    // hint: Text('Select Acc No'),
+
                                   ),
                                 ),
-                              ),
+                              ],
                             ),
-                            // Second Half (Cash Return)
-                            Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    _selectedIndex = 1; // Show Container 2
-                                  });
-                                },
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  decoration: BoxDecoration(
-                                    color: _selectedIndex == 1
-                                        ? Colors.blue
-                                        : Colors.blue[200],
-                                    borderRadius: BorderRadius.only(
-                                      topRight: Radius.circular(2),
-                                      bottomRight: Radius.circular(2),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    controller: TranCodeController,
+                                    maxLengthEnforcement:
+                                        MaxLengthEnforcement.enforced,
+                                    // Enforce max length
+                                    inputFormatters: <TextInputFormatter>[
+                                      LengthLimitingTextInputFormatter(30), // Limit to 30 characters
+                                      FilteringTextInputFormatter.deny(
+                                        RegExp(r'[^\u0000-\u007F]'), // Block emojis and non-ASCII characters
+                                      ),
+                                      FilteringTextInputFormatter.deny(
+                                        RegExp(r'\s'), // Block all whitespace including space, tab, etc.
+                                      ),
+                                    ],
+                                    decoration: InputDecoration(
+                                      errorText: _isTranscode
+                                          ? 'Transaction code is Required'
+                                          : null,
+                                      label: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          countTextWidgetTextStar(
+                                            context,
+                                            'Transaction Code',
+                                            showAsterisk: true,
+                                          ),
+                                        ],
+                                      ),
+                                      contentPadding: EdgeInsets.symmetric(
+                                          vertical: 8.0, horizontal: 12.0),
                                     ),
-                                  ),
-                                  child: Text(
-                                    "Cash Return",
-                                    style: Styling.buttonTextBlack.copyWith(
-                                      color: _selectedIndex == 1
-                                          ? Colors.white
-                                          : Colors.black,
-                                    ),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _isTranscode = value.isEmpty;
+                                      });
+                                    },
                                   ),
                                 ),
-                              ),
+                                SizedBox(width: 8),
+                                Expanded(
+                                  child: TextField(
+                                    controller: timeController,
+                                    decoration: InputDecoration(
+                                      labelText: 'Time',
+                                    ),
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(
+                                        RegExp(r'^\d{0,5}:?$'), // up to 5 digits, optional 1 colon at end
+                                      ),
+                                    ],
+
+                                    onChanged: (value) {
+                                      setState(() {});
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: TextField(
+                                    controller: transReviewController,
+                                    decoration: InputDecoration(
+                                      labelText: 'Transaction Remark',
+                                    ),
+                                    inputFormatters: <TextInputFormatter>[
+                                      LengthLimitingTextInputFormatter(250),
+                                      // Limit the length to 30 characters
+                                    ],
+                                    onChanged: (value) {
+                                      setState(() {});
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      ),
-                    if (selectedTransMode == 'Cash')
+                      SizedBox(height: 10,),
+                      if (selectedTransMode == 'Cash')
+                        Container(
+                          height: 30,
+                          decoration: BoxDecoration(
+                            color: Colors.blue[200],
+                            borderRadius: BorderRadius.all(Radius.circular(2)),
+                          ),
+                          child: Row(
+                            children: [
+                              // First Half (Cash Denomination)
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedIndex = 0; // Show Container 1
+                                    });
+                                  },
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      color: _selectedIndex == 0
+                                          ? Colors.blue
+                                          : Colors.blue[200],
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(2),
+                                        bottomLeft: Radius.circular(2),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      "Cash Denomination",
+                                      style: Styling.buttonTextBlack.copyWith(
+                                        color: _selectedIndex == 0
+                                            ? Colors.white
+                                            : Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              // Second Half (Cash Return)
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedIndex = 1; // Show Container 2
+                                    });
+                                  },
+                                  child: Container(
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      color: _selectedIndex == 1
+                                          ? Colors.blue
+                                          : Colors.blue[200],
+                                      borderRadius: BorderRadius.only(
+                                        topRight: Radius.circular(2),
+                                        bottomRight: Radius.circular(2),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      "Cash Return",
+                                      style: Styling.buttonTextBlack.copyWith(
+                                        color: _selectedIndex == 1
+                                            ? Colors.white
+                                            : Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      if (selectedTransMode == 'Cash')
+                        Visibility(
+                          visible: _selectedIndex == 0,
+                          child: Column(
+                            children: [
+                              Column(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      // Background color of the box
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                          width:
+                                              1), // Optional: Add rounded corners
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        // First Row with Vertical Divider
+                                        SizedBox(
+                                          height: 50,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            // Center the row content
+                                            children: [
+                                              // First Text and Divider inside Expanded to ensure equal size
+                                              Expanded(
+                                                flex: 2,
+                                                child: Center(
+                                                    child: Text(
+                                                  "Note Type",
+                                                  style: TextStyle(
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 14),
+                                                )), // Centering the text
+                                              ),
+                                              Expanded(
+                                                flex: 3,
+                                                child: Center(
+                                                    child: Text(
+                                                  "Qty",
+                                                  style: TextStyle(
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 14),
+                                                )), // Centering the text
+                                              ),
+                                              Expanded(
+                                                flex: 3,
+                                                child: Center(
+                                                    child: Text(
+                                                  "Amount",
+                                                  style: TextStyle(
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 14),
+                                                )), // Centering the text
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        ListView.builder(
+                                          shrinkWrap: true,
+                                          physics: BouncingScrollPhysics(),
+                                          itemCount:
+                                              getNoteTypeAndIdFroDenominationListModel
+                                                  .length,
+                                          itemBuilder: (context, index) {
+                                            final data =
+                                                getNoteTypeAndIdFroDenominationListModel[
+                                                    index];
+                                            return Column(
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Expanded(
+                                                      flex: 2,
+                                                      child: Center(
+                                                        child: Text(
+                                                          "${data.noteType}",
+                                                          style: TextStyle(
+                                                              fontSize: 12),
+                                                          textAlign:
+                                                              TextAlign.left,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 1,
+                                                      child: Center(
+                                                        child: Text(
+                                                          "X",
+                                                          style: TextStyle(
+                                                              fontSize: 12),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Center(
+                                                        child: TextField(
+                                                          controller:
+                                                              qtyController[
+                                                                  index],
+                                                          keyboardType:
+                                                              TextInputType
+                                                                  .number,
+                                                          inputFormatters: <TextInputFormatter>[
+                                                            FilteringTextInputFormatter
+                                                                .digitsOnly,
+                                                          ],
+                                                          onChanged: (value) {
+                                                            setState(() {
+                                                              amounts[
+                                                                  index] = (double
+                                                                          .tryParse(
+                                                                              value) ??
+                                                                      0.0) *
+                                                                  data.noteType!;
+                                                              totalAmount =
+                                                                  amounts.fold(
+                                                                      0.0,
+                                                                      (sum, amount) =>
+                                                                          sum +
+                                                                          amount);
+                                                              finalAmountCashDeno =
+                                                                  totalAmount -
+                                                                      returnAmount;
+                                                              isQtyFilled[index] =
+                                                                  value
+                                                                      .isNotEmpty; // Mark index as filled
+                                                              debugPrint(
+                                                                  "Collected$totalAmount");
+                                                            });
+                                                          },
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 1,
+                                                      child: Center(
+                                                        child: Text(
+                                                          "=",
+                                                          style: TextStyle(
+                                                              fontSize: 12),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Center(
+                                                        child: Text(
+                                                          "${amounts[index].toStringAsFixed(2)}",
+                                                          style: TextStyle(
+                                                              fontSize: 12),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(right: 8.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              Column(
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Expanded(
+                                                        flex: 0,
+                                                        child: Text(
+                                                          "Collected:",
+                                                          style: Styling
+                                                              .itemBlackTestBold,
+                                                          //textAlign: TextAlign.left,
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        flex: 0,
+                                                        child: Text(
+                                                          totalAmount
+                                                              .toStringAsFixed(2),
+                                                          style: Styling
+                                                              .itemBlackTestBold,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(height: 5),
+                                                  Row(
+                                                    children: [
+                                                      Expanded(
+                                                        flex: 0,
+                                                        child: Text(
+                                                          "Final Total:",
+                                                          style: Styling
+                                                              .itemBlackTestBold,
+                                                          textAlign:
+                                                              TextAlign.left,
+                                                        ),
+                                                      ),
+                                                      Expanded(
+                                                        flex: 0,
+                                                        child: Text(
+                                                          finalAmountCashDeno
+                                                              .toStringAsFixed(2),
+                                                          style: Styling
+                                                              .itemBlackTestBold,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
                       Visibility(
-                        visible: _selectedIndex == 0,
+                        visible: _selectedIndex == 1,
                         child: Column(
                           children: [
                             Column(
@@ -2062,8 +2565,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                                         "${data.noteType}",
                                                         style: TextStyle(
                                                             fontSize: 12),
-                                                        textAlign:
-                                                            TextAlign.left,
+                                                        textAlign: TextAlign.left,
                                                       ),
                                                     ),
                                                   ),
@@ -2082,25 +2584,24 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                                     child: Center(
                                                       child: TextField(
                                                         controller:
-                                                            qtyController[
+                                                            qtyControllerReturn[
                                                                 index],
                                                         keyboardType:
-                                                            TextInputType
-                                                                .number,
+                                                            TextInputType.number,
                                                         inputFormatters: <TextInputFormatter>[
                                                           FilteringTextInputFormatter
                                                               .digitsOnly,
                                                         ],
                                                         onChanged: (value) {
                                                           setState(() {
-                                                            amounts[
+                                                            amountsReturn[
                                                                 index] = (double
                                                                         .tryParse(
                                                                             value) ??
                                                                     0.0) *
                                                                 data.noteType!;
-                                                            totalAmount =
-                                                                amounts.fold(
+                                                            returnAmount =
+                                                                amountsReturn.fold(
                                                                     0.0,
                                                                     (sum, amount) =>
                                                                         sum +
@@ -2108,15 +2609,16 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                                             finalAmountCashDeno =
                                                                 totalAmount -
                                                                     returnAmount;
-                                                            isQtyFilled[index] =
-                                                                value
-                                                                    .isNotEmpty; // Mark index as filled
                                                             debugPrint(
-                                                                "Collected$totalAmount");
+                                                                "return$returnAmount");
                                                           });
                                                         },
                                                         textAlign:
                                                             TextAlign.center,
+                                                        enabled: !isQtyFilled
+                                                                .containsKey(
+                                                                    index) ||
+                                                            !isQtyFilled[index]!,
                                                       ),
                                                     ),
                                                   ),
@@ -2134,7 +2636,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                                     flex: 3,
                                                     child: Center(
                                                       child: Text(
-                                                        "${amounts[index].toStringAsFixed(2)}",
+                                                        "${amountsReturn[index].toStringAsFixed(2)}",
                                                         style: TextStyle(
                                                             fontSize: 12),
                                                       ),
@@ -2163,7 +2665,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                                     Expanded(
                                                       flex: 0,
                                                       child: Text(
-                                                        "Collected:",
+                                                        "Return:",
                                                         style: Styling
                                                             .itemBlackTestBold,
                                                         //textAlign: TextAlign.left,
@@ -2172,7 +2674,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                                     Expanded(
                                                       flex: 0,
                                                       child: Text(
-                                                        totalAmount
+                                                        returnAmount
                                                             .toStringAsFixed(2),
                                                         style: Styling
                                                             .itemBlackTestBold,
@@ -2180,6 +2682,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                                     ),
                                                   ],
                                                 ),
+                                                // Final Total section
                                                 SizedBox(height: 5),
                                                 Row(
                                                   children: [
@@ -2189,8 +2692,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                                         "Final Total:",
                                                         style: Styling
                                                             .itemBlackTestBold,
-                                                        textAlign:
-                                                            TextAlign.left,
+                                                        textAlign: TextAlign.left,
                                                       ),
                                                     ),
                                                     Expanded(
@@ -2217,533 +2719,335 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                           ],
                         ),
                       ),
-                    Visibility(
-                      visible: _selectedIndex == 1,
-                      child: Column(
-                        children: [
-                          Column(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  // Background color of the box
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                      width:
-                                          1), // Optional: Add rounded corners
-                                ),
-                                child: Column(
-                                  children: [
-                                    // First Row with Vertical Divider
-                                    SizedBox(
-                                      height: 50,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        // Center the row content
-                                        children: [
-                                          // First Text and Divider inside Expanded to ensure equal size
-                                          Expanded(
-                                            flex: 2,
-                                            child: Center(
-                                                child: Text(
-                                              "Note Type",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 14),
-                                            )), // Centering the text
-                                          ),
-                                          Expanded(
-                                            flex: 3,
-                                            child: Center(
-                                                child: Text(
-                                              "Qty",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 14),
-                                            )), // Centering the text
-                                          ),
-                                          Expanded(
-                                            flex: 3,
-                                            child: Center(
-                                                child: Text(
-                                              "Amount",
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 14),
-                                            )), // Centering the text
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    ListView.builder(
-                                      shrinkWrap: true,
-                                      physics: BouncingScrollPhysics(),
-                                      itemCount:
-                                          getNoteTypeAndIdFroDenominationListModel
-                                              .length,
-                                      itemBuilder: (context, index) {
-                                        final data =
-                                            getNoteTypeAndIdFroDenominationListModel[
-                                                index];
-                                        return Column(
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Expanded(
-                                                  flex: 2,
-                                                  child: Center(
-                                                    child: Text(
-                                                      "${data.noteType}",
-                                                      style: TextStyle(
-                                                          fontSize: 12),
-                                                      textAlign: TextAlign.left,
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 1,
-                                                  child: Center(
-                                                    child: Text(
-                                                      "X",
-                                                      style: TextStyle(
-                                                          fontSize: 12),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: Center(
-                                                    child: TextField(
-                                                      controller:
-                                                          qtyControllerReturn[
-                                                              index],
-                                                      keyboardType:
-                                                          TextInputType.number,
-                                                      inputFormatters: <TextInputFormatter>[
-                                                        FilteringTextInputFormatter
-                                                            .digitsOnly,
-                                                      ],
-                                                      onChanged: (value) {
-                                                        setState(() {
-                                                          amountsReturn[
-                                                              index] = (double
-                                                                      .tryParse(
-                                                                          value) ??
-                                                                  0.0) *
-                                                              data.noteType!;
-                                                          returnAmount =
-                                                              amountsReturn.fold(
-                                                                  0.0,
-                                                                  (sum, amount) =>
-                                                                      sum +
-                                                                      amount);
-                                                          finalAmountCashDeno =
-                                                              totalAmount -
-                                                                  returnAmount;
-                                                          debugPrint(
-                                                              "return$returnAmount");
-                                                        });
-                                                      },
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      enabled: !isQtyFilled
-                                                              .containsKey(
-                                                                  index) ||
-                                                          !isQtyFilled[index]!,
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 1,
-                                                  child: Center(
-                                                    child: Text(
-                                                      "=",
-                                                      style: TextStyle(
-                                                          fontSize: 12),
-                                                    ),
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 3,
-                                                  child: Center(
-                                                    child: Text(
-                                                      "${amountsReturn[index].toStringAsFixed(2)}",
-                                                      style: TextStyle(
-                                                          fontSize: 12),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(right: 8.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          Column(
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    flex: 0,
-                                                    child: Text(
-                                                      "Return:",
-                                                      style: Styling
-                                                          .itemBlackTestBold,
-                                                      //textAlign: TextAlign.left,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 0,
-                                                    child: Text(
-                                                      returnAmount
-                                                          .toStringAsFixed(2),
-                                                      style: Styling
-                                                          .itemBlackTestBold,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              // Final Total section
-                                              SizedBox(height: 5),
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    flex: 0,
-                                                    child: Text(
-                                                      "Final Total:",
-                                                      style: Styling
-                                                          .itemBlackTestBold,
-                                                      textAlign: TextAlign.left,
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 0,
-                                                    child: Text(
-                                                      finalAmountCashDeno
-                                                          .toStringAsFixed(2),
-                                                      style: Styling
-                                                          .itemBlackTestBold,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                    ],
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        // Handle Cancel action
+                        cancelAction();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical:
+                                10), // Adjust padding to make button smaller
+                      ),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 10), // Adds space between buttons
+                    ElevatedButton(
+                      onPressed: () {
+                        // cancelAction();
+                        if(modes == "Edit"){
+                          updateSVAddEditForMob(psvIdEdit!,"EDIT");
+                        }else{
+                          updateSVAddEditForMob(0,"ADD");
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical:
+                                10), // Adjust padding to make button smaller
+                      ),
+                      child: Text(
+                        modes == "Edit"?'Update':'Save',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                   ],
                 ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      // Handle Cancel action
-                      cancelAction();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical:
-                              10), // Adjust padding to make button smaller
-                    ),
-                    child: Text(
-                      'Cancel',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 10), // Adds space between buttons
-                  ElevatedButton(
-                    onPressed: () {
-                      // cancelAction();
-                      if(modes == "Edit"){
-                        updateSVAddEditForMob(psvIdEdit!,"EDIT");
-                      }else{
-                        updateSVAddEditForMob(0,"ADD");
-                      }
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical:
-                              10), // Adjust padding to make button smaller
-                    ),
-                    child: Text(
-                      modes == "Edit"?'Update':'Save',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 5),
-              Card(
-                child: receiptList.isNotEmpty
-                    ? ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: receiptList.length,
-                        itemBuilder: (context, index) {
-                          GetAddEditDataSvSaleItemModel? svSale = receiptList[index];
-                          return  Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(flex:1,child: Text(DateFormat('dd-MM-yyyy').format(DateTime.parse(svSale.sVDate ?? '')),style: Styling.blueClrText,),),
-                                    Expanded(flex:1,child: Text(svSale.productName.toString(),style: Styling.blueClrText,),),
-                                    Expanded(
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.end,  // Align the icons to the right
-                                        children: [
-                                          // Edit Icon
-                                          IconButton(
-                                            icon: Icon(Icons.edit, color: Colors.blue),  // Icon for edit
-                                            onPressed: () {
-                                              loadDenominationData(svSale.pSVId!.toInt());
-                                              var itemsToShow = svSale.itemDetails?.toList();
-                                              var psvID = svSale.pSVId.toString();
-                                              var sVDate = svSale.sVDate.toString();
-                                              var referredById = svSale.referredById.toString();
-                                              var referredByName = svSale.referredByName.toString();
-                                              var otherName = svSale.otherName.toString();
-                                              var productId = svSale.productId.toString();
-                                              var productName = svSale.productName.toString();
-                                              var isUndocument = svSale.isUndocument.toString();
-                                              var sVType = svSale.sVType.toString();
-                                              var cylQty = svSale.cylQty.toString();
-                                              var sCRegulator = svSale.sCRegulator.toString();
-                                              var depositCyl = svSale.depositCyl.toString();
-                                              var cylRefillRSP = svSale.cylRefillRSP.toString();
-                                              var regulatorDeposit = svSale.regulatorDeposit.toString();
-                                              var stampDuty = svSale.stampDuty.toString();
-                                              var fTLRegulator = svSale.fTLRegulator.toString();
-                                              var basicAmt = svSale.basicAmt.toString();
-                                              var consuDCNo = svSale.consuDCNo.toString();
-                                              var consumerName = svSale.consumerName.toString();
-                                              var consuContactNo = svSale.consuContactNo.toString();
-                                              var totalAmount = svSale.totalAmount.toString();
-                                              var receiptAmt = svSale.receiptAmt.toString();
-                                              var paymentMode = svSale.paymentMode.toString();
-                                              var transactionCode = svSale.transactionCode.toString();
-                                              var transactionTime = svSale.transactionTime.toString();
-                                              var transactionRemark = svSale.transactionRemark.toString();
-                                              var addedBy = svSale.addedBy.toString();
-                                              var action = svSale.action.toString();
-                                              var itemId = svSale.itemId.toString();
-                                              var itemName = svSale.itemName.toString();
-                                              var rate = svSale.rate.toString();
-                                              var itemQty = svSale.itemQty.toString();
-                                              var discountAmt = svSale.discountAmt.toString();
-                                              var aRBAmount = svSale.aRBAmount.toString();
-                                              var amtCharges = svSale.amtCharges.toString();
-                                              var categoryName = svSale.categoryName.toString();
-                                              var bankId = svSale.bankId.toString();
-                                              var bankMappingId = svSale.bankMappingId.toString();
-                                              var accountNo = svSale.accountNo.toString();
-                                              var bankName = svSale.bankName.toString();
-                                              var isExemptReti = svSale.isExemptReti.toString();
-                                              var sVDiscountAmt = svSale.sVDiscountAmt.toString();
-                                                // Navigate to the target screen and pass the data
-                                                Navigator.pushNamed(
-                                                  context,
-                                                  SVSaleReportScreen.screenName,
-                                                  arguments: {
-                                                    'psvIDV' : psvID,
-                                                    'sVDateV' : sVDate,
-                                                    'referredByIdV' : referredById,
-                                                    'referredByNameV' : referredByName,
-                                                    'otherNameV' : otherName,
-                                                    'productIdV' : productId,
-                                                    'productNameV' : productName,
-                                                    'isUndocumentV' : isUndocument,
-                                                    'sVTypeV' : sVType,
-                                                    'cylQtyV' : cylQty,
-                                                    'sCRegulatorV' : sCRegulator,
-                                                    'depositCylV' : depositCyl,
-                                                    'cylRefillRSPV' : cylRefillRSP,
-                                                    'regulatorDepositV' : regulatorDeposit,
-                                                    'stampDutyV' : stampDuty,
-                                                    'fTLRegulatorV' : fTLRegulator,
-                                                    'basicAmtV' : basicAmt,
-                                                    'consuDCNoV' : consuDCNo,
-                                                    'consumerNameV' : consumerName,
-                                                    'consuContactNoV' : consuContactNo,
-                                                    'totalAmountV' : totalAmount,
-                                                    'receiptAmtV' : receiptAmt,
-                                                    'paymentModeV' : paymentMode,
-                                                    'transactionCodeV' : transactionCode,
-                                                    'transactionTimeV' : transactionTime,
-                                                    'transactionRemarkV' : transactionRemark,
-                                                    'addedByV' : addedBy,
-                                                    'actionV' : action,
-                                                    'itemIdV' : itemId,
-                                                    'itemNameV' : itemName,
-                                                    'rateV' : rate,
-                                                    'itemQtyV' : itemQty,
-                                                    'discountAmtV' : discountAmt,
-                                                    'aRBAmountV' : aRBAmount,
-                                                    'amtChargesV' : amtCharges,
-                                                    'categoryNameV' : categoryName,
-                                                    'bankIdV' : bankId,
-                                                    'bankMappingIdV' : bankMappingId,
-                                                    'accountNoV' : accountNo,
-                                                    'bankNameV' : bankName,
-                                                    'isExemptRetiV' : isExemptReti,
-                                                    'sVDiscountAmtV' : sVDiscountAmt,
-                                                    'itemsToShow': itemsToShow,
-                                                    'modeChange': "Edit"
+                SizedBox(height: 5),
+                Card(
+                  child: receiptList.isNotEmpty
+                      ? ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: receiptList.length,
+                          itemBuilder: (context, index) {
+                            GetAddEditDataSvSaleItemModel? svSale = receiptList[index];
+                            return
+                              Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(flex:1,child: Text(DateFormat('dd-MM-yyyy').format(DateTime.parse(svSale.sVDate ?? '')),style: Styling.blueClrText,),),
+                                      Expanded(flex:1,child: Text(svSale.productName.toString(),style: Styling.blueClrText,),),
+                                      Expanded(
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,  // Align the icons to the right
+                                          children: [
+                                            // Edit Icon
+                                            IconButton(
+                                              icon: Icon(Icons.edit, color: Colors.blue),  // Icon for edit
+                                              onPressed: () {
+                                                loadDenominationData(svSale.pSVId!.toInt());
+                                                var itemsToShow = svSale.itemDetails?.toList();
+                                                var psvID = svSale.pSVId.toString();
+                                                var sVDate = svSale.sVDate.toString();
+                                                var referredById = svSale.referredById.toString();
+                                                var referredByName = svSale.referredByName.toString();
+                                                var otherName = svSale.otherName.toString();
+                                                var productId = svSale.productId.toString();
+                                                var productName = svSale.productName.toString();
+                                                var isUndocument = svSale.isUndocument.toString();
+                                                var sVType = svSale.sVType.toString();
+                                                var cylQty = svSale.cylQty.toString();
+                                                var sCRegulator = svSale.sCRegulator.toString();
+                                                var depositCyl = svSale.depositCyl.toString();
+                                                var cylRefillRSP = svSale.cylRefillRSP.toString();
+                                                var regulatorDeposit = svSale.regulatorDeposit.toString();
+                                                var stampDuty = svSale.stampDuty.toString();
+                                                var fTLRegulator = svSale.fTLRegulator.toString();
+                                                var basicAmt = svSale.basicAmt.toString();
+                                                var consuDCNo = svSale.consuDCNo.toString();
+                                                var consumerName = svSale.consumerName.toString();
+                                                var consuContactNo = svSale.consuContactNo.toString();
+                                                var totalAmount = svSale.totalAmount.toString();
+                                                var receiptAmt = svSale.receiptAmt.toString();
+                                                var paymentMode = svSale.paymentMode.toString();
+                                                var transactionCode = svSale.transactionCode.toString();
+                                                var transactionTime = svSale.transactionTime.toString();
+                                                var transactionRemark = svSale.transactionRemark.toString();
+                                                var addedBy = svSale.addedBy.toString();
+                                                var action = svSale.action.toString();
+                                                var itemId = svSale.itemId.toString();
+                                                var itemName = svSale.itemName.toString();
+                                                var rate = svSale.rate.toString();
+                                                var itemQty = svSale.itemQty.toString();
+                                                var discountAmt = svSale.discountAmt.toString();
+                                                var aRBAmount = svSale.aRBAmount.toString();
+                                                var amtCharges = svSale.amtCharges.toString();
+                                                var categoryName = svSale.categoryName.toString();
+                                                var bankId = svSale.bankId.toString();
+                                                var bankMappingId = svSale.bankMappingId.toString();
+                                                var accountNo = svSale.accountNo.toString();
+                                                var bankName = svSale.bankName.toString();
+                                                var isExemptReti = svSale.isExemptReti.toString();
+                                                var sVDiscountAmt = svSale.sVDiscountAmt.toString();
+                                                  // Navigate to the target screen and pass the data
+                                                debugPrint("sCRegulator $sCRegulator");
+                                                  Navigator.pushNamed(
+                                                    context,
+                                                    SVSaleReportScreen.screenName,
+                                                    arguments: {
+                                                      'psvIDV' : psvID,
+                                                      'sVDateV' : sVDate,
+                                                      'referredByIdV' : referredById,
+                                                      'referredByNameV' : referredByName,
+                                                      'otherNameV' : otherName,
+                                                      'productIdV' : productId,
+                                                      'productNameV' : productName,
+                                                      'isUndocumentV' : isUndocument,
+                                                      'sVTypeV' : sVType,
+                                                      'cylQtyV' : cylQty,
+                                                      'sCRegulatorV' : sCRegulator,
+                                                      'depositCylV' : depositCyl,
+                                                      'cylRefillRSPV' : cylRefillRSP,
+                                                      'regulatorDepositV' : regulatorDeposit,
+                                                      'stampDutyV' : stampDuty,
+                                                      'fTLRegulatorV' : fTLRegulator,
+                                                      'basicAmtV' : basicAmt,
+                                                      'consuDCNoV' : consuDCNo,
+                                                      'consumerNameV' : consumerName,
+                                                      'consuContactNoV' : consuContactNo,
+                                                      'totalAmountV' : totalAmount,
+                                                      'receiptAmtV' : receiptAmt,
+                                                      'paymentModeV' : paymentMode,
+                                                      'transactionCodeV' : transactionCode,
+                                                      'transactionTimeV' : transactionTime,
+                                                      'transactionRemarkV' : transactionRemark,
+                                                      'addedByV' : addedBy,
+                                                      'actionV' : action,
+                                                      'itemIdV' : itemId,
+                                                      'itemNameV' : itemName,
+                                                      'rateV' : rate,
+                                                      'itemQtyV' : itemQty,
+                                                      'discountAmtV' : discountAmt,
+                                                      'aRBAmountV' : aRBAmount,
+                                                      'amtChargesV' : amtCharges,
+                                                      'categoryNameV' : categoryName,
+                                                      'bankIdV' : bankId,
+                                                      'bankMappingIdV' : bankMappingId,
+                                                      'accountNoV' : accountNo,
+                                                      'bankNameV' : bankName,
+                                                      'isExemptRetiV' : isExemptReti,
+                                                      'sVDiscountAmtV' : sVDiscountAmt,
+                                                      'itemsToShow': itemsToShow,
+                                                      'modeChange': "Edit"
+                                                    },
+                                                  );
+                                              },
+                                            ),
+                                            // Delete Icon
+                                            IconButton(
+                                              icon: Icon(Icons.delete, color: Colors.red),  // Icon for delete
+                                              onPressed: () async {
+                                                int? psv = svSale.pSVId?.toInt();
+
+                                                bool? confirmDelete = await showDialog<bool>(
+                                                  context: context,
+                                                  builder: (BuildContext context) {
+                                                    return AlertDialog(
+                                                      title: const Text('Are you sure?'),
+                                                      content: const Text('You want to delete?'),
+                                                      actions: <Widget>[
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.of(context).pop(false); // User pressed Cancel
+                                                          },
+                                                          child: const Text('Cancel'),
+                                                        ),
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            Navigator.of(context).pop(true); // User pressed Delete
+                                                          },
+                                                          child: const Text('Delete'),
+                                                        ),
+                                                      ],
+                                                    );
                                                   },
                                                 );
-                                            },
-                                          ),
-                                          // Delete Icon
-                                          IconButton(
-                                            icon: Icon(Icons.delete, color: Colors.red),  // Icon for delete
-                                            onPressed: () {
-                                              updateSVAddEditForMob(psvIdEdit!,"DELETE");
-                                              print('Delete button pressed');
-                                            },
-                                          ),
-                                        ],
+
+                                                // If user confirmed deletion
+                                                if (confirmDelete == true) {
+                                                  // Check if receiptId is not null
+                                                  // int? pId = payList.receiptId;
+                                                  if (psv != null) {
+                                                    updateSVAddEditForMob(psv!,"DELETE");
+                                                    print('Delete button pressed$psv');
+                                                  } else {
+                                                    print("Receipt ID is null.");
+                                                  }
+                                                } else {
+                                                  print('Delete action was canceled');
+                                                }
+                                              },
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                 Expanded(
-                                   child: Row(
-                                     children: [
-                                       Text("SV Type : ",style: Styling.itemGreyTextSmall,),
-                                          Text(svSale.sVType.toString(),style: Styling.itemBlackTestSmall,),
-                                     ],
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                   Expanded(
+                                     child: Row(
+                                       children: [
+                                         Text("SV Type : ",style: Styling.itemGreyTextSmall,),
+                                            Text(svSale.sVType.toString(),style: Styling.itemBlackTestSmall,),
+                                       ],
+                                     ),
                                    ),
-                                 ),
-                                    Expanded(
-                                      child: Row(
-                                        children: [
-                                          Text("SV Pending : ",style: Styling.itemGreyTextSmall,),
-                                          Text(svSale.sVType.toString(),style: Styling.itemBlackTestSmall,),
-                                        ],
+                                      Expanded(
+                                        child: Row(
+                                          children: [
+                                            Text("SV Pending : ",style: Styling.itemGreyTextSmall,),
+                                            Text(svSale.sVType.toString(),style: Styling.itemBlackTestSmall,),
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Row(
+                                          children: [
+                                            Text("Cons. No./DC No. : ",style: Styling.itemGreyTextSmall,),
+                                          ],
+                                        ),
                                       ),
-                                    )
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Row(
-                                        children: [
-                                          Text("Cons. No./DC No. : ",style: Styling.itemGreyTextSmall,),
-                                        ],
+                                      Expanded(
+                                        child: Row(
+                                          children: [
+                                            Text(svSale.consuDCNo.toString(),style: Styling.itemBlackTestSmall,),
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Row(
+                                          children: [
+                                            Text("Cons. Name : ",style: Styling.itemGreyTextSmall,),
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    Expanded(
-                                      child: Row(
-                                        children: [
-                                          Text(svSale.consuDCNo.toString(),style: Styling.itemBlackTestSmall,),
-                                        ],
+                                      Expanded(
+                                        child: Row(
+                                          children: [
+                                            Text(svSale.consumerName.toString(),style: Styling.itemBlackTestSmall,),
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Row(
+                                          children: [
+                                            Text("Amt. : ",style: Styling.itemGreyTextSmall,),
+                                            Text(svSale.totalAmount.toString(),style: Styling.itemBlackTestSmall,),
+                                          ],
+                                        ),
                                       ),
-                                    )
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Row(
-                                        children: [
-                                          Text("Cons. Name : ",style: Styling.itemGreyTextSmall,),
-                                        ],
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Row(
-                                        children: [
-                                          Text(svSale.consumerName.toString(),style: Styling.itemBlackTestSmall,),
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Row(
-                                        children: [
-                                          Text("Amt. : ",style: Styling.itemGreyTextSmall,),
-                                          Text(svSale.totalAmount.toString(),style: Styling.itemBlackTestSmall,),
-                                        ],
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Row(
-                                        children: [
-                                          Text("Mode : ",style: Styling.itemGreyTextSmall,),
-                                          Text(svSale.paymentMode.toString(),style: Styling.itemBlackTestSmall,),
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                // if (widget.serialNumber != widget.listLength)
-                                //   Divider(),
-                              ],
-                            ),
-                          );
-                        },
-                      )
-                    : Center(
-                        child: Text('No Records Found'),
-                      ),
-              ),
-            ],
+                                      Expanded(
+                                        child: Row(
+                                          children: [
+                                            Text("Mode : ",style: Styling.itemGreyTextSmall,),
+                                            Text(svSale.paymentMode.toString(),style: Styling.itemBlackTestSmall,),
+                                          ],
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                  // if (widget.serialNumber != widget.listLength)
+                                  //   Divider(),
+                                ],
+                              ),
+                            );
+                          },
+                        )
+                      : Center(
+                          child: Text('No Records Found'),
+                        ),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+            ),
+      );
   }
 
   void _updateSum(int index) {
@@ -2788,43 +3092,43 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     }
   }
 
-  Future<void> fetchItems() async {
-    Constants.isNetworkAvailable =
-        await InternetConnectionChecker().hasConnection;
-    if (Constants.isNetworkAvailable) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? distributorId = prefs.getString('DistributorId');
-      String? bearerToken =
-          prefs.getString('token'); // Assuming the token is stored here
-
-      if (bearerToken == null) {
-        throw Exception('Bearer Token Is Missing');
-      }
-
-      final response = await http.get(
-        Uri.parse('${AppUrl.GetARBItemMasterList}/$distributorId/1/C'),
-        headers: {
-          'Authorization': 'Bearer $bearerToken', // Add Bearer token here
-        },
-      );
-      debugPrint("item" + '${AppUrl.GetARBItemMasterList}/$distributorId/1/C');
-      debugPrint("item" + response.body);
-      if (response.statusCode == 200) {
-        // Parse the response
-        List<dynamic> data = json.decode(response.body);
-        setState(() {
-          svcStock = data
-              .map((json) => GetArbCurrentStockListModel.fromJson(json))
-              .toList();
-        });
-      } else {
-        // refreshTokens();
-        throw Exception('Unable To Load Data At This Time. Please Try Again');
-      }
-    } else {
-      showFlushBar(context, Constants.connectionMessage);
-    }
-  }
+  // Future<void> fetchItems() async {
+  //   Constants.isNetworkAvailable =
+  //       await InternetConnectionChecker().hasConnection;
+  //   if (Constants.isNetworkAvailable) {
+  //     SharedPreferences prefs = await SharedPreferences.getInstance();
+  //     String? distributorId = prefs.getString('DistributorId');
+  //     String? bearerToken =
+  //         prefs.getString('token'); // Assuming the token is stored here
+  //
+  //     if (bearerToken == null) {
+  //       throw Exception('Bearer Token Is Missing');
+  //     }
+  //
+  //     final response = await http.get(
+  //       Uri.parse('${AppUrl.GetARBItemMasterList}/$distributorId/1/C'),
+  //       headers: {
+  //         'Authorization': 'Bearer $bearerToken', // Add Bearer token here
+  //       },
+  //     );
+  //     debugPrint("itemGetARBItemMasterList" + '${AppUrl.GetARBItemMasterList}/$distributorId/1/C');
+  //     debugPrint("itemGetARBItemMasterList" + response.body);
+  //     if (response.statusCode == 200) {
+  //       // Parse the response
+  //       List<dynamic> data = json.decode(response.body);
+  //       setState(() {
+  //         svcStock = data
+  //             .map((json) => GetArbCurrentStockListModel.fromJson(json))
+  //             .toList();
+  //       });
+  //     } else {
+  //       // refreshTokens();
+  //       throw Exception('Unable To Load Data At This Time. Please Try Again');
+  //     }
+  //   } else {
+  //     showFlushBar(context, Constants.connectionMessage);
+  //   }
+  // }
 
   Future<void> getNoteTypeAndIDList() async {
     Constants.isNetworkAvailable =
@@ -2939,16 +3243,30 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
 
+      // setState(() {
+      //   staffdetailsmodel = data.map((json) {
+      //     // String dateString = json['TransDate'];
+      //     // DateTime date = DateTime.parse(dateString);
+      //     // String formattedDate = DateFormat('yyyy-MM-dd').format(date);
+      //     // json['TransDate'] = formattedDate;
+      //
+      //     return GetStaffDetailsListModel.fromJson(json);
+      //   }).toList();
+      //   isLoading = false;
+      //   EasyLoading.dismiss();
+      // });
       setState(() {
         staffdetailsmodel = data.map((json) {
-          // String dateString = json['TransDate'];
-          // DateTime date = DateTime.parse(dateString);
-          // String formattedDate = DateFormat('yyyy-MM-dd').format(date);
-          // json['TransDate'] = formattedDate;
-
           return GetStaffDetailsListModel.fromJson(json);
         }).toList();
-        isLoading = false;
+
+        // 🔤 Sort alphabetically by a string field like "staffName"
+        staffdetailsmodel.sort((a, b) {
+          final nameA = a.staffName ?? '';
+          final nameB = b.staffName ?? '';
+          return nameA.toLowerCase().compareTo(nameB.toLowerCase());
+        });
+
         EasyLoading.dismiss();
       });
     } else {
@@ -3240,7 +3558,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     }
   }
 
-
   num? getRefillAmountByItemName(String? itemName) {
     if (itemName == null) return null;
 
@@ -3275,7 +3592,8 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     double discountAmt = double.tryParse(regulatorDiscountAmountController.text) ?? 0;
     double newAmt = deposit + refill + regulator + stampDuty;
     double total = deposit + refill + regulator + stampDuty - discountAmt;
-
+      debugPrint("total $total");
+      debugPrint("newAmt $newAmt");
     regulatorBasicAmountController.text = total.toStringAsFixed(2);
     if(newAmt >= discountAmt){
 
@@ -3479,147 +3797,157 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     int? addedBys = int.parse(addedBy!);
     int? distributorIds = int.parse(distributorId!);
     final DateTime now = DateTime.now();
-    String formattedDate = DateFormat('yyyy-MM-dd').format(now);
-    int scRegulators = 0;
+    String formattedDate = DateFormat('yyyy-MM-dd').format(now); int scRegulators = 0;
     double cylDeposit = 0.0;
     double cylRefillRSP = 0.0;
     double regDeposit = 0.0;
     double stampD = 0.0;
     double basicAmt = 0.0;
     double discountAmt = 0.0;
-    if(scRegulatorController.text.isNotEmpty){
-      scRegulators = int.parse(scRegulatorController.text);
-    }
-
-    if(depositCylinderAmountController.text.isNotEmpty){
-      cylDeposit = double.parse(depositCylinderAmountController.text);
-    }
-
-    if(refillCylinderAmountController.text.isNotEmpty){
-      cylRefillRSP = double.parse(refillCylinderAmountController.text);
-    }
-
-    if(regulatorDepositAmountController.text.isNotEmpty){
-      regDeposit = double.parse(regulatorDepositAmountController.text);
-    }
-
-    if(stampDutyController.text.isNotEmpty){
-      stampD = double.parse(stampDutyController.text);
-    }
-    if(regulatorBasicAmountController.text.isNotEmpty){
-      basicAmt = double.parse(regulatorBasicAmountController.text);
-    }
-    if(regulatorDiscountAmountController.text.isNotEmpty){
-      discountAmt = double.parse(regulatorDiscountAmountController.text);
-    }
-
     String? conDSNo;
     String? consName;
     String? conCont;
     double totalAmt = 0.0;
     double receiveAmt = 0.0 ;
-    if(conNoController.text.isNotEmpty){
-      conDSNo = conNoController.text;
-    }
-    if(conNameController.text.isNotEmpty){
-      consName = conNameController.text;
-    }
-    if(conContactController.text.isNotEmpty){
-      conCont = conContactController.text;
-    }
 
-    if(totalAmountController.text.isNotEmpty){
-      totalAmt = double.parse(totalAmountController.text);
-    }
-    if(recPaymentController.text.isNotEmpty){
-      receiveAmt = double.parse(recPaymentController.text);
-    }
 
     String? tranCode;
     String? times;
     String? transRemark;
-    if(TranCodeController.text.isNotEmpty){
-      tranCode = TranCodeController.text;
-    }
-    if(timeController.text.isNotEmpty){
-      times = timeController.text;
-    }
-    if(transReviewController.text.isNotEmpty){
-      transRemark = transReviewController.text;
-    }
+
     double nameChangeCharges = 0.0;
-    if(nameChangeAmtChargesController.text.isNotEmpty){
-      nameChangeCharges = double.parse(nameChangeAmtChargesController.text);
-    }
-    if(selectedBankName != null || selectedBankId != null){
+
+    double discountAmount = 0.0;
+
+    String? payMode;
+
+    if(actionMode != "DELETE"){
+      if(scRegulatorController.text.isNotEmpty){
+        scRegulators = int.parse(scRegulatorController.text);
+      }
+
+      if(depositCylinderAmountController.text.isNotEmpty){
+        cylDeposit = double.parse(depositCylinderAmountController.text);
+      }
+
+      if(refillCylinderAmountController.text.isNotEmpty){
+        cylRefillRSP = double.parse(refillCylinderAmountController.text);
+      }
+
+      if(regulatorDepositAmountController.text.isNotEmpty || regulatorDepositAmountController.text != null || regulatorDepositAmountController.text != "null"){
+        regDeposit = double.parse(regulatorDepositAmountController.text);
+      }
+
+      if(stampDutyController.text.isNotEmpty){
+        stampD = double.parse(stampDutyController.text);
+      }
+      if(regulatorBasicAmountController.text.isNotEmpty){
+        basicAmt = double.parse(regulatorBasicAmountController.text);
+      }
+      if(regulatorDiscountAmountController.text.isNotEmpty){
+        discountAmt = double.parse(regulatorDiscountAmountController.text);
+      }
+      if(conNoController.text.isNotEmpty){
+        conDSNo = conNoController.text;
+      }
+      if(conNameController.text.isNotEmpty){
+        consName = conNameController.text;
+      }
+      if(conContactController.text.isNotEmpty){
+        conCont = conContactController.text;
+      }
+
+      if(totalAmountController.text.isNotEmpty){
+        totalAmt = double.parse(totalAmountController.text);
+      }
+      if(recPaymentController.text.isNotEmpty){
+        receiveAmt = double.parse(recPaymentController.text);
+      }
+      if(TranCodeController.text.isNotEmpty){
+        tranCode = TranCodeController.text;
+      }
+      if(timeController.text.isNotEmpty){
+        times = timeController.text;
+      }
+      if(transReviewController.text.isNotEmpty){
+        transRemark = transReviewController.text;
+      }
+      if(nameChangeAmtChargesController.text.isNotEmpty){
+        nameChangeCharges = double.parse(nameChangeAmtChargesController.text);
+      }
+      if(regulatorDiscountAmountController.text.isNotEmpty){
+        discountAmount = double.parse( regulatorDiscountAmountController.text);
+      }
+      if(selectedBankName != null || selectedBankId != null){
+        if(selectedTransMode == null){
+          showFlushBar(context, "Select Transaction Mode.");
+          return;
+        }
+      }
+
+      if(selectedTranssvItemName == null){
+        showFlushBar(context, "Select Product.");
+        return;
+      }
+      if(selectedTransacc == null){
+        showFlushBar(context, "Select SV Type.");
+        return;
+      }
+      if(selectedTranssvItemName == "14.2 KG" && !isExemptedReticulated){
+        if(selectedTranqty == null){
+          showFlushBar(context, "Select Cylinder Quantity.");
+          return;
+        }
+      }
+      if(selectedTranssvItemName != "14.2 KG" || isExemptedReticulated){
+        if(cylinderQtyAddController.text.isEmpty){
+          showFlushBar(context, "Enter Cylinder Quantity.");
+          return;
+        }
+      }
+      if(selectedTranssvItemName != "14.2 KG"){
+        if(getSelectedFTLRegulatorQtyString == null){
+          showFlushBar(context, "Select FTL Regulator Quantity.");
+          return;
+        }
+      }
+
+      if(depositCylinderAmountController.text.isEmpty){
+        showFlushBar(context, "Enter Cylinder Deposit Amount.");
+        return;
+      }
+
+      if(selectedTransacc != "DBC"){
+        if(regulatorDepositAmountController.text.isEmpty){
+          showFlushBar(context, "Enter Regulator Deposit Amount.");
+          return;
+        }
+      }
+
+      if(selectedTransacc == "Name Change"){
+        if(nameChangeAmtChargesController.text.isEmpty){
+          showFlushBar(context,"Enter Name Change Amount.");
+          return;
+        }
+      }
+
+      if(conNoController.text.isEmpty){
+        showFlushBar(context,"Enter Consumer Number.");
+        return;
+      }
+
+      if(recPaymentController.text.isEmpty){
+        showFlushBar(context, "Enter Receipt payment amount.");
+        return;
+      }
+
       if(selectedTransMode == null){
         showFlushBar(context, "Select Transaction Mode.");
         return;
       }
-    }
 
-    if(selectedTranssvItemName == null){
-      showFlushBar(context, "Select Product.");
-     return;
-    }
-    if(selectedTransacc == null){
-      showFlushBar(context, "Select SV Type.");
-      return;
-    }
-    if(selectedTranssvItemName == "14.2 KG" && !isExemptedReticulated){
-      if(selectedTranqty == null){
-        showFlushBar(context, "Select Cylinder Quantity.");
-        return;
-      }
-    }
-    if(selectedTranssvItemName != "14.2 KG" || isExemptedReticulated){
-      if(cylinderQtyAddController.text.isEmpty){
-        showFlushBar(context, "Enter Cylinder Quantity.");
-        return;
-      }
-    }
-    if(selectedTranssvItemName != "14.2 KG"){
-      if(getSelectedFTLRegulatorQtyString == null){
-        showFlushBar(context, "Select FTL Regulator Quantity.");
-        return;
-      }
-    }
 
-    if(depositCylinderAmountController.text.isEmpty){
-      showFlushBar(context, "Enter Cylinder Deposit Amount.");
-      return;
-    }
-
-    if(selectedTransacc != "DBC"){
-      if(regulatorDepositAmountController.text.isEmpty){
-        showFlushBar(context, "Enter Regulator Deposit Amount.");
-        return;
-      }
-    }
-
-    if(selectedTransacc == "Name Change"){
-      if(nameChangeAmtChargesController.text.isEmpty){
-        showFlushBar(context,"Enter Name Change Amount.");
-        return;
-      }
-    }
-
-    if(conNoController.text.isEmpty){
-      showFlushBar(context,"Enter Consumer Number.");
-      return;
-    }
-
-    if(recPaymentController.text.isEmpty){
-      showFlushBar(context, "Enter Receipt payment amount.");
-      return;
-    }
-
-    if(selectedTransMode == null){
-      showFlushBar(context, "Select Transaction Mode.");
-      return;
-    }
-
-    if(selectedTransMode == "Online"){
+      if(selectedTransMode == "Online"){
         if(selectedBankName == null || selectedBankId == null){
           showFlushBar(context, "Select Bank.");
           return;
@@ -3628,21 +3956,33 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
           showFlushBar(context, "Enter Transaction Code.");
           return;
         }
-    }
+      }
 
-    if(selectedTransMode == 'Cash'){
-      if(finalAmountCashDeno > 0){
-        if(finalAmountCashDeno != receiveAmt){
-          showFlushBar(context, "The Entered Cash Denomination Total Should Be Equal To Received Cash Amount.");
-          return;
+      if(selectedTransMode == 'Cash'){
+        if(finalAmountCashDeno > 0){
+          if(finalAmountCashDeno != receiveAmt){
+            showFlushBar(context, "The Entered Cash Denomination Total Should Be Equal To Received Cash Amount.");
+            return;
+          }
         }
+      }
+
+      if(receiveAmt != totalAmt){
+        showFlushBar(context, "The Entered Receipt Payment Amount Should Be Equal To Total Amount.");
+        return;
+      }
+      if(selectedTransMode == "Online"){
+        payMode = "Bank";
+      }else if(selectedTransMode == "Cash"){
+        payMode = "Cash";
+      }else{
+        payMode = "";
       }
     }
 
-    if(receiveAmt != totalAmt){
-      showFlushBar(context, "The Entered Receipt Payment Amount Should Be Equal To Total Amount.");
-      return;
-    }
+
+
+
 
 
       //   int cylQty;
@@ -3695,17 +4035,27 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
       bankId = 0;
       accMappingIds = 0;
     }
+    int? isExpted;
+    if(isExemptedReticulated == true){
+      debugPrint("isExemptedReticulated1 $isExemptedReticulated");
+      isExpted = 1;
+    }else if(isExemptedReticulated == false){
+      debugPrint("isExemptedReticulated0 $isExemptedReticulated");
+      isExpted = 0;
+    }else{
+
+    }
     final Map<String, dynamic> requestBody = {
       "PSVId": psvID,
       "DistributorId":distributorIds,
       "SVDate": formattedDate,
-      "ReferredById": selectedReferredID,
+      "ReferredById": selectedReferredID ?? '',
       "OtherName":selectedReferredName ?? '',
-      "ProductId": selectedProductID,
-      "ProductName":selectedTranssvItemName ,
+      "ProductId": selectedProductID ?? '',
+      "ProductName":selectedTranssvItemName ?? '' ,
       "IsUndocument":isSVPending,
-      "SvType":selectedTransacc,
-      "CylQty": cylinderQty,
+      "SvType":selectedTransacc ?? '',
+      "CylQty": cylinderQty ?? '',
       "ScRegulator":scRegulators,
       "DepositCyl": cylDeposit,
       "CylRefillRSP": cylRefillRSP,
@@ -3713,12 +4063,12 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
       "StampDuty": stampD,
       "FtlRegulator": selectedFTLRegQty ?? 0,
       "BasicAmt": basicAmt,
-      "ConsuDCNo": conDSNo,
-      "ConsumerName": consName,
-      "ConsuContactNo": conCont,
+      "ConsuDCNo": conDSNo ??'',
+      "ConsumerName": consName ?? '',
+      "ConsuContactNo": conCont ??'',
       "TotalAmount": totalAmt,
       "ReceiptAmt": receiveAmt,
-      "PaymentMode": selectedTransMode,
+      "PaymentMode": payMode ??'',
       "TransactionCode": tranCode ?? '',
       "TransactionTime": times ?? '',
       "TransactionRemark": transRemark ?? '',
@@ -3728,15 +4078,15 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
       "ItemName": '',
       "Rate": '',
       "ItemQty": '',
-      "DiscountAmt": arbTotalDiscount,
-      "SVDiscountAmt": discountAmt,
-      "ArbAmount": arbTotalAmount,
+      "DiscountAmt": arbTotalDiscount??'',
+      "SVDiscountAmt": discountAmt ??'',
+      "ArbAmount": arbTotalAmount??'',
       "ItemDataList": itemDetails,
       "DenomDtList": dataCashDenomination,
       "AmtCharges": nameChangeCharges,
       "BankId": bankId,
       "BankMappingId": accMappingIds,
-      "IsExemptReti": 0,
+      "IsExemptReti": isExpted ??'',
     };
 
     print("DepositCashAddEdit: ${requestBody}");
@@ -3760,23 +4110,27 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     });
     // Handling response
     if (response.statusCode == 200) {
-      if(response == -1){
+      if(response == -1 || response.body == -1 || response == "-1" || response.body == "-1"){
         EasyLoading.showToast(Constants.expenseExistMgr,
             duration: const Duration(milliseconds: 3000));
-      }else if(response == 0){
+      }else if(response == 0 || response.body == 0 || response == "0" || response.body == "0"){
         EasyLoading.showToast(Constants.failToInserRecord,
             duration: const Duration(milliseconds: 3000));
       }else{
         // Successful response
         print("Response UpdateSaleAddEditForMob: ${response.body}");
-
-        // Navigator.pushNamed(
-        //   context,
-        //   BottomNavBarExample.screenName,
-        //   arguments: 3, // This opens the third tab
-        // );
-        EasyLoading.showToast(Constants.expenseSendMgr,
-            duration: const Duration(milliseconds: 3000));
+          if(actionMode != "DELETE"){
+            EasyLoading.showToast(Constants.expenseSendMgr,
+                duration: const Duration(milliseconds: 3000));
+          }else{
+            EasyLoading.showToast(Constants.dataDeleted,
+                duration: const Duration(milliseconds: 3000));
+          }
+        Navigator.pushNamed(
+          context,
+          BottomNavBarExample.screenName,
+          arguments: 3, // This opens the third tab
+        );
         setState(() {
           fetchItemSvAddEditList();
         });
@@ -3800,7 +4154,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     double discountAmt = double.tryParse(regulatorDiscountAmountController.text) ?? 0;
 
     double fixedTotal = deposit + refill + regulator + stampDuty - discountAmt;
-
+    print("Grand Total: $deposit $refill $regulator $stampDuty $discountAmt");
     // 2. Sum up item amounts from the ListView
     double dynamicItemTotal = 0.0;
     double dynamicItemTotalD = 0.0;
@@ -3867,19 +4221,19 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     selectedTransacc = null;
     selectedTransMode = null;
     _selectBankModel = null;
-    selectedBankName = '';
-    selectedBankId = '';
+    selectedBankName = null;
+    selectedBankId = null;
     selecteBankIDApi = 0;
     accMappingId = 0;
     _selectedIndex = 0;
     arbTotalAmount = 0;
     arbTotalDiscount = 0;
     stampDuty = 0;
-    selectedTransMode = '';
-    selectedTransacc = '';
-    selectedTranssvItemName = '';
+    selectedTransMode = null;
+    selectedTransacc = null;
+    selectedTranssvItemName = null;
     selectedProductID = 0;
-    selectedTranqty = '';
+    selectedTranqty = null;
     cylinderQty = 0;
     depositAmount = 0;
     refillAmountCyl = 0;
@@ -3895,17 +4249,16 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     returnAmount = 0.0;
     finalAmountCashDeno = 0.0;
     isQtyFilled = {};
-    getSelectedFTLRegulatorQtyString = '';
+    getSelectedFTLRegulatorQtyString = null;
     selectedFTLRegQty = 0;
     isCashDenominationListViewVisible = false;
     isSVPending = false;
     isExemptedReticulated = false;
     _selectedIndex = 0;
     arbTotalAmount = 0;
-    arbTotalDiscount = 0;
     stampDuty = 0;
     selectedReferredID = 0;
-    selectedReferredName = '';
+    selectedReferredName = null;
     conNameController.clear();
     conContactController.clear();
     conNoController.clear();
@@ -3927,8 +4280,11 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     cylinderQtyAddController.clear();
     totalAmountController.clear();
     nameChangeAmtChargesController.clear();
-    qtyController = [];
-    qtyControllerReturn = [];
+    Navigator.pop(context);
+    Navigator.pushNamed(
+      context,
+      SVSaleReportScreen.screenName// This opens the third tab
+    );
   }
 
 }

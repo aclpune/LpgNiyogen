@@ -8,6 +8,8 @@ import 'CashDepositToBankScreen.dart';
 import 'CashHandoverScreen.dart';
 import 'PaymentReceiptScreen/PaymentReceiptScreen.dart';
 import 'SVSaleReportScreen.dart';
+import 'SalaryPaymentScreen/SalaryPaymentScreen.dart';
+import 'TVSaleScreen/TVSalesScreen.dart';
 import 'UpdatePaymentsScreen/UpdatePaymentScreen.dart';
 class ManagerMoreScree extends StatefulWidget {
   static const screenName = '/managerMoreScree';
@@ -50,13 +52,9 @@ class _ManagerMoreScreeState extends State<ManagerMoreScree> {
                     children: [
                       Padding(
                         padding: const EdgeInsets.only(left: 10.0),
-                        child: Text("Cash HandOver",style:Styling.itemGreyTextBigMore,),
+                        child: Text("Daily Transaction",style:Styling.itemGreyTextBigMore,),
                       ),
-                      GestureDetector(
-                        onTap: (){
-                          Navigator.pushReplacementNamed(context, CashHandoverScreen.screenName);
-                        },
-                        child:
+
                         Card(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5),
@@ -65,144 +63,345 @@ class _ManagerMoreScreeState extends State<ManagerMoreScree> {
                           color: Colors.white,
                           child:
                           Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Title for Cylinder Categories Table
-                              Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pushNamed(context, SVSaleReportScreen.screenName
+                                  );
+                                },
+                                child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child:
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(Icons.sell_outlined),
+                                            SizedBox(width: 10,),
+                                            Text("SV Sale",style: Styling.itemBlackTestMore,),
+                                          ],
+                                        ),
+                                        Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+                                      ],
+                                    )
+                                ),
+                              ),
+                              Container(height: 1,color: Colors.grey[300],),
+                              GestureDetector(
+                                onTap: (){
+                                  Navigator.pushReplacementNamed(context, TVSalesScreen.screenName);
+                                },
+                                child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
 
-                                      Row(
-                                        children: [
-                                          Icon(Icons.currency_rupee_sharp),
-                                          SizedBox(width: 10,),
-                                          Text("Cash Handover",style: Styling.itemBlackTestMore,),
-                                        ],
-                                      ),
+                                        Row(
+                                          children: [
+                                            Icon(Icons.receipt_outlined),
+                                            SizedBox(width: 10,),
+                                            Text("TV Receipt",style: Styling.itemBlackTestMore,),
+                                          ],
+                                        ),
 
-                                      Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
-                                    ],
-                                  )
+                                        Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+                                      ],
+                                    )
+                                ),
+                              ),
+                              Container(height: 1,color: Colors.grey[300],),
+                              GestureDetector(
+                                onTap: (){
+                                  Navigator.pushReplacementNamed(context, PaymentReceiptScreen.screenName);
+                                },
+                                child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                
+                                        Row(
+                                          children: [
+                                            Icon(Icons.payment_outlined),
+                                            SizedBox(width: 10,),
+                                            Text("Payments Receipt",style: Styling.itemBlackTestMore,),
+                                          ],
+                                        ),
+                                
+                                        Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+                                      ],
+                                    )
+                                ),
+                              ),
+                              Container(height: 1,color: Colors.grey[300],),
+                              GestureDetector(
+                                onTap: (){
+                                  Navigator.pushReplacementNamed(context, UpdatePaymentScreen.screenName);
+                                },
+                                child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                
+                                        Row(
+                                          children: [
+                                            Icon(Icons.update),
+                                            SizedBox(width: 10,),
+                                            Text("Update Payments",style: Styling.itemBlackTestMore,),
+                                          ],
+                                        ),
+                                
+                                        Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+                                      ],
+                                    )
+                                ),
+                              ),
+                              Container(height: 1,color: Colors.grey[300],),
+                              GestureDetector(
+                                onTap: (){
+                                  Navigator.pushReplacementNamed(context, SalaryPaymentScreen.screenName);
+                                },
+                                child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                
+                                        Row(
+                                          children: [
+                                            Icon(Icons.payments_outlined),
+                                            SizedBox(width: 10,),
+                                            Text("Salary Payments",style: Styling.itemBlackTestMore,),
+                                          ],
+                                        ),
+                                
+                                        Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+                                      ],
+                                    )
+                                ),
+                              ),
+                              Container(height: 1,color: Colors.grey[300],),
+                              GestureDetector(
+                                onTap: (){
+                                  Navigator.pushReplacementNamed(context, CashHandoverScreen.screenName);
+                                },
+                                child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                
+                                        Row(
+                                          children: [
+                                            Icon(Icons.comment_bank_outlined),
+                                            SizedBox(width: 10,),
+                                            Text("Cash Handover-Bank Deposit",style: Styling.itemBlackTestMore,),
+                                          ],
+                                        ),
+                                
+                                        Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+                                      ],
+                                    )
+                                ),
                               ),
                             ],
                           ),
-
                         ),
-                      ),
-                      Container(
-                        height: 1,
-                        color: Colors.grey[200],
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, SVSaleReportScreen.screenName
-                          );
-                        },
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          elevation: 1,
-                          color: Colors.white,
-                          child:
-                              Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child:
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(Icons.comment_bank_outlined),
-                                          SizedBox(width: 10,),
-                                          Text("SV Sale",style: Styling.itemBlackTestMore,),
-                                        ],
-                                      ),
-                                      Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
 
-                                    ],
-                                  )
-                              ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: (){
-                          Navigator.pushReplacementNamed(context, UpdatePaymentScreen.screenName);
-                        },
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          elevation: 1,
-                          color: Colors.white,
-                          child:
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Title for Cylinder Categories Table
-                              Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-
-                                      Row(
-                                        children: [
-                                          Icon(Icons.currency_rupee_sharp),
-                                          SizedBox(width: 10,),
-                                          Text("Update Payments",style: Styling.itemBlackTestMore,),
-                                        ],
-                                      ),
-
-                                      Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
-                                    ],
-                                  )
-                              ),
-
-                            ],
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: (){
-                          Navigator.pushReplacementNamed(context, PaymentReceiptScreen.screenName);
-                        },
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          elevation: 1,
-                          color: Colors.white,
-                          child:
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Title for Cylinder Categories Table
-                              Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-
-                                      Row(
-                                        children: [
-                                          Icon(Icons.currency_rupee_sharp),
-                                          SizedBox(width: 10,),
-                                          Text("Payments Receipt",style: Styling.itemBlackTestMore,),
-                                        ],
-                                      ),
-
-                                      Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
-                                    ],
-                                  )
-                              ),
-
-                            ],
-                          ),
-                        ),
-                      ),
+                      // GestureDetector(
+                      //   onTap: (){
+                      //     Navigator.pushReplacementNamed(context, TVSalesScreen.screenName);
+                      //   },
+                      //   child: Card(
+                      //     shape: RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.circular(5),
+                      //     ),
+                      //     elevation: 1,
+                      //     color: Colors.white,
+                      //     child:
+                      //     Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         // Title for Cylinder Categories Table
+                      //         Padding(
+                      //             padding: const EdgeInsets.all(10.0),
+                      //             child: Row(
+                      //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //               children: [
+                      //
+                      //                 Row(
+                      //                   children: [
+                      //                     Icon(Icons.currency_rupee_sharp),
+                      //                     SizedBox(width: 10,),
+                      //                     Text("TV Receipt",style: Styling.itemBlackTestMore,),
+                      //                   ],
+                      //                 ),
+                      //
+                      //                 Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+                      //               ],
+                      //             )
+                      //         ),
+                      //
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
+                      // GestureDetector(
+                      //   onTap: (){
+                      //     Navigator.pushReplacementNamed(context, PaymentReceiptScreen.screenName);
+                      //   },
+                      //   child: Card(
+                      //     shape: RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.circular(5),
+                      //     ),
+                      //     elevation: 1,
+                      //     color: Colors.white,
+                      //     child:
+                      //     Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         // Title for Cylinder Categories Table
+                      //         Padding(
+                      //             padding: const EdgeInsets.all(10.0),
+                      //             child: Row(
+                      //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //               children: [
+                      //
+                      //                 Row(
+                      //                   children: [
+                      //                     Icon(Icons.currency_rupee_sharp),
+                      //                     SizedBox(width: 10,),
+                      //                     Text("Payments Receipt",style: Styling.itemBlackTestMore,),
+                      //                   ],
+                      //                 ),
+                      //
+                      //                 Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+                      //               ],
+                      //             )
+                      //         ),
+                      //
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
+                      // GestureDetector(
+                      //   onTap: (){
+                      //     Navigator.pushReplacementNamed(context, UpdatePaymentScreen.screenName);
+                      //   },
+                      //   child: Card(
+                      //     shape: RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.circular(5),
+                      //     ),
+                      //     elevation: 1,
+                      //     color: Colors.white,
+                      //     child:
+                      //     Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         // Title for Cylinder Categories Table
+                      //         Padding(
+                      //             padding: const EdgeInsets.all(10.0),
+                      //             child: Row(
+                      //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //               children: [
+                      //
+                      //                 Row(
+                      //                   children: [
+                      //                     Icon(Icons.currency_rupee_sharp),
+                      //                     SizedBox(width: 10,),
+                      //                     Text("Update Payments",style: Styling.itemBlackTestMore,),
+                      //                   ],
+                      //                 ),
+                      //
+                      //                 Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+                      //               ],
+                      //             )
+                      //         ),
+                      //
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
+                      // GestureDetector(
+                      //   onTap: (){
+                      //     Navigator.pushReplacementNamed(context, SalaryPaymentScreen.screenName);
+                      //   },
+                      //   child: Card(
+                      //     shape: RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.circular(5),
+                      //     ),
+                      //     elevation: 1,
+                      //     color: Colors.white,
+                      //     child:
+                      //     Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         // Title for Cylinder Categories Table
+                      //         Padding(
+                      //             padding: const EdgeInsets.all(10.0),
+                      //             child: Row(
+                      //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //               children: [
+                      //
+                      //                 Row(
+                      //                   children: [
+                      //                     Icon(Icons.currency_rupee_sharp),
+                      //                     SizedBox(width: 10,),
+                      //                     Text("Salary Payments",style: Styling.itemBlackTestMore,),
+                      //                   ],
+                      //                 ),
+                      //
+                      //                 Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+                      //               ],
+                      //             )
+                      //         ),
+                      //
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ),
+                      // GestureDetector(
+                      //   onTap: (){
+                      //     Navigator.pushReplacementNamed(context, CashHandoverScreen.screenName);
+                      //   },
+                      //   child:
+                      //   Card(
+                      //     shape: RoundedRectangleBorder(
+                      //       borderRadius: BorderRadius.circular(5),
+                      //     ),
+                      //     elevation: 1,
+                      //     color: Colors.white,
+                      //     child:
+                      //     Column(
+                      //       crossAxisAlignment: CrossAxisAlignment.start,
+                      //       children: [
+                      //         // Title for Cylinder Categories Table
+                      //         Padding(
+                      //             padding: const EdgeInsets.all(10.0),
+                      //             child: Row(
+                      //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //               children: [
+                      //
+                      //                 Row(
+                      //                   children: [
+                      //                     Icon(Icons.currency_rupee_sharp),
+                      //                     SizedBox(width: 10,),
+                      //                     Text("Cash Handover-Bank Deposit",style: Styling.itemBlackTestMore,),
+                      //                   ],
+                      //                 ),
+                      //
+                      //                 Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+                      //               ],
+                      //             )
+                      //         ),
+                      //       ],
+                      //     ),
+                      //
+                      //   ),
+                      // ),
                       Padding(
                         padding: const EdgeInsets.only(left: 10.0),
                         child: Text("LOGOUT",style:Styling.itemGreyTextBigMore,),

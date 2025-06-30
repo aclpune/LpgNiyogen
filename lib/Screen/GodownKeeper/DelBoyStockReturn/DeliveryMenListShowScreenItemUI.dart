@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:lpgsalesandinventory/Screen/Utils/Styling.dart';
 import 'package:lpgsalesandinventory/Screen/Utils/app_url.dart';
@@ -83,7 +84,6 @@ class _DeliveryMenListShowScreenItemUIState extends State<DeliveryMenListShowScr
                                   }else{
                                     CustomAlertDialog.showCustomAlert(context,Constants.stockNotAccepted);
                                   }
-
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 8.0),
@@ -131,6 +131,7 @@ class _DeliveryMenListShowScreenItemUIState extends State<DeliveryMenListShowScr
   }
 
   Future<void> checkAndSaveDayEndData() async {
+    EasyLoading.show();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? distributorId = prefs.getString('DistributorId');
     String? bearerToken = prefs.getString('token');
@@ -157,6 +158,7 @@ class _DeliveryMenListShowScreenItemUIState extends State<DeliveryMenListShowScr
           // If the list is empty, do not save
           saveFlag = false;
           print("The list is empty, no data to save.");
+          EasyLoading.dismiss();
         } else {
           // If there is data in the response, process it and save
           var dayEndData = apiResponse[0]; // Access the first item in the list (assuming it's an object)
@@ -171,22 +173,27 @@ class _DeliveryMenListShowScreenItemUIState extends State<DeliveryMenListShowScr
             saveFlag = true;
             // If the conditions are met, set the flag and save the data
             print("Data is valid, proceeding to save.");
+            EasyLoading.dismiss();
           } else {
             // If any condition is not met, print a message
             print("Data is incomplete. Cannot proceed to save.");
+            EasyLoading.dismiss();
           }
         }
       } else {
         // Handle API error
         print("Error: ${response.statusCode}");
+        EasyLoading.dismiss();
       }
     }
     catch (e) {
       // Exception handling
       print("Exception: $e");
+      EasyLoading.dismiss();
     }
   }
   Future<void> fetchTransactionList() async {
+    EasyLoading.show();
     Constants.isNetworkAvailable =
     await InternetConnectionChecker().hasConnection;
     if (Constants.isNetworkAvailable) {
@@ -231,12 +238,15 @@ class _DeliveryMenListShowScreenItemUIState extends State<DeliveryMenListShowScr
           }
         });
         isLoading = false;
+        EasyLoading.dismiss();
       } else {
         isLoading = false;
+        EasyLoading.dismiss();
         throw Exception('Failed To Load Items');
       }
     } else {
       isLoading = false;
+      EasyLoading.dismiss();
       showFlushBar(
           context,Constants.connectionMessage);
     }
