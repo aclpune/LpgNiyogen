@@ -105,577 +105,589 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-    return Scaffold(
-      appBar:CustomAppBarManager(
-        title: 'Cash Handover - Bank Deposit', // Title or hint text for the text field
-      ),
-      body:
-      Padding(
-        padding: const EdgeInsets.only(left: 5.0,right: 5,top: 15,bottom: 15),
-        child: SingleChildScrollView(
-          child:
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                      Expanded(
-                        child: textWidgetBlueColorWithoutStar(
-                            'Deposit Date'),
-                      ),
-                      Flexible(flex: 1,
-                          child: Text("$formattedDate")),
-                ],
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                      Expanded(
-                        child: textWidgetBlueColorWithStar(
-                          'Deposit By', "*", // Add a parameter to conditionally show the asterisk
+    var argLRAdd = ModalRoute.of(context)?.settings.arguments;
+    return
+      WillPopScope(
+        onWillPop: () async {
+          if (argLRAdd == "fromDrawer") {
+            Navigator.pushReplacementNamed(context, '/bottomNavBarExample');
+            return false;
+          } else {
+            Navigator.pushReplacementNamed(context, '/bottomNavBarExample');
+            return false;
+          }
+        },
+        child: Scaffold(
+        appBar:CustomAppBarManager(
+          title: 'Cash Handover - Bank Deposit', // Title or hint text for the text field
+        ),
+        body:
+        Padding(
+          padding: const EdgeInsets.only(left: 5.0,right: 5,top: 15,bottom: 15),
+          child: SingleChildScrollView(
+            child:
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                        Expanded(
+                          child: textWidgetBlueColorWithoutStar(
+                              'Deposit Date'),
                         ),
-                      ),
-               
-                      Flexible(flex: 1,child: Text("$userName")),
-                  
-                ],
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                      Expanded(child: textWidgetBlueColorWithoutStar('Cash In Hand')),
-                      Flexible(flex: 1,child: Text('${(totalamt ?? 0).toStringAsFixed(2)}')),
-                ],
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                      Expanded(
-                        child:
-                            textWidgetBlueColorWithStar(
-                              'Cash Handover To',
-                             "*", // Add a parameter to conditionally show the asterisk
-                            ),
-                      ),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left:0.0),
-                      child: DropdownButtonFormField<GetStaffDetailsListUserIsMadeModel>(
-                        isExpanded: true,
-                        key: formKey1,
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                        ),
-                        value: _selectedItemModel,
-                        items: staffdetailsmodel.map((item) {
-                          return DropdownMenuItem<GetStaffDetailsListUserIsMadeModel>(
-                            value: item,
-                            child: Text(
-                              item.staffName ?? '',
-                              style: Styling.itemBlackTest,
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: (selectedItem) {
-                          setState(() {
-                            _selectedItemModel = selectedItem;
-                            _selectedItem = selectedItem?.staffName ?? '';
-                            selectedItemId = selectedItem?.userId?.toInt();
-                            // Clear bank selection when staff is selected
-                            _selectBankModel = null;
-                            selectedBankName = null;
-                            selectedBankId = null;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-
-                ],
-              ),
-              SizedBox(height: 5),
-              Center(
-                child: Text(
-                  "OR",
-                  style:Styling.itemBlackTestSmallReportBold
+                        Flexible(flex: 1,
+                            child: Text("$formattedDate")),
+                  ],
                 ),
-              ),
-              SizedBox(height: 5),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                      Expanded(
-                        child: textWidgetBlueColorWithStar(
-                          ' Select Bank \n Account No.',
-                          "*" // Add a parameter to conditionally show the asterisk
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                        Expanded(
+                          child: textWidgetBlueColorWithStar(
+                            'Deposit By', "*", // Add a parameter to conditionally show the asterisk
+                          ),
                         ),
-                      ),
-                    
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 0.0),
-                      child:
-                      DropdownButtonFormField<GetBankMappingDetailsListModel>(
-                        isExpanded: true,
-                        key: formKey2,
-                        decoration: InputDecoration(),
-                        value: _selectBankModel,
-                        items: bankmappingModel.map((item) {
-                          return DropdownMenuItem<GetBankMappingDetailsListModel>(
-                            value: item,
-                            child: Text(
-                              '${item.bankName ?? ''} - ${item.accountNo ?? ''}',
-                              style: Styling.itemBlackTest,
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: (selectedItem) {
-                          setState(() {
-                            _selectBankModel = selectedItem;
-                            selectedBankName = selectedItem?.bankName;
-                            selectedBankId = selectedItem?.accountNo;
-                            getTransMode = getTransModeListForBank(selectedItem);
-                            selecteBankIDApi = selectedItem?.bankId?.toInt();
-                            accMappingId = selectedItem?.mappingId?.toInt();
-                            selectedTransMode = null;
-                            _selectedItemModel = null;
-                            _selectedItem = null;
-                            selectedItemId = null;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                      Expanded(
-                        child: textWidgetBlueColorWithStar(
-                          'Cash Hand/\nDeposit Amt.',
-                          "*" // Add a parameter to conditionally show the asterisk
-                        ),
-                      ),
-                   
-                  Expanded(
-                    child: TextField(
-                      controller: depositController,
-                      keyboardType: TextInputType.numberWithOptions(decimal: true),
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
-                      ],
-                      decoration: InputDecoration(
-                        labelText: 'Enter Deposit Amt.',
-                        errorText: _isDepositEmpty ? 'Deposit Amt. is Required' : null, // Show error if required
-                      ),
-                      onChanged: (value) {
-                        setState(() {
-                          _isDepositEmpty = value.isEmpty;
-                          double val = double.parse(value);
-                          if(val>totalamt!){
-                            depositController.clear();
-                            remainingAmount = 0;
-                          }else{
-                            updateRemainingAmount();
-                          }
-                        });
-                      },
-                    ),
-                  ),
 
-                ],
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                      Expanded(
-                        child: textWidgetBlueColorWithoutStar(
-                            'Balanced Amount'
-                        ),
-                      ),
-                          
-                          Flexible(flex: 1,child: Text('${remainingAmount.toString()}')),
-                    
-                ],
-              ),
-              SizedBox(height: 10),
-              if (selectedBankName != null)
+                        Flexible(flex: 1,child: Text("$userName")),
+
+                  ],
+                ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                        Expanded(child: textWidgetBlueColorWithoutStar('Cash In Hand')),
+                        Flexible(flex: 1,child: Text('${(totalamt ?? 0).toStringAsFixed(2)}')),
+                  ],
+                ),
+                SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    
+                        Expanded(
+                          child:
+                              textWidgetBlueColorWithStar(
+                                'Cash Handover To',
+                               "*", // Add a parameter to conditionally show the asterisk
+                              ),
+                        ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left:0.0),
+                        child: DropdownButtonFormField<GetStaffDetailsListUserIsMadeModel>(
+                          isExpanded: true,
+                          key: formKey1,
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                          ),
+                          value: _selectedItemModel,
+                          items: staffdetailsmodel.map((item) {
+                            return DropdownMenuItem<GetStaffDetailsListUserIsMadeModel>(
+                              value: item,
+                              child: Text(
+                                item.staffName ?? '',
+                                style: Styling.itemBlackTest,
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (selectedItem) {
+                            setState(() {
+                              _selectedItemModel = selectedItem;
+                              _selectedItem = selectedItem?.staffName ?? '';
+                              selectedItemId = selectedItem?.userId?.toInt();
+                              // Clear bank selection when staff is selected
+                              _selectBankModel = null;
+                              selectedBankName = null;
+                              selectedBankId = null;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+
+                  ],
+                ),
+                SizedBox(height: 5),
+                Center(
+                  child: Text(
+                    "OR",
+                    style:Styling.itemBlackTestSmallReportBold
+                  ),
+                ),
+                SizedBox(height: 5),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
                         Expanded(
                           child: textWidgetBlueColorWithStar(
-                            'Select Dep.Mode',"*"// Add a parameter to conditionally show the asterisk
+                            ' Select Bank \n Account No.',
+                            "*" // Add a parameter to conditionally show the asterisk
                           ),
                         ),
 
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.only(left: 0.0),
-                        child: DropdownButtonFormField<String>(
-                          key: formKey3,
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                          ),
-                          value: selectedTransMode, // Bind the selected value
-                          items: getTransMode
-                              .map((String value) => DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          ))
-                              .toList(),
-                          onChanged: (value) {
+                        child:
+                        DropdownButtonFormField<GetBankMappingDetailsListModel>(
+                          isExpanded: true,
+                          key: formKey2,
+                          decoration: InputDecoration(),
+                          value: _selectBankModel,
+                          items: bankmappingModel.map((item) {
+                            return DropdownMenuItem<GetBankMappingDetailsListModel>(
+                              value: item,
+                              child: Text(
+                                '${item.bankName ?? ''} - ${item.accountNo ?? ''}',
+                                style: Styling.itemBlackTest,
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (selectedItem) {
                             setState(() {
-                              selectedTransMode = value; // Update the selected value
+                              _selectBankModel = selectedItem;
+                              selectedBankName = selectedItem?.bankName;
+                              selectedBankId = selectedItem?.accountNo;
+                              getTransMode = getTransModeListForBank(selectedItem);
+                              selecteBankIDApi = selectedItem?.bankId?.toInt();
+                              accMappingId = selectedItem?.mappingId?.toInt();
+                              selectedTransMode = null;
+                              _selectedItemModel = null;
+                              _selectedItem = null;
+                              selectedItemId = null;
                             });
                           },
-                          isExpanded: true,
                         ),
                       ),
                     ),
                   ],
                 ),
-              SizedBox(height: 20),
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(width: 0.5),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    // Header Row
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(8),
-                          topRight: Radius.circular(8),
+                        Expanded(
+                          child: textWidgetBlueColorWithStar(
+                            'Cash Hand/\nDeposit Amt.',
+                            "*" // Add a parameter to conditionally show the asterisk
+                          ),
                         ),
-                        color: Colors.blue.shade100,
-                      ),
-                      child: Row(
-                        //mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: Text(
-                              'Sr.No.',
-                              style: Styling.itemBlackTestBold,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          verticalDividerSmall(), // Small vertical divider
-                          Expanded(
-                            flex: 3,
-                            child: Text(
-                              'Staff Name',
-                              style: Styling.itemBlackTestBold,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          verticalDividerSmall(), // Small vertical divider
-                          Expanded(
-                            flex: 2,
-                            child: Text(
-                              'Cash In Hand',
-                              style: Styling.itemBlackTestBold,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
+
+                    Expanded(
+                      child: TextField(
+                        controller: depositController,
+                        keyboardType: TextInputType.numberWithOptions(decimal: true),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
                         ],
+                        decoration: InputDecoration(
+                          labelText: 'Enter Deposit Amt.',
+                          errorText: _isDepositEmpty ? 'Deposit Amt. is Required' : null, // Show error if required
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            _isDepositEmpty = value.isEmpty;
+                            double val = double.parse(value);
+                            if(val>totalamt!){
+                              depositController.clear();
+                              remainingAmount = 0;
+                            }else{
+                              updateRemainingAmount();
+                            }
+                          });
+                        },
                       ),
                     ),
-                    Container(
-                      color: Colors.black12,
-                      height: 1,
-                      width: double.infinity,
-                    ),
-                    // ListView for Data
-                    cashInHandDetails.isNotEmpty
-                        ? ListView.builder(
-                      physics: const BouncingScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: cashInHandDetails.length,
-                      itemBuilder: (context, index) {
-                        debugPrint(
-                            "Rendering Expense Item: ${cashInHandDetails[index]}");
-                        return CashHandoverListViewUI(
-                            cashInHandDetails[index],
-                            index + 1,
-                            cashInHandDetails.length
-                        );
-                      },
-                    )
-                        : Container(child: Text('No Records Found')),
+
                   ],
                 ),
-              ),
-              SizedBox(height: 20),
-              Column(
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        isCashDenominationListViewVisible =
-                        !isCashDenominationListViewVisible; // Toggle ListView visibility
-                      });
-                    },
-                    child: Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(5.0),
-                        child:
-                        Column(
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                        Expanded(
+                          child: textWidgetBlueColorWithoutStar(
+                              'Balanced Amount'
+                          ),
+                        ),
+
+                            Flexible(flex: 1,child: Text('${remainingAmount.toString()}')),
+
+                  ],
+                ),
+                SizedBox(height: 10),
+                if (selectedBankName != null)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+
+                          Expanded(
+                            child: textWidgetBlueColorWithStar(
+                              'Select Dep.Mode',"*"// Add a parameter to conditionally show the asterisk
+                            ),
+                          ),
+
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 0.0),
+                          child: DropdownButtonFormField<String>(
+                            key: formKey3,
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                            ),
+                            value: selectedTransMode, // Bind the selected value
+                            items: getTransMode
+                                .map((String value) => DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            ))
+                                .toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                selectedTransMode = value; // Update the selected value
+                              });
+                            },
+                            isExpanded: true,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                SizedBox(height: 20),
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(width: 0.5),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header Row
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(8),
+                            topRight: Radius.circular(8),
+                          ),
+                          color: Colors.blue.shade100,
+                        ),
+                        child: Row(
+                          //mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "Cash denomination",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.blue,
-                                      fontWeight: FontWeight.bold,),
-                                  ),
-                                  Icon(
-                                    isCashDenominationListViewVisible
-                                        ? Icons.arrow_drop_up
-                                        : Icons.arrow_drop_down,
-                                  ),
-                                ],
+                            Expanded(
+                              flex: 1,
+                              child: Text(
+                                'Sr.No.',
+                                style: Styling.itemBlackTestBold,
+                                textAlign: TextAlign.center,
                               ),
                             ),
-                            Visibility(
-                              visible:
-                              isCashDenominationListViewVisible,
-                              child:
-                              Container(
-                                decoration: BoxDecoration(
-                                  // Background color of the box
-                                  borderRadius:
-                                  BorderRadius.circular(8),
-                                  border: Border.all(
-                                      width:
-                                      1), // Optional: Add rounded corners
-                                ),
-                                child: Column(
+                            verticalDividerSmall(), // Small vertical divider
+                            Expanded(
+                              flex: 3,
+                              child: Text(
+                                'Staff Name',
+                                style: Styling.itemBlackTestBold,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            verticalDividerSmall(), // Small vertical divider
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                'Cash In Hand',
+                                style: Styling.itemBlackTestBold,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        color: Colors.black12,
+                        height: 1,
+                        width: double.infinity,
+                      ),
+                      // ListView for Data
+                      cashInHandDetails.isNotEmpty
+                          ? ListView.builder(
+                        physics: const BouncingScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: cashInHandDetails.length,
+                        itemBuilder: (context, index) {
+                          debugPrint(
+                              "Rendering Expense Item: ${cashInHandDetails[index]}");
+                          return CashHandoverListViewUI(
+                              cashInHandDetails[index],
+                              index + 1,
+                              cashInHandDetails.length
+                          );
+                        },
+                      )
+                          : Container(child: Text('No Records Found')),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 20),
+                Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          isCashDenominationListViewVisible =
+                          !isCashDenominationListViewVisible; // Toggle ListView visibility
+                        });
+                      },
+                      child: Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child:
+                          Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
-                                    // First Row with Vertical Divider
-                                    SizedBox(
-                                      height:50,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment.center,
-                                        // Center the row content
-                                        children: [
-                                          // First Text and Divider inside Expanded to ensure equal size
-                                          Expanded(
-                                            flex: 2,
-                                            child: Center(
-                                                child: Text(
-                                                  "Note Type", style: TextStyle(
-                                                    fontWeight:
-                                                    FontWeight.bold,
-                                                    fontSize: 14),)), // Centering the text
-                                          ),
-                                          Expanded(
-                                            flex: 3,
-                                            child: Center(
-                                                child: Text(
-                                                  "Qty", style: TextStyle(
-                                                    fontWeight:
-                                                    FontWeight.bold,
-                                                    fontSize: 14),)), // Centering the text
-                                          ),
-                                          Expanded(
-                                            flex: 3,
-                                            child: Center(
-                                                child: Text(
-                                                  "Amount", style: TextStyle(
-                                                    fontWeight:
-                                                    FontWeight.bold,
-                                                    fontSize: 14),)), // Centering the text
-                                          ),
-                                        ],
-                                      ),
+                                    Text(
+                                      "Cash denomination",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.blue,
+                                        fontWeight: FontWeight.bold,),
                                     ),
-                                    SizedBox(height: 10,),
-                                    ListView.builder(
-                                      shrinkWrap: true,
-                                      physics: BouncingScrollPhysics(),
-                                      itemCount: getNoteTypeAndIdFroDenominationListModel.length,
-                                      itemBuilder: (context, index) {
-                                        final data = getNoteTypeAndIdFroDenominationListModel[index];
-                                        return
-                                          Column(
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                  Expanded(
-                                                    flex: 2,
-                                                    child: Center(
-                                                      child: Text(
-                                                        "${data.noteType}",
-                                                        style: TextStyle(fontSize: 12),
-                                                        textAlign: TextAlign.left,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: Center(
-                                                      child: Text(
-                                                        "X",
-                                                        style: TextStyle(fontSize: 12),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 3,
-                                                    child: Center(
-                                                      child: TextField(
-                                                        controller: qtyController[index],
-                                                        keyboardType: TextInputType.number,
-                                                        inputFormatters: <TextInputFormatter>[
-                                                          FilteringTextInputFormatter.digitsOnly,
-                                                        ],
-
-                                                        onChanged: (value) {
-                                                          setState(() {
-                                                            amounts[index] = (double.tryParse(value) ?? 0.0) * data.noteType!;
-                                                            totalAmount = amounts.fold(0.0, (sum, amount) => sum + amount);
-                                                            debugPrint("totalAmount$totalAmount");
-                                                          });
-                                                        },
-                                                        textAlign: TextAlign.center,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: Center(
-                                                      child: Text(
-                                                        "=",
-                                                        style: TextStyle(fontSize: 12),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex:3,
-                                                    child: Center(
-                                                      child: Text(
-                                                        "${amounts[index].toStringAsFixed(2)}",
-                                                        style: TextStyle(fontSize: 12),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          );
-                                      },
-                                    ),
-                                    SizedBox(height: 10,),
-                                    Padding(
-                                      padding: const EdgeInsets.only(right: 8.0),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.end,
-                                        children: [
-                                          Expanded(
-                                              flex: 0,
-                                              child: Text("Total Amount : ",
-                                                  style: Styling.itemBlackTestBold,
-                                                  textAlign: TextAlign.left)),
-                                          Expanded(
-                                              flex: 0,
-                                              child: Text(
-                                                totalAmount.toStringAsFixed(2),
-                                                style: Styling.itemBlackTestBold,
-                                              )),
-                                        ],
-                                      ),
+                                    Icon(
+                                      isCashDenominationListViewVisible
+                                          ? Icons.arrow_drop_up
+                                          : Icons.arrow_drop_down,
                                     ),
                                   ],
                                 ),
                               ),
-                            ),
+                              Visibility(
+                                visible:
+                                isCashDenominationListViewVisible,
+                                child:
+                                Container(
+                                  decoration: BoxDecoration(
+                                    // Background color of the box
+                                    borderRadius:
+                                    BorderRadius.circular(8),
+                                    border: Border.all(
+                                        width:
+                                        1), // Optional: Add rounded corners
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      // First Row with Vertical Divider
+                                      SizedBox(
+                                        height:50,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                          // Center the row content
+                                          children: [
+                                            // First Text and Divider inside Expanded to ensure equal size
+                                            Expanded(
+                                              flex: 2,
+                                              child: Center(
+                                                  child: Text(
+                                                    "Note Type", style: TextStyle(
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      fontSize: 14),)), // Centering the text
+                                            ),
+                                            Expanded(
+                                              flex: 3,
+                                              child: Center(
+                                                  child: Text(
+                                                    "Qty", style: TextStyle(
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      fontSize: 14),)), // Centering the text
+                                            ),
+                                            Expanded(
+                                              flex: 3,
+                                              child: Center(
+                                                  child: Text(
+                                                    "Amount", style: TextStyle(
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                      fontSize: 14),)), // Centering the text
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(height: 10,),
+                                      ListView.builder(
+                                        shrinkWrap: true,
+                                        physics: BouncingScrollPhysics(),
+                                        itemCount: getNoteTypeAndIdFroDenominationListModel.length,
+                                        itemBuilder: (context, index) {
+                                          final data = getNoteTypeAndIdFroDenominationListModel[index];
+                                          return
+                                            Column(
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Expanded(
+                                                      flex: 2,
+                                                      child: Center(
+                                                        child: Text(
+                                                          "${data.noteType}",
+                                                          style: TextStyle(fontSize: 12),
+                                                          textAlign: TextAlign.left,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 1,
+                                                      child: Center(
+                                                        child: Text(
+                                                          "X",
+                                                          style: TextStyle(fontSize: 12),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Center(
+                                                        child: TextField(
+                                                          controller: qtyController[index],
+                                                          keyboardType: TextInputType.number,
+                                                          inputFormatters: <TextInputFormatter>[
+                                                            FilteringTextInputFormatter.digitsOnly,
+                                                          ],
 
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                                                          onChanged: (value) {
+                                                            setState(() {
+                                                              amounts[index] = (double.tryParse(value) ?? 0.0) * data.noteType!;
+                                                              totalAmount = amounts.fold(0.0, (sum, amount) => sum + amount);
+                                                              debugPrint("totalAmount$totalAmount");
+                                                            });
+                                                          },
+                                                          textAlign: TextAlign.center,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 1,
+                                                      child: Center(
+                                                        child: Text(
+                                                          "=",
+                                                          style: TextStyle(fontSize: 12),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Expanded(
+                                                      flex:3,
+                                                      child: Center(
+                                                        child: Text(
+                                                          "${amounts[index].toStringAsFixed(2)}",
+                                                          style: TextStyle(fontSize: 12),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            );
+                                        },
+                                      ),
+                                      SizedBox(height: 10,),
+                                      Padding(
+                                        padding: const EdgeInsets.only(right: 8.0),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                            Expanded(
+                                                flex: 0,
+                                                child: Text("Total Amount : ",
+                                                    style: Styling.itemBlackTestBold,
+                                                    textAlign: TextAlign.left)),
+                                            Expanded(
+                                                flex: 0,
+                                                child: Text(
+                                                  totalAmount.toStringAsFixed(2),
+                                                  style: Styling.itemBlackTestBold,
+                                                )),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
 
-              SizedBox(height: 20),
-              // Save Button
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // Handle Cancel action
-                        cancelAction();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                      ),
-                      child: Text(
-                        'Cancel',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(width: 10), // Adds space between buttons
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        //save button action
-                        updateCashAddEditForMob();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
+                  ],
+                ),
+
+                SizedBox(height: 20),
+                // Save Button
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          // Handle Cancel action
+                          cancelAction();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
                         ),
-                      ),
-                      child: Text(
-                        'Save',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                        child: Text(
+                          'Cancel',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                    SizedBox(width: 10), // Adds space between buttons
+                    Expanded(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          //save button action
+                          updateCashAddEditForMob();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                        ),
+                        child: Text(
+                          'Save',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+            ),
+      );
   }
 
   // Fetch data from API
@@ -786,6 +798,7 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
       throw Exception('Failed to load items');
     }
   }
+
   Future<void> getNoteTypeAndIDList() async {
     Constants.isNetworkAvailable =
     await InternetConnectionChecker().hasConnection;
@@ -856,6 +869,7 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
       }
     }
   }
+
   Future<void> fetchStaffList(DateTime date) async {
     Constants.isNetworkAvailable =
     await InternetConnectionChecker().hasConnection;
@@ -978,6 +992,7 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
     formKey2.currentState?.reset();
     formKey3.currentState?.reset();
   }
+
   Future<void> updateCashAddEditForMob() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? distributorId = prefs.getString('DistributorId');

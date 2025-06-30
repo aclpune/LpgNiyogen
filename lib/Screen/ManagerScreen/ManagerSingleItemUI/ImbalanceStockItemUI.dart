@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 import '../../ConstantScreen/widgets.dart';
 import '../../GodownKeeper/ItemReceipt/CylItemList/GetCurrentStcOfGodownKeeperModel.dart';
 import '../../Utils/constants.dart';
+import '../DashboardItemClickUI/ImbalanceCountClickUI.dart';
 import '../ManagerModelClass/DailySaleSaummaryListModel.dart';
 import '../ManagerModelClass/DilySaleSummaryDeliveryBoyWiseListModel.dart';
 import '../ManagerModelClass/GetManagerDashboarDetailModel.dart';
@@ -46,21 +47,40 @@ class _ImbalanceStockItemUIState extends State<ImbalanceStockItemUI> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Text(
-                          sale.todayImbQty.toString(), // Replace this with your dynamic data
-                          style: Styling.countNumber,
-                          textAlign: TextAlign.center,
-                        ),
-                        verticalDividerSmallest(),
-                        Text(
-                          sale.asOfDateImbQty.toString(), // Replace this with your dynamic data
-                          style: Styling.countNumber,
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
+                    GestureDetector(
+                      onTap:
+                          () {
+                        Navigator.pushNamed(
+                          context,
+                          ImbalanceCountClickUI.screenName,
+                          arguments: {"ItemId":sale.itemId},
+                        );
+                      }, // No action when count is 0 or less
+                      behavior: HitTestBehavior.opaque,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(
+                            sale.todayImbQty.toString(), // Replace this with your dynamic data
+                            style: Styling.countNumber.copyWith(
+                              color: Colors.blue,
+                              decoration: TextDecoration.underline,
+                              decorationColor: Colors.blue,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          verticalDividerSmallestRed(),
+                          Text(
+                            sale.asOfDateImbQty.toString(), // Replace this with your dynamic data
+                            style: Styling.countNumber.copyWith(
+                              color: Colors.blue,
+                              decoration: TextDecoration.underline,
+                              decorationColor: Colors.blue,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
                     ),
                     SizedBox(height: 15),
                     Row(

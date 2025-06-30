@@ -109,6 +109,21 @@ BranchAdminAH	cnf@1234*/
 
   static String roleIdOwner = "5";
 
+  ///
+  static String reqfield = "Please enter all required fields";
+  static String expenseSendMgr1 = "Data deleted successfully.";
+  static String selectConsumerTypeMode = "Please select consumer type.";
+  static String amountEqual = 'The Entered Payment Amount cannot exceed the total amount';
+
+  static String TransMode = "Please select payment mode";
+  static String selStaff = "Please select staff name";
+  static String selCust = "Please select customer name";
+  static String pedagainst = "Please select paid against value";
+  static String salaryAmt = "Amount is required";
+  static String bankname = "Bank Account No is required";
+  static String transCode = "Transaction Code is required";
+  static String expenseSendMgrEdit = "Data Updated successfully.";
+  static String expenseSendMgrDelete = "Data deleted successfully.";
   //TextSizes
   static double size20 = 20;
   static double size18 = 18;
@@ -119,6 +134,8 @@ BranchAdminAH	cnf@1234*/
   static String DSRMessage =
       "Warning: Once you confirm the DSR,\nApplication will close the day and save the closing entries for inventory (cyl and ARB), along with cash flow transactions.\nYou will not be allowed to make any changes to any transaction once you confirm, and today’s closing will be done.\nAre you sure you want to proceed?";
 
+  ///
+  static String discountError = "The Entered Discount Should Not Be Greater Than Amt.";
 /*
   //Picklist -
 0	Created	PL

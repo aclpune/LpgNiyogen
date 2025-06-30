@@ -203,7 +203,6 @@ class _ManagerUpdateSaleCashUpdationState
   GetExpenceHeadAmountListModel? _selectedexpensesHeaders;
   bool isCheckedBalanceCash = false;
   int pendingCDCMSCount = 0;
-
   bool isLumsumAmountAdd = true;
   @override
   void initState() {
@@ -6880,75 +6879,273 @@ class _ManagerUpdateSaleCashUpdationState
             final alreadyExists = _consumerList.any(
                     (element) => element.consumerNo == consumer.consumerNo
             );
+            // if(!alreadyExists){
+            //   bool isValid = consumer.niyojanDel != 1 &&
+            //       consumer.consumerRemark != "Already Punched In Niyojan" &&
+            //       consumer.consumerRemark != "Not Found" &&
+            //       consumer.consumerRemark != "Not Found - Unaccounted";
+            //
+            //   if (isValid) {
+            //     validConsumerCount++;
+            //     validCountController.text = validConsumerCount.toString();
+            //
+            //     pendingCDCMSCount++;
+            //     _qtyControllerPrepaid.text = pendingCDCMSCount.toString();
+            //     prepaidQty = pendingCDCMSCount;
+            //
+            //     await _addConsumer(
+            //       consumer.consumerNo ?? '',
+            //       consumer.consumerName ?? '',
+            //       consumer.orderDate ,
+            //       consumer.cashDate ,
+            //       consumer.paymentStatus ?? '',
+            //       consumer.consumerRemark ?? '',
+            //       1,
+            //       consumer.cDCMSDel?.toInt() ?? 0,
+            //       1,
+            //       consumer.payDate ,
+            //       consumer.deliveryDate ,
+            //       consumer.settDate ,
+            //     );
+            //
+            //     // _calculateCylinderAmountPrepaid();
+            //     // _validateQuantities("Prepaid");
+            //    setState(() {
+            //      if(isLumsumAmountAdd){
+            //        _calculateCylinderAmountPrepaid();
+            //        _validateQuantities("Prepaid");
+            //        // calculateBalanceAmountForReceiveAmountCash();
+            //        _totalReceivedAmountCash.text = '';
+            //        _totalBalanceAmountCash.text = '';
+            //      }else{
+            //        _validateQuantitiesLumsumCase("Prepaid");
+            //        _calculateCylinderAmountPrepaid();
+            //        calculateBalanceAmountForReceiveAmountCashLumsumMode();
+            //        // calculateBalanceAmountForReceiveAmountCashLumsum();
+            //        _totalReceivedAmountCash.text = '';
+            //        _totalBalanceAmountCash.text = '';
+            //      }
+            //    });
+            //   } else {
+            //     invalidConsumerCount++;
+            //     invalidCountController.text = invalidConsumerCount.toString();
+            //
+            //     await _addConsumer(
+            //       consumer.consumerNo ?? '',
+            //       consumer.consumerName ?? '',
+            //       consumer.orderDate ,
+            //       consumer.cashDate ,
+            //       consumer.paymentStatus ?? '',
+            //       consumer.consumerRemark ?? '',
+            //       0,
+            //       0,
+            //       3,
+            //       consumer.payDate ,
+            //       consumer.deliveryDate ,
+            //       consumer.settDate ,
+            //     );
+            //   }
+            // }else{
+            //   showFlushBar(context, Constants.expenseExistMgr);
+            // }
+
             if(!alreadyExists){
-              bool isValid = consumer.niyojanDel != 1 &&
-                  consumer.consumerRemark != "Already Punched In Niyojan" &&
-                  consumer.consumerRemark != "Not Found" &&
-                  consumer.consumerRemark != "Not Found - Unaccounted";
+              if(consumer.bypassOn == 1){
+                    if(consumer.isvalid == 1){
+                      validConsumerCount++;
+                      validCountController.text = validConsumerCount.toString();
 
-              if (isValid) {
-                validConsumerCount++;
-                validCountController.text = validConsumerCount.toString();
+                      pendingCDCMSCount++;
+                      _qtyControllerPrepaid.text = pendingCDCMSCount.toString();
+                      prepaidQty = pendingCDCMSCount;
 
-                pendingCDCMSCount++;
-                _qtyControllerPrepaid.text = pendingCDCMSCount.toString();
-                prepaidQty = pendingCDCMSCount;
+                      await _addConsumer(
+                        consumer.consumerNo ?? '',
+                        consumer.consumerName ?? '',
+                        consumer.orderDate ,
+                        consumer.cashDate ,
+                        consumer.paymentStatus ?? '',
+                        consumer.consumerRemark ?? '',
+                        1,
+                        consumer.cDCMSDel?.toInt() ?? 0,
+                        1,
+                        consumer.payDate ,
+                        consumer.deliveryDate ,
+                        consumer.settDate ,
+                      );
 
-                await _addConsumer(
-                  consumer.consumerNo ?? '',
-                  consumer.consumerName ?? '',
-                  consumer.orderDate ,
-                  consumer.cashDate ,
-                  consumer.paymentStatus ?? '',
-                  consumer.consumerRemark ?? '',
-                  1,
-                  consumer.cDCMSDel?.toInt() ?? 0,
-                  1,
-                  consumer.payDate ,
-                  consumer.deliveryDate ,
-                  consumer.settDate ,
-                );
+                      // _calculateCylinderAmountPrepaid();
+                      // _validateQuantities("Prepaid");
+                      setState(() {
+                        if(isLumsumAmountAdd){
+                          _calculateCylinderAmountPrepaid();
+                          _validateQuantities("Prepaid");
+                          // calculateBalanceAmountForReceiveAmountCash();
+                          _totalReceivedAmountCash.text = '';
+                          _totalBalanceAmountCash.text = '';
+                        }else{
+                          _validateQuantitiesLumsumCase("Prepaid");
+                          _calculateCylinderAmountPrepaid();
+                          calculateBalanceAmountForReceiveAmountCashLumsumMode();
+                          // calculateBalanceAmountForReceiveAmountCashLumsum();
+                          _totalReceivedAmountCash.text = '';
+                          _totalBalanceAmountCash.text = '';
+                        }
+                      });
+                    }else{
+                      showDialog(
+                        context: context,
+                        builder:
+                            (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text(
+                                "Record not found of this consumer number"),
+                            content: const Text(
+                                "Do you want to consider it?"),
+                            actions: [
+                              TextButton(
+                                onPressed: () async {
+                                  Navigator.of(
+                                      context)
+                                      .pop();
+                                  invalidConsumerCount++;
+                                  invalidCountController.text = invalidConsumerCount.toString();
 
-                // _calculateCylinderAmountPrepaid();
-                // _validateQuantities("Prepaid");
-               setState(() {
-                 if(isLumsumAmountAdd){
-                   _calculateCylinderAmountPrepaid();
-                   _validateQuantities("Prepaid");
-                   // calculateBalanceAmountForReceiveAmountCash();
-                   _totalReceivedAmountCash.text = '';
-                   _totalBalanceAmountCash.text = '';
-                 }else{
-                   _validateQuantitiesLumsumCase("Prepaid");
-                   _calculateCylinderAmountPrepaid();
-                   calculateBalanceAmountForReceiveAmountCashLumsumMode();
-                   // calculateBalanceAmountForReceiveAmountCashLumsum();
-                   _totalReceivedAmountCash.text = '';
-                   _totalBalanceAmountCash.text = '';
-                 }
-               });
-              } else {
-                invalidConsumerCount++;
-                invalidCountController.text = invalidConsumerCount.toString();
+                                  await _addConsumer(
+                                  consumer.consumerNo ?? '',
+                                  consumer.consumerName ?? '',
+                                  consumer.orderDate ,
+                                  consumer.cashDate ,
+                                  consumer.paymentStatus ?? '',
+                                  consumer.consumerRemark ?? '',
+                                  0,
+                                  0,
+                                  3,
+                                  consumer.payDate ,
+                                  consumer.deliveryDate ,
+                                  consumer.settDate ,
+                                  );// Close dialog without action
+                                },
+                                child: Text("No"),
+                              ),
+                              TextButton(
+                                onPressed:
+                                    () async {
+                                  Navigator.of(
+                                      context)
+                                      .pop(); // Close dialog
+                                  validConsumerCount++;
+                                  validCountController.text = validConsumerCount.toString();
 
-                await _addConsumer(
-                  consumer.consumerNo ?? '',
-                  consumer.consumerName ?? '',
-                  consumer.orderDate ,
-                  consumer.cashDate ,
-                  consumer.paymentStatus ?? '',
-                  consumer.consumerRemark ?? '',
-                  0,
-                  0,
-                  3,
-                  consumer.payDate ,
-                  consumer.deliveryDate ,
-                  consumer.settDate ,
-                );
+                                  pendingCDCMSCount++;
+                                  _qtyControllerPrepaid.text = pendingCDCMSCount.toString();
+                                  prepaidQty = pendingCDCMSCount;
+
+                                  await _addConsumer(
+                                    consumer.consumerNo ?? '',
+                                    consumer.consumerName ?? '',
+                                    consumer.orderDate ,
+                                    consumer.cashDate ,
+                                    consumer.paymentStatus ?? '',
+                                    consumer.consumerRemark ?? '',
+                                    1,
+                                    consumer.cDCMSDel?.toInt() ?? 0,
+                                    1,
+                                    consumer.payDate ,
+                                    consumer.deliveryDate ,
+                                    consumer.settDate ,
+                                  );
+
+                                  // _calculateCylinderAmountPrepaid();
+                                  // _validateQuantities("Prepaid");
+                                  setState(() {
+                                    if(isLumsumAmountAdd){
+                                      _calculateCylinderAmountPrepaid();
+                                      _validateQuantities("Prepaid");
+                                      // calculateBalanceAmountForReceiveAmountCash();
+                                      _totalReceivedAmountCash.text = '';
+                                      _totalBalanceAmountCash.text = '';
+                                    }else{
+                                      _validateQuantitiesLumsumCase("Prepaid");
+                                      _calculateCylinderAmountPrepaid();
+                                      calculateBalanceAmountForReceiveAmountCashLumsumMode();
+                                      // calculateBalanceAmountForReceiveAmountCashLumsum();
+                                      _totalReceivedAmountCash.text = '';
+                                      _totalBalanceAmountCash.text = '';
+                                    }
+                                  });
+                                },
+                                child: Text("Yes"),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+              }else{
+                if(consumer.isvalid == 1){
+                  validConsumerCount++;
+                  validCountController.text = validConsumerCount.toString();
+
+                  pendingCDCMSCount++;
+                  _qtyControllerPrepaid.text = pendingCDCMSCount.toString();
+                  prepaidQty = pendingCDCMSCount;
+
+                  await _addConsumer(
+                    consumer.consumerNo ?? '',
+                    consumer.consumerName ?? '',
+                    consumer.orderDate ,
+                    consumer.cashDate ,
+                    consumer.paymentStatus ?? '',
+                    consumer.consumerRemark ?? '',
+                    1,
+                    consumer.cDCMSDel?.toInt() ?? 0,
+                    1,
+                    consumer.payDate ,
+                    consumer.deliveryDate ,
+                    consumer.settDate ,
+                  );
+
+                  // _calculateCylinderAmountPrepaid();
+                  // _validateQuantities("Prepaid");
+                  setState(() {
+                    if(isLumsumAmountAdd){
+                      _calculateCylinderAmountPrepaid();
+                      _validateQuantities("Prepaid");
+                      // calculateBalanceAmountForReceiveAmountCash();
+                      _totalReceivedAmountCash.text = '';
+                      _totalBalanceAmountCash.text = '';
+                    }else{
+                      _validateQuantitiesLumsumCase("Prepaid");
+                      _calculateCylinderAmountPrepaid();
+                      calculateBalanceAmountForReceiveAmountCashLumsumMode();
+                      // calculateBalanceAmountForReceiveAmountCashLumsum();
+                      _totalReceivedAmountCash.text = '';
+                      _totalBalanceAmountCash.text = '';
+                    }
+                  });
+                }else{
+                  invalidConsumerCount++;
+                  invalidCountController.text = invalidConsumerCount.toString();
+
+                  await _addConsumer(
+                    consumer.consumerNo ?? '',
+                    consumer.consumerName ?? '',
+                    consumer.orderDate ,
+                    consumer.cashDate ,
+                    consumer.paymentStatus ?? '',
+                    consumer.consumerRemark ?? '',
+                    0,
+                    0,
+                    3,
+                    consumer.payDate ,
+                    consumer.deliveryDate ,
+                    consumer.settDate ,
+                  );
+                }
               }
             }else{
               showFlushBar(context, Constants.expenseExistMgr);
-
             }
 
           }

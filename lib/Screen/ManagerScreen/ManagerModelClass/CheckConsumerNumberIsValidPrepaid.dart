@@ -1,26 +1,29 @@
 /// DistributorId : 8118
-/// OrderRefNo : 1250811800046713.0
-/// OrderNo : null
-/// OrderDate : null
+/// OrderRefNo : 5250811800071846.0
+/// OrderNo : "597338"
+/// OrderDate : "2025-05-03T10:10:58"
 /// CashDate : null
-/// ConsumerNo : "665714"
-/// ConsumerName : "Mrs. Rubina Bibi Molla"
+/// ConsumerNo : "614075"
+/// ConsumerName : "Bhatia Arun"
 /// PaymentStatus : "Credited"
 /// ConsumerRemark : "Punched In cDCMS"
-/// PayDate : "2025-03-19T12:02:41"
-/// DeliveryDate : "2025-04-02T12:45:11.527"
-/// SettDate : "2025-03-19T12:00:00"
+/// PayDate : "2025-05-03T10:16:46"
+/// DeliveryDate : "2025-05-05T11:01:12.29"
+/// SettDate : "2025-05-03T12:00:00"
 /// NiyojanDel : 0
 /// cDCMSDel : 1
 /// InCorrectStatus : 0
+/// UnAccVerified : 0
+/// BypassOn : 0
+/// Isvalid : 1
 /// AddedBy : 0
 
 class CheckConsumerNumberIsValidPrepaid {
   CheckConsumerNumberIsValidPrepaid({
       num? distributorId, 
       num? orderRefNo, 
-      dynamic orderNo, 
-      dynamic orderDate, 
+      String? orderNo, 
+      String? orderDate, 
       dynamic cashDate, 
       String? consumerNo, 
       String? consumerName, 
@@ -32,6 +35,9 @@ class CheckConsumerNumberIsValidPrepaid {
       num? niyojanDel, 
       num? cDCMSDel, 
       num? inCorrectStatus, 
+      num? unAccVerified, 
+      num? bypassOn, 
+      num? isvalid, 
       num? addedBy,}){
     _distributorId = distributorId;
     _orderRefNo = orderRefNo;
@@ -48,6 +54,9 @@ class CheckConsumerNumberIsValidPrepaid {
     _niyojanDel = niyojanDel;
     _cDCMSDel = cDCMSDel;
     _inCorrectStatus = inCorrectStatus;
+    _unAccVerified = unAccVerified;
+    _bypassOn = bypassOn;
+    _isvalid = isvalid;
     _addedBy = addedBy;
 }
 
@@ -67,12 +76,15 @@ class CheckConsumerNumberIsValidPrepaid {
     _niyojanDel = json['NiyojanDel'];
     _cDCMSDel = json['cDCMSDel'];
     _inCorrectStatus = json['InCorrectStatus'];
+    _unAccVerified = json['UnAccVerified'];
+    _bypassOn = json['BypassOn'];
+    _isvalid = json['Isvalid'];
     _addedBy = json['AddedBy'];
   }
   num? _distributorId;
   num? _orderRefNo;
-  dynamic _orderNo;
-  dynamic _orderDate;
+  String? _orderNo;
+  String? _orderDate;
   dynamic _cashDate;
   String? _consumerNo;
   String? _consumerName;
@@ -84,11 +96,14 @@ class CheckConsumerNumberIsValidPrepaid {
   num? _niyojanDel;
   num? _cDCMSDel;
   num? _inCorrectStatus;
+  num? _unAccVerified;
+  num? _bypassOn;
+  num? _isvalid;
   num? _addedBy;
 CheckConsumerNumberIsValidPrepaid copyWith({  num? distributorId,
   num? orderRefNo,
-  dynamic orderNo,
-  dynamic orderDate,
+  String? orderNo,
+  String? orderDate,
   dynamic cashDate,
   String? consumerNo,
   String? consumerName,
@@ -100,6 +115,9 @@ CheckConsumerNumberIsValidPrepaid copyWith({  num? distributorId,
   num? niyojanDel,
   num? cDCMSDel,
   num? inCorrectStatus,
+  num? unAccVerified,
+  num? bypassOn,
+  num? isvalid,
   num? addedBy,
 }) => CheckConsumerNumberIsValidPrepaid(  distributorId: distributorId ?? _distributorId,
   orderRefNo: orderRefNo ?? _orderRefNo,
@@ -116,12 +134,15 @@ CheckConsumerNumberIsValidPrepaid copyWith({  num? distributorId,
   niyojanDel: niyojanDel ?? _niyojanDel,
   cDCMSDel: cDCMSDel ?? _cDCMSDel,
   inCorrectStatus: inCorrectStatus ?? _inCorrectStatus,
+  unAccVerified: unAccVerified ?? _unAccVerified,
+  bypassOn: bypassOn ?? _bypassOn,
+  isvalid: isvalid ?? _isvalid,
   addedBy: addedBy ?? _addedBy,
 );
   num? get distributorId => _distributorId;
   num? get orderRefNo => _orderRefNo;
-  dynamic get orderNo => _orderNo;
-  dynamic get orderDate => _orderDate;
+  String? get orderNo => _orderNo;
+  String? get orderDate => _orderDate;
   dynamic get cashDate => _cashDate;
   String? get consumerNo => _consumerNo;
   String? get consumerName => _consumerName;
@@ -133,6 +154,9 @@ CheckConsumerNumberIsValidPrepaid copyWith({  num? distributorId,
   num? get niyojanDel => _niyojanDel;
   num? get cDCMSDel => _cDCMSDel;
   num? get inCorrectStatus => _inCorrectStatus;
+  num? get unAccVerified => _unAccVerified;
+  num? get bypassOn => _bypassOn;
+  num? get isvalid => _isvalid;
   num? get addedBy => _addedBy;
 
   Map<String, dynamic> toJson() {
@@ -152,6 +176,9 @@ CheckConsumerNumberIsValidPrepaid copyWith({  num? distributorId,
     map['NiyojanDel'] = _niyojanDel;
     map['cDCMSDel'] = _cDCMSDel;
     map['InCorrectStatus'] = _inCorrectStatus;
+    map['UnAccVerified'] = _unAccVerified;
+    map['BypassOn'] = _bypassOn;
+    map['Isvalid'] = _isvalid;
     map['AddedBy'] = _addedBy;
     return map;
   }

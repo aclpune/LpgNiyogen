@@ -28,6 +28,8 @@ import 'DashboardItemClickUI/DashboardPrepaidDetailUI.dart';
 import 'DashboardItemClickUI/DashboardPrepaidDetails.dart';
 import 'DashboardItemClickUI/DashboardSVDetails.dart';
 import 'DashboardItemClickUI/DashboardTVDetails.dart';
+import 'DashboardItemClickUI/TodaysCashSummaryOnAccountList.dart';
+import 'DashboardItemClickUI/UnsettledSaleDetailList.dart';
 import 'ManagerModelClass/GetCurrentStockDetailManagerModel.dart';
 import 'ManagerModelClass/GetManagerDashboarDetailModel.dart';
 
@@ -63,14 +65,14 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
   List<GetCurrentStockDetailManagerModel> getCurrentStockDetailManager = [];
 
   bool isLoading = true;
-  String? mobileNo, cDCMDPendSince, settlementPendSince;
-  int? deliveryMenCount,todaysPunchingInNiyojanC,pendingInNiyojanC,pendingInCdcmsC,todaysIncorrectPunchingC,settlPayReceiveDelPendC,settlDelPayPendC,oldBkgPendNewBkgRecv,delDonNiyoJanPunPend,niyoJanPunDelPend, postPaidVerifPend, sVPendingStk, tVPendingStk;
+  String? mobileNo, cDCMDPendSince, settlementPendSince,totalPendingSettSince;
+  int? deliveryMenCount,todaysPunchingInNiyojanC,pendingInNiyojanC,pendingInCdcmsC,todaysIncorrectPunchingC,settlPayReceiveDelPendC,settlDelPayPendC,oldBkgPendNewBkgRecv,delDonNiyoJanPunPend,niyoJanPunDelPend, postPaidVerifPend,
+      sVPendingStk, tVPendingStk,paymtDoneBtDelPendAmt,delDoneBtPaymtPendAmt,totalPendingSettCnt,totalPendingSettAmt,postPaidVerifPendAmt;
   double? totalAmount,
       totalIncome,
       totalExpense,
       onAccountToday,
       onAccountAsOfDate;
-
 
   @override
   void initState() {
@@ -100,6 +102,9 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
         : 'No Date';  // You can change 'No Date' to anything if it's null
     String formattedDatecdcms = cDCMDPendSince != null
         ? DateFormat('dd-MM-yyyy').format(DateTime.parse(cDCMDPendSince!))
+        : 'No Date';
+    String totalPendingSettSinceDate = totalPendingSettSince != null
+    ? DateFormat('dd-MM-yyyy').format(DateTime.parse(totalPendingSettSince!))
         : 'No Date';
     return
       Scaffold(
@@ -468,31 +473,52 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                             "(Pending) : ",
                                             style: Styling.textFormText,
                                           ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(left:5.0,right:5),
-                                            child: Text(
-                                              deliveryMenCount
-                                                  .toString(),
-                                              // Replace this with your dynamic data
-                                              style: Styling
-                                                  .countNumber,
-                                              textAlign:
-                                              TextAlign
-                                                  .center,
-                                            ),
-                                          ),
-                                          verticalDividerSmallest(),
-                                          Padding(
-                                            padding: const EdgeInsets.only(left:5.0,right:5),
-                                            child: Text(
-                                              formatCurrency(
-                                                  totalAmount ?? 0),
-                                              // Replace this with your dynamic data
-                                              style: Styling
-                                                  .countNumber,
-                                              textAlign:
-                                              TextAlign
-                                                  .center,
+                                          GestureDetector(
+                                              onTap:
+                                                () {
+                                              Navigator.pushNamed(
+                                                  context,
+                                                  UnsettledSaleDetailList.screenName
+                                              );
+                                            },
+                                            // No action when count is 0 or less
+                                            behavior: HitTestBehavior.opaque,
+                                            child: Row(
+                                              children: [
+                                                Padding(
+                                                  padding: const EdgeInsets.only(left:5.0,right:5),
+                                                  child: Text(
+                                                    deliveryMenCount
+                                                        .toString(),
+                                                    // Replace this with your dynamic data
+                                                    style:  Styling.countNumber.copyWith(
+                                                      color: Colors.blue,
+                                                      decoration: TextDecoration.underline,
+                                                      decorationColor: Colors.blue,
+                                                    ),
+                                                    textAlign:
+                                                    TextAlign
+                                                        .center,
+                                                  ),
+                                                ),
+                                                verticalDividerSmallestRed(),
+                                                Padding(
+                                                  padding: const EdgeInsets.only(left:5.0,right:5),
+                                                  child: Text(
+                                                    formatCurrency(
+                                                        totalAmount ?? 0),
+                                                    // Replace this with your dynamic data
+                                                    style:  Styling.countNumber.copyWith(
+                                                      color: Colors.blue,
+                                                      decoration: TextDecoration.underline,
+                                                      decorationColor: Colors.blue,
+                                                    ),
+                                                    textAlign:
+                                                    TextAlign
+                                                        .center,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ],
@@ -608,42 +634,62 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                               ),
                                                               Column(
                                                                 children: [
-                                                                  Row(
-                                                                    children: [
-                                                                      Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .only(
-                                                                            right:
-                                                                            8.0),
-                                                                        child:
-                                                                        Text(
-                                                                          formatCurrency(
-                                                                              onAccountToday!),
-                                                                          // Replace this with your dynamic data
-                                                                          style:
-                                                                          Styling.textFormText,
-                                                                          textAlign:
-                                                                          TextAlign.center,
+                                                                  GestureDetector(
+                                                                    onTap:
+                                                                        () {
+                                                                      Navigator.pushNamed(
+                                                                        context,
+                                                                        TodaysCashSummaryOnAccountList.screenName
+                                                                      );
+                                                                    },
+                                                                   // No action when count is 0 or less
+                                                                    behavior: HitTestBehavior.opaque,
+                                                                    child: Row(
+                                                                      children: [
+                                                                        Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .only(
+                                                                              right:
+                                                                              8.0),
+                                                                          child:
+                                                                          Text(
+                                                                            formatCurrency(
+                                                                                onAccountToday!),
+                                                                            // Replace this with your dynamic data
+                                                                            style:
+                                                                            // Styling.textFormText,
+                                                                            Styling.textFormText.copyWith(
+                                                                              color: Colors.blue,
+                                                                              decoration: TextDecoration.underline,
+                                                                              decorationColor: Colors.blue,
+                                                                            ),
+                                                                            textAlign:
+                                                                            TextAlign.center,
+                                                                          ),
                                                                         ),
-                                                                      ),
-                                                                      verticalDividerSmallest(),
-                                                                      Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .only(
-                                                                            left:
-                                                                            8.0),
-                                                                        child:
-                                                                        Text(
-                                                                          formatCurrency(
-                                                                              onAccountAsOfDate!),
-                                                                          // Replace this with your dynamic data
-                                                                          style:
-                                                                          Styling.textFormText,
-                                                                          textAlign:
-                                                                          TextAlign.center,
+                                                                        verticalDividerSmallestRed(),
+                                                                        Padding(
+                                                                          padding: const EdgeInsets
+                                                                              .only(
+                                                                              left:
+                                                                              8.0),
+                                                                          child:
+                                                                          Text(
+                                                                            formatCurrency(
+                                                                                onAccountAsOfDate!),
+                                                                            // Replace this with your dynamic data
+                                                                            style:Styling.textFormText.copyWith(
+                                                                              color: Colors.blue,
+                                                                              decoration: TextDecoration.underline,
+                                                                              decorationColor: Colors.blue,
+                                                                            ),
+                                                                            // Styling.textFormText,
+                                                                            textAlign:
+                                                                            TextAlign.center,
+                                                                          ),
                                                                         ),
-                                                                      ),
-                                                                    ],
+                                                                      ],
+                                                                    ),
                                                                   ),
                                                                   SizedBox(
                                                                       height:
@@ -1038,17 +1084,35 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                                         );
                                                                       } :null,
                                                                       behavior: HitTestBehavior.opaque,
-                                                                      child: Text(
-                                                                        settlPayReceiveDelPendC.toString(),
-                                                                        // Replace this with your dynamic data
-                                                                        style: Styling
-                                                                            .countNumber.copyWith(
-                                                                          color: Colors.blue, // Make the text blue like a link
-                                                                          decoration: TextDecoration.underline,// Underline the text
-                                                                          decorationColor: Colors.blue,
-                                                                        ),
-                                                                        textAlign:
-                                                                        TextAlign.center,
+                                                                      child: Row(
+                                                                        children: [
+                                                                          Text(
+                                                                            settlPayReceiveDelPendC.toString(),
+                                                                            // Replace this with your dynamic data
+                                                                            style: Styling
+                                                                                .countNumber.copyWith(
+                                                                              color: Colors.blue, // Make the text blue like a link
+                                                                              decoration: TextDecoration.underline,// Underline the text
+                                                                              decorationColor: Colors.blue,
+                                                                            ),
+                                                                            textAlign:
+                                                                            TextAlign.center,
+                                                                          ),
+                                                                          Padding(
+                                                                            padding: const EdgeInsets.only(left:5.0,right:5),
+                                                                            child: verticalDividerSmallestRed(),
+                                                                          ),
+                                                                          Text(
+                                                                            paymtDoneBtDelPendAmt!.toStringAsFixed(2),
+                                                                            // Replace this with your dynamic data
+                                                                            style: Styling
+                                                                                .countNumber.copyWith(
+                                                                              color: Colors.black, // Make the text blue like a link
+                                                                            ),
+                                                                            textAlign:
+                                                                            TextAlign.center,
+                                                                          ),
+                                                                        ],
                                                                       ),
                                                                     ),
                                                                     SizedBox(
@@ -1093,19 +1157,29 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                                       //   textAlign:
                                                                       //   TextAlign.center,
                                                                       // ),
-                                                                      Text(
-                                                                        //settlDelPayPendC.toString(),
-                                                                        //'${settlDelPayPendC.toString()} ($cDCMDPendSince)',
-                                                                        '${settlDelPayPendC.toString()}', // Use 'N/A' if cDCMDPendSince is null
-
-                                                                        // settlDelPayPendC.toString(),
-                                                                        // Combine the count and formatted date
-                                                                        style: Styling.countNumber.copyWith(
-                                                                          color: Colors.blue,  // Make the text blue like a link
-                                                                          decoration: TextDecoration.underline, // Underline the text
-                                                                          decorationColor: Colors.blue,  // Underline color
-                                                                        ),
-                                                                        textAlign: TextAlign.center,
+                                                                      Row(
+                                                                        children: [
+                                                                          Text(
+                                                                            '${settlDelPayPendC.toString()}', // Use 'N/A' if cDCMDPendSince is null
+                                                                            style: Styling.countNumber.copyWith(
+                                                                              color: Colors.blue,  // Make the text blue like a link
+                                                                              decoration: TextDecoration.underline, // Underline the text
+                                                                              decorationColor: Colors.blue,  // Underline color
+                                                                            ),
+                                                                            textAlign: TextAlign.center,
+                                                                          ),
+                                                                          Padding(
+                                                                            padding: const EdgeInsets.only(left:5.0,right:5),
+                                                                            child: verticalDividerSmallestRed(),
+                                                                          ),
+                                                                          Text(
+                                                                            '${delDoneBtPaymtPendAmt?.toStringAsFixed(2)}', // Use 'N/A' if cDCMDPendSince is null
+                                                                            style: Styling.countNumber.copyWith(
+                                                                              color: Colors.black,  // Make the text blue like a link
+                                                                            ),
+                                                                            textAlign: TextAlign.center,
+                                                                          ),
+                                                                        ],
                                                                       ),
                                                                       //print('cDCMDPendSince value: $cDCMDPendSince');
                                                                     ),
@@ -1132,8 +1206,92 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                                 ),
                                                               ],
                                                             ),
+                                                            SizedBox(height: 5),
+                                                            Row(
+                                                                    mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceEvenly,
+                                                                children:[
+                                                              Column(
+                                                                children: [
+                                                                  GestureDetector(
+                                                                    onTap: totalPendingSettCnt! > 0
+                                                                        ? (){
+                                                                      Navigator.pushNamed(
+                                                                          context,
+                                                                          DashboardPrepaidDetails
+                                                                              .screenName,
+                                                                          arguments: {
+                                                                            "flag":"TotalOutstanding",
+                                                                          }
+                                                                      );
+                                                                    } : null,
+                                                                    behavior: HitTestBehavior.opaque,
+                                                                    child:
+                                                                    // Text(
+                                                                    //   settlDelPayPendC.toString(),
+                                                                    //   // Replace this with your dynamic data
+                                                                    //   style: Styling
+                                                                    //       .countNumber.copyWith(
+                                                                    //     color: Colors.blue, // Make the text blue like a link
+                                                                    //     decoration: TextDecoration.underline,// Underline the text
+                                                                    //     decorationColor: Colors.blue,
+                                                                    //   ),
+                                                                    //   textAlign:
+                                                                    //   TextAlign.center,
+                                                                    // ),
+                                                                    Row(
+                                                                      children: [
+                                                                        Text(
+                                                                          '${totalPendingSettCnt.toString()}', // Use 'N/A' if cDCMDPendSince is null
+                                                                          style: Styling.countNumber.copyWith(
+                                                                            color: Colors.blue,  // Make the text blue like a link
+                                                                            decoration: TextDecoration.underline, // Underline the text
+                                                                            decorationColor: Colors.blue,  // Underline color
+                                                                          ),
+                                                                          textAlign: TextAlign.center,
+                                                                        ),
+                                                                        Padding(
+                                                                          padding: const EdgeInsets.only(left:5.0,right:5),
+                                                                          child: verticalDividerSmallestRed(),
+                                                                        ),
+                                                                        Text(
+                                                                          '${totalPendingSettAmt?.toStringAsFixed(2)}', // Use 'N/A' if cDCMDPendSince is null
+                                                                          style: Styling.countNumber.copyWith(
+                                                                            color: Colors.black,  // Make the text blue like a link
+                                                                          ),
+                                                                          textAlign: TextAlign.center,
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    //print('cDCMDPendSince value: $cDCMDPendSince');
+                                                                  ),
+                                                                  SizedBox(
+                                                                      height: 4),
+                                                                  // Space between count and label
+                                                                  Text(
+                                                                    "Since ($totalPendingSettSinceDate)",
+                                                                    // Label for emptyDiff
+                                                                    style: Styling
+                                                                        .textFormText,
+                                                                    textAlign:
+                                                                    TextAlign.center,
+                                                                  ),
+                                                                  Text(
+                                                                    'Total Outstanding,\npayment pending',
+                                                                    // Label for emptyDiff
+                                                                    style: Styling
+                                                                        .textFormText,
+                                                                    textAlign:
+                                                                    TextAlign.center,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                             ]
+                                                                ),
                                                           ],
-                                                        )),
+                                                        )
+                                                             ),
                                                   ],
                                                 ),
                                                 // ),
@@ -1219,17 +1377,34 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                                         );
                                                                       } :null,
                                                                       behavior: HitTestBehavior.opaque,
-                                                                      child: Text(
-                                                                        postPaidVerifPend.toString(),
-                                                                        // Replace this with your dynamic data
-                                                                        style: Styling
-                                                                            .countNumber.copyWith(
-                                                                          color: Colors.blue, // Make the text blue like a link
-                                                                          decoration: TextDecoration.underline,// Underline the text
-                                                                          decorationColor: Colors.blue,
-                                                                        ),
-                                                                        textAlign:
-                                                                        TextAlign.center,
+                                                                      child: Row(
+                                                                        children: [
+                                                                          Text(
+                                                                            postPaidVerifPend.toString(),
+                                                                            // Replace this with your dynamic data
+                                                                            style: Styling
+                                                                                .countNumber.copyWith(
+                                                                              color: Colors.blue, // Make the text blue like a link
+                                                                              decoration: TextDecoration.underline,// Underline the text
+                                                                              decorationColor: Colors.blue,
+                                                                            ),
+                                                                            textAlign:
+                                                                            TextAlign.center,
+                                                                          ),
+                                                                          Padding(
+                                                                            padding: const EdgeInsets.only(left:5.0,right:5),
+                                                                            child: verticalDividerSmallestRed(),
+                                                                          ),
+                                                                          Text(
+                                                                            '${postPaidVerifPendAmt?.toStringAsFixed(2)}', // Use 'N/A' if cDCMDPendSince is null
+                                                                            style: Styling.countNumber.copyWith(
+                                                                              color: Colors.blue,
+                                                                              // Make the text blue like a link
+                                                                              decoration: TextDecoration.underline,// Make the text blue like a link
+                                                                            ),
+                                                                            textAlign: TextAlign.center,
+                                                                          ),
+                                                                        ],
                                                                       ),
                                                                     ),
                                                                     SizedBox(
@@ -3278,6 +3453,12 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
               tVPendingStk = getManagerDashboarDetail[0].tVPendingStk?.toInt()??0;
               cDCMDPendSince = getManagerDashboarDetail[0].cDCMDPendSince?.toString();
               settlementPendSince = getManagerDashboarDetail[0].settlementPendSince?.toString();
+              totalPendingSettSince = getManagerDashboarDetail[0].totalPendingSettSince?.toString();
+              paymtDoneBtDelPendAmt = getManagerDashboarDetail[0].paymtDoneBtDelPendAmt?.toInt()??0;
+              delDoneBtPaymtPendAmt = getManagerDashboarDetail[0].delDoneBtPaymtPendAmt?.toInt()??0;
+              totalPendingSettCnt = getManagerDashboarDetail[0].totalPendingSettCnt?.toInt()??0;
+              totalPendingSettAmt = getManagerDashboarDetail[0].totalPendingSettAmt?.toInt()??0;
+              postPaidVerifPendAmt = getManagerDashboarDetail[0].postPaidVerifPendAmt?.toInt()??0;
 
             }
           });
@@ -3310,7 +3491,6 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
       showFlushBar(context, Constants.connectionMessage);
     }
   }
-
   Future<void> fetchCurrentStock() async {
     print(
         "Request URL InventoryCurrentStockDtlsForMobDash:");
@@ -3324,7 +3504,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
       String? addedBy = prefs.getString('StaffId');
       String? godownKeeperId = prefs.getString('godownKeeperId');
       String? token = prefs.getString('token'); // This is your bearer token
-
+      print("StaffId $addedBy'}");
       try {
         final response = await http.get(
           Uri.parse(

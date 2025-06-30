@@ -33,18 +33,22 @@ class AuthService {
         headers: headers,
         body: body,
       );
-
+      debugPrint("dashbpa2${response.request}");
+      debugPrint("dashbpa1${response.body}");
+      debugPrint("dashbpa3${response}");
       if (response.statusCode == 200) {
         debugPrint(response.body);
         debugPrint('success');
+        debugPrint("dashbpa4${response.body}");
         return LoginResponseModel.fromJson(jsonDecode(response.body));
 
       } else {
+        debugPrint('fail2');
         throw Exception("Invalid User..!");
-
         // throw Exception("Failed to login: ${response.statusCode}");
       }
     } catch (e) {
+      debugPrint('fail1');
       throw Exception("Invalid User..!");
     }
   }

@@ -106,10 +106,22 @@ class _DashboardPrepaidDetailsState extends State<DashboardPrepaidDetails> {
       List<dynamic> data = json.decode(response.body);
       setState(() {
         punchModel = data.map((json) {
-              String dateString = json['TodayDate'];
-              DateTime date = DateTime.parse(dateString);
-              String formattedDate = DateFormat('yyyy-MM-dd').format(date);
-              json['TodayDate'] = formattedDate;
+              // String dateString = json['TodayDate'];
+              // DateTime date = DateTime.parse(dateString);
+              // String formattedDate = DateFormat('yyyy-MM-dd').format(date);
+              // json['TodayDate'] = formattedDate;
+              if (json['TodayDate'] != null) {
+                try {
+                  DateTime date = DateTime.parse(json['TodayDate']);
+                  String formattedDate = DateFormat('yyyy-MM-dd').format(date);
+                  json['TodayDate'] = formattedDate;
+                } catch (e) {
+                  debugPrint("Date parsing failed for: ${json['TodayDate']}, error: $e");
+                  json['TodayDate'] = ''; // Or set to null or leave as-is
+                }
+              } else {
+                json['TodayDate'] = ''; // Handle missing date gracefully
+              }
           return GetDashboardNiyojanPunchCtnLstModel.fromJson(json);
         }).toList();
         filteredPunchModel = List.from(punchModel); // <-- Add this
@@ -137,6 +149,9 @@ class _DashboardPrepaidDetailsState extends State<DashboardPrepaidDetails> {
         'Authorization': 'Bearer $bearerToken',
       },
     );
+    debugPrint("GetDashboardSettlementCtnList" + '${AppUrl.GetDashboardSettlementCtnList}/$distributorId/$flags');
+    debugPrint("GetDashboardSettlementCtnList" + '${response.body}');
+
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
       // setState(() {
@@ -145,6 +160,8 @@ class _DashboardPrepaidDetailsState extends State<DashboardPrepaidDetails> {
       //   isLoading = false;
       //   EasyLoading.dismiss();
       // });
+      debugPrint("GetDashboardSettlementCtnList" + '$data');
+
       setState(() {
         prepaidModel = data.map((json) => GetDashboardSettlementCtnListModel.fromJson(json)).toList();
         filteredPrepaidModel = List.from(prepaidModel); // <-- Add this
@@ -156,6 +173,7 @@ class _DashboardPrepaidDetailsState extends State<DashboardPrepaidDetails> {
       throw Exception('Failed to load items');
     }
   }
+
   String _getDisplayText(String flag) {
     switch (flag) {
       case "Delivered":
@@ -174,6 +192,8 @@ class _DashboardPrepaidDetailsState extends State<DashboardPrepaidDetails> {
         return "Today's incorrect";
       case "NiyoJanPunDelPend":
         return "Punched in Niyojan,pending in cDCMS";
+      case "TotalOutstanding":
+        return "Total Outstanding Pending";
       default:
         return "Prepaid Details";
     }
@@ -216,6 +236,7 @@ class _DashboardPrepaidDetailsState extends State<DashboardPrepaidDetails> {
                           Text(
                             (flag == "Delivered"
                                 || flag == "Settled"
+                                || flag == "TotalOutstanding"
                                 || flag == "cDCMS"
                                 || flag == "DelDonNiyoJanPunPend"
                                 || flag == "OldBkgPendNewBkgRecv")
@@ -271,10 +292,10 @@ class _DashboardPrepaidDetailsState extends State<DashboardPrepaidDetails> {
                     ),
                     verticalDividerVerySmallWidth(),
                     Expanded(
-                      flex:(flag == "Delivered" || flag == "Settled" || flag == "cDCMS" || flag == "DelDonNiyoJanPunPend" || flag == "OldBkgPendNewBkgRecv")
+                      flex:(flag == "Delivered" || flag == "Settled" || flag == "TotalOutstanding" || flag == "cDCMS" || flag == "DelDonNiyoJanPunPend" || flag == "OldBkgPendNewBkgRecv")
                       ?2:4,
                       child: Text(
-                        (flag == "Delivered" || flag == "Settled" || flag == "cDCMS" || flag == "DelDonNiyoJanPunPend" || flag == "OldBkgPendNewBkgRecv")
+                        (flag == "Delivered" || flag == "Settled" || flag == "TotalOutstanding" || flag == "cDCMS" || flag == "DelDonNiyoJanPunPend" || flag == "OldBkgPendNewBkgRecv")
                             ? "Consumer No."
                             : "Staff Name",
                         style: Styling.buttonTextBlack,
@@ -284,10 +305,10 @@ class _DashboardPrepaidDetailsState extends State<DashboardPrepaidDetails> {
                     verticalDividerVerySmallWidth(),
 
                     Expanded(
-                      flex:(flag == "Delivered" || flag == "Settled" || flag == "cDCMS" || flag == "DelDonNiyoJanPunPend" || flag == "OldBkgPendNewBkgRecv")
+                      flex:(flag == "Delivered" || flag == "Settled" || flag == "TotalOutstanding" || flag == "cDCMS" || flag == "DelDonNiyoJanPunPend" || flag == "OldBkgPendNewBkgRecv")
                       ?3:2,
                       child: Text(
-                        (flag == "Delivered" || flag == "Settled" || flag == "cDCMS" || flag == "DelDonNiyoJanPunPend" || flag == "OldBkgPendNewBkgRecv")
+                        (flag == "Delivered" || flag == "Settled" || flag == "TotalOutstanding" || flag == "cDCMS" || flag == "DelDonNiyoJanPunPend" || flag == "OldBkgPendNewBkgRecv")
                             ? "Consumer \n Name"
                             : "Niyojan \n Punching",
                         style: Styling.buttonTextBlack,
@@ -298,7 +319,7 @@ class _DashboardPrepaidDetailsState extends State<DashboardPrepaidDetails> {
                     Expanded(
                       flex: 2,
                       child: Text(
-                        (flag == "Delivered" || flag == "Settled" || flag == "cDCMS" || flag == "DelDonNiyoJanPunPend" || flag == "OldBkgPendNewBkgRecv")
+                        (flag == "Delivered" || flag == "Settled" || flag == "TotalOutstanding" || flag == "cDCMS" || flag == "DelDonNiyoJanPunPend" || flag == "OldBkgPendNewBkgRecv")
                             ? "Order Date"
                             : "Settl Qty.",
                         style: Styling.buttonTextBlack,
@@ -309,17 +330,17 @@ class _DashboardPrepaidDetailsState extends State<DashboardPrepaidDetails> {
                     Expanded(
                       flex: 2,
                       child: Text(
-                        (flag == "Delivered" || flag == "Settled" || flag == "cDCMS" || flag == "DelDonNiyoJanPunPend" || flag == "OldBkgPendNewBkgRecv")
+                        (flag == "Delivered" || flag == "Settled" || flag == "TotalOutstanding" || flag == "cDCMS" || flag == "DelDonNiyoJanPunPend" || flag == "OldBkgPendNewBkgRecv")
                             ? "Delivery Date"
                             : "Settl Pen Qty.",
                         style: Styling.buttonTextBlack,
                         textAlign: TextAlign.center,
                       ),
                     ),
-                    Visibility( visible: (flag == "Delivered" || flag == "Settled" || flag == "cDCMS" || flag == "DelDonNiyoJanPunPend" || flag == "OldBkgPendNewBkgRecv"),
+                    Visibility( visible: (flag == "Delivered" || flag == "Settled" || flag == "TotalOutstanding" || flag == "cDCMS" || flag == "DelDonNiyoJanPunPend" || flag == "OldBkgPendNewBkgRecv"),
                         child: verticalDividerVerySmallWidth()),
                     Visibility(
-                      visible: (flag == "Delivered" || flag == "Settled" || flag == "cDCMS" || flag == "DelDonNiyoJanPunPend" || flag == "OldBkgPendNewBkgRecv"),
+                      visible: (flag == "Delivered" || flag == "Settled" || flag == "TotalOutstanding" || flag == "cDCMS" || flag == "DelDonNiyoJanPunPend" || flag == "OldBkgPendNewBkgRecv"),
                       child:  Expanded(
                         flex: 2,
                         child: Text(
@@ -340,7 +361,7 @@ class _DashboardPrepaidDetailsState extends State<DashboardPrepaidDetails> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  flag == "Delivered" || flag == "Settled" || flag == "cDCMS" || flag == "DelDonNiyoJanPunPend" || flag == "OldBkgPendNewBkgRecv"
+                  flag == "Delivered" || flag == "Settled" || flag == "TotalOutstanding" || flag == "cDCMS" || flag == "DelDonNiyoJanPunPend" || flag == "OldBkgPendNewBkgRecv"
                       ? filteredPrepaidModel.isNotEmpty
                       ? ListView.builder(
                     physics: const BouncingScrollPhysics(),

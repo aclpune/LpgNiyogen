@@ -26,6 +26,14 @@ Widget verticalDividerSmallest() {
   );
 }
 
+Widget verticalDividerSmallestRed() {
+  return  Container(
+    width: 2.0, // Width of the vertical line
+    height: 15.0, // Height of the vertical line
+    color: Colors.redAccent, // Color of the line
+  );
+}
+
 Widget verticalDividerBig() {
   return  Container(
     width: 1.0, // Width of the vertical line
@@ -278,10 +286,25 @@ InputDecoration buildInputBorderUpdateStatus(
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)));
 }
 
+InputDecoration buildInputBorderUpdateStatusMgr(
+    String hintText, BuildContext context) {
+  return InputDecoration(
+      hintText: hintText,
+      hintStyle: Styling.hintTextSmall,
+      border: UnderlineInputBorder(
+        borderSide: BorderSide(color: Colors.grey.shade400),
+      ),
+      enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey.shade500, width: 1.0)),
+      contentPadding: EdgeInsets.all(1.2 * SizeConfig.heightMultiplier!),
+      // border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0))
+  );
+}
 
 InputDecoration buildInputWithoutBorderUpdateStatus(
-    BuildContext context) {
+    String hintText, BuildContext context) {
   return InputDecoration(
+      hintText: hintText,
       enabledBorder: InputBorder.none,
       border: InputBorder.none);
 }
@@ -413,4 +436,26 @@ Widget itemSubLineSubMenu(String greyText, bool isImbalanceStockListViewVisible)
       ),
     );
 
+}
+
+Widget countTextWidgetTextStarverysmall(BuildContext context, String label, {bool showAsterisk = false}) {
+
+  return RichText(
+    text: TextSpan(
+      children: [
+        TextSpan(
+          text: label,
+          style:Styling.itemBlackTestVerySmall,
+        ),
+        if (showAsterisk)
+          TextSpan(
+            text: ' *',
+            style: TextStyle(
+              color: Colors.red, // Asterisk in red
+              fontSize: 8,
+            ),
+          ),
+      ],
+    ),
+  );
 }

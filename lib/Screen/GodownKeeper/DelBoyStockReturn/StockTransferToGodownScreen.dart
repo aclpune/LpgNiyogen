@@ -55,6 +55,7 @@ class _StockTransferTOGodownScreenState
   String? mobileNo;
   bool stockTransferFlag = false;
 
+
   @override
   void initState() {
     // TODO: implement initState
