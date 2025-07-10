@@ -14,6 +14,7 @@ import '../Utils/Widget.dart';
 import '../Utils/app_url.dart';
 import '../Utils/constants.dart';
 import 'BootomNavigatinBarManager.dart';
+import 'CashDenominationMandatoryFlag/CahsDenominationMandatoryFlagModel.dart';
 import 'CashHandoverModelClass/GetBankMappingDetailsListModel.dart';
 import 'ManagerModelClass/DenomModel.dart';
 import 'ManagerModelClass/ManagerDSRReportCashDeniminationModel.dart';
@@ -37,8 +38,7 @@ class SVSaleReportScreen extends StatefulWidget {
 }
 
 class _SVSaleReportScreen extends State<SVSaleReportScreen> {
-  List<DenomModel>
-      getNoteTypeAndIdFroDenominationListModel = [];
+  List<DenomModel>getNoteTypeAndIdFroDenominationListModel = [];
   List<dynamic> dataCashDenominationList = [];
   List<TextEditingController> qtyController = [];
   List<TextEditingController> qtyControllerReturn = [];
@@ -138,6 +138,11 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
   var argValue;
   String? modes;
   int? psvIdEdit;
+  bool saveFlag = false;
+  List<CahsDenominationMandatoryFlagModel> cashDenoMandatoryList = [];
+  bool cashDenominationMandatory = false;
+  List<FocusNode> _discountFocusNodes = [];
+  List<FocusNode> _dropdownFocusNodes = [];
   // @override
   // void initState() {
   //   super.initState();
@@ -339,6 +344,8 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
   @override
   void initState() {
     super.initState();
+    checkAndSaveDayEndData();
+    checkCashDenominationFlagMandatory();
     _addNewItem();
     getNoteTypeAndIDList();
     getStaffDetailsList();
@@ -539,6 +546,16 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
   }
 
   final String formattedDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+  @override
+  void dispose() {
+    for (var node in _discountFocusNodes) {
+      node.dispose();
+    }
+    for (var node in _dropdownFocusNodes) {
+      node.dispose();
+    }
+    super.dispose();
+  }
 
   // void _addNewItem() {
   //   setState(() {
@@ -553,9 +570,12 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
   //   });
   // }
   void _addNewItem() {
+    _discountFocusNodes.add(FocusNode());
+    _dropdownFocusNodes.add(FocusNode());
     // Check if there are existing items
     if (items.isNotEmpty) {
       // Get the last added item
+
       var lastItem = items.last;
 
       // Extract and validate each controller's value
@@ -625,7 +645,8 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     setState(() {
       items.clear(); // Clear any existing data
       _selectedItems.clear(); // Clear previous selections if any
-
+      _discountFocusNodes.add(FocusNode());
+      _dropdownFocusNodes.add(FocusNode());
       for (var i = 0; i < itemsToShow.length; i++) {
         var item = itemsToShow[i];
 
@@ -642,7 +663,8 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
         // Directly assign the selected item name for this index in _selectedItems map
         _selectedItems[items.length - 1] = item.itemName ??
             ''; // Ensure this is added correctly for each index
-
+        _discountFocusNodes.add(FocusNode());
+        _dropdownFocusNodes.add(FocusNode());
       }
 
       // Debugging step to check the number of items
@@ -1424,246 +1446,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                     SizedBox(width: 8),
                   ],
                 ),
-                // ListView.builder(
-                //   // ListView.builder(
-                //   shrinkWrap: true,
-                //   physics: NeverScrollableScrollPhysics(),
-                //   itemCount: items.length,
-                //   itemBuilder: (context, index) {
-                //     return Padding(
-                //       padding: const EdgeInsets.only(bottom: 16.0),
-                //       child: Column(
-                //         children: [
-                //           Row(
-                //             children: [
-                //               // Expanded(
-                //               //   child:
-                //               //
-                //               //       ///working
-                //               //       DropdownButtonFormField<String>(
-                //               //     decoration: InputDecoration(
-                //               //       label: Row(
-                //               //         mainAxisSize: MainAxisSize.min,
-                //               //         children: const [
-                //               //           Text('Select Item',
-                //               //               style: TextStyle(fontSize: 12)),
-                //               //           SizedBox(width: 4),
-                //               //           Icon(Icons.star,
-                //               //               color: Colors.red, size: 10),
-                //               //         ],
-                //               //       ),
-                //               //       // border: const OutlineInputBorder(),
-                //               //       // contentPadding: const EdgeInsets.symmetric(
-                //               //       //     vertical: 8.0, horizontal: 12.0),
-                //               //     ),
-                //               //     items: _items
-                //               //         .where((item) =>
-                //               //             !_selectedItems.values
-                //               //                 .contains(item.itemName) ||
-                //               //             _selectedItems[index] == item.itemName)
-                //               //         .toSet() // Removing duplicates if any
-                //               //         .map((GetArbItemMasterListModel item) {
-                //               //       return DropdownMenuItem<String>(
-                //               //         value: item.itemName,
-                //               //         child: Text(item.itemName ?? 'Unknown'),
-                //               //       );
-                //               //     }).toList(),
-                //               //     onChanged: (selectedItem) {
-                //               //       setState(() {
-                //               //         _selectedItems[index] = selectedItem ?? '';
-                //               //       });
-                //               //
-                //               //     },
-                //               //     value: _selectedItems[index]?.isEmpty ?? true
-                //               //         ? null // If the value is null or empty, set to null
-                //               //         : _selectedItems[index],
-                //               //
-                //               //   ),
-                //               //
-                //               // ),
-                //               Expanded(
-                //                 child: DropdownButtonFormField<GetArbItemMasterListModel>(
-                //                   decoration: InputDecoration(
-                //                     label: Row(
-                //                       mainAxisSize: MainAxisSize.min,
-                //                       children: const [
-                //                         Text('Select Item', style: TextStyle(fontSize: 12)),
-                //                         SizedBox(width: 4),
-                //                         Icon(Icons.star, color: Colors.red, size: 10),
-                //                       ],
-                //                     ),
-                //                     // border: const OutlineInputBorder(),
-                //                     // contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                //                   ),
-                //                   items: _items
-                //                       .where((item) =>
-                //                   !_selectedItems.values.contains(item.itemName) ||
-                //                       _selectedItems[index] == item.itemName)
-                //                       .toSet() // Removing duplicates if any
-                //                       .map((GetArbItemMasterListModel item) {
-                //                     return DropdownMenuItem<GetArbItemMasterListModel>(
-                //                       value: item, // Entire GetArbItemMasterListModel object
-                //                       child: Text(item.itemName ?? 'Unknown'),
-                //                     );
-                //                   }).toList(),
-                //                   onChanged: (selectedItem) {
-                //                     if (selectedItem != null) {
-                //                       setState(() {
-                //                         _selectedItems[index] = selectedItem.itemName; // Store the selected item's name
-                //                         // You can also store the full model if needed:
-                //                         // _selectedItems[index] = selectedItem;
-                //
-                //                         // Retrieve rate and calculate amount
-                //                         double rate = selectedItem.rate?.toDouble() ?? 0.0;
-                //                         double amount = rate * 0; // Assuming quantity is available (replace `quantity` with your actual quantity value)
-                //
-                //                         // You can use the rate and amount in your UI or other logic
-                //                         print("Selected item: ${selectedItem.itemName}");
-                //                         print("Rate: $rate");
-                //                         print("Amount: $amount");
-                //                       });
-                //                     }
-                //                   },
-                //                   // value: _selectedItems[index]?.isEmpty ?? true
-                //                   //     ? null // If the value is null or empty, set to null
-                //                   //     : _selectedItems[index],
-                //                 ),
-                //               ),
-                //
-                //               ElevatedButton(
-                //                 onPressed: () {
-                //                   _removeItem(index);
-                //                 },
-                //                 child: Icon(Icons.delete, color: Colors.red),
-                //                 style: ElevatedButton.styleFrom(
-                //                   shape: CircleBorder(),
-                //                   padding: EdgeInsets.all(12),
-                //                 ),
-                //               ),
-                //             ],
-                //           ),
-                //           SizedBox(height: 16),
-                //           // Received Qty, EMR, Invoice Fields
-                //           Row(
-                //             children: [
-                //               Expanded(
-                //                 child: TextField(
-                //                   controller: items[index]['rate'],
-                //                   decoration: InputDecoration(
-                //                     label: Row(
-                //                       mainAxisSize: MainAxisSize.min,
-                //                       children: [
-                //                         Text(
-                //                           'Rate',
-                //                         ),
-                //                       ],
-                //                     ),
-                //                     // border: const OutlineInputBorder(),
-                //                     // contentPadding: const EdgeInsets.symmetric(
-                //                     //     vertical: 8.0, horizontal: 12.0),
-                //                   ),
-                //                   onChanged: (value) {
-                //                     // Update the sum when the value changes
-                //                     //_updateSum(index);
-                //                   },
-                //                 ),
-                //               ),
-                //               SizedBox(width: 16),
-                //               Expanded(
-                //                 child: TextField(
-                //                   controller: items[index]['qty'],
-                //                   keyboardType: TextInputType.number,
-                //                   inputFormatters: <TextInputFormatter>[
-                //                     FilteringTextInputFormatter.digitsOnly,
-                //                     LengthLimitingTextInputFormatter(3),
-                //                     // Allow only digits
-                //                   ],
-                //                   decoration: InputDecoration(
-                //                     label: Row(
-                //                       mainAxisSize: MainAxisSize.min,
-                //                       children: [
-                //                         countTextWidgetTextStar(
-                //                           context,
-                //                           'Qty',
-                //                           showAsterisk:
-                //                               true, // Add a parameter to conditionally show the asterisk
-                //                         ),
-                //                       ],
-                //                     ),
-                //                     // border: const OutlineInputBorder(),
-                //                     // contentPadding: const EdgeInsets.symmetric(
-                //                     //     vertical: 8.0, horizontal: 12.0),
-                //                   ),
-                //                   onChanged: (value) {
-                //                     setState(() {
-                //                       _calculateAmount(index);
-                //                     });
-                //                   },
-                //                 ),
-                //               ),
-                //               SizedBox(width: 16),
-                //               Expanded(
-                //                 child: TextField(
-                //                   controller: items[index]['discount'],
-                //                   keyboardType: TextInputType.number,
-                //                   inputFormatters: <TextInputFormatter>[
-                //                     FilteringTextInputFormatter.digitsOnly,
-                //                     LengthLimitingTextInputFormatter(7),
-                //                     // Allow only digits
-                //                   ],
-                //                   decoration: InputDecoration(
-                //                     label: Row(
-                //                       mainAxisSize: MainAxisSize.min,
-                //                       children: const [
-                //                         Text(
-                //                           'Discount',
-                //                           style: TextStyle(fontSize: 12),
-                //                         ),
-                //                       ],
-                //                     ),
-                //                     // border: const OutlineInputBorder(),
-                //                     // contentPadding: const EdgeInsets.symmetric(
-                //                     //     vertical: 8.0, horizontal: 12.0),
-                //                   ),
-                //                   onChanged: (value) {
-                //                     setState(() {
-                //                       _calculateAmount(index);
-                //                     });
-                //                   },
-                //                 ),
-                //               ),
-                //               SizedBox(width: 16),
-                //               Expanded(
-                //                 child: TextField(
-                //                   controller: items[index]['amt'],
-                //                   decoration: InputDecoration(
-                //                     label: Row(
-                //                       mainAxisSize: MainAxisSize.min,
-                //                       children: const [
-                //                         Text(
-                //                           'Amt.',
-                //                           style: TextStyle(fontSize: 12),
-                //                         ),
-                //                       ],
-                //                     ),
-                //                     // border: const OutlineInputBorder(),
-                //                     // contentPadding: const EdgeInsets.symmetric(
-                //                     //     vertical: 8.0, horizontal: 12.0),
-                //                   ),
-                //                   onChanged: (value) {
-                //                     setState(() {
-                //                       _calculateAmount(index);
-                //                     });
-                //                   },
-                //                 ),
-                //               ),
-                //             ],
-                //           ),
-                //         ],
-                //       ),
-                //     );
-                //   },
-                // ),
                 ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
@@ -1675,108 +1457,9 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                         children: [
                           Row(
                             children: [
-                              // Instead of using Flexible, use Expanded for better layout control
-                              // Expanded(
-                              //                 child:
-                              //
-                              //                     ///working
-                              //                     DropdownButtonFormField<String>(
-                              //                   decoration: InputDecoration(
-                              //                     label: Row(
-                              //                       mainAxisSize: MainAxisSize.min,
-                              //                       children: const [
-                              //                         Text('Select Item',
-                              //                             style: TextStyle(fontSize: 12)),
-                              //                         SizedBox(width: 4),
-                              //                         Icon(Icons.star,
-                              //                             color: Colors.red, size: 10),
-                              //                       ],
-                              //                     ),
-                              //                   ),
-                              //                   items: _items
-                              //                       .where((item) =>
-                              //                           !_selectedItems.values
-                              //                               .contains(item.itemName) ||
-                              //                           _selectedItems[index] == item.itemName)
-                              //                       .toSet() // Removing duplicates if any
-                              //                       .map((GetArbItemMasterListModel item) {
-                              //                     return DropdownMenuItem<String>(
-                              //                       value: item.itemName,
-                              //                       child: Text(item.itemName ?? 'Unknown'),
-                              //                     );
-                              //                   }).toList(),
-                              //                   onChanged: (selectedItem) {
-                              //                     setState(() {
-                              //                       _selectedItems[index] = selectedItem ?? '';
-                              //
-                              //                     });
-                              //
-                              //                   },
-                              //                   value: _selectedItems[index]?.isEmpty ?? true
-                              //                       ? null // If the value is null or empty, set to null
-                              //                       : _selectedItems[index],
-                              //
-                              //                 ),
-                              //
-                              //               ),
-                              //   Expanded(
-                              //     child: DropdownButtonFormField<
-                              //         GetArbItemMasterListModel>(
-                              //       decoration: InputDecoration(
-                              //         label: Row(
-                              //           mainAxisSize: MainAxisSize.min,
-                              //           children: const [
-                              //             Text('Select Item',
-                              //                 style: TextStyle(fontSize: 12)),
-                              //             SizedBox(width: 4),
-                              //             Icon(Icons.star,
-                              //                 color: Colors.red, size: 10),
-                              //           ],
-                              //         ),
-                              //       ),
-                              //       items: _items
-                              //           .where((item) =>
-                              //               !_selectedItems.values
-                              //                   .contains(item.itemName) ||
-                              //               _selectedItems[index] == item.itemName)
-                              //           .toSet() // Removing duplicates if any
-                              //           .map((GetArbItemMasterListModel item) {
-                              //         return DropdownMenuItem<
-                              //             GetArbItemMasterListModel>(
-                              //           value: item,
-                              //           // Entire GetArbItemMasterListModel object
-                              //           child: Text(item.itemName ?? 'Unknown'),
-                              //         );
-                              //       }).toList(),
-                              //       onChanged: (selectedItem) {
-                              //         if (selectedItem != null) {
-                              //           setState(() {
-                              //             _selectedItems[index] = selectedItem.itemName; // Store item name or full model
-                              //             // Retrieve rate and calculate amount
-                              //             double rate =
-                              //                 selectedItem.rate?.toDouble() ?? 0.0;
-                              //             double amount = rate *
-                              //                 0; // Replace with actual quantity
-                              //             items[index]['rate']?.text =
-                              //                 rate.toString();
-                              //             items[index]['amt']?.text =
-                              //                 rate.toString();
-                              //             print(
-                              //                 "Selected item: ${selectedItem.itemName}");
-                              //             print("Rate: $rate");
-                              //             print("Amount: $amount");
-                              //             items[index]['qty']?.clear();
-                              //             items[index]['discount']?.clear();
-                              //           });
-                              //         }
-                              //       },
-                              //       // value: _selectedItems[index]?.isEmpty ?? true
-                              //       //     ? null // If the value is null or empty, set to null
-                              //       //     : _selectedItems[index],
-                              //     ),
-                              //   ),
                               Expanded(
-                                child: DropdownButtonFormField<String>(
+                                child:
+                                DropdownButtonFormField<String>(
                                   decoration: InputDecoration(
                                     label: Row(
                                       mainAxisSize: MainAxisSize.min,
@@ -1815,12 +1498,49 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                         double amount = rate * 0; // Replace 0 with actual quantity if available
                                         items[index]['rate']?.text = rate.toString();
                                         items[index]['amt']?.text = rate.toString();
-                                        items[index]['qty']?.clear();
-                                        items[index]['discount']?.clear();
+                                        if(selectedItem.categoryName == "Non ARB Item" || selectedItem.categoryName == "Other"){
+                                          items[index]['qty']?.text = "0";
+                                          items[index]['discount']?.clear();
+                                          print("Rate3:");
+                                        }else{
+                                          int? stockLimit = _itemStockByIndex[index];
+                                          if (stockLimit != null && 1 > stockLimit) {
+                                            items[index]['qty']?.clear();
+                                            items[index]['discount']?.clear();// Or retain but show error
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                content: Text('Entered quantity exceeds current stock: $stockLimit'),
+                                                backgroundColor: Colors.red,
+                                              ),
+                                            );
+                                            print("Rate2:");
+                                            _updateSum(index);
+                                            calculateGrandTotalAmount();
+                                            return;
+                                          }else{
+                                            print("Rate1:");
+                                            items[index]['qty']?.text = "1";
+                                            items[index]['discount']?.clear();
+                                            // _addNewItem();
+                                            _updateSum(index);
+                                            calculateGrandTotalAmount();
+                                            if (index == items.length - 1) {
+                                              Future.delayed(Duration(milliseconds: 200), () {
+                                                _addNewItem();
+                                              });
+                                            }
+                                          }
+                                        }
                                         print("Selected item: ${selectedItem.itemName}");
                                         print("Rate: $rate");
                                         print("Amount: $amount");
                                         calculateGrandTotalAmount();
+                                        // Move focus to Discount field after short delay
+                                        Future.delayed(Duration(milliseconds: 100), () {
+                                          if (_discountFocusNodes.length > index) {
+                                            FocusScope.of(context).requestFocus(_discountFocusNodes[index]);
+                                          }
+                                        });
                                       });
                                     }
                                   },
@@ -1892,9 +1612,10 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                           _updateSum(index);
                                           calculateGrandTotalAmount();
                                           return;
+                                        }else{
+                                          _updateSum(index);
+                                          calculateGrandTotalAmount();
                                         }
-                                        _updateSum(index);
-                                        calculateGrandTotalAmount();
                                       } else {
                                         _updateSum(index);
                                         calculateGrandTotalAmount();
@@ -1907,6 +1628,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                               Expanded(
                                 child: TextField(
                                   controller: items[index]['discount'],
+                                  focusNode: _discountFocusNodes[index],
                                   keyboardType: TextInputType.number,
                                   inputFormatters: <TextInputFormatter>[
                                     FilteringTextInputFormatter.digitsOnly,
@@ -2136,8 +1858,11 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                     ),
                                     inputFormatters: [
                                       FilteringTextInputFormatter.allow(
-                                        RegExp(r'^\d{0,5}:?$'), // up to 5 digits, optional 1 colon at end
+                                        RegExp(r'^[\d.:]{0,5}$'),
                                       ),
+                                      // FilteringTextInputFormatter.allow(
+                                      //   RegExp(r'^\d{0,5}:?$'), // up to 5 digits, optional 1 colon at end
+                                      // ),
                                     ],
 
                                     onChanged: (value) {
@@ -2753,14 +2478,19 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                     ElevatedButton(
                       onPressed: () {
                         // cancelAction();
-                        if(modes == "Edit"){
-                          updateSVAddEditForMob(psvIdEdit!,"EDIT");
-                        }else{
-                          updateSVAddEditForMob(0,"ADD");
+                        if (saveFlag) {
+                        print('saveFlag $saveFlag');
+                        showFlushBar(context, Constants.dayEndCompleted);
+                        } else {
+                          if(modes == "Edit"){
+                            updateSVAddEditForMob(psvIdEdit!,"EDIT");
+                          }else{
+                            updateSVAddEditForMob(0,"ADD");
+                          }
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
+                        backgroundColor:saveFlag?Colors.grey:Colors.blue,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50),
                         ),
@@ -2772,7 +2502,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                       child: Text(
                         modes == "Edit"?'Update':'Save',
                         style: TextStyle(
-                          color: Colors.black,
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
@@ -2805,7 +2535,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                           children: [
                                             // Edit Icon
                                             IconButton(
-                                              icon: Icon(Icons.edit, color: Colors.blue),  // Icon for edit
+                                              icon: Icon(Icons.edit, color:saveFlag?Colors.blueGrey:Colors.blue),  // Icon for edit
                                               onPressed: () {
                                                 loadDenominationData(svSale.pSVId!.toInt());
                                                 var itemsToShow = svSale.itemDetails?.toList();
@@ -2852,7 +2582,11 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                                 var isExemptReti = svSale.isExemptReti.toString();
                                                 var sVDiscountAmt = svSale.sVDiscountAmt.toString();
                                                   // Navigate to the target screen and pass the data
-                                                debugPrint("sCRegulator $sCRegulator");
+                                                if (saveFlag) {
+                                                  print('saveFlag $saveFlag');
+                                                  showFlushBar(context, Constants.dayEndCompleted);
+                                                } else {
+                                                  debugPrint("sCRegulator $sCRegulator");
                                                   Navigator.pushNamed(
                                                     context,
                                                     SVSaleReportScreen.screenName,
@@ -2903,51 +2637,58 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                                       'modeChange': "Edit"
                                                     },
                                                   );
+                                                }
+
                                               },
                                             ),
                                             // Delete Icon
                                             IconButton(
-                                              icon: Icon(Icons.delete, color: Colors.red),  // Icon for delete
+                                              icon: Icon(Icons.delete, color:saveFlag?Colors.redAccent: Colors.red),  // Icon for delete
                                               onPressed: () async {
-                                                int? psv = svSale.pSVId?.toInt();
-
-                                                bool? confirmDelete = await showDialog<bool>(
-                                                  context: context,
-                                                  builder: (BuildContext context) {
-                                                    return AlertDialog(
-                                                      title: const Text('Are you sure?'),
-                                                      content: const Text('You want to delete?'),
-                                                      actions: <Widget>[
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            Navigator.of(context).pop(false); // User pressed Cancel
-                                                          },
-                                                          child: const Text('Cancel'),
-                                                        ),
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            Navigator.of(context).pop(true); // User pressed Delete
-                                                          },
-                                                          child: const Text('Delete'),
-                                                        ),
-                                                      ],
-                                                    );
-                                                  },
-                                                );
-
-                                                // If user confirmed deletion
-                                                if (confirmDelete == true) {
-                                                  // Check if receiptId is not null
-                                                  // int? pId = payList.receiptId;
-                                                  if (psv != null) {
-                                                    updateSVAddEditForMob(psv!,"DELETE");
-                                                    print('Delete button pressed$psv');
-                                                  } else {
-                                                    print("Receipt ID is null.");
-                                                  }
+                                                if (saveFlag) {
+                                                  print('saveFlag $saveFlag');
+                                                  showFlushBar(context, Constants.dayEndCompleted);
                                                 } else {
-                                                  print('Delete action was canceled');
+                                                  int? psv = svSale.pSVId?.toInt();
+                                                  bool? confirmDelete = await showDialog<bool>(
+                                                    context: context,
+                                                    builder: (BuildContext context) {
+                                                      return AlertDialog(
+                                                        title: const Text('Are you sure?'),
+                                                        content: const Text('You want to delete?'),
+                                                        actions: <Widget>[
+                                                          TextButton(
+                                                            onPressed: () {
+                                                              Navigator.of(context).pop(false); // User pressed Cancel
+                                                            },
+                                                            child: const Text('Cancel'),
+                                                          ),
+                                                          TextButton(
+                                                            onPressed: () {
+                                                              Navigator.of(context).pop(true); // User pressed Delete
+                                                            },
+                                                            child: const Text('Delete'),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+
+                                                  // If user confirmed deletion
+                                                  if (confirmDelete == true) {
+                                                    // Check if receiptId is not null
+                                                    // int? pId = payList.receiptId;
+                                                    if (psv != null) {
+                                                      updateSVAddEditForMob(psv!,"DELETE");
+                                                      print('Delete button pressed$psv');
+                                                    } else {
+                                                      print("Receipt ID is null.");
+                                                    }
+                                                  } else {
+                                                    print('Delete action was canceled');
+                                                  }
                                                 }
+
                                               },
                                             ),
                                           ],
@@ -3966,6 +3707,19 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
           }
         }
       }
+      if(selectedTransMode == 'Cash'){
+        if(cashDenominationMandatory){
+          if(finalAmountCashDeno != null || finalAmountCashDeno > 0){
+            if(finalAmountCashDeno != receiveAmt){
+              showFlushBar(context, "The Entered Cash Denomination Total Should Be Equal To Received Cash Amount.");
+              return;
+            }
+          }else{
+            showFlushBar(context, Constants.cashDenominationIsMandatory);
+            return;
+          }
+        }
+      }
 
       if(receiveAmt != totalAmt){
         showFlushBar(context, "The Entered Receipt Payment Amount Should Be Equal To Total Amount.");
@@ -4004,13 +3758,45 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
       };
     }).toList();
 
-    List<Map<String, dynamic>> itemDetails = items.map((item) {
-      String? selectedItemName = _selectedItems[items.indexOf(item)];
+    // List<Map<String, dynamic>> itemDetails = items.map((item) {
+    //   String? selectedItemName = _selectedItems[items.indexOf(item)];
+    //
+    //   GetArbItemMasterListModel? selectedItem = _items.firstWhere(
+    //         (model) => model.itemName == selectedItemName,
+    //     orElse: () => GetArbItemMasterListModel(itemId: 0, itemName: ''),
+    //   );
+    //   return {
+    //     'ItemId': selectedItem.itemId ?? '',
+    //     'Rate': item['rate']?.text ?? '',
+    //     'ItemQty': item['qty']?.text ?? '',
+    //     'DiscountAmt': item['discount']?.text ?? '',
+    //     'ARBAmount': item['amt']?.text ?? '',
+    //   };
+    // }).toList();
 
-      GetArbItemMasterListModel? selectedItem = _items.firstWhere(
+    List<Map<String, dynamic>> itemDetails = items.where((item) {
+      int index = items.indexOf(item);
+      String? selectedItemName = _selectedItems[index];
+
+      GetArbItemMasterListModel selectedItem = _items.firstWhere(
             (model) => model.itemName == selectedItemName,
         orElse: () => GetArbItemMasterListModel(itemId: 0, itemName: ''),
       );
+
+      int itemId = selectedItem.itemId?.toInt() ?? 0;
+      int qty = int.tryParse(item['qty']?.text ?? '0') ?? 0;
+
+      // Filter condition: only include if both > 0
+      return itemId > 0 && qty > 0;
+    }).map((item) {
+      int index = items.indexOf(item);
+      String? selectedItemName = _selectedItems[index];
+
+      GetArbItemMasterListModel selectedItem = _items.firstWhere(
+            (model) => model.itemName == selectedItemName,
+        orElse: () => GetArbItemMasterListModel(itemId: 0, itemName: ''),
+      );
+
       return {
         'ItemId': selectedItem.itemId ?? '',
         'Rate': item['rate']?.text ?? '',
@@ -4019,6 +3805,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
         'ARBAmount': item['amt']?.text ?? '',
       };
     }).toList();
+
 
     if(selectedTranssvItemName == "14.2 KG"){
       if(itemDetails.isEmpty){
@@ -4287,5 +4074,105 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     );
   }
 
+  Future<void> checkAndSaveDayEndData() async {
+    EasyLoading.instance
+      ..maskType = EasyLoadingMaskType.black // This creates a modal blocking interaction
+      ..loadingStyle = EasyLoadingStyle.light
+      ..dismissOnTap = false // Disable dismissing the loader by tapping
+      ..userInteractions = false;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? distributorId = prefs.getString('DistributorId');
+    String? bearerToken = prefs.getString('token');
+    int? distributorIds = int.parse(distributorId!);
+    try {
+      final response = await http.get(
+        Uri.parse('${AppUrl.CheckDayEndConfirmation}/$distributorIds'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $bearerToken",
+          // Pass bearer token in headers
+        },
+      );
+      debugPrint("Response bodyCheckDayEndConfirmation: ${response.body}");
+      debugPrint("requesr bodyCheckDayEndConfirmation: ${response.request}");
+      if (response.statusCode == 200) {
+        List<dynamic> apiResponse = json.decode(response.body);
+        if (apiResponse.isEmpty) {
+          saveFlag = false;
+          print("The list is empty, no data to save.");
+        } else {
+          var dayEndData = apiResponse[0];
+          int DSRSaved = dayEndData['DSRSaved'] ?? 0;
+          int CDCMSStkSaved = dayEndData['CDCMSStkSaved'] ?? 0;
+          int OpClSaved = dayEndData['OpClSaved'] ?? 0;
+          if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
+            saveFlag = true;
+            print("Data is valid, proceeding to save.");
+          } else {
+            print("Data is incomplete. Cannot proceed to save.");
+          }
+        }
+      } else {
+        print("Error: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Exception: $e");
+    }
+  }
+
+  Future<void> checkCashDenominationFlagMandatory() async {
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+
+    if (!Constants.isNetworkAvailable) {
+      showFlushBar(context, Constants.connectionMessage);
+      isLoading = false;
+    } else {
+      try {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? distributorId = prefs.getString('DistributorId');
+        String? bearerToken = prefs.getString('token');
+
+        if (bearerToken == null) {
+          isLoading = false;
+          throw Exception('Bearer token is missing');
+        }
+        final response = await http.get(
+          Uri.parse('${AppUrl.GetPageActionPermissionDtls}/$distributorId/All'),
+          headers: {
+            'Authorization': 'Bearer $bearerToken', // Add Bearer token here
+          },
+        );
+        debugPrint("Response body GetPageActionPermissionDtls: ${response.body}");
+        debugPrint("Request body GetPageActionPermissionDtls: ${response.request}");
+
+        if (response.statusCode == 200) {
+          // Parse the JSON response
+          final List<dynamic> data = json.decode(response.body);
+          setState(() {
+            cashDenoMandatoryList = data.map((jsonItem) =>
+                CahsDenominationMandatoryFlagModel.fromJson(jsonItem)).toList();
+            isLoading = false;
+            for (var item in cashDenoMandatoryList) {
+              if (item.distributorId.toString() == distributorId && item.permissionFor == "Cash Denomination" && item.isActive == 1) {
+                print("Flag truet:");
+                cashDenominationMandatory = true;
+                break; // Exit loop after finding the match
+              }else{
+                cashDenominationMandatory = false;
+              }
+            }
+          });
+        } else {
+          isLoading = false;
+          throw Exception('Failed to load sales data');
+        }
+      } catch (error) {
+        isLoading = false;
+        debugPrint("Error: $error");
+        // Return an empty list in case of an error
+      }
+    }
+  }
 }
 

@@ -792,7 +792,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> _fetchImbalanceData() async {
-    EasyLoading.show();
+    EasyLoading.show(status: 'Loading..');
     Constants.isNetworkAvailable = await InternetConnectionChecker().hasConnection;
     if (Constants.isNetworkAvailable) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -849,7 +849,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> _fetchTodaysOpeningStockData() async {
-    EasyLoading.show();
+    EasyLoading.instance
+      ..maskType = EasyLoadingMaskType.black // This creates a modal blocking interaction
+      ..loadingStyle = EasyLoadingStyle.light
+      ..dismissOnTap = false // Disable dismissing the loader by tapping
+      ..userInteractions = false;
     Constants.isNetworkAvailable = await InternetConnectionChecker().hasConnection;
     if (Constants.isNetworkAvailable) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -906,7 +910,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> fetchCurrentStock() async {
-    EasyLoading.show();
+    EasyLoading.show(status: 'Loading..');
     Constants.isNetworkAvailable =
     await InternetConnectionChecker().hasConnection;
     if(Constants.isNetworkAvailable){
@@ -981,6 +985,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
       if (bearerToken == null) {
         throw Exception('Bearer token is missing');
       }
+      try{
+
 
       final response = await http.get(
         Uri.parse('${AppUrl.GetStockTransferDtls}/$dId/$gId'),
@@ -988,6 +994,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           'Authorization': 'Bearer $bearerToken', // Add Bearer token here
         },
       );
+
+
       debugPrint(
           "GetStockTransferDtls" + '${AppUrl.GetStockTransferDtls}/$distributorId/1/2');
       debugPrint("GetStockTransferDtls" + response.body);
@@ -1020,6 +1028,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           showFlushBar(context,
               Constants.listGettingFail);
         });
+      }
+      }catch(e){
+        debugPrint("GetStockTransferDtls" + e.toString());
       }
     } else {
       refreshTokens();

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 import 'package:lpgsalesandinventory/Screen/Utils/Styling.dart';
@@ -11,6 +12,7 @@ import 'package:http/http.dart' as http;
 
 import '../../ConstantScreen/widgets.dart';
 import '../../Utils/constants.dart';
+import '../BootomNavigatinBarManager.dart';
 import '../ManagerModelClass/DailySaleSaummaryListModel.dart';
 import '../ManagerModelClass/DilySaleSummaryDeliveryBoyWiseListModel.dart';
 import '../ManagerModelClass/RSPAmountOFItemListModel.dart';
@@ -365,57 +367,166 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
                           // Fetch item rate from the API
                           double? itemRate = await fetchItemRate(itemId);
                           debugPrint("${itemRate}");
-                          String mode;
-                         if((sale.cashQty == 0 && sale.prepaidQty == 0 && sale.postQty == 0 && sale.creditQty == 0 && sale.cashAmt == 0 && sale.postAmt == 0)){
-                            mode = '';
-                          }else if((sale.cashQty != 0 || sale.prepaidQty != 0 || sale.postQty != 0 || sale.creditQty != 0 || sale.cashAmt != 0 || sale.postAmt != 0)){
-                           mode = 'EDIT';
-                         }else{
-                           mode = '';
-                         }
 
-                          Navigator.pushNamed(
-                              context,
-                              ManagerUpdateSaleCashUpdation
-                                  .screenName,
-                              arguments: {
-                                "delBoyName": sale.staffName,
-                                "itemName": sale.itemName,
-                                "saleQty" : sale.actualSaleQty,
-                                "svQty" : sale.sVQty,
-                                "tvQty" : sale.tVQty,
-                                "amountTotal" : sale.amount,
-                                "expAmount" : "",
-                                "dmBal" : "",
-                                "itemRate" :itemRate,
-                                "delBoyID" : sale.staffId,
-                                "itemID":sale.itemId,
-                                "salesGkId" : sale.saleGKId,
-                                "sakesGKItemID" : sale.saleGKItemId,
-                                "vehicleID" :widget.vehicleIDs,
-                                "dSCollMgrId" : sale.dSCollMgrId,
-                                "vehicleNumber" : widget.vehicleNumber,
-                                "receiptNoText" : widget.receiptNoText,
-                                "actionModeApi": mode,
-                                "prepaidQtyApi":sale.prepaidQty,
-                                "prepaidAmountApi":sale.prepaidAmt,
-                                "postpaidQtyApi":sale.postQty,
-                                "postpaidAmountApi":sale.postAmt,
-                                "creditQtyApi":sale.creditQty,
-                                "creditAmountApi":sale.creditAmt,
-                                "cashQtyApi":sale.cashQty,
-                                "cashAmountApi":sale.cashAmt,
-                                "cashTotalExpectedAmount" :sale.denoCashExptd,
-                                "cashTotalReceiveAmount" :sale.denoCashRcvd,
-                                "cashBalanceAmount" :sale.cashBalance,
-                              });
+                         if((sale.cashQty == 0 && sale.prepaidQty == 0 && sale.postQty == 0 && sale.creditQty == 0 && sale.cashAmt == 0 && sale.postAmt == 0 && sale.actualSaleQty != 0)){
+                            Navigator.pushNamed(
+                                context,
+                                ManagerUpdateSaleCashUpdation
+                                    .screenName,
+                                arguments: {
+                                  "delBoyName": sale.staffName,
+                                  "itemName": sale.itemName,
+                                  "saleQty" : sale.actualSaleQty,
+                                  "svQty" : sale.sVQty,
+                                  "tvQty" : sale.tVQty,
+                                  "amountTotal" : sale.amount,
+                                  "expAmount" : "",
+                                  "dmBal" : "",
+                                  "itemRate" :itemRate,
+                                  "delBoyID" : sale.staffId,
+                                  "itemID":sale.itemId,
+                                  "salesGkId" : sale.saleGKId,
+                                  "sakesGKItemID" : sale.saleGKItemId,
+                                  "vehicleID" :widget.vehicleIDs,
+                                  "dSCollMgrId" : sale.dSCollMgrId,
+                                  "vehicleNumber" : widget.vehicleNumber,
+                                  "receiptNoText" : widget.receiptNoText,
+                                  "actionModeApi": '',
+                                  "prepaidQtyApi":sale.prepaidQty,
+                                  "prepaidAmountApi":sale.prepaidAmt,
+                                  "postpaidQtyApi":sale.postQty,
+                                  "postpaidAmountApi":sale.postAmt,
+                                  "creditQtyApi":sale.creditQty,
+                                  "creditAmountApi":sale.creditAmt,
+                                  "cashQtyApi":sale.cashQty,
+                                  "cashAmountApi":sale.cashAmt,
+                                  "cashTotalExpectedAmount" :sale.denoCashExptd,
+                                  "cashTotalReceiveAmount" :sale.denoCashRcvd,
+                                  "cashBalanceAmount" :sale.cashBalance,
+                                });
+                          }else if((sale.cashQty != 0 || sale.prepaidQty != 0 || sale.postQty != 0 || sale.creditQty != 0 || sale.cashAmt != 0 || sale.postAmt != 0 && sale.actualSaleQty != 0)){
+                           Navigator.pushNamed(
+                               context,
+                               ManagerUpdateSaleCashUpdation
+                                   .screenName,
+                               arguments: {
+                                 "delBoyName": sale.staffName,
+                                 "itemName": sale.itemName,
+                                 "saleQty" : sale.actualSaleQty,
+                                 "svQty" : sale.sVQty,
+                                 "tvQty" : sale.tVQty,
+                                 "amountTotal" : sale.amount,
+                                 "expAmount" : "",
+                                 "dmBal" : "",
+                                 "itemRate" :itemRate,
+                                 "delBoyID" : sale.staffId,
+                                 "itemID":sale.itemId,
+                                 "salesGkId" : sale.saleGKId,
+                                 "sakesGKItemID" : sale.saleGKItemId,
+                                 "vehicleID" :widget.vehicleIDs,
+                                 "dSCollMgrId" : sale.dSCollMgrId,
+                                 "vehicleNumber" : widget.vehicleNumber,
+                                 "receiptNoText" : widget.receiptNoText,
+                                 "actionModeApi": 'EDIT',
+                                 "prepaidQtyApi":sale.prepaidQty,
+                                 "prepaidAmountApi":sale.prepaidAmt,
+                                 "postpaidQtyApi":sale.postQty,
+                                 "postpaidAmountApi":sale.postAmt,
+                                 "creditQtyApi":sale.creditQty,
+                                 "creditAmountApi":sale.creditAmt,
+                                 "cashQtyApi":sale.cashQty,
+                                 "cashAmountApi":sale.cashAmt,
+                                 "cashTotalExpectedAmount" :sale.denoCashExptd,
+                                 "cashTotalReceiveAmount" :sale.denoCashRcvd,
+                                 "cashBalanceAmount" :sale.cashBalance,
+                               });
+                         }else if((sale.actualSaleQty == 0 || sale.dailySaleStatus != 13)){
+                           int? saleGk = sale.saleGKId?.toInt();
+                           int? saleGkItemId = sale.saleGKItemId?.toInt();
+                           showDialog(
+                             context: context,
+                             barrierDismissible: false, // prevent tapping outside to dismiss
+                             builder: (BuildContext context) {
+                               return AlertDialog(
+                                 contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 24.0),
+                                 content: Column(
+                                   mainAxisSize: MainAxisSize.min,
+                                   children: [
+                                     const Icon(
+                                       Icons.info_outline_rounded,
+                                       size: 48,
+                                       color: Colors.orange,
+                                     ),
+                                     const SizedBox(height: 16),
+                                     Text(
+                                       "No cash against only SV sale",
+                                       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                                       textAlign: TextAlign.center,
+                                     ),
+                                     const SizedBox(height: 12),
+                                     Text(
+                                       "You want to settle sale",
+                                       style: TextStyle(fontSize: 16),
+                                       textAlign: TextAlign.center,
+                                     ),
+                                     const SizedBox(height: 20),
+                                     Row(
+                                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                       children: [
+                                         ElevatedButton(
+                                           style: ElevatedButton.styleFrom(
+                                             backgroundColor: Colors.blue,
+                                             shape: RoundedRectangleBorder(
+                                               borderRadius: BorderRadius.circular(50),
+                                             ),
+                                           ),
+                                           onPressed: () {
+                                             Navigator.of(context).pop(); // Close the dialog
+                                             statusChangeApi(saleGk!, saleGkItemId!, 13, Constants.acceptSale);
+                                           },
+                                           child: Padding(
+                                             padding: const EdgeInsets.all(8.0),
+                                             child: Text(
+                                               "Yes,settle",
+                                               style: const TextStyle(color: Colors.white),
+                                             ),
+                                           ),
+                                         ),
+                                         ElevatedButton(
+                                           style: ElevatedButton.styleFrom(
+                                             backgroundColor: Colors.redAccent,
+                                             shape: RoundedRectangleBorder(
+                                               borderRadius: BorderRadius.circular(50),
+                                             ),
+                                           ),
+                                           onPressed: () {
+                                             Navigator.of(context).pop(); // Close the dialog
+                                           },
+                                           child: Padding(
+                                             padding: const EdgeInsets.all(8.0),
+                                             child: Text(
+                                               "Cancle",
+                                               style: const TextStyle(color: Colors.white),
+                                             ),
+                                           ),
+                                         ),
+                                       ],
+                                     ),
+                                   ],
+                                 ),
+                               );
+                             },
+                           );
+                         } else{
+
+                         }
                         },
                         child: Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Text(
-                              (sale.cashQty == 0 && sale.prepaidQty == 0 && sale.postQty == 0 && sale.creditQty == 0 && sale.cashAmt == 0 && sale.postAmt == 0)?
-                              "Update":(sale.cashQty != 0 || sale.prepaidQty != 0 || sale.postQty != 0 || sale.creditQty != 0 || sale.cashAmt != 0 || sale.postAmt != 0)?
-                              "Edit":"",
+                              (sale.cashQty == 0 && sale.prepaidQty == 0 && sale.postQty == 0 && sale.creditQty == 0 && sale.cashAmt == 0 && sale.postAmt == 0 && sale.actualSaleQty != 0)?
+                              "Update":(sale.cashQty != 0 || sale.prepaidQty != 0 || sale.postQty != 0 || sale.creditQty != 0 || sale.cashAmt != 0 || sale.postAmt != 0 && sale.actualSaleQty != 0)?
+                              "Edit":(sale.actualSaleQty == 0 || sale.dailySaleStatus !=13)?"No Cash":"",
                               style: Styling.blueClrTextWithUnderline
                           ),
                         ),
@@ -550,4 +661,143 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
 
     return formattedAmount;
   }
+  Future<void> statusChangeApi(int salesGKId, int salesGKItemId, int flagUpdate,
+      String messageShow) async {
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+
+    if (!Constants.isNetworkAvailable) {
+      // Return an empty list if there is no network connection
+      showFlushBar(context, Constants.connectionMessage);
+    } else {
+      try {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? distributorId = prefs.getString('DistributorId');
+        String? bearerToken = prefs.getString('token');
+
+        if (bearerToken == null) {
+          throw Exception('Bearer token is missing');
+        }
+
+        final response = await http.get(
+          Uri.parse(
+              '${AppUrl.DailySaleByGK_StatusUpdate}/$distributorId/$salesGKId/$salesGKItemId/$flagUpdate'),
+          headers: {
+            'Authorization': 'Bearer $bearerToken',
+          },
+        );
+
+        debugPrint(
+            "Response body DailySaleByGK_StatusUpdate: ${response.body}");
+        debugPrint(
+            "request body DailySaleByGK_StatusUpdate: ${response.request}");
+
+        if (response.statusCode == 200) {
+          final body = response.body;
+
+          EasyLoading.showToast(messageShow,
+              duration: const Duration(milliseconds: 3000));
+          // Example: refresh screen or go back to previous screen
+          // Navigator.pop(context); // or do a refresh using setState()
+          Navigator.pushNamed(
+            context,
+            BottomNavBarExample.screenName,
+            arguments: 2, // This opens the third tab
+          );
+          setState(() {
+            // update your UI or state variables if needed
+          });
+        } else {
+          throw Exception('Failed to load sales data');
+        }
+      } catch (error) {
+        debugPrint("Error: $error");
+        // Return an empty list in case of an error
+      }
+    }
+  }
+  void showYesCancelDialog(BuildContext context, {
+    required String title,
+    required String content,
+    String yesText = 'Yes',
+    String cancelText = 'Cancel',
+    required VoidCallback onYesPressed,
+  }) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // prevent tapping outside to dismiss
+      builder: (BuildContext context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 24.0),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.info_outline_rounded,
+                size: 48,
+                color: Colors.orange,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                title,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                content,
+                style: TextStyle(fontSize: 16),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Close the dialog
+                      onYesPressed(); // Handle "Yes" action
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        yesText,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.redAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(50),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Close the dialog
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        cancelText,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+
 }

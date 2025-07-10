@@ -132,6 +132,9 @@ class AppUrl {
   static const String TVDtlsAddEdit = '$baseUrl/DailyStockCash/TVDtlsAddEdit_V2';
   static const String GetTVDetails = '$baseUrl/DailyStockCash/GetTVDetails_V2';
   static const String GetTVEntryCashDenominationDtl = '$baseUrl/DailyStockCash/GetTVEntryCashDenominationDtl_V2';
+
+  ///cash denomination
+  static const String GetPageActionPermissionDtls = '$baseUrl/Masters/GetPageActionPermissionDtls';
 }
 
 

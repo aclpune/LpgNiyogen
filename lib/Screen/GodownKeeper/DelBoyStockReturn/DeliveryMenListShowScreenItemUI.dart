@@ -21,7 +21,6 @@ import 'StockReturnFromDelBoy.dart';
 class DeliveryMenListShowScreenItemUI extends StatefulWidget {
   DeliveryMenSaleListModel _listModel;
 
-
   DeliveryMenListShowScreenItemUI(this._listModel,{Key? key}) : super(key: key);
 
   @override
@@ -38,8 +37,8 @@ class _DeliveryMenListShowScreenItemUIState extends State<DeliveryMenListShowScr
   void initState() {
     // TODO: implement initState
     super.initState();
-    fetchTransactionList();
-    checkAndSaveDayEndData();
+    // fetchTransactionList();
+    // checkAndSaveDayEndData();
   }
   @override
   Widget build(BuildContext context) {
@@ -66,11 +65,11 @@ class _DeliveryMenListShowScreenItemUIState extends State<DeliveryMenListShowScr
                               child:
                               GestureDetector(
                                 onTap: (){
-                                  if(stockTransferFlag){
-                                    if(saveFlag){
-                                      showFlushBar(context,
-                                          Constants.dayEndCompleted);
-                                    }else{
+                                  // if(stockTransferFlag){
+                                  //   if(saveFlag){
+                                  //     showFlushBar(context,
+                                  //         Constants.dayEndCompleted);
+                                  //   }else{
                                       Navigator.pushNamed(
                                           context,
                                           DailyRefillSalePage
@@ -80,17 +79,17 @@ class _DeliveryMenListShowScreenItemUIState extends State<DeliveryMenListShowScr
                                             "delBoyID" : value.dMId,
                                             "vehicleNo" :value.vehicleNo,
                                           });
-                                    }
-                                  }else{
-                                    CustomAlertDialog.showCustomAlert(context,Constants.stockNotAccepted);
-                                  }
+                                    // }
+                                  // }else{
+                                  //   CustomAlertDialog.showCustomAlert(context,Constants.stockNotAccepted);
+                                  // }
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 8.0),
                                   child: Text(
                                     value.staffName.toString(),
                                     textAlign: TextAlign.left,
-                                    style:saveFlag? Styling.blueClrTextWithUnderlineGrey:Styling.blueClrTextWithUnderline,
+                                    style:Styling.blueClrTextWithUnderline,
                                     textScaler: TextScaler.noScaling,
                                   ),
                                 ),

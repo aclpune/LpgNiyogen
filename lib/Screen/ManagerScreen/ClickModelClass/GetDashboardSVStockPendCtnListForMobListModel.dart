@@ -2,26 +2,27 @@
 /// FromDate : null
 /// ToDate : null
 /// StaffId : 0
-/// ReferredBy : "Abhi"
-/// SVDate : "2025-04-17T15:42:03"
+/// ReferredBy : "19kg Devendra"
+/// SVDate : "2025-07-07T14:39:03"
 /// SVType : "NC"
 /// ProductId : 1
 /// ItemName : "14.2 KG"
 /// ItemId : 0
 /// IsUndocument : false
-/// ConsuDCNo : "546123"
+/// ConsuDCNo : "43434"
 /// ConsumerName : ""
 /// CylQty : 1
 /// SCRegulator : 1
 /// StaffName : null
 /// AmtCharges : 0.00
-/// TotalAmount : 6355.50
-/// AddedOn : "2025-04-17T15:42:36.69"
+/// TotalAmount : 6155.50
+/// AddedOn : "2025-07-07T09:09:46.283"
 /// DMId : 0
 /// StockStatus : "Pending"
 /// GodownId : 0
 /// GodownNo : null
 /// ReceiptDate : null
+/// ConsumerNo : null
 
 class GetDashboardSvStockPendCtnListForMobListModel {
   GetDashboardSvStockPendCtnListForMobListModel({
@@ -48,7 +49,8 @@ class GetDashboardSvStockPendCtnListForMobListModel {
       String? stockStatus, 
       num? godownId, 
       dynamic godownNo, 
-      dynamic receiptDate,}){
+      dynamic receiptDate, 
+      dynamic consumerNo,}){
     _distributorId = distributorId;
     _fromDate = fromDate;
     _toDate = toDate;
@@ -73,6 +75,7 @@ class GetDashboardSvStockPendCtnListForMobListModel {
     _godownId = godownId;
     _godownNo = godownNo;
     _receiptDate = receiptDate;
+    _consumerNo = consumerNo;
 }
 
   GetDashboardSvStockPendCtnListForMobListModel.fromJson(dynamic json) {
@@ -100,6 +103,7 @@ class GetDashboardSvStockPendCtnListForMobListModel {
     _godownId = json['GodownId'];
     _godownNo = json['GodownNo'];
     _receiptDate = json['ReceiptDate'];
+    _consumerNo = json['ConsumerNo'];
   }
   num? _distributorId;
   dynamic _fromDate;
@@ -125,6 +129,7 @@ class GetDashboardSvStockPendCtnListForMobListModel {
   num? _godownId;
   dynamic _godownNo;
   dynamic _receiptDate;
+  dynamic _consumerNo;
 GetDashboardSvStockPendCtnListForMobListModel copyWith({  num? distributorId,
   dynamic fromDate,
   dynamic toDate,
@@ -149,6 +154,7 @@ GetDashboardSvStockPendCtnListForMobListModel copyWith({  num? distributorId,
   num? godownId,
   dynamic godownNo,
   dynamic receiptDate,
+  dynamic consumerNo,
 }) => GetDashboardSvStockPendCtnListForMobListModel(  distributorId: distributorId ?? _distributorId,
   fromDate: fromDate ?? _fromDate,
   toDate: toDate ?? _toDate,
@@ -173,6 +179,7 @@ GetDashboardSvStockPendCtnListForMobListModel copyWith({  num? distributorId,
   godownId: godownId ?? _godownId,
   godownNo: godownNo ?? _godownNo,
   receiptDate: receiptDate ?? _receiptDate,
+  consumerNo: consumerNo ?? _consumerNo,
 );
   num? get distributorId => _distributorId;
   dynamic get fromDate => _fromDate;
@@ -198,6 +205,7 @@ GetDashboardSvStockPendCtnListForMobListModel copyWith({  num? distributorId,
   num? get godownId => _godownId;
   dynamic get godownNo => _godownNo;
   dynamic get receiptDate => _receiptDate;
+  dynamic get consumerNo => _consumerNo;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -225,6 +233,7 @@ GetDashboardSvStockPendCtnListForMobListModel copyWith({  num? distributorId,
     map['GodownId'] = _godownId;
     map['GodownNo'] = _godownNo;
     map['ReceiptDate'] = _receiptDate;
+    map['ConsumerNo'] = _consumerNo;
     return map;
   }
 

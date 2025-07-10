@@ -15,6 +15,7 @@ import '../Utils/app_url.dart';
 import 'package:http/http.dart' as http;
 import '../Utils/constants.dart';
 import 'BootomNavigatinBarManager.dart';
+import 'CashDenominationMandatoryFlag/CahsDenominationMandatoryFlagModel.dart';
 import 'CashHandoverListViewUI.dart';
 import 'CashHandoverModelClass/GetBankMappingDetailsListModel.dart';
 import 'CashHandoverModelClass/GetCashHandOverDtlsModel.dart';
@@ -31,6 +32,8 @@ class CashHandoverScreen extends StatefulWidget {
 }
 
 class _CashHandoverScreenState extends State<CashHandoverScreen> {
+  List<CahsDenominationMandatoryFlagModel> cashDenoMandatoryList = [];
+  bool cashDenominationMandatory = false;
   List<CylItemListModel> _items = [];
   List<GetStaffDetailsListUserIsMadeModel> staffdetailsmodel = [];
   List<GetCashHandOverDtlsModel> cashInHandDetails = [];
@@ -48,7 +51,6 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
   List<TextEditingController> qtyController = [];
   List<double> amounts = [];
   double totalAmount = 0.0;// Keep track of the total amount.
-
 
   String? _selectedItem;
   int? selectedItemId;
@@ -80,12 +82,15 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
   final depositController = TextEditingController();
   bool _isDepositEmpty = false;
   double remainingAmount = 0.0;
+  bool saveFlag = false;
   @override
   void initState() {
 
     super.initState();
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('dd-mm-yyyy').format(now);
+    checkAndSaveDayEndData();
+    checkCashDenominationFlagMandatory();
     fetchItems();
     fetchStaff();
     fetchBank();
@@ -453,6 +458,7 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
                                   MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
+                                      cashDenominationMandatory?"Cash Denomination Is Mandatory":
                                       "Cash denomination",
                                       style: TextStyle(
                                         fontSize: 16,
@@ -662,10 +668,15 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
                       child: ElevatedButton(
                         onPressed: () {
                           //save button action
-                          updateCashAddEditForMob();
+                          if (saveFlag) {
+                            print('saveFlag $saveFlag');
+                            showFlushBar(context, Constants.dayEndCompleted);
+                          } else {
+                            updateCashAddEditForMob();
+                          }
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
+                          backgroundColor:saveFlag?Colors.grey:Colors.blue,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(50),
                           ),
@@ -798,7 +809,6 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
       throw Exception('Failed to load items');
     }
   }
-
   Future<void> getNoteTypeAndIDList() async {
     Constants.isNetworkAvailable =
     await InternetConnectionChecker().hasConnection;
@@ -869,7 +879,6 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
       }
     }
   }
-
   Future<void> fetchStaffList(DateTime date) async {
     Constants.isNetworkAvailable =
     await InternetConnectionChecker().hasConnection;
@@ -992,7 +1001,6 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
     formKey2.currentState?.reset();
     formKey3.currentState?.reset();
   }
-
   Future<void> updateCashAddEditForMob() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? distributorId = prefs.getString('DistributorId');
@@ -1039,6 +1047,23 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
         "RetNoteAmt": 0.0, // Replace with actual value if available
       };
     }).toList();
+    if(cashDenominationMandatory){
+      if(depositController.text.isNotEmpty){
+        hvrBnkDepAmt = double.parse(depositController.text);
+        if(totalAmount != null || totalAmount>0){
+          if(totalAmount != hvrBnkDepAmt){
+            showFlushBar(context, Constants.cashHandOverDeno);
+            return;
+          }
+        }else{
+          showFlushBar(context, Constants.cashDenominationIsMandatory);
+          return;
+        }
+      }else{
+        showFlushBar(context, Constants.cashAmount);
+        return;
+      }
+    }
 
     int? bankId;
     int? accMappingIds;
@@ -1107,5 +1132,103 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
     //   print("Exception UpdateSaleAddEditForMob: $e");
     // }
   }
+  Future<void> checkAndSaveDayEndData() async {
+    EasyLoading.instance
+      ..maskType = EasyLoadingMaskType.black // This creates a modal blocking interaction
+      ..loadingStyle = EasyLoadingStyle.light
+      ..dismissOnTap = false // Disable dismissing the loader by tapping
+      ..userInteractions = false;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? distributorId = prefs.getString('DistributorId');
+    String? bearerToken = prefs.getString('token');
+    int? distributorIds = int.parse(distributorId!);
+    try {
+      final response = await http.get(
+        Uri.parse('${AppUrl.CheckDayEndConfirmation}/$distributorIds'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $bearerToken",
+          // Pass bearer token in headers
+        },
+      );
+      debugPrint("Response bodyCheckDayEndConfirmation: ${response.body}");
+      debugPrint("requesr bodyCheckDayEndConfirmation: ${response.request}");
+      if (response.statusCode == 200) {
+        List<dynamic> apiResponse = json.decode(response.body);
+        if (apiResponse.isEmpty) {
+          saveFlag = false;
+          print("The list is empty, no data to save.");
+        } else {
+          var dayEndData = apiResponse[0];
+          int DSRSaved = dayEndData['DSRSaved'] ?? 0;
+          int CDCMSStkSaved = dayEndData['CDCMSStkSaved'] ?? 0;
+          int OpClSaved = dayEndData['OpClSaved'] ?? 0;
+          if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
+            saveFlag = true;
+            print("Data is valid, proceeding to save.");
+          } else {
+            print("Data is incomplete. Cannot proceed to save.");
+          }
+        }
+      } else {
+        print("Error: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Exception: $e");
+    }
+  }
+  Future<void> checkCashDenominationFlagMandatory() async {
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
 
+    if (!Constants.isNetworkAvailable) {
+      showFlushBar(context, Constants.connectionMessage);
+      isLoading = false;
+    } else {
+      try {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? distributorId = prefs.getString('DistributorId');
+        String? bearerToken = prefs.getString('token');
+
+        if (bearerToken == null) {
+          isLoading = false;
+          throw Exception('Bearer token is missing');
+        }
+        final response = await http.get(
+          Uri.parse('${AppUrl.GetPageActionPermissionDtls}/$distributorId/All'),
+          headers: {
+            'Authorization': 'Bearer $bearerToken', // Add Bearer token here
+          },
+        );
+        debugPrint("Response body GetPageActionPermissionDtls: ${response.body}");
+        debugPrint("Request body GetPageActionPermissionDtls: ${response.request}");
+
+        if (response.statusCode == 200) {
+          // Parse the JSON response
+          final List<dynamic> data = json.decode(response.body);
+          setState(() {
+            cashDenoMandatoryList = data.map((jsonItem) =>
+                CahsDenominationMandatoryFlagModel.fromJson(jsonItem)).toList();
+            isLoading = false;
+            for (var item in cashDenoMandatoryList) {
+              if (item.distributorId.toString() == distributorId && item.permissionFor == "Cash Denomination" && item.isActive == 1) {
+                print("Flag truet:");
+                cashDenominationMandatory = true;
+                break; // Exit loop after finding the match
+              }else{
+                cashDenominationMandatory = false;
+              }
+            }
+          });
+        } else {
+          isLoading = false;
+          throw Exception('Failed to load sales data');
+        }
+      } catch (error) {
+        isLoading = false;
+        debugPrint("Error: $error");
+        // Return an empty list in case of an error
+      }
+    }
+  }
 }

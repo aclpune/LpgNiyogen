@@ -41,10 +41,12 @@ class _StockTransferTOGodownScreenItemUIState extends State<StockTransferTOGodow
   List<GetStockTransferListModel> _stockTransferList = [];
   String? mobileNo;
   List<GetCurrentStcOfGodownKeeperModel> getCurrentStcOfGodownKeeper = [];
+  bool saveFlag = false;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    checkAndSaveDayEndData();
   }
   @override
   Widget build(BuildContext context) {
@@ -159,16 +161,16 @@ class _StockTransferTOGodownScreenItemUIState extends State<StockTransferTOGodow
                             String remark = value.remark ?? '';
 
                             bool isStockValid = await fetchCurrentStock(fGID, fillQ, emptyQ, defQ, itemIDs);
-
-                            if (isStockValid) {
-                              submitStockToApi(tGID,fGID,itemIDs,fillQ,emptyQ,defQ,remark);
+                            if (saveFlag) {
+                              print('saveFlag $saveFlag');
+                              showFlushBar(context, Constants.dayEndCompleted);
                             } else {
-                              CustomAlertDialog.showCustomAlert(context, Constants.countShouldNotBeGreater);
-
-                              // If stock is invalid (i.e., item quantity exceeds the available stock), show an error
-                              // showFlushBar(context, "Invalid Quantity", "The item quantities exceed the available stock.");
+                              if (isStockValid) {
+                                submitStockToApi(tGID,fGID,itemIDs,fillQ,emptyQ,defQ,remark);
+                              } else {
+                                CustomAlertDialog.showCustomAlert(context, Constants.countShouldNotBeGreater);
+                              }
                             }
-
                           },
                           child: Text(
                             "Accept",
@@ -565,5 +567,44 @@ class _StockTransferTOGodownScreenItemUIState extends State<StockTransferTOGodow
       return false;
     }
   }
-
+  Future<void> checkAndSaveDayEndData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? distributorId = prefs.getString('DistributorId');
+    String? bearerToken = prefs.getString('token');
+    int? distributorIds = int.parse(distributorId!);
+    try {
+      final response = await http.get(
+        Uri.parse('${AppUrl.CheckDayEndConfirmation}/$distributorIds'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $bearerToken",
+          // Pass bearer token in headers
+        },
+      );
+      debugPrint("Response bodyCheckDayEndConfirmation: ${response.body}");
+      debugPrint("requesr bodyCheckDayEndConfirmation: ${response.request}");
+      if (response.statusCode == 200) {
+        List<dynamic> apiResponse = json.decode(response.body);
+        if (apiResponse.isEmpty) {
+          saveFlag = false;
+          print("The list is empty, no data to save.");
+        } else {
+          var dayEndData = apiResponse[0];
+          int DSRSaved = dayEndData['DSRSaved'] ?? 0;
+          int CDCMSStkSaved = dayEndData['CDCMSStkSaved'] ?? 0;
+          int OpClSaved = dayEndData['OpClSaved'] ?? 0;
+          if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
+            saveFlag = true;
+            print("Data is valid, proceeding to save.");
+          } else {
+            print("Data is incomplete. Cannot proceed to save.");
+          }
+        }
+      } else {
+        print("Error: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Exception: $e");
+    }
+  }
 }

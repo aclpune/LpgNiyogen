@@ -168,6 +168,7 @@ class _DeliveryMenListShowScreenState extends State<DeliveryMenListShowScreen> {
       )
     );
   }
+
   void filterSearchResults(String query) {
     setState(() {
       _filteredDelBoyInfo = _delBoyInfo
@@ -175,6 +176,7 @@ class _DeliveryMenListShowScreenState extends State<DeliveryMenListShowScreen> {
           .toList();
     });
   }
+
     Future<void> fetchDeliveryBoyInfo() async {
       Constants.isNetworkAvailable =
       await InternetConnectionChecker().hasConnection;
@@ -187,7 +189,7 @@ class _DeliveryMenListShowScreenState extends State<DeliveryMenListShowScreen> {
         if (bearerToken == null) {
           throw Exception('Bearer token is missing');
         }
-
+          try{
         final response = await http.get(
           Uri.parse('${AppUrl.GetDeliveryBoyListForMob}/$distributorId/1/2'),
           headers: {
@@ -213,6 +215,9 @@ class _DeliveryMenListShowScreenState extends State<DeliveryMenListShowScreen> {
           isLoading = false;
           throw Exception(Constants.listGettingFail);
         }
+          }catch(e){
+            debugPrint("_delBoyInfo" + e.toString());
+          }
       } else {
         isLoading = false;
         showFlushBar(

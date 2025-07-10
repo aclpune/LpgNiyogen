@@ -41,7 +41,7 @@ class _DashboardSVDetailUI extends State<DashboardSVDetailUI> {
           SizedBox(height: 2),
           Row(
             children: [
-              Expanded(flex:1,child: countTextWidgetText(context,"Cons. No", nullToDash(sale.consuDCNo))),
+              Expanded(flex:1,child: countTextWidgetText(context,"Cons./Challan", nullToDash(sale.consuDCNo))),
               Expanded(flex:1,child: countTextWidgetText(context,"Cyl. Qty", nullToDash(sale.cylQty.toString()))),
             ],
           ),
@@ -62,6 +62,14 @@ class _DashboardSVDetailUI extends State<DashboardSVDetailUI> {
           SizedBox(height: 2),
           Row(
             children: [
+              Expanded(flex:1,child: countTextWidgetText(context,"Consumer No.", sale.consumerNo ?? '-')),
+              Expanded(flex:1,child: countTextWidgetText(context,"SV Type", sale.sVType ?? '')),
+
+            ],
+          ),
+          SizedBox(height: 2),
+          Row(
+            children: [
               Expanded(flex:1,child: countTextWidgetText(context,"Con Name", nullToDash(sale.consumerName))),
             ],
           ),
@@ -71,6 +79,7 @@ class _DashboardSVDetailUI extends State<DashboardSVDetailUI> {
               Expanded(flex:1,child: countTextWidgetText(context,"Ref. By", sale.referredBy ?? '')),
             ],
           ),
+
           SizedBox(height: 2),
           Row(
             children: [

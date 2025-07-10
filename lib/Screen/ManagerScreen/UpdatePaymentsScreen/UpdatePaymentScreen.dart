@@ -15,6 +15,7 @@ import '../../Utils/Widget.dart';
 import '../../Utils/app_url.dart';
 import '../../Utils/constants.dart';
 import '../BootomNavigatinBarManager.dart';
+import '../CashDenominationMandatoryFlag/CahsDenominationMandatoryFlagModel.dart';
 import '../CashHandoverModelClass/GetBankMappingDetailsListModel.dart';
 import '../CashHandoverModelClass/GetCashHandOverDtlsModel.dart';
 import '../ManagerModelClass/DenomModel.dart';
@@ -47,11 +48,6 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
   final GlobalKey<FormState> formKey1 = GlobalKey<FormState>();
   List<String> getTransStaff = ["Staff", "Vendor"];
   String? selectedStaff = "Staff";
-  //Map<int, bool> isQtyFilled = {};
-  //late List<TextEditingController> qtyControllerReturn;
-  //late List<double> amountsReturn;
-  //late double returnAmount;
-  //late double finalAmountCashDeno;
 
   late List<TextEditingController> qtyController;
   late List<double> amounts;
@@ -76,9 +72,6 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
   List<DenomModel>getNoteTypeAndIdFroDenominationListModel = [];
   List<dynamic> dataCashDenominationList = [];
   bool isLoading = true;
-  // List<TextEditingController> qtyController = [];
-  //List<double> amounts = [];
-  // double totalAmount = 0.0;
   List<GetBankMappingDetailsListModel> bankModel = [];
   List<GetPaymentDetailListModel> paymentModel = [];
   GetBankMappingDetailsListModel? _selectBankModel;
@@ -124,12 +117,15 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
   String? modes;
   int? paymentId;
   int? payId;
-
-
+  bool saveFlag = false;
+  List<CahsDenominationMandatoryFlagModel> cashDenoMandatoryList = [];
+  bool cashDenominationMandatory = false;
   @override
   void initState() {
 
     super.initState();
+    checkCashDenominationFlagMandatory();
+    checkAndSaveDayEndData();
     getNoteTypeAndIDList();
     fetchBank();
     fetchSavedData();
@@ -139,9 +135,7 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
     getExpenseHeaderList();
     loadInitialStaffData();
     getPaymentDetailList();
-    //
     getVoucherNoForExpense();
-
 
     Future.delayed(Duration.zero, ()  async{
 
@@ -930,6 +924,7 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
                                     MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
+                                        cashDenominationMandatory?"Cash Denomination Is Mandatory":
                                         "Cash denomination",
                                         style: TextStyle(
                                           fontSize: 16,
@@ -1136,18 +1131,22 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
                     ),
 
                     SizedBox(width: 10), // Adds space between buttons
-
                     ElevatedButton(
                       onPressed: () {
-                        if (modes == "EDIT") {
-                          paymentDetailAddEditForMob(paymentId!, "EDIT");
-
+                        if (saveFlag) {
+                          print('saveFlag $saveFlag');
+                          showFlushBar(context, Constants.dayEndCompleted);
                         } else {
-                          paymentDetailAddEditForMob(0, "ADD");
+                          if (modes == "EDIT") {
+                            paymentDetailAddEditForMob(paymentId!, "EDIT");
+
+                          } else {
+                            paymentDetailAddEditForMob(0, "ADD");
+                          }
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
+                        backgroundColor:saveFlag?Colors.grey:Colors.blue,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50),
                         ),
@@ -1190,7 +1189,7 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
                                   children: [
                                     // Edit Icon
                                     IconButton(
-                                      icon: Icon(Icons.edit, color: Colors.blue),  // Icon for edit
+                                      icon: Icon(Icons.edit, color:saveFlag?Colors.blueGrey:Colors.blue),  // Icon for edit
                                       onPressed: () {
                                         setState(() {
                                           var payVoucherNo = payList.voucherNo.toString();
@@ -1214,80 +1213,90 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
                                           var accountNo = payList.accountNo.toString();
                                           var paymentId = payList.paymentId.toString();
                                           int payId = int.parse(paymentId);
-
-                                          // Navigate to the target screen and pass the data
-                                          Navigator.pushNamed(
-                                            context,
-                                            UpdatePaymentScreen.screenName,
-                                            arguments: {
-                                              'payVoucherNoV': payVoucherNo,
-                                              'depositDateV': depositDate,
-                                              'paymentModeV': paymentMode,
-                                              'paymentToIDV': paymentToId,
-                                              'staffNameV' : staffName,
-                                              'staffIdV': staffId,
-                                              'vendorIdV': vendorId,
-                                              'vehIdV': vehId,
-                                              'vehicleNoV': vehicleNo,
-                                              'amountTotalV': amountTotal,
-                                              'expHeadId': expHeadId,
-                                              'payRemarkV': payRemark,
-                                              'transTimeV': transTime,
-                                              'transationCodeV': transationCode,
-                                              'transRemarkV': transRemark,
-                                              'expHeadNameV': expHeadName,
-                                              'bankIdV': bankId,
-                                              'mappingIdV': mappingId,
-                                              'accountNoV': accountNo,
-                                              'paymentIdV': paymentId,
-                                              'modeChange': "EDIT"
-                                            },
-                                          );
+                                          if (saveFlag) {
+                                            print('saveFlag $saveFlag');
+                                            showFlushBar(context, Constants.dayEndCompleted);
+                                          } else {
+                                            // Navigate to the target screen and pass the data
+                                            Navigator.pushNamed(
+                                              context,
+                                              UpdatePaymentScreen.screenName,
+                                              arguments: {
+                                                'payVoucherNoV': payVoucherNo,
+                                                'depositDateV': depositDate,
+                                                'paymentModeV': paymentMode,
+                                                'paymentToIDV': paymentToId,
+                                                'staffNameV' : staffName,
+                                                'staffIdV': staffId,
+                                                'vendorIdV': vendorId,
+                                                'vehIdV': vehId,
+                                                'vehicleNoV': vehicleNo,
+                                                'amountTotalV': amountTotal,
+                                                'expHeadId': expHeadId,
+                                                'payRemarkV': payRemark,
+                                                'transTimeV': transTime,
+                                                'transationCodeV': transationCode,
+                                                'transRemarkV': transRemark,
+                                                'expHeadNameV': expHeadName,
+                                                'bankIdV': bankId,
+                                                'mappingIdV': mappingId,
+                                                'accountNoV': accountNo,
+                                                'paymentIdV': paymentId,
+                                                'modeChange': "EDIT"
+                                              },
+                                            );
+                                          }
                                         });
                                       },
                                     ),
                                     // Icon for delete
                                     IconButton(
-                                      icon: Icon(Icons.delete, color: Colors.red), // Icon for delete
+                                      icon: Icon(Icons.delete, color:saveFlag?Colors.redAccent:Colors.red), // Icon for delete
                                       onPressed: () async {
-                                        int? pId = (payList.paymentId)?.toInt();
-                                        print('Delete button pressedd${payList.paymentId}');
-                                        // Show confirmation dialog
-                                        bool? confirmDelete = await showDialog<bool>(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title: const Text('Are you sure?'),
-                                              content: const Text('You want to delete?'),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop(false); // User pressed Cancel
-                                                  },
-                                                  child: const Text('Cancel'),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop(true); // User pressed Delete
-                                                  },
-                                                  child: const Text('Delete'),
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
-
-                                        // If user confirmed deletion
-                                        if (confirmDelete == true) {
-                                          if (pId != null) {
-                                            paymentDetailAddEditForMob(pId, "DELETE");
-                                            print('Delete button pressed$pId');
-                                          } else {
-                                            print("Receipt ID is null.");
-                                          }
+                                        if (saveFlag) {
+                                          print('saveFlag $saveFlag');
+                                          showFlushBar(context, Constants.dayEndCompleted);
                                         } else {
-                                          print('Delete action was canceled');
+                                          int? pId = (payList.paymentId)?.toInt();
+                                          print('Delete button pressedd${payList.paymentId}');
+                                          // Show confirmation dialog
+                                          bool? confirmDelete = await showDialog<bool>(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: const Text('Are you sure?'),
+                                                content: const Text('You want to delete?'),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context).pop(false); // User pressed Cancel
+                                                    },
+                                                    child: const Text('Cancel'),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context).pop(true); // User pressed Delete
+                                                    },
+                                                    child: const Text('Delete'),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+
+                                          // If user confirmed deletion
+                                          if (confirmDelete == true) {
+                                            if (pId != null) {
+                                              paymentDetailAddEditForMob(pId, "DELETE");
+                                              print('Delete button pressed$pId');
+                                            } else {
+                                              print("Receipt ID is null.");
+                                            }
+                                          } else {
+                                            print('Delete action was canceled');
+                                          }
                                         }
+
                                       },
                                     ),
                                   ],
@@ -2129,9 +2138,25 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
 
       // Conditional check for cash payment mode
       if (selectedTransMode == 'Cash') {
-        if (discountAmt != totalAmount || discountAmt <= 0) {
-          showFlushBar(context, Constants.denominationAmount);
-          return;
+        if(totalAmount != null || totalAmount>0){
+          if (discountAmt != totalAmount || discountAmt <= 0) {
+            showFlushBar(context, Constants.denominationAmount);
+            return;
+          }
+        }
+      }
+
+      if (selectedTransMode == 'Cash') {
+        if(cashDenominationMandatory){
+          if(totalAmount != null || totalAmount>0){
+            if (discountAmt != totalAmount || discountAmt <= 0) {
+              showFlushBar(context, Constants.denominationAmount);
+              return;
+            }
+          }else{
+            showFlushBar(context, Constants.cashDenominationIsMandatory);
+            return;
+          }
         }
       }
 
@@ -2148,7 +2173,6 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
           return;
         }
       }
-
 
       if (_selectBankModel != null) {
         bankId = selecteBankIDApi;
@@ -2280,7 +2304,106 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
     );
 
   }
+  Future<void> checkAndSaveDayEndData() async {
+    EasyLoading.instance
+      ..maskType = EasyLoadingMaskType.black // This creates a modal blocking interaction
+      ..loadingStyle = EasyLoadingStyle.light
+      ..dismissOnTap = false // Disable dismissing the loader by tapping
+      ..userInteractions = false;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? distributorId = prefs.getString('DistributorId');
+    String? bearerToken = prefs.getString('token');
+    int? distributorIds = int.parse(distributorId!);
+    try {
+      final response = await http.get(
+        Uri.parse('${AppUrl.CheckDayEndConfirmation}/$distributorIds'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $bearerToken",
+          // Pass bearer token in headers
+        },
+      );
+      debugPrint("Response bodyCheckDayEndConfirmation: ${response.body}");
+      debugPrint("requesr bodyCheckDayEndConfirmation: ${response.request}");
+      if (response.statusCode == 200) {
+        List<dynamic> apiResponse = json.decode(response.body);
+        if (apiResponse.isEmpty) {
+          saveFlag = false;
+          print("The list is empty, no data to save.");
+        } else {
+          var dayEndData = apiResponse[0];
+          int DSRSaved = dayEndData['DSRSaved'] ?? 0;
+          int CDCMSStkSaved = dayEndData['CDCMSStkSaved'] ?? 0;
+          int OpClSaved = dayEndData['OpClSaved'] ?? 0;
+          if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
+            saveFlag = true;
+            print("Data is valid, proceeding to save.");
+          } else {
+            print("Data is incomplete. Cannot proceed to save.");
+          }
+        }
+      } else {
+        print("Error: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Exception: $e");
+    }
+  }
 
+  Future<void> checkCashDenominationFlagMandatory() async {
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+
+    if (!Constants.isNetworkAvailable) {
+      showFlushBar(context, Constants.connectionMessage);
+      isLoading = false;
+    } else {
+      try {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? distributorId = prefs.getString('DistributorId');
+        String? bearerToken = prefs.getString('token');
+
+        if (bearerToken == null) {
+          isLoading = false;
+          throw Exception('Bearer token is missing');
+        }
+        final response = await http.get(
+          Uri.parse('${AppUrl.GetPageActionPermissionDtls}/$distributorId/All'),
+          headers: {
+            'Authorization': 'Bearer $bearerToken', // Add Bearer token here
+          },
+        );
+        debugPrint("Response body GetPageActionPermissionDtls: ${response.body}");
+        debugPrint("Request body GetPageActionPermissionDtls: ${response.request}");
+
+        if (response.statusCode == 200) {
+          // Parse the JSON response
+          final List<dynamic> data = json.decode(response.body);
+          setState(() {
+            cashDenoMandatoryList = data.map((jsonItem) =>
+                CahsDenominationMandatoryFlagModel.fromJson(jsonItem)).toList();
+            isLoading = false;
+            for (var item in cashDenoMandatoryList) {
+              if (item.distributorId.toString() == distributorId && item.permissionFor == "Cash Denomination" && item.isActive == 1) {
+                print("Flag truet:");
+                cashDenominationMandatory = true;
+                break; // Exit loop after finding the match
+              }else{
+                cashDenominationMandatory = false;
+              }
+            }
+          });
+        } else {
+          isLoading = false;
+          throw Exception('Failed to load sales data');
+        }
+      } catch (error) {
+        isLoading = false;
+        debugPrint("Error: $error");
+        // Return an empty list in case of an error
+      }
+    }
+  }
 }
 
 

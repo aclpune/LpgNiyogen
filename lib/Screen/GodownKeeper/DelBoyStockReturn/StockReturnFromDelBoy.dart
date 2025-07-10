@@ -16,6 +16,7 @@ import '../../DashboardModel/TodaysOpeningStockDataModel.dart';
 import '../../User/Login/provider/LoginProvider.dart';
 import '../../User/splashscreen/page/splash_screen.dart';
 import '../../Utils/CustomAppBar.dart';
+import '../../Utils/CustomeAlertDialog.dart';
 import '../../Utils/Styling.dart';
 import '../../Utils/Widget.dart';
 import '../../Utils/app_url.dart';
@@ -26,6 +27,7 @@ import '../BottomNavigationForGodownKeeper.dart';
 import '../DashboardScreen.dart';
 import '../DeliveryBoyModel/DeliveryBoyInfoModel.dart';
 import '../DeliveryBoyModel/GetSVTVConsumerListModel.dart';
+import '../DeliveryBoyModel/GetStockTransferListModel.dart';
 import '../DeliveryBoyModel/ItemData.dart';
 import '../DeliveryBoyModel/StockSubmitToManagerListModel.dart';
 import '../DeliveryBoyModel/VehicleNumberGetModel.dart';
@@ -89,7 +91,6 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
   int? imbalaceSum = 0;
   List<String> selectedConsumers =['Consumer 1', 'Consumer 2', 'Consumer 3', 'Consumer 4', 'Consumer 5'];
 
-
   // Controllers for each text field
   final TextEditingController _itemController = TextEditingController();
   final TextEditingController _filledController = TextEditingController();
@@ -125,6 +126,9 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
   var argValue;
   String? delBoyNameName;
   int? delBoyIDs;
+  bool stockTransferFlag = false;
+  List<GetStockTransferListModel> _stockTransferList = [];
+  bool saveFlag = false;
 
   void _addNewItem() async {
     DateTime now = DateTime.now();
@@ -436,14 +440,17 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
     DateTime now = DateTime.now();
     formattedDate = DateFormat('yyyy-MM-dd').format(now);
     deliveryDateController.text = formattedDate!;
-
     updateRefillSale = UpdateRefillSale();
-    fetchItems();
-    fetchDeliveryBoyInfo();
+    loadAllData();
+    // fetchItems();
+    // fetchDeliveryBoyInfo();
+    // fetchTransactionList();
+    // checkAndSaveDayEndData();
     itemList = updateRefillSale!.getUpdateRefillSaleData();
     updateRefillSale!.deleteCompletedRefillSales();
     debugPrint("itemList" + itemList.toString());
-    _fetchSVConsumerData("SV");
+    // _fetchSVConsumerData("SV");
+    // fetchCurrentStock();
     if (widget.flagAdd != null) {
       if (widget.flagAdd == "editMode") {
         debugPrint("widget.saleGKId " + widget.saleGKId.toString());
@@ -477,8 +484,8 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
     } else {
       debugPrint("Empty flag");
     }
-    _fetchTodaysOpeningStockData();
-    fetchCurrentStock();
+    // _fetchTodaysOpeningStockData();
+
     Future.delayed(Duration.zero, () {
       setState(() {
         argValue = ModalRoute.of(context)?.settings.arguments as Map;
@@ -494,6 +501,44 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
     });
   }
 
+  Future<void> loadAllData() async {
+    EasyLoading.instance
+      ..maskType = EasyLoadingMaskType.black
+      ..loadingStyle = EasyLoadingStyle.light
+      ..dismissOnTap = false
+      ..userInteractions = false;
+
+    EasyLoading.show(status: 'Loading...');
+
+    try {
+      await Future.wait([
+        fetchItems(),
+        fetchDeliveryBoyInfo(),
+        fetchTransactionList(),
+        checkAndSaveDayEndData(),
+        fetchCurrentStock(),
+      _fetchSVConsumerData("SV"),
+
+      ]);
+    } catch (e) {
+      debugPrint("Error loading all data: $e");
+      if (mounted) {
+        showFlushBar(context, 'Error: ${e.toString()}');
+      }
+    } finally {
+      EasyLoading.dismiss();
+    }
+  }
+
+  // void configLoading() {
+  //   EasyLoading.instance
+  //     ..loadingStyle = EasyLoadingStyle.light
+  //     ..maskType = EasyLoadingMaskType.black // 👈 This disables clicks
+  //     ..indicatorType = EasyLoadingIndicatorType.circle
+  //     ..userInteractions = false // 👈 Also ensures user cannot interact
+  //     ..dismissOnTap = false;
+  //
+  // }
   void _onEditItem(ItemList item, StockSubmitToManagerListModel v) {
     selectedConsumerNumbers.clear();
     selectedCylinderQuantities.clear();
@@ -757,7 +802,8 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
               /// Add New Section Imbalance
               receiptList.isNotEmpty
                   ?
-              Container(
+              Container
+                (
                 child: Row(
                   children: [
                     Expanded(
@@ -2559,18 +2605,28 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                   // Add 10px margin on left and right
                   child: ElevatedButton(
                     onPressed: () {
-                      if (flagEditMode == "editMode") {
-                        ((stockDataFuture != null))
-                            ? sendEditedDataToApi(context)
-                            : null;
-                      } else {
-                        ((_dataGetFromDBDelBoy.isNotEmpty) &&
-                            (selectedDelBoyName != null &&
-                                selectedDelBoyName!.isNotEmpty))
-                            ? sendDataToApi(selectedDelBoyId.toString()!,
-                            deliveryDateController.text)
-                            : null;
+                      if(stockTransferFlag){
+                        if(saveFlag){
+                          showFlushBar(context,
+                              Constants.dayEndCompleted);
+                        }else{
+                          if (flagEditMode == "editMode") {
+                            ((stockDataFuture != null))
+                                ? sendEditedDataToApi(context)
+                                : null;
+                          } else {
+                            ((_dataGetFromDBDelBoy.isNotEmpty) &&
+                                (selectedDelBoyName != null &&
+                                    selectedDelBoyName!.isNotEmpty))
+                                ? sendDataToApi(selectedDelBoyId.toString()!,
+                                deliveryDateController.text)
+                                : null;
+                          }
+                        }
+                      }else{
+                        CustomAlertDialog.showCustomAlert(context,Constants.stockNotAccepted);
                       }
+
                     },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 25.0,right: 25,top: 12,bottom: 12),
@@ -2618,55 +2674,72 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
 
   // Fetch data from API Item
   Future<void> fetchItems() async {
-    EasyLoading.show();
-    Constants.isNetworkAvailable =
-        await InternetConnectionChecker().hasConnection;
-    if (Constants.isNetworkAvailable) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? distributorId = prefs.getString('DistributorId');
-      String? bearerToken =
-          prefs.getString('token'); // Assuming the token is stored here
+    // EasyLoading.instance
+    //   ..maskType = EasyLoadingMaskType.black // This creates a modal blocking interaction
+    //   ..loadingStyle = EasyLoadingStyle.light
+    //   ..dismissOnTap = false // Disable dismissing the loader by tapping
+    //   ..userInteractions = false;
+    // EasyLoading.show(status: 'Loading...');
 
-      if (bearerToken == null) {
-        throw Exception('Bearer token is missing');
+      Constants.isNetworkAvailable =
+      await InternetConnectionChecker().hasConnection;
+      if (Constants.isNetworkAvailable) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? distributorId = prefs.getString('DistributorId');
+        String? bearerToken =
+        prefs.getString('token'); // Assuming the token is stored here
 
-      }
+        if (bearerToken == null) {
+          throw Exception('Bearer token is missing');
 
-      final response = await http.get(
-        Uri.parse('${AppUrl.GetItemMasterList}/$distributorId/1/C'),
-        headers: {
-          'Authorization': 'Bearer $bearerToken', // Add Bearer token here
-        },
-      );
-      debugPrint("GetItemMasterList" +
-          '${AppUrl.GetItemMasterList}/$distributorId/1/C');
-      debugPrint("GetItemMasterList" + response.body);
-      if (response.statusCode == 200) {
-        // Parse the response
-        List<dynamic> data = json.decode(response.body);
-        setState(() {
-          _items = data.map((json) => CylItemListModel.fromJson(json)).toList();
-          _items = _items
-              .where(
-                  (item) => !item.itemName!.toLowerCase().contains('regulator'))
-              .toList();
+        }
+        try{
 
-          EasyLoading.dismiss();
-        });
+          final response = await http.get(
+            Uri.parse('${AppUrl.GetItemMasterList}/$distributorId/1/C'),
+            headers: {
+              'Authorization': 'Bearer $bearerToken', // Add Bearer token here
+            },
+          );
+          debugPrint("GetItemMasterList" +
+              '${AppUrl.GetItemMasterList}/$distributorId/1/C');
+          debugPrint("GetItemMasterList" + response.body);
+          if (response.statusCode == 200) {
+            // Parse the response
+            List<dynamic> data = json.decode(response.body);
+            setState(() {
+              _items = data.map((json) => CylItemListModel.fromJson(json)).toList();
+              _items = _items
+                  .where(
+                      (item) => !item.itemName!.toLowerCase().contains('regulator'))
+                  .toList();
+
+
+            });
+          } else {
+
+            refreshTokens();
+            throw Exception('Failed To Load Items');
+          }
+        }catch(e){
+          debugPrint("GetItemMasterList" + e.toString());
+        }
       } else {
-        EasyLoading.dismiss();
-        refreshTokens();
-        throw Exception('Failed To Load Items');
+
+        showFlushBar(
+            context,Constants.connectionMessage);
       }
-    } else {
-      EasyLoading.dismiss();
-      showFlushBar(
-          context,Constants.connectionMessage);
-    }
+
+
   }
 
   // Fetch data from API Del boy
   Future<void> fetchDeliveryBoyInfo() async {
+    // EasyLoading.instance
+    //   ..maskType = EasyLoadingMaskType.black // This creates a modal blocking interaction
+    //   ..loadingStyle = EasyLoadingStyle.light
+    //   ..dismissOnTap = false // Disable dismissing the loader by tapping
+    //   ..userInteractions = false;
     Constants.isNetworkAvailable =
         await InternetConnectionChecker().hasConnection;
     if (Constants.isNetworkAvailable) {
@@ -2678,6 +2751,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
       if (bearerToken == null) {
         throw Exception('Bearer token is missing');
       }
+        try{
 
       final response = await http.get(
         Uri.parse('${AppUrl.GetStaffDetailsList}/$distributorId/1/2'),
@@ -2699,6 +2773,9 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
         refreshTokens();
         throw Exception(Constants.listGettingFail);
       }
+        }catch(e){
+          debugPrint("_delBoyInfo" + e.toString());
+        }
     } else {
       showFlushBar(
           context, Constants.connectionMessage);
@@ -2707,6 +2784,11 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
 
 //vehicle info
   Future<void> fetchVehicleDetail(int staffId) async {
+    // EasyLoading.instance
+    //   ..maskType = EasyLoadingMaskType.black // This creates a modal blocking interaction
+    //   ..loadingStyle = EasyLoadingStyle.light
+    //   ..dismissOnTap = false // Disable dismissing the loader by tapping
+    //   ..userInteractions = false;
     Constants.isNetworkAvailable =
         await InternetConnectionChecker().hasConnection;
     if (Constants.isNetworkAvailable) {
@@ -2718,6 +2800,8 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
       if (bearerToken == null) {
         throw Exception('Bearer Token Is Missing');
       }
+        try{
+
 
       final response = await http.get(
         Uri.parse(
@@ -2756,6 +2840,9 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
         // Optionally handle token refresh here or show an error
         throw Exception(Constants.listGettingFail);
       }
+        }catch(e){
+          debugPrint("vehicleId body: " + e.toString());
+        }
     } else {
       showFlushBar(
           context, Constants.connectionMessage);
@@ -2917,7 +3004,6 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
   }
 
   Future<void> fetchData(String deliveryBoyId, String delDate) async {
-    EasyLoading.show();
     try {
       // Fetch data for the given deliveryBoyId
       List<Map<String, Object?>>? fetchedData = await updateRefillSale
@@ -2929,7 +3015,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
           print(
               '_dataGetFromDBDelBoy: $_dataGetFromDBDelBoy');
             // Store the fetched data in _data
-          EasyLoading.dismiss();
+          // EasyLoading.dismiss();
         });
       } else {
         // Handle the case when no data is returned
@@ -2938,11 +3024,11 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
           print(
               '_dataGetFromDBDelBoy: $_dataGetFromDBDelBoy'); // Store the fetched data in _data
 // Empty the list if no data is found
-          EasyLoading.dismiss();
+//           EasyLoading.dismiss();
         });
       }
     } catch (e) {
-      EasyLoading.dismiss();
+      // EasyLoading.dismiss();
       print('Error fetching data: $e');
     }
   }
@@ -3311,7 +3397,11 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
   }
 
   Future<void> _fetchImbalanceData(int delManId) async {
-    EasyLoading.show();
+    // EasyLoading.instance
+    //   ..maskType = EasyLoadingMaskType.black // This creates a modal blocking interaction
+    //   ..loadingStyle = EasyLoadingStyle.light
+    //   ..dismissOnTap = false // Disable dismissing the loader by tapping
+    //   ..userInteractions = false;
     Constants.isNetworkAvailable =
         await InternetConnectionChecker().hasConnection;
     if (Constants.isNetworkAvailable) {
@@ -3340,7 +3430,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                 .map((json) => ImabalanceEmptyListModel.fromJson(json))
                 .toList();
             isLoading = false;
-            EasyLoading.dismiss();
+            // EasyLoading.dismiss();
             // Initialize totalImbQty
             num totalImbQty = 0;
 
@@ -3360,14 +3450,15 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
         } else {
           // Handle non-200 responses
           setState(() {
-            EasyLoading.dismiss();
+            // EasyLoading.dismiss();
             isLoading = false;
+            showFlushBar(context, Constants.listGettingFail);
           });
-          showFlushBar(context, Constants.listGettingFail);
+
         }
       } catch (e) {
         setState(() {
-          EasyLoading.dismiss();
+          // EasyLoading.dismiss();
           isLoading = false;
         });
         // ScaffoldMessenger.of(context).showSnackBar(
@@ -3376,7 +3467,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
         showFlushBar(context,  Constants.listGettingFail);
       }
     } else {
-      EasyLoading.dismiss();
+      // EasyLoading.dismiss();
       showFlushBar(
           context, Constants.connectionMessage);
     }
@@ -3563,6 +3654,11 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
   }
 
   Future<void> _fetchTodaysOpeningStockData() async {
+    EasyLoading.instance
+      ..maskType = EasyLoadingMaskType.black // This creates a modal blocking interaction
+      ..loadingStyle = EasyLoadingStyle.light
+      ..dismissOnTap = false // Disable dismissing the loader by tapping
+      ..userInteractions = false;
     Constants.isNetworkAvailable = await InternetConnectionChecker().hasConnection;
     if (Constants.isNetworkAvailable) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -3596,18 +3692,19 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
           // Handle non-200 responses
           setState(() {
             isLoading = false;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(Constants.listGettingFail)),
+            );
           });
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(Constants.listGettingFail)),
-          );
+
         }
       } catch (e) {
-        setState(() {
-          isLoading = false;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
+        if(mounted){
+          setState(() {
+            isLoading = false;
+          });
+        }
+
       }
     } else {
       showFlushBar(context, Constants.connectionMessage);
@@ -3616,7 +3713,12 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
 
 // Add this method to compare total sale with filled stock
   Future<void> fetchCurrentStock() async {
-    EasyLoading.show();
+    // EasyLoading.instance
+    //   ..maskType = EasyLoadingMaskType.black // This creates a modal blocking interaction
+    //   ..loadingStyle = EasyLoadingStyle.light
+    //   ..dismissOnTap = false // Disable dismissing the loader by tapping
+    //   ..userInteractions = false;
+
     Constants.isNetworkAvailable =
     await InternetConnectionChecker().hasConnection;
     if(Constants.isNetworkAvailable){
@@ -3646,28 +3748,29 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
           setState(() {
             getCurrentStcOfGodownKeeper = data.map((json) => GetCurrentStcOfGodownKeeperModel.fromJson(json)).toList();
             isLoading = false;
-            EasyLoading.dismiss();
+            // EasyLoading.dismiss();
           });
         } else {
           // Handle non-200 responses
           setState(() {
             isLoading = false;
-            EasyLoading.dismiss();
+            // EasyLoading.dismiss();
+            showFlushBar(context, Constants.listGettingFail);
           });
-          showFlushBar(context, Constants.listGettingFail);
+
         }
       } catch (e) {
-        setState(() {
-          EasyLoading.dismiss();
-          isLoading = false;
-        });
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(content: Text('Error: $e')),
-        // );
-        showFlushBar(context,Constants.listGettingFail);
-      }
+        if (mounted) {
+          setState(() {
+            // EasyLoading.dismiss();
+            isLoading = false;
+            showFlushBar(context,Constants.listGettingFail);
+          });
+        }
+        }
+
     }else{
-      EasyLoading.dismiss();
+      // EasyLoading.dismiss();
       showFlushBar(context,
           Constants.connectionMessage);
     }
@@ -3686,6 +3789,11 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
   }
 
   Future<void> _fetchSVConsumerData(String flag) async {
+    EasyLoading.instance
+      ..maskType = EasyLoadingMaskType.black // This creates a modal blocking interaction
+      ..loadingStyle = EasyLoadingStyle.light
+      ..dismissOnTap = false // Disable dismissing the loader by tapping
+      ..userInteractions = false;
     EasyLoading.show();
     Constants.isNetworkAvailable =
     await InternetConnectionChecker().hasConnection;
@@ -3738,19 +3846,20 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
           setState(() {
             EasyLoading.dismiss();
             isLoading = false;
+            showFlushBar(context, Constants.listGettingFail);
           });
-          showFlushBar(context, Constants.listGettingFail);
+
         }
       } catch (e) {
-        setState(() {
-          EasyLoading.dismiss();
-          isLoading = false;
-        });
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(content: Text('Error: $e')),
-        // );
-        showFlushBar(context,  Constants.listGettingFail);
-      }
+        if(mounted){
+          setState(() {
+            EasyLoading.dismiss();
+            isLoading = false;
+            showFlushBar(context,  Constants.listGettingFail);
+          });
+        }
+    }
+
     } else {
       EasyLoading.dismiss();
       showFlushBar(
@@ -4418,5 +4527,139 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
     return selectedCylinderQuantitiesTV;
   }
 
+  Future<void> fetchTransactionList() async {
+    // EasyLoading.instance
+    //   ..maskType = EasyLoadingMaskType.black // This creates a modal blocking interaction
+    //   ..loadingStyle = EasyLoadingStyle.light
+    //   ..dismissOnTap = false // Disable dismissing the loader by tapping
+    //   ..userInteractions = false;
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+    if (Constants.isNetworkAvailable) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? distributorId = prefs.getString('DistributorId');
+      String? godownId = prefs.getString('godownId');
+      String? bearerToken = prefs.getString('token'); // Assuming the token is stored here
+      int dId = int.parse(distributorId!);
+      int gId = int.parse(godownId!);
+      if (bearerToken == null) {
+        throw Exception('Bearer token is missing');
+      }
+      try{
 
+
+      final response = await http.get(
+        Uri.parse('${AppUrl.GetStockTransferDtls}/$dId/$gId'),
+        headers: {
+          'Authorization': 'Bearer $bearerToken', // Add Bearer token here
+        },
+      );
+      debugPrint(
+          "GetStockTransferDtls" + '${AppUrl.GetStockTransferDtls}/$distributorId/1/2');
+      debugPrint("GetStockTransferDtls" + response.body);
+      if (response.statusCode == 200) {
+        // Parse the response
+        List<dynamic> data = json.decode(response.body);
+        setState(() {
+          _stockTransferList = data.map((json) => GetStockTransferListModel.fromJson(json)).toList();
+          bool hasZeroStkTrans = false;
+          for (int i = 0; i < _stockTransferList.length; i++) {
+            if (_stockTransferList[i].isStkTrans == 0) {
+              hasZeroStkTrans = true;
+              debugPrint("Found item with isStkTrans = 0");
+              break; // No need to continue checking once we find an item with isStkTrans = 0
+            }
+          }
+          if (hasZeroStkTrans) {
+            stockTransferFlag = false; // Disable the button
+            // showFlushBar(
+            //     context, "Action Restricted", "Cannot perform the action as one or more items have isStkTrans = 0");
+          } else {
+            stockTransferFlag = true; // Enable the button
+          }
+        });
+        isLoading = false;
+        // EasyLoading.dismiss();
+      } else {
+        isLoading = false;
+        // EasyLoading.dismiss();
+        throw Exception('Failed To Load Items');
+      }
+      }catch(e){
+        debugPrint("Found item with isStkTrans = ${e.toString()}");
+      }
+    } else {
+      isLoading = false;
+      // EasyLoading.dismiss();
+      showFlushBar(
+          context,Constants.connectionMessage);
+    }
+  }
+
+  Future<void> checkAndSaveDayEndData() async {
+    // EasyLoading.instance
+    //   ..maskType = EasyLoadingMaskType.black // This creates a modal blocking interaction
+    //   ..loadingStyle = EasyLoadingStyle.light
+    //   ..dismissOnTap = false // Disable dismissing the loader by tapping
+    //   ..userInteractions = false;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? distributorId = prefs.getString('DistributorId');
+    String? bearerToken = prefs.getString('token');
+    String? StaffId = prefs.getString('StaffId');
+    int? staffIds = int.parse(StaffId!);
+    int? distributorIds = int.parse(distributorId!);
+    try {
+      // Make the GET request
+      final response = await http.get(
+        Uri.parse('${AppUrl.CheckDayEndConfirmation}/$distributorIds'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $bearerToken", // Pass bearer token in headers
+        },
+      );
+      debugPrint("Response bodyCheckDayEndConfirmation: ${response.body}");
+      debugPrint("requesr bodyCheckDayEndConfirmation: ${response.request}");
+      if (response.statusCode == 200) {
+        // Parse the API response
+        List<dynamic> apiResponse = json.decode(response.body);
+
+        // Check if the response list is empty
+        if (apiResponse.isEmpty) {
+          // If the list is empty, do not save
+          saveFlag = false;
+          print("The list is empty, no data to save.");
+          // EasyLoading.dismiss();
+        } else {
+          // If there is data in the response, process it and save
+          var dayEndData = apiResponse[0]; // Access the first item in the list (assuming it's an object)
+
+          // You can validate the fields in the response as needed
+          int DSRSaved = dayEndData['DSRSaved'] ?? 0;
+          int CDCMSStkSaved = dayEndData['CDCMSStkSaved'] ?? 0;
+          int OpClSaved = dayEndData['OpClSaved'] ?? 0;
+
+          // Check if all required fields are saved
+          if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
+            saveFlag = true;
+            // If the conditions are met, set the flag and save the data
+            print("Data is valid, proceeding to save.");
+            // EasyLoading.dismiss();
+          } else {
+            // If any condition is not met, print a message
+            print("Data is incomplete. Cannot proceed to save.");
+            // EasyLoading.dismiss();
+          }
+        }
+      } else {
+        // Handle API error
+        print("Error: ${response.statusCode}");
+        // EasyLoading.dismiss();
+      }
+    }
+    catch (e) {
+      // Exception handling
+      print("Exception: $e");
+      // EasyLoading.dismiss();
+    }
+  }
 }

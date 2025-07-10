@@ -124,7 +124,6 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
     // _fetchData("Y");
     checkIfSavedOrNot(selectedDate);
     checkAndSaveDayEndData();
-
   }
 
   @override
@@ -1423,7 +1422,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                 dataExpenseList[index - 1].transCate);
 
                         return Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(0.0),
                           child: Column(
                             children: [
                               // If TransCate is different, show the header row
@@ -1449,6 +1448,17 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                           style: Styling
                                               .itemBlackTestSmallReportBold,
                                           textAlign: TextAlign.left,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 1,
+                                        child: Text(
+                                          item.transCate == "TV Refund"?
+                                          'Qty':
+                                          '',
+                                          style: Styling
+                                              .itemBlackTestSmallReportBold,
+                                          textAlign: TextAlign.center,
                                         ),
                                       ),
                                       Expanded(
@@ -1515,6 +1525,14 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                           ),
                                           textAlign: TextAlign.left,
                                         ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        item.transCate == "TV Refund"?item.quantity == 0 ? ' ' : item.quantity.toString():' ',
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.center,
                                       ),
                                     ),
                                     Expanded(
@@ -2910,7 +2928,9 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
         "MappingId":e.mappingId ?? 0
       };
     }).toList();
-
+    for (var e in dataIncomeTotalAmountList) {
+      print('quantity: ${e.quantity}, type: ${e.quantity.runtimeType}');
+    }
     // Process Income & Expense Data
     final List<Map<String, dynamic>> dataIncomeTotalAmount = []
       ..addAll(dataIncomeTotalAmountList.map((e) {
@@ -2918,7 +2938,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
           "TransCate": e.transCate,
           "ItemId": e.itemId,
           "ItemName": e.itemName,
-          "TotalSaleQty": e.quantity,
+          "TotalSaleQty": double.tryParse(e.quantity.toString())?.toInt() ?? 0,
           "UnsettQty": e.unsettQty,
           "SettQty": e.settQty,
           "Mode": e.mode,
@@ -2932,10 +2952,18 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
           "ItemName": e.expenseItemName,
           "Mode": e.mode,
           "Amount": e.expenseAmount,
+          "TotalSaleQty": e.quantity,
           "SectionType":2,
         };
       }).toList());
 
+    for (var item in dataIncomeTotalAmount) {
+      print('--- Entry ---');
+      item.forEach((key, value) {
+        print('$key: $value');
+      });
+    }
+    print(jsonEncode(dataIncomeTotalAmount));
     // Request Body to send data to the API
     final Map<String, dynamic> requestBody = {
       "DSRId": 0,
@@ -2958,6 +2986,10 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
     };
     // print("response SaveAllDSRDataFromMob: ${response.statusCode} - ${response.body}");
     print("requestBody SaveAllDSRDataFromMob: $requestBody");
+    print("requestBody SaveAllDSRDataFromMob1: ${requestBody}");
+    requestBody.forEach((key, value) {
+      print('$key: $value');
+    });
     // Making the POST request
     try {
       final response = await http.post(
