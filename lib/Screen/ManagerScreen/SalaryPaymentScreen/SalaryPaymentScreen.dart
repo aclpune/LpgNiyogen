@@ -610,6 +610,7 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
                           contentPadding: EdgeInsets.symmetric(
                               vertical: 12, horizontal: 10),
                         ),
+
                         value: selectedTransMode,
                         // Bind the selected value
                         items: getTransMode.map((String value) =>
