@@ -137,6 +137,12 @@ BranchAdminAH	cnf@1234*/
 
   ///
   static String discountError = "The Entered Discount Should Not Be Greater Than Amt.";
+
+  static String partialPayErr = "After partial payment or payment completion, the invoice cannot be deleted";
+  static String partialPayErr1 = "After partial payment or payment completion, the invoice cannot be edited";
+  static String creditPayErr = "After adding a credit note, you cannot edit the record.";
+  static String creditPayErr1 = "After adding a credit note, you cannot delete the record.";
+  static String creditCheck = "The Credit note amount is equal to the total amount.";
 /*
   //Picklist -
 0	Created	PL

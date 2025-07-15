@@ -17,6 +17,10 @@ import 'Screen/GodownKeeper/ItemReceipt/ItemReturn/ItenRetun.dart';
 import 'Screen/GodownKeeper/ItemReceipt/ItemReturnXMI/screen/AddReturnItemXMIScreen.dart';
 import 'Screen/GodownKeeper/ItemReceipt/ItemReturnXMI/screen/ItemReturnXMIListScreen.dart';
 import 'Screen/GodownKeeper/MoreOptionScreenGodownKeeper.dart';
+import 'Screen/ManagerScreen/ARBReturnScreen/ArbReturnScreen.dart';
+import 'Screen/ManagerScreen/ARBSaleScreen/ArbSaleScreen.dart';
+import 'Screen/ManagerScreen/ARBScreen/AddPaymentPopupScreen.dart';
+import 'Screen/ManagerScreen/ARBScreen/ArbScreen.dart';
 import 'Screen/ManagerScreen/BootomNavigatinBarManager.dart';
 import 'Screen/GodownKeeper/MarkDefective/MarkDefectiveItemScreen.dart';
 import 'Screen/ManagerScreen/CashDepositToBankScreen.dart';
@@ -207,6 +211,10 @@ class MyApp extends StatelessWidget {
             ImbalanceCountClickUI.screenName: (context) => ImbalanceCountClickUI(),
             TVSalesScreen.screenName: (context) => TVSalesScreen(),
             SalaryPaymentScreen.screenName: (context) => SalaryPaymentScreen(),
+            ArbReturnScreen.screenName: (context) => ArbReturnScreen(),
+            ArbSaleScreen.screenName: (context) => ArbSaleScreen(),
+            ArbScreen.screenName: (context) => ArbScreen(),
+            AddPaymentPopupScreen.screenName: (context) => AddPaymentPopupScreen(),
             //ManagerCashInHandScreenDetails.screenName: (context) => ManagerCashInHandScreenDetails(),
 
 

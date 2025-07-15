@@ -118,6 +118,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
   bool saveFlag = false;
   GlobalKey _globalKey = GlobalKey();
   bool isGenerating = false;
+
   @override
   void initState() {
     super.initState();
@@ -140,6 +141,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
     }
     super.dispose();
   }
+
   late bool isDateValid;
   @override
   Widget build(BuildContext context) {
@@ -2916,8 +2918,6 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
       };
     }).toList();
 
-
-
     final List<Map<String, dynamic>> dataCashFlowSummary= dataCashFlowSummaryList.map((e) {
       return {
         "StaffId": e.staffId ?? 0,
@@ -2951,11 +2951,13 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
           "TransCate": e.transCate,
           "ItemName": e.expenseItemName,
           "Mode": e.mode,
-          "Amount": e.expenseAmount,
           "TotalSaleQty": e.quantity,
+          "Amount": e.expenseAmount,
           "SectionType":2,
         };
       }).toList());
+    // "TotalSaleQty": double.tryParse(e.quantity.toString())?.toInt() ?? 0,
+    // "TotalSaleQty": e.quantity,
 
     for (var item in dataIncomeTotalAmount) {
       print('--- Entry ---');

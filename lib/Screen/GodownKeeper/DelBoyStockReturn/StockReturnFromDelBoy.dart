@@ -1620,7 +1620,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
 
                                                 if (isUpdated == true) {
                                                   EasyLoading.showToast(
-                                                      Constants.dataDeleted,
+                                                      Constants.dataUpdated,
                                                       duration: const Duration(
                                                           milliseconds: 3000));
 

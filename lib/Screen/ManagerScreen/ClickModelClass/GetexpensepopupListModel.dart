@@ -1,13 +1,14 @@
 /// DistributorId : 8118
 /// Date : null
-/// expensehead : "On Account"
-/// Cash : 304.50
-/// Bank : 0.00
-/// StaffId : 24
-/// StaffName : "Bhagwat"
+/// expensehead : "TV Refund"
+/// Cash : 0.00
+/// Bank : 100.00
+/// StaffId : 44
+/// StaffName : "19kg Devendra"
 /// ExpHeadId : 0
 /// ExpenseAmount : 0.0
 /// Flag : null
+/// Qty : 1
 
 class GetexpensepopupListModel {
   GetexpensepopupListModel({
@@ -20,7 +21,8 @@ class GetexpensepopupListModel {
       String? staffName, 
       num? expHeadId, 
       num? expenseAmount, 
-      dynamic flag,}){
+      dynamic flag, 
+      num? qty,}){
     _distributorId = distributorId;
     _date = date;
     _expensehead = expensehead;
@@ -31,6 +33,7 @@ class GetexpensepopupListModel {
     _expHeadId = expHeadId;
     _expenseAmount = expenseAmount;
     _flag = flag;
+    _qty = qty;
 }
 
   GetexpensepopupListModel.fromJson(dynamic json) {
@@ -44,6 +47,7 @@ class GetexpensepopupListModel {
     _expHeadId = json['ExpHeadId'];
     _expenseAmount = json['ExpenseAmount'];
     _flag = json['Flag'];
+    _qty = json['Qty'];
   }
   num? _distributorId;
   dynamic _date;
@@ -55,6 +59,7 @@ class GetexpensepopupListModel {
   num? _expHeadId;
   num? _expenseAmount;
   dynamic _flag;
+  num? _qty;
 GetexpensepopupListModel copyWith({  num? distributorId,
   dynamic date,
   String? expensehead,
@@ -65,6 +70,7 @@ GetexpensepopupListModel copyWith({  num? distributorId,
   num? expHeadId,
   num? expenseAmount,
   dynamic flag,
+  num? qty,
 }) => GetexpensepopupListModel(  distributorId: distributorId ?? _distributorId,
   date: date ?? _date,
   expensehead: expensehead ?? _expensehead,
@@ -75,6 +81,7 @@ GetexpensepopupListModel copyWith({  num? distributorId,
   expHeadId: expHeadId ?? _expHeadId,
   expenseAmount: expenseAmount ?? _expenseAmount,
   flag: flag ?? _flag,
+  qty: qty ?? _qty,
 );
   num? get distributorId => _distributorId;
   dynamic get date => _date;
@@ -86,6 +93,7 @@ GetexpensepopupListModel copyWith({  num? distributorId,
   num? get expHeadId => _expHeadId;
   num? get expenseAmount => _expenseAmount;
   dynamic get flag => _flag;
+  num? get qty => _qty;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -99,6 +107,7 @@ GetexpensepopupListModel copyWith({  num? distributorId,
     map['ExpHeadId'] = _expHeadId;
     map['ExpenseAmount'] = _expenseAmount;
     map['Flag'] = _flag;
+    map['Qty'] = _qty;
     return map;
   }
 

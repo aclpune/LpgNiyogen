@@ -106,128 +106,6 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
   int? salaryEntryId;
   int? payId;
   bool saveFlag = false;
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   getNoteTypeAndIDList();
-  //   fetchBank();
-  //   fetchSavedData();
-  //    getCashHandOverDtlsList(selectedDate);
-  //   getStaffDetailsList();
-  //   loadInitialStaffData();
-  //   getSalaryPaymentList();
-  //   getVoucherNoForExpense();
-  //
-  //   Future.delayed(Duration.zero, () {
-  //     setState(() async {
-  //       argValue = ModalRoute.of(context)?.settings.arguments as Map;
-  //       modes = argValue?["modeChange"]?? '';
-  //       if (argValue != null) {
-  //         String paymentModeEdit = argValue["paymentModeV"] ?? 0;
-  //          selectedTransMode = paymentModeEdit;
-  //         String staffNameEdit = argValue["staffNameV"] ?? 0;
-  //         selectedItemId = int.tryParse(argValue["staffIdV"] ?? '') ?? 0;
-  //         String paidModeEdit = argValue["paidModeV"] ?? 0;
-  //         selectedpaidAgainstSalary = paidModeEdit;
-  //         int selectecteItemTypeEdit = argValue["ItemTypeV"];
-  //         selectedItemType = selectecteItemTypeEdit;
-  //         //updateSelectedPaidAgainstSalary() = paidModeEdit;
-  //         //updateSelectedPaidAgainstSalary();
-  //        // filteredPaidAgainstSalary = paidModeEdit;
-  //         double amountTotalEdit = double.tryParse(argValue["amountTotalV"] ?? '') ?? 0;
-  //         selectedExpId = int.tryParse(argValue["expHeadId"] ?? '') ?? 0;
-  //         String payRemarkEdit = argValue["payRemarkV"] ?? 0;
-  //         String transTimeEdit = argValue["transTimeV"] ?? 0;
-  //         String transRemarkEdit = argValue["transRemarkV"] ?? 0;
-  //         String transationCodeEdit = argValue["transationCodeV"] ?? 0;
-  //         String accountNoEdit = argValue["accountNoV"] ?? 0;
-  //         selecteBankIDApi = int.tryParse(argValue["bankIdV"] ?? '') ?? 0;
-  //         accMappingId = int.tryParse(argValue["mappingIdV"] ?? '') ?? 0;
-  //         salaryEntryId = int.tryParse(argValue["salaryEntryIDV"] ?? '') ?? 0;
-  //
-  //         timeController.text = transTimeEdit;
-  //         TranCodeController.text = transationCodeEdit;
-  //         transReviewController.text = transRemarkEdit;
-  //         _balanceController.text = amountTotalEdit.toString();
-  //         remarkController.text = payRemarkEdit;
-  //
-  //
-  //         if(filteredPaidAgainstSalary.contains(paidModeEdit)){
-  //           selectedpaidAgainstSalary = paidModeEdit;
-  //           selectedItemType = selectecteItemTypeEdit;
-  //         } else{
-  //           selectedpaidAgainstSalary = null;
-  //         }
-  //
-  //         // if(getpaidAgainstSalary.contains(paidModeEdit)){
-  //         //   selectedpaidAgainstSalary = paidModeEdit;
-  //         //   selectedItemType = selectecteItemTypeEdit;
-  //         // } else{
-  //         //   selectedpaidAgainstSalary = null;
-  //         // }
-  //
-  //         //Edit Action For Transaction Mode
-  //         if(getTransMode.contains(paymentModeEdit)){
-  //           selectedTransMode = paymentModeEdit;
-  //         }else if(paymentModeEdit == "Bank"){
-  //            selectedTransMode = "Online";
-  //          } else{
-  //           selectedTransMode = null;
-  //         }
-  //
-  //         //Edit Action On Selected Staff
-  //         if (selectedItemId != 0) {
-  //           getStaffDetailsList().whenComplete(() {
-  //             selectedstaff = staffmodel.firstWhere(
-  //                   (item) => item.staffName == staffNameEdit,
-  //               orElse: () => GetStaffDetailsListModel(staffName: ''),
-  //             );
-  //             debugPrint("Staff selected during edit: ${selectedstaff?.staffName}");
-  //           });
-  //         }
-  //
-  //         //Edit Action On Cash Denomination
-  //         getNoteTypeAndIDList().whenComplete((){
-  //           getReceiptCashDenominationDtl(salaryEntryId!).whenComplete(() {
-  //             if (returndenominationModel.isNotEmpty) {
-  //               initializeControllers();
-  //             } else {
-  //               debugPrint("Denomination data is empty");
-  //             }
-  //           });
-  //         });
-  //
-  //         //Edit Action On Bank Mode
-  //         // await fetchBank();
-  //         // if(accountNoEdit.isNotEmpty && accountNoEdit != "null"){
-  //         //   final match = bankModel.firstWhere(
-  //         //         (item) => item.accountNo?.trim() == accountNoEdit.trim(),
-  //         //     orElse: () => GetBankMappingDetailsListModel(),
-  //         //   );
-  //         //
-  //         //   if((match.accountNo ?? '').isNotEmpty){
-  //         //     setState(() {
-  //         //       _selectBankModel = match;
-  //         //     });
-  //         //   }
-  //         // }
-  //         await fetchBank();
-  //         if(accountNoEdit.isNotEmpty && accountNoEdit != "null"){
-  //           final match = bankModel.firstWhere(
-  //                 (item) => item.accountNo?.trim() == accountNoEdit.trim(),
-  //             orElse: () => GetBankMappingDetailsListModel(),
-  //           );
-  //
-  //           if((match.accountNo ?? '').isNotEmpty){
-  //             setState(() {
-  //               _selectBankModel = match;
-  //             });
-  //           }
-  //         }
-  //       }
-  //     });
-  //   });
-  // }
   List<CahsDenominationMandatoryFlagModel> cashDenoMandatoryList = [];
   bool cashDenominationMandatory = false;
   @override
@@ -340,14 +218,6 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
       }
     });
   }
-
-  // void updateSelectedPaidAgainstSalary() {
-  //   if (filteredPaidAgainstSalary.contains(paidModeEdit)) {
-  //     selectedpaidAgainstSalary = paidModeEdit;
-  //   } else {
-  //     selectedpaidAgainstSalary = null; // or some default value
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -466,28 +336,6 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
                     Flexible(
                  flex: 1,
                         child:
-                        // DropdownButtonFormField<String>(
-                        //   key: formKey2,
-                        //   decoration: InputDecoration(
-                        //     contentPadding: EdgeInsets.symmetric(
-                        //         vertical: 12, horizontal: 10),
-                        //   ),
-                        //   value: selectedpaidAgainstSalary,
-                        //   // Bind the selected value
-                        //   items: filteredPaidAgainstSalary.map((String value) =>
-                        //       DropdownMenuItem<String>(
-                        //         value: value,
-                        //         child: Text(value),
-                        //       ))
-                        //       .toList(),
-                        //   onChanged: (value) {
-                        //     setState(() {
-                        //       selectedpaidAgainstSalary =
-                        //           value;
-                        //     });
-                        //   },
-                        //   isExpanded: true,
-                        // ),
                         DropdownButtonFormField<String>(
                           key: formKey2,
                           decoration: InputDecoration(
@@ -525,38 +373,6 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
                         "*",
                       ),
                     ),
-                    // Flexible(
-                    //   flex: 1,
-                    //   child: TextField(
-                    //     controller: _balanceController,
-                    //     keyboardType: TextInputType.number,
-                    //     // inputFormatters: [
-                    //     //   FilteringTextInputFormatter.deny(RegExp(r'\s')), // Disallow spaces
-                    //     //
-                    //     // ],
-                    //     onChanged: (value) {
-                    //
-                    //       setState(() {
-                    //         _isDepositEmpty = value.isEmpty;
-                    //         double val = double.tryParse(value.replaceAll(',', '')) ?? 0;
-                    //         if (val > totalAmt!) {
-                    //           _balanceController.clear();
-                    //         }
-                    //       });
-                    //     },
-                    //     decoration: InputDecoration(
-                    //       hintText: 'Enter paid Salary Amount',
-                    //       errorText: _isDepositEmpty ? 'Paid Salary Amt is required' : null,
-                    //       errorStyle: TextStyle(color: Colors.red),
-                    //       focusedErrorBorder: UnderlineInputBorder(
-                    //         borderSide: BorderSide(color: Colors.red),
-                    //       ),
-                    //       errorBorder: UnderlineInputBorder(
-                    //         borderSide: BorderSide(color: Colors.red),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
                     Flexible(
                       flex: 1,
                       child: TextField(
@@ -571,8 +387,6 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
                           setState(() {
                             _isDepositEmpty = value.isEmpty;
                             double val = double.tryParse(value.replaceAll(',', '')) ?? 0;
-
-
                           });
                         },
                         decoration: InputDecoration(
@@ -671,9 +485,6 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
                             TextField(
                               controller: TranCodeController,
                               maxLengthEnforcement: MaxLengthEnforcement.enforced, // Enforce max length
-                              // inputFormatters: <TextInputFormatter>[
-                              //   LengthLimitingTextInputFormatter(30), // Limit the length to 30 characters
-                              // ],
                               inputFormatters: <TextInputFormatter>[
                                 LengthLimitingTextInputFormatter(30), // Limit to 30 characters
                                 FilteringTextInputFormatter.deny(
@@ -711,11 +522,6 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
                           Expanded(
                             child: TextField(
                               controller: timeController,
-                              // inputFormatters: [
-                              //   FilteringTextInputFormatter.allow(
-                              //     RegExp(r'^\d{0,5}:?$'), // up to 5 digits, optional 1 colon at end
-                              //   ),
-                              // ],
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(RegExp(r'^\d{0,2}:?\d{0,2}$')),
                                 LengthLimitingTextInputFormatter(5),
@@ -1083,8 +889,7 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
                                           var accountNo = payList.accountNo.toString();
                                           var remark = payList.remark.toString();
                                           var salaryEntryId = payList.salaryEntryId.toString();
-                                          //int payId = int.parse(salaryEntryId);
-                                          // Navigate to the target screen and pass the data
+
                                           if (saveFlag) {
                                             print('saveFlag $saveFlag');
                                             showFlushBar(context, Constants.dayEndCompleted);
@@ -1775,7 +1580,12 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
         return;
       }
       if(selectedTransMode == 'Cash'){
-        if (discountAmt > totalAmt!) {
+        if(totalAmt != null){
+          if (discountAmt > totalAmt!) {
+            showFlushBar(context, "Salary Amount Can Not Be Greater Than Cash In Hand Amount.");
+            return;
+          }
+        }else{
           showFlushBar(context, "Salary Amount Can Not Be Greater Than Cash In Hand Amount.");
           return;
         }
@@ -1877,7 +1687,7 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
 
         Navigator.pushNamed(
           context,
-          ManagerMoreScree.screenName,
+          SalaryPaymentScreen.screenName,
         );
 
         Future.delayed(Duration(milliseconds: 300), () {
@@ -2025,6 +1835,7 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
       print("Exception: $e");
     }
   }
+
   Future<void> checkCashDenominationFlagMandatory() async {
     Constants.isNetworkAvailable =
     await InternetConnectionChecker().hasConnection;

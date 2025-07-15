@@ -1,9 +1,10 @@
 class AppUrl {
    // static const String baseUrl = 'https://192.168.2.27:502'; // Local
-   static const String baseUrl = 'https://192.168.2.64:502'; // Local new
+   // static const String baseUrl = 'https://192.168.2.64:502'; // Local new
   // static const String baseUrl = 'https://20.193.149.194/lpgniyojanapi'; // UAT Client
   //  static const String baseUrl = 'https://20.193.149.194/lpgniyojanuatapi'; // UAT New Development
- // static const String baseUrl = 'https://lpgniyojan.aadyaminfotech.com/lpgniyojanapi'; // Production New
+  //  static const String baseUrl = 'https://aadyaminfotech.com/lpgniyojanuatapi'; // UAT New Development working
+ static const String baseUrl = 'https://lpgniyojan.aadyaminfotech.com/lpgniyojanapi'; // Production New
 
   ///Log in
   // static const String login = '$baseUrl/Login/LoginUser';
@@ -67,7 +68,6 @@ class AppUrl {
   static const String GetBalanceByStaffId = '$baseUrl/DailyStockCash/GetBalanceByStaffId';
   static const String GetLastUploadedTimeDiff = '$baseUrl/AutoExport/GetLastUploadedTimeDiff';
   static const String DepositCashAddEdit = '$baseUrl/DailyStockCash/DepositCashAddEdit';
-
 
   ///DSR Click API
   static const String GetCashflowpopupList_Mob = '$baseUrl/Reports/GetCashflowpopupList_Mob';
@@ -135,6 +135,26 @@ class AppUrl {
 
   ///cash denomination
   static const String GetPageActionPermissionDtls = '$baseUrl/Masters/GetPageActionPermissionDtls';
+
+  ///ARB Purchase Return
+  static const String AddEditARBItemPurchase = '$baseUrl/InventoryStock/AddEditARBItemPurchase';
+  static const String GetARBItemPurList = '$baseUrl/InventoryStock/GetARBItemPurList';
+  static const String PaymentDetailsAdd = '$baseUrl/InventoryStock/PaymentDetailsAdd';
+  static const String GetPaymentDetlARBPurLst = '$baseUrl/InventoryStock/GetPaymentDetlARBPurLst';
+  static const String GetARBItemPurCashDenoDtlsById = '$baseUrl/InventoryStock/GetARBItemPurCashDenoDtlsById';
+  //static const String GetARBItemPurList = '$baseUrl/InventoryStock/GetARBItemPurList';
+  ///InventoryStock/GetARBItemPurList/8118
+
+  ///ARB
+  static const String AddEditARBItemReturn = '$baseUrl/InventoryStock/AddEditARBItemReturn';
+  static const String GetARBItemRetList = '$baseUrl/InventoryStock/GetARBItemRetList';
+  static const String AddCreditNoteDetails = '$baseUrl/InventoryStock/AddCreditNoteDetails';
+
+  ///ARB Sale
+  ///InventoryStock/ARBSalesAddEdit
+  static const String ARBSalesAddEdit = '$baseUrl/InventoryStock/ARBSalesAddEdit';
+  static const String GetARBSalesList = '$baseUrl/InventoryStock/GetARBSalesList';
+  static const String GetARBSalesCashDenoDtlsById = '$baseUrl/InventoryStock/GetARBSalesCashDenoDtlsById';
 }
 
 

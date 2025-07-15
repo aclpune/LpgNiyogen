@@ -7533,443 +7533,443 @@ class _ManagerUpdateSaleCashUpdationState
     }
   }
 
-  void _showDiscountBottomSheet(
-      BuildContext context, String deliveryBoyName, String VehicleNo,
-      {GetExpenseDetailListModel? editingItem}) {
-    bool isEditMode = editingItem != null;
-    if (editingItem != null) {
-      _selectedExpenseHead = editingItem.expHeadName;
-      _selectedExpenseHeadId = editingItem.expHeadId!.toInt();
-      _expenseAmountController.text = editingItem.expAmount?.toStringAsFixed(2) ?? '';
-      _expenseRemarkController.text = editingItem.remark ?? '';
-    } else {
-      _selectedExpenseHead = null;
-      _selectedExpenseHeadId = null;
-      _expenseAmountController.clear();
-      _expenseRemarkController.clear();
-    }
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      // Allows the bottom sheet to adapt its height to the content
-      builder: (BuildContext context) {
-        return Container(
-          width:
-          MediaQuery.of(context).size.width, // Set width to device's width
-          padding: EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-          ),
-          child: SingleChildScrollView(
-            // Wrap content in a scrollable view
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              // Ensure column size is based on children
-              children: [
-                Text(
-                  "Add Discount",
-                  style: Styling.bodyTitle,
-                ),
-                SizedBox(height: 16),
-                // Delivery Boy and Vehicle info
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        "${deliveryBoyName}",
-                        style: Styling.itemTitle,
-                        textAlign: TextAlign.center, // Center the text
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        "${VehicleNo}",
-                        style: Styling.itemTitle,
-                        textAlign: TextAlign.center, // Center the text
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 16),
-
-                // Expense Head dropdown
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    textWidgetBlueColorWithStar("Customer Name", "*"),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.6,
-                      // Use relative width (60% of screen width)
-                      child:
-                      DropdownButtonFormField<
-                          GetExpenceHeadAmountListModel>(
-                        isExpanded: true,
-                        value: _expensesHeaders.any((item) =>
-                        item.expHeadId == _selectedExpenseHeadId)
-                            ? _expensesHeaders.firstWhere((item) =>
-                        item.expHeadId == _selectedExpenseHeadId)
-                            : null,
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 10),
-                        ),
-                        style: Styling.itemBlackTest,
-                        items: _expensesHeaders
-                            .map((GetExpenceHeadAmountListModel expenses) {
-                          return DropdownMenuItem<
-                              GetExpenceHeadAmountListModel>(
-                            value: expenses,
-                            child:Text(expenses.expHeadName ?? ''),
-                          );
-                        }).toList(),
-                        onChanged:
-                            (GetExpenceHeadAmountListModel? selectedExpense) {
-                          setState(() {
-                            if (selectedExpense != null) {
-                              _selectedExpenseHead = selectedExpense.expHeadName;
-                              _selectedExpenseHeadId =
-                                  selectedExpense.expHeadId?.toInt();
-                              print("Selected exp Name: $_selectedExpenseHead");
-                              print("Selected exp ID: $_selectedExpenseHeadId");
-                            }
-                          });
-
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10),
-
-                // Expense Amount input field
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    textWidgetBlueColorWithStar("Exp. Amt:", "*"),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.6,
-                      // Use relative width (60% of screen width)
-                      child:
-                      DropdownButtonFormField<
-                          GetExpenceHeadAmountListModel>(
-                        isExpanded: true,
-                        value: _expensesHeaders.any((item) =>
-                        item.expHeadId == _selectedExpenseHeadId)
-                            ? _expensesHeaders.firstWhere((item) =>
-                        item.expHeadId == _selectedExpenseHeadId)
-                            : null,
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 10),
-                        ),
-                        style: Styling.itemBlackTest,
-                        items: _expensesHeaders
-                            .map((GetExpenceHeadAmountListModel expenses) {
-                          return DropdownMenuItem<
-                              GetExpenceHeadAmountListModel>(
-                            value: expenses,
-                            child:Text(expenses.expHeadName ?? ''),
-                          );
-                        }).toList(),
-                        onChanged:
-                            (GetExpenceHeadAmountListModel? selectedExpense) {
-                          setState(() {
-                            if (selectedExpense != null) {
-                              _selectedExpenseHead = selectedExpense.expHeadName;
-                              _selectedExpenseHeadId =
-                                  selectedExpense.expHeadId?.toInt();
-                              print("Selected exp Name: $_selectedExpenseHead");
-                              print("Selected exp ID: $_selectedExpenseHeadId");
-                            }
-                          });
-
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10),
-                // Remark input field
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    textWidgetBlueColorWithoutStar("Remark:"),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.6,
-                      // Use relative width (60% of screen width)
-                      child: TextField(
-                        controller: _expenseRemarkController,
-                        decoration: InputDecoration(
-                          labelStyle: TextStyle(color: Colors.blueAccent),
-                        ),
-                        textAlign: TextAlign.center,
-                        style: Styling.itemBlackTest,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
-
-                // Save button
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all<Color>(
-                            (_expenseAmountController.text.isNotEmpty &&
-                                _selectedExpenseHead != null)
-                                ? Color(0xff1280b3)
-                                : Color(0xff666666)),
-                      ),
-                      onPressed: () {
-                        if (_expenseAmountController.text.isNotEmpty &&
-                            _selectedExpenseHead!.isNotEmpty) {
-                          double expenseAmt =
-                          double.parse(_expenseAmountController.text);
-                          if (isEditMode) {
-                            addExpenseAPI(
-                                _selectedExpenseHeadId!,
-                                _selectedExpenseHead!,
-                                expenseAmt,
-                                _expenseRemarkController.text,
-                                "EDIT",
-                                editingItem.expId!.toInt());
-                          } else {
-                            addExpenseAPI(
-                                _selectedExpenseHeadId!,
-                                _selectedExpenseHead!,
-                                expenseAmt,
-                                _expenseRemarkController.text,
-                                "ADD",
-                                0);
-                          }
-                          Navigator.pop(context);
-                          _showExpenseBottomSheet(
-                              context, deliveryBoyName, VehicleNo);
-                          // Close bottom sheet after saving
-                        } else {
-                          EasyLoading.showToast(Constants.validCountEnter,
-                              duration: const Duration(milliseconds: 3000));
-                        }
-                      },
-                      child: Text(
-                        isEditMode ? "Update" : "Save",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor:
-                        MaterialStateProperty.all<Color>(Color(0xff1280b3)),
-                      ),
-                      onPressed: () {
-                        Navigator.pop(
-                            context); // Close bottom sheet after saving
-                      },
-                      child: const Text("Close",
-                          style: TextStyle(color: Colors.white)),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                Column(
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(12),
-                          topRight: Radius.circular(12),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                'Name',
-                                style: Styling.buttonTextBlack,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Text(
-                                'Amount',
-                                style: Styling.buttonTextBlack,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                'Status',
-                                style: Styling.buttonTextBlack,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                'Actions',
-                                style: Styling.buttonTextBlack,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    getExpenseDetailListModel.isNotEmpty
-                        ? ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: getExpenseDetailListModel.length,
-                      itemBuilder: (context, index) {
-                        final items = getExpenseDetailListModel[index];
-                        Color backgroundColor = (index % 2 == 0)
-                            ? Colors.grey[
-                        300]! // Color for even index (first, third, fifth...)
-                            : Colors.white70!;
-                        return Container(
-                          color: backgroundColor,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              crossAxisAlignment:
-                              CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      flex: 2,
-                                      child: Text(
-                                        items.expHeadName.toString(),
-                                        style: Styling.buttonTextBlack,
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      flex: 1,
-                                      child: Text(
-                                        items.expAmount!.toStringAsFixed(2),
-                                        style: Styling.buttonTextBlack,
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      flex: 2,
-                                      child: Text(
-                                        items.expStatus.toString(),
-                                        style: Styling.buttonTextBlack,
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                    Expanded(
-                                      flex: 1,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                          _showExpenseBottomSheet(context,
-                                              deliveryBoyName, VehicleNo,
-                                              editingItem: items);
-                                          // _selectedExpenseHead = items.expHeadName;
-                                          // _selectedExpenseHeadId = items.expHeadId!.toInt();
-                                          // _expenseAmountController.text = items.expAmount?.toString() ?? '';
-                                          // _expenseRemarkController.text = items.remark ?? '';
-                                        },
-                                        child: Icon(
-                                          Icons.edit,
-                                          size: 18,
-                                          color: Colors.blue,
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      flex: 1,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          if (isEditMode) {
-                                          } else {
-                                            showDialog(
-                                              context: context,
-                                              builder:
-                                                  (BuildContext context) {
-                                                return AlertDialog(
-                                                  title: Text(
-                                                      "Confirm Deletion"),
-                                                  content: Text(
-                                                      "Are you sure you want to delete this record?"),
-                                                  actions: [
-                                                    TextButton(
-                                                      onPressed: () {
-                                                        Navigator.of(
-                                                            context)
-                                                            .pop(); // Close dialog without action
-                                                      },
-                                                      child: Text("No"),
-                                                    ),
-                                                    TextButton(
-                                                      onPressed:
-                                                          () async {
-                                                        Navigator.of(
-                                                            context)
-                                                            .pop(); // Close dialog
-                                                        addExpenseAPI(
-                                                            items
-                                                                .expHeadId!
-                                                                .toInt(),
-                                                            items
-                                                                .expHeadName!,
-                                                            items
-                                                                .expAmount!
-                                                                .toDouble(),
-                                                            items.remark
-                                                                .toString(),
-                                                            "DELETE",
-                                                            items.expId!
-                                                                .toInt());
-                                                      },
-                                                      child: Text("Yes"),
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          }
-                                        },
-                                        child: Icon(
-                                          Icons.delete,
-                                          size: 18,
-                                          color: Colors.red,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    )
-                        : Container(
-                      child: Text("No Data Available"),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
+  // void _showDiscountBottomSheet(
+  //     BuildContext context, String deliveryBoyName, String VehicleNo,
+  //     {GetExpenseDetailListModel? editingItem}) {
+  //   bool isEditMode = editingItem != null;
+  //   if (editingItem != null) {
+  //     _selectedExpenseHead = editingItem.expHeadName;
+  //     _selectedExpenseHeadId = editingItem.expHeadId!.toInt();
+  //     _expenseAmountController.text = editingItem.expAmount?.toStringAsFixed(2) ?? '';
+  //     _expenseRemarkController.text = editingItem.remark ?? '';
+  //   } else {
+  //     _selectedExpenseHead = null;
+  //     _selectedExpenseHeadId = null;
+  //     _expenseAmountController.clear();
+  //     _expenseRemarkController.clear();
+  //   }
+  //   showModalBottomSheet(
+  //     context: context,
+  //     isScrollControlled: true,
+  //     // Allows the bottom sheet to adapt its height to the content
+  //     builder: (BuildContext context) {
+  //       return Container(
+  //         width:
+  //         MediaQuery.of(context).size.width, // Set width to device's width
+  //         padding: EdgeInsets.all(16),
+  //         decoration: BoxDecoration(
+  //           color: Colors.white,
+  //           borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+  //         ),
+  //         child: SingleChildScrollView(
+  //           // Wrap content in a scrollable view
+  //           child: Column(
+  //             mainAxisSize: MainAxisSize.min,
+  //             // Ensure column size is based on children
+  //             children: [
+  //               Text(
+  //                 "Add Discount",
+  //                 style: Styling.bodyTitle,
+  //               ),
+  //               SizedBox(height: 16),
+  //               // Delivery Boy and Vehicle info
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //                 children: [
+  //                   Expanded(
+  //                     child: Text(
+  //                       "${deliveryBoyName}",
+  //                       style: Styling.itemTitle,
+  //                       textAlign: TextAlign.center, // Center the text
+  //                     ),
+  //                   ),
+  //                   Expanded(
+  //                     child: Text(
+  //                       "${VehicleNo}",
+  //                       style: Styling.itemTitle,
+  //                       textAlign: TextAlign.center, // Center the text
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //               SizedBox(height: 16),
+  //
+  //               // Expense Head dropdown
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                 children: [
+  //                   textWidgetBlueColorWithStar("Customer Name", "*"),
+  //                   Container(
+  //                     width: MediaQuery.of(context).size.width * 0.6,
+  //                     // Use relative width (60% of screen width)
+  //                     child:
+  //                     DropdownButtonFormField<
+  //                         GetExpenceHeadAmountListModel>(
+  //                       isExpanded: true,
+  //                       value: _expensesHeaders.any((item) =>
+  //                       item.expHeadId == _selectedExpenseHeadId)
+  //                           ? _expensesHeaders.firstWhere((item) =>
+  //                       item.expHeadId == _selectedExpenseHeadId)
+  //                           : null,
+  //                       decoration: InputDecoration(
+  //                         contentPadding: EdgeInsets.symmetric(
+  //                             vertical: 12, horizontal: 10),
+  //                       ),
+  //                       style: Styling.itemBlackTest,
+  //                       items: _expensesHeaders
+  //                           .map((GetExpenceHeadAmountListModel expenses) {
+  //                         return DropdownMenuItem<
+  //                             GetExpenceHeadAmountListModel>(
+  //                           value: expenses,
+  //                           child:Text(expenses.expHeadName ?? ''),
+  //                         );
+  //                       }).toList(),
+  //                       onChanged:
+  //                           (GetExpenceHeadAmountListModel? selectedExpense) {
+  //                         setState(() {
+  //                           if (selectedExpense != null) {
+  //                             _selectedExpenseHead = selectedExpense.expHeadName;
+  //                             _selectedExpenseHeadId =
+  //                                 selectedExpense.expHeadId?.toInt();
+  //                             print("Selected exp Name: $_selectedExpenseHead");
+  //                             print("Selected exp ID: $_selectedExpenseHeadId");
+  //                           }
+  //                         });
+  //
+  //                       },
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //               SizedBox(height: 10),
+  //
+  //               // Expense Amount input field
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                 children: [
+  //                   textWidgetBlueColorWithStar("Exp. Amt:", "*"),
+  //                   Container(
+  //                     width: MediaQuery.of(context).size.width * 0.6,
+  //                     // Use relative width (60% of screen width)
+  //                     child:
+  //                     DropdownButtonFormField<
+  //                         GetExpenceHeadAmountListModel>(
+  //                       isExpanded: true,
+  //                       value: _expensesHeaders.any((item) =>
+  //                       item.expHeadId == _selectedExpenseHeadId)
+  //                           ? _expensesHeaders.firstWhere((item) =>
+  //                       item.expHeadId == _selectedExpenseHeadId)
+  //                           : null,
+  //                       decoration: InputDecoration(
+  //                         contentPadding: EdgeInsets.symmetric(
+  //                             vertical: 12, horizontal: 10),
+  //                       ),
+  //                       style: Styling.itemBlackTest,
+  //                       items: _expensesHeaders
+  //                           .map((GetExpenceHeadAmountListModel expenses) {
+  //                         return DropdownMenuItem<
+  //                             GetExpenceHeadAmountListModel>(
+  //                           value: expenses,
+  //                           child:Text(expenses.expHeadName ?? ''),
+  //                         );
+  //                       }).toList(),
+  //                       onChanged:
+  //                           (GetExpenceHeadAmountListModel? selectedExpense) {
+  //                         setState(() {
+  //                           if (selectedExpense != null) {
+  //                             _selectedExpenseHead = selectedExpense.expHeadName;
+  //                             _selectedExpenseHeadId =
+  //                                 selectedExpense.expHeadId?.toInt();
+  //                             print("Selected exp Name: $_selectedExpenseHead");
+  //                             print("Selected exp ID: $_selectedExpenseHeadId");
+  //                           }
+  //                         });
+  //
+  //                       },
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //               SizedBox(height: 10),
+  //               // Remark input field
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                 children: [
+  //                   textWidgetBlueColorWithoutStar("Remark:"),
+  //                   Container(
+  //                     width: MediaQuery.of(context).size.width * 0.6,
+  //                     // Use relative width (60% of screen width)
+  //                     child: TextField(
+  //                       controller: _expenseRemarkController,
+  //                       decoration: InputDecoration(
+  //                         labelStyle: TextStyle(color: Colors.blueAccent),
+  //                       ),
+  //                       textAlign: TextAlign.center,
+  //                       style: Styling.itemBlackTest,
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //               SizedBox(height: 20),
+  //
+  //               // Save button
+  //               Row(
+  //                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //                 children: [
+  //                   ElevatedButton(
+  //                     style: ButtonStyle(
+  //                       backgroundColor: MaterialStateProperty.all<Color>(
+  //                           (_expenseAmountController.text.isNotEmpty &&
+  //                               _selectedExpenseHead != null)
+  //                               ? Color(0xff1280b3)
+  //                               : Color(0xff666666)),
+  //                     ),
+  //                     onPressed: () {
+  //                       if (_expenseAmountController.text.isNotEmpty &&
+  //                           _selectedExpenseHead!.isNotEmpty) {
+  //                         double expenseAmt =
+  //                         double.parse(_expenseAmountController.text);
+  //                         if (isEditMode) {
+  //                           addExpenseAPI(
+  //                               _selectedExpenseHeadId!,
+  //                               _selectedExpenseHead!,
+  //                               expenseAmt,
+  //                               _expenseRemarkController.text,
+  //                               "EDIT",
+  //                               editingItem.expId!.toInt());
+  //                         } else {
+  //                           addExpenseAPI(
+  //                               _selectedExpenseHeadId!,
+  //                               _selectedExpenseHead!,
+  //                               expenseAmt,
+  //                               _expenseRemarkController.text,
+  //                               "ADD",
+  //                               0);
+  //                         }
+  //                         Navigator.pop(context);
+  //                         _showExpenseBottomSheet(
+  //                             context, deliveryBoyName, VehicleNo);
+  //                         // Close bottom sheet after saving
+  //                       } else {
+  //                         EasyLoading.showToast(Constants.validCountEnter,
+  //                             duration: const Duration(milliseconds: 3000));
+  //                       }
+  //                     },
+  //                     child: Text(
+  //                       isEditMode ? "Update" : "Save",
+  //                       style: TextStyle(color: Colors.white),
+  //                     ),
+  //                   ),
+  //                   ElevatedButton(
+  //                     style: ButtonStyle(
+  //                       backgroundColor:
+  //                       MaterialStateProperty.all<Color>(Color(0xff1280b3)),
+  //                     ),
+  //                     onPressed: () {
+  //                       Navigator.pop(
+  //                           context); // Close bottom sheet after saving
+  //                     },
+  //                     child: const Text("Close",
+  //                         style: TextStyle(color: Colors.white)),
+  //                   ),
+  //                 ],
+  //               ),
+  //               SizedBox(height: 20),
+  //               Column(
+  //                 children: [
+  //                   Container(
+  //                     decoration: BoxDecoration(
+  //                       borderRadius: BorderRadius.only(
+  //                         topLeft: Radius.circular(12),
+  //                         topRight: Radius.circular(12),
+  //                       ),
+  //                     ),
+  //                     child: Padding(
+  //                       padding: const EdgeInsets.all(8.0),
+  //                       child: Row(
+  //                         mainAxisAlignment: MainAxisAlignment.center,
+  //                         children: [
+  //                           Expanded(
+  //                             flex: 2,
+  //                             child: Text(
+  //                               'Name',
+  //                               style: Styling.buttonTextBlack,
+  //                               textAlign: TextAlign.center,
+  //                             ),
+  //                           ),
+  //                           Expanded(
+  //                             flex: 1,
+  //                             child: Text(
+  //                               'Amount',
+  //                               style: Styling.buttonTextBlack,
+  //                               textAlign: TextAlign.center,
+  //                             ),
+  //                           ),
+  //                           Expanded(
+  //                             flex: 2,
+  //                             child: Text(
+  //                               'Status',
+  //                               style: Styling.buttonTextBlack,
+  //                               textAlign: TextAlign.center,
+  //                             ),
+  //                           ),
+  //                           Expanded(
+  //                             flex: 2,
+  //                             child: Text(
+  //                               'Actions',
+  //                               style: Styling.buttonTextBlack,
+  //                               textAlign: TextAlign.center,
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   getExpenseDetailListModel.isNotEmpty
+  //                       ? ListView.builder(
+  //                     shrinkWrap: true,
+  //                     physics: NeverScrollableScrollPhysics(),
+  //                     itemCount: getExpenseDetailListModel.length,
+  //                     itemBuilder: (context, index) {
+  //                       final items = getExpenseDetailListModel[index];
+  //                       Color backgroundColor = (index % 2 == 0)
+  //                           ? Colors.grey[
+  //                       300]! // Color for even index (first, third, fifth...)
+  //                           : Colors.white70!;
+  //                       return Container(
+  //                         color: backgroundColor,
+  //                         child: Padding(
+  //                           padding: const EdgeInsets.all(8.0),
+  //                           child: Column(
+  //                             crossAxisAlignment:
+  //                             CrossAxisAlignment.start,
+  //                             children: [
+  //                               Row(
+  //                                 mainAxisAlignment:
+  //                                 MainAxisAlignment.center,
+  //                                 children: [
+  //                                   Expanded(
+  //                                     flex: 2,
+  //                                     child: Text(
+  //                                       items.expHeadName.toString(),
+  //                                       style: Styling.buttonTextBlack,
+  //                                       textAlign: TextAlign.center,
+  //                                     ),
+  //                                   ),
+  //                                   Expanded(
+  //                                     flex: 1,
+  //                                     child: Text(
+  //                                       items.expAmount!.toStringAsFixed(2),
+  //                                       style: Styling.buttonTextBlack,
+  //                                       textAlign: TextAlign.center,
+  //                                     ),
+  //                                   ),
+  //                                   Expanded(
+  //                                     flex: 2,
+  //                                     child: Text(
+  //                                       items.expStatus.toString(),
+  //                                       style: Styling.buttonTextBlack,
+  //                                       textAlign: TextAlign.center,
+  //                                     ),
+  //                                   ),
+  //                                   Expanded(
+  //                                     flex: 1,
+  //                                     child: GestureDetector(
+  //                                       onTap: () {
+  //                                         Navigator.pop(context);
+  //                                         _showExpenseBottomSheet(context,
+  //                                             deliveryBoyName, VehicleNo,
+  //                                             editingItem: items);
+  //                                         // _selectedExpenseHead = items.expHeadName;
+  //                                         // _selectedExpenseHeadId = items.expHeadId!.toInt();
+  //                                         // _expenseAmountController.text = items.expAmount?.toString() ?? '';
+  //                                         // _expenseRemarkController.text = items.remark ?? '';
+  //                                       },
+  //                                       child: Icon(
+  //                                         Icons.edit,
+  //                                         size: 18,
+  //                                         color: Colors.blue,
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //                                   Expanded(
+  //                                     flex: 1,
+  //                                     child: GestureDetector(
+  //                                       onTap: () {
+  //                                         if (isEditMode) {
+  //                                         } else {
+  //                                           showDialog(
+  //                                             context: context,
+  //                                             builder:
+  //                                                 (BuildContext context) {
+  //                                               return AlertDialog(
+  //                                                 title: Text(
+  //                                                     "Confirm Deletion"),
+  //                                                 content: Text(
+  //                                                     "Are you sure you want to delete this record?"),
+  //                                                 actions: [
+  //                                                   TextButton(
+  //                                                     onPressed: () {
+  //                                                       Navigator.of(
+  //                                                           context)
+  //                                                           .pop(); // Close dialog without action
+  //                                                     },
+  //                                                     child: Text("No"),
+  //                                                   ),
+  //                                                   TextButton(
+  //                                                     onPressed:
+  //                                                         () async {
+  //                                                       Navigator.of(
+  //                                                           context)
+  //                                                           .pop(); // Close dialog
+  //                                                       addExpenseAPI(
+  //                                                           items
+  //                                                               .expHeadId!
+  //                                                               .toInt(),
+  //                                                           items
+  //                                                               .expHeadName!,
+  //                                                           items
+  //                                                               .expAmount!
+  //                                                               .toDouble(),
+  //                                                           items.remark
+  //                                                               .toString(),
+  //                                                           "DELETE",
+  //                                                           items.expId!
+  //                                                               .toInt());
+  //                                                     },
+  //                                                     child: Text("Yes"),
+  //                                                   ),
+  //                                                 ],
+  //                                               );
+  //                                             },
+  //                                           );
+  //                                         }
+  //                                       },
+  //                                       child: Icon(
+  //                                         Icons.delete,
+  //                                         size: 18,
+  //                                         color: Colors.red,
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //                                 ],
+  //                               ),
+  //                             ],
+  //                           ),
+  //                         ),
+  //                       );
+  //                     },
+  //                   )
+  //                       : Container(
+  //                     child: Text("No Data Available"),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ],
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 }

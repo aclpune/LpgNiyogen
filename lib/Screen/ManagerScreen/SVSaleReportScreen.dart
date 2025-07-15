@@ -143,204 +143,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
   bool cashDenominationMandatory = false;
   List<FocusNode> _discountFocusNodes = [];
   List<FocusNode> _dropdownFocusNodes = [];
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _addNewItem();
-  //   // fetchItems();
-  //   getNoteTypeAndIDList();
-  //   getStaffDetailsList();
-  //   getItemMasterList();
-  //   getDistStampDuty();
-  //   fetchBank();
-  //   getArbCurrentStockList();
-  //   getArbItemMasterListModel();
-  //   getRspDetailsListModel();
-  //   fetchItemSvAddEditList();
-  //
-  //   Future.delayed(Duration.zero, () {
-  //     setState(() async {
-  //       argValue = ModalRoute.of(context)?.settings.arguments as Map;
-  //       modes = argValue?["modeChange"]?? '';
-  //       if (argValue != null) {
-  //         final itemsToShow = argValue["itemsToShow"] ?? [];
-  //          psvIdEdit = int.tryParse(argValue["psvIDV"] ?? 0);
-  //          String sVDateEdit = argValue["sVDateV"] ?? 0;
-  //          String referredByIdEdit = argValue["referredByIdV"] ?? 0;
-  //          String referredByNameEdit = argValue["referredByNameV"] ?? 0;
-  //          String otherNameEdit = argValue["otherNameV"] ?? 0;
-  //          String productIdEdit = argValue["productIdV"] ?? 0;
-  //          String productNameEdit = argValue["productNameV"] ?? 0;
-  //          String isUndocumentEdit = argValue["isUndocumentV"] ?? 0;
-  //          String sVTypeEdit = argValue["sVTypeV"] ?? 0;
-  //          String cylQtyEdit = argValue["cylQtyV"] ?? 0;
-  //          String sCRegulatorEdit = argValue["sCRegulatorV"] ?? 0;
-  //          String depositCylEdit = argValue["depositCylV"] ?? 0;
-  //          String cylRefillRSPEdit = argValue["cylRefillRSPV"] ?? 0;
-  //          String regulatorDepositEdit = argValue["regulatorDepositV"] ?? 0;
-  //          String stampDutyEdit = argValue["stampDutyV"] ?? 0;
-  //          String fTLRegulatorEdit = argValue["fTLRegulatorV"] ?? 0;
-  //          String basicAmtEdit = argValue["basicAmtV"] ?? 0;
-  //          String consuDCNoEdit = argValue["consuDCNoV"] ?? 0;
-  //          String consumerNameEdit = argValue["consumerNameV"] ?? 0;
-  //          String consuContactNoEdit = argValue["consuContactNoV"] ?? 0;
-  //          String totalAmountEdit = argValue["totalAmountV"] ?? 0;
-  //          String receiptAmtEdit = argValue["receiptAmtV"] ?? 0;
-  //          String paymentModeEdit = argValue["paymentModeV"] ?? 0;
-  //          String transactionCodeEdit = argValue["transactionCodeV"] ?? 0;
-  //          String transactionTimeEdit = argValue["transactionTimeV"] ?? 0;
-  //          String transactionRemarkEdit = argValue["transactionRemarkV"] ?? 0;
-  //          String addedByEdit = argValue["addedByV"] ?? 0;
-  //          String actionEdit = argValue["actionV"] ?? 0;
-  //          String itemIdEdit = argValue["itemIdV"] ?? 0;
-  //          String itemNameEdit = argValue["itemNameV"] ?? 0;
-  //          String rateEdit = argValue["rateV"] ?? 0;
-  //          String itemQtyEdit = argValue["itemQtyV"] ?? 0;
-  //          String discountAmtEdit = argValue["discountAmtV"] ?? 0;
-  //          String aRBAmountEdit = argValue["aRBAmountV"] ?? 0;
-  //          String amtChargesEdit = argValue["amtChargesV"] ?? 0;
-  //          String categoryNameEdit = argValue["categoryNameV"] ?? 0;
-  //          String bankIdEdit = argValue["bankIdV"] ?? 0;
-  //          String bankMappingIdEdit = argValue["bankMappingIdV"] ?? 0;
-  //          String accountNoEdit = argValue["accountNoV"] ?? 0;
-  //          String bankNameEdit = argValue["bankNameV"] ?? 0;
-  //          String isExemptRetiEdit = argValue["isExemptRetiV"] ?? 0;
-  //          String sVDiscountAmtEdit = argValue["sVDiscountAmtV"] ?? 0;
-  //         selectedProductID = int.parse(productIdEdit);
-  //         cylinderQty = int.parse(cylQtyEdit);
-  //
-  //         depositCylinderAmountController.text = depositCylEdit;
-  //         refillCylinderAmountController.text = cylRefillRSPEdit;
-  //         regulatorDepositAmountController.text = regulatorDepositEdit;
-  //         stampDutyController.text = stampDutyEdit;
-  //         regulatorDiscountAmountController.text = discountAmtEdit;
-  //         regulatorBasicAmountController.text = basicAmtEdit;
-  //         conNoController.text = consuDCNoEdit;
-  //         conNameController.text = consumerNameEdit;
-  //         conContactController.text = consuContactNoEdit;
-  //         recPaymentController.text = receiptAmtEdit;
-  //         TranCodeController.text = transactionCodeEdit;
-  //         timeController.text = transactionTimeEdit;
-  //         transReviewController.text = transactionRemarkEdit;
-  //         totalAmountController.text = totalAmountEdit;
-  //
-  //         if (getTransMode.contains(paymentModeEdit)) {
-  //           selectedTransMode = paymentModeEdit;
-  //         } else if(paymentModeEdit == "Bank") {
-  //           selectedTransMode = 'Online';// fallback or handle invalid values
-  //         }else{
-  //           selectedTransMode = null;
-  //         }
-  //         await getStaffDetailsList();
-  //         getStaffDetailsList().whenComplete((){
-  //           debugPrint("referredByNameEdit:$referredByNameEdit");
-  //           if(referredByNameEdit != "null" && referredByNameEdit.isNotEmpty && referredByNameEdit != null){
-  //             setState(() {
-  //               selectedStaff = staffdetailsmodel.firstWhere(
-  //                     (item) => item.staffName == referredByNameEdit,
-  //                 orElse: () => GetStaffDetailsListModel(staffName: ''),
-  //               );
-  //               selectedReferredID = int.parse(referredByIdEdit);
-  //               selectedReferredName = referredByNameEdit;
-  //             }
-  //             );
-  //           }
-  //         });
-  //
-  //         // fetchBank().whenComplete((){
-  //         //   debugPrint("empty:$accountNoEdit");
-  //         //   if(accountNoEdit != "null" && accountNoEdit.isNotEmpty && accountNoEdit != null){
-  //         //     setState(() {
-  //         //       _selectBankModel = bankModel.firstWhere(
-  //         //             (item) => item.accountNo == accountNoEdit,
-  //         //         orElse: () => GetBankMappingDetailsListModel(accountNo:'', ),
-  //         //       );
-  //         //     });
-  //         //   }
-  //         // });
-  //         await fetchBank(); // wait for data first
-  //         if (accountNoEdit.isNotEmpty && accountNoEdit != "null") {
-  //           final match = bankModel.firstWhere(
-  //                 (item) => item.accountNo?.trim() == accountNoEdit.trim(),
-  //             orElse: () => GetBankMappingDetailsListModel(), // fallback empty object
-  //           );
-  //
-  //           // Only set if a valid match found
-  //           if ((match.accountNo ?? '').isNotEmpty) {
-  //             setState(() {
-  //               _selectBankModel = match;
-  //               selectedBankName = match.bankName;
-  //               selectedBankId = match.accountNo;
-  //               selecteBankIDApi = match.bankId?.toInt();
-  //               accMappingId = match.mappingId?.toInt();
-  //             });
-  //           }
-  //         }
-  //         // await getItemMasterList();
-  //         getItemMasterList().whenComplete((){
-  //           debugPrint("productNameEdit:$productNameEdit");
-  //           if(productNameEdit != "null" && productNameEdit.isNotEmpty && productNameEdit != null){
-  //             setState(() {
-  //               selectedMaster = masterListModel.firstWhere(
-  //                     (item) => item.itemName == productNameEdit,
-  //                 orElse: () => GetItemMasterListModel(itemId: 0, itemName: ''),
-  //               );
-  //               selectedTranssvItemName = productNameEdit;
-  //             });
-  //           }
-  //         });
-  //         if(isUndocumentEdit == "true"){
-  //           isSVPending = true;
-  //         }else{
-  //           isSVPending =  false;
-  //         }
-  //         debugPrint("isExemptRetiEdit$isExemptRetiEdit");
-  //         if(isExemptRetiEdit == "1"){
-  //           isExemptedReticulated = true;
-  //           debugPrint("isExemptRetiEdittrue");
-  //         }else{
-  //           isExemptedReticulated =  false;
-  //           debugPrint("isExemptRetiEditfalse");
-  //         }
-  //
-  //         if (getTransacc.contains(sVTypeEdit)) {
-  //           selectedTransacc = sVTypeEdit;
-  //         } else {
-  //           selectedTransacc = null; // fallback or handle invalid values
-  //         }
-  //         if(productNameEdit != "14.2 KG" || isExemptRetiEdit == "1"){
-  //           cylinderQtyAddController.text = cylQtyEdit;
-  //         }else{
-  //           if (getTransqty.contains(cylQtyEdit)) {
-  //             selectedTranqty = cylQtyEdit;
-  //           } else {
-  //             selectedTranqty = null; // fallback or handle invalid values
-  //           }
-  //         }
-  //
-  //         if (getSelectedFTLRegulatorQty.contains(fTLRegulatorEdit)) {
-  //           getSelectedFTLRegulatorQtyString = fTLRegulatorEdit;
-  //         } else {
-  //           getSelectedFTLRegulatorQtyString = null; // fallback or handle invalid values
-  //         }
-  //
-  //         loadDenominationData(psvIdEdit!);
-  //         // _initializeItems(itemsToShow);
-  //         if (itemsToShow.isNotEmpty) {
-  //           _initializeItems(itemsToShow);
-  //         } else {
-  //           // If no initial data, start with an empty list or default values
-  //           _initializeItems([]);
-  //         }
-  //         if(getDenominationLis.isNotEmpty){
-  //           initializeControllers();
-  //         }else{
-  //           debugPrint("empty");
-  //         }
-  //       }
-  //     });
-  //   });
-  // }
   @override
   void initState() {
     super.initState();
@@ -1502,6 +1304,13 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                           items[index]['qty']?.text = "0";
                                           items[index]['discount']?.clear();
                                           print("Rate3:");
+                                          _updateSum(index);
+                                          calculateGrandTotalAmount();
+                                          if (index == items.length - 1) {
+                                            Future.delayed(Duration(milliseconds: 200), () {
+                                              _addNewItem();
+                                            });
+                                          }
                                         }else{
                                           int? stockLimit = _itemStockByIndex[index];
                                           if (stockLimit != null && 1 > stockLimit) {
@@ -1894,6 +1703,24 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                           ],
                         ),
                       SizedBox(height: 10,),
+                      if (selectedTransMode == 'Cash')
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Row(
+                          mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              cashDenominationMandatory?"Cash Denomination Is Mandatory":
+                              "Cash denomination",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold,),
+                            ),
+                          ],
+                        ),
+                      ),
                       if (selectedTransMode == 'Cash')
                         Container(
                           height: 30,
@@ -3783,11 +3610,22 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
         orElse: () => GetArbItemMasterListModel(itemId: 0, itemName: ''),
       );
 
+      int? currentStock = getArbItemCurrentStock(selectedItem.itemId?.toInt())?.toInt();
+      _itemStockByIndex[index] = currentStock;
+
       int itemId = selectedItem.itemId?.toInt() ?? 0;
       int qty = int.tryParse(item['qty']?.text ?? '0') ?? 0;
 
+      if (selectedItem.categoryName != "Non ARB Item" && selectedItem.categoryName != "Other") {
+        if (qty > currentStock!) {
+          // Show a message and return early to stop further processing
+          showFlushBar(context,"Quantity exceeds available stock for item ${selectedItem.itemName}");
+          throw Exception("Quantity exceeds available stock for item ${selectedItem.itemName}"); // <-- Stop process here
+
+        }
+      }
       // Filter condition: only include if both > 0
-      return itemId > 0 && qty > 0;
+      return itemId > 0;
     }).map((item) {
       int index = items.indexOf(item);
       String? selectedItemName = _selectedItems[index];

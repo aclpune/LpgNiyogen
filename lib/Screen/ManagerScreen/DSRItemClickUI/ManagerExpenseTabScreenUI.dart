@@ -51,6 +51,14 @@ class _ManagerExpenseTabScreenUI extends State<ManagerExpenseTabScreenUI>{
                     ),
                   ),
                   Expanded(
+                    flex: 2,
+                    child: Text(sale.qty == null ? '':
+                    sale.qty.toString() ?? '',
+                      style: TextStyle(fontSize: 16),
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                  Expanded(
                     flex: 3,
                     child: Text(
                         formatCurrency(sale.cash!.toDouble()),
