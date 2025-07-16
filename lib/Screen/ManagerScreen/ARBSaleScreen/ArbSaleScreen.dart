@@ -14,7 +14,6 @@ import '../../Utils/Styling.dart';
 import '../../Utils/Widget.dart';
 import '../../Utils/app_url.dart';
 import '../../Utils/constants.dart';
-import '../CashDenominationMandatoryFlag/CahsDenominationMandatoryFlagModel.dart';
 import '../CashHandoverModelClass/GetBankMappingDetailsListModel.dart';
 import '../ManagerModelClass/DenomModel.dart';
 import '../SVSaleModel/GetARBItemMasterListModel.dart';
@@ -87,13 +86,10 @@ class _ArbSaleScreen extends State<ArbSaleScreen> {
   var argValue;
   int? arbSalesIdEdit;
 
-  List<CahsDenominationMandatoryFlagModel> cashDenoMandatoryList = [];
-  bool cashDenominationMandatory = false;
+
   @override
   void initState() {
     super.initState();
-    checkAndSaveDayEndData();
-    checkCashDenominationFlagMandatory();
     _addNewItem();
     getStaffDetailsList();
     getArbItemMasterListModel();
@@ -772,32 +768,13 @@ void _addNewItem() {
                       ],
                     ),
                     if (selectedTransMode == 'Cash')
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0,top: 10),
-                      child: Row(
-                        mainAxisAlignment:
-                        MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            cashDenominationMandatory?"Cash Denomination Is Mandatory":
-                            "Cash denomination",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.blue,
-                              fontWeight: FontWeight.bold,),
-                          ),
-                        ],
-                      ),
-                    ),
-                    if (selectedTransMode == 'Cash')
                       Container(
                         height: 30,
                         decoration: BoxDecoration(
                           color: Colors.blue[200],
                           borderRadius: BorderRadius.all(Radius.circular(2)),
                         ),
-                        child:
-                        Row(
+                        child: Row(
                           children: [
                             // First Half (Cash Denomination)
                             Expanded(
@@ -1456,16 +1433,11 @@ void _addNewItem() {
                         SizedBox(width: 10), // Adds space between buttons
                         ElevatedButton(
                           onPressed: () {
-                            if (saveFlag) {
-                              print('saveFlag $saveFlag');
-                              showFlushBar(context, Constants.dayEndCompleted);
+                            if (modes == "EDIT") {
+                              // Null check for paymentIdEdit
+                              arbSalesAddEditForMob(arbSalesIdEdit!, "EDIT");
                             } else {
-                              if (modes == "EDIT") {
-                                // Null check for paymentIdEdit
-                                arbSalesAddEditForMob(arbSalesIdEdit!, "EDIT");
-                              } else {
-                                arbSalesAddEditForMob(0, "ADD");
-                              }
+                              arbSalesAddEditForMob(0, "ADD");
                             }
                           },
                           style: ElevatedButton.styleFrom(
@@ -1516,7 +1488,7 @@ void _addNewItem() {
                                           onPressed: () {
                                             setState(() {
                                               loadDenominationData(payList.aRBSalesId!.toInt());
-                                              var itemsToShow = payList.itemDetails?.toList();
+                                              var itemsToShow = payList.itemDataList?.toList();
                                               var saleDate= payList.saleDate.toString();
                                               var referredByName = payList.staffName.toString();
                                               var referredById = payList.staffId.toString();
@@ -1532,50 +1504,84 @@ void _addNewItem() {
                                               var arbSaleId = payList.aRBSalesId.toString();
                                               int payId = int.parse(arbSaleId);
 
-                                              if (saveFlag) {
-                                                print('saveFlag $saveFlag');
-                                                showFlushBar(context, Constants.dayEndCompleted);
-                                              } else {
-                                                Navigator.pushNamed(
-                                                  context,
-                                                  ArbSaleScreen.screenName,
-                                                  arguments: {
-                                                    'arbSalesV': arbSaleId,
-                                                    'salesDateV': saleDate,
-                                                    'itemsToShow': itemsToShow,
-                                                    'paymentModeV': paymentMode,
-                                                    'referredByNameV' : referredByName,
-                                                    'referredByIdV' : referredById,
-                                                    'consumerNoV': consumerNo,
-                                                    'consumerNameV': consumerName,
-                                                    'amountTotalV': amountTotal,
-                                                    'transTimeV': transTime,
-                                                    'transationCodeV': transationCode,
-                                                    'transRemarkV': transRemark,
-                                                    'bankIdV': bankId,
-                                                    'mappingIdV': mappingId,
-                                                    'modeChange': "EDIT"
-                                                  },
-                                                );
-                                              }
-                                              // Navigate to the target screen and pass the data
 
+                                              // Navigate to the target screen and pass the data
+                                              Navigator.pushNamed(
+                                                context,
+                                                ArbSaleScreen.screenName,
+                                                arguments: {
+                                                  'arbSalesV': arbSaleId,
+                                                  'salesDateV': saleDate,
+                                                  'itemsToShow': itemsToShow,
+                                                  'paymentModeV': paymentMode,
+                                                  'referredByNameV' : referredByName,
+                                                  'referredByIdV' : referredById,
+                                                  'consumerNoV': consumerNo,
+                                                  'consumerNameV': consumerName,
+                                                  'amountTotalV': amountTotal,
+                                                  'transTimeV': transTime,
+                                                  'transationCodeV': transationCode,
+                                                  'transRemarkV': transRemark,
+                                                  'bankIdV': bankId,
+                                                  'mappingIdV': mappingId,
+                                                  'modeChange': "EDIT"
+                                                },
+                                              );
                                             });
                                           },
                                         ),
+                                        // IconButton(
+                                        //   icon: Icon(Icons.delete, color: Colors.red), // Icon for delete
+                                        //   onPressed: () async {
+                                        //     int? pId = (payList.aRBSalesId)?.toInt();
+                                        //     print('Delete button pressed ${payList.aRBSalesId}');
+                                        //     // Show confirmation dialog
+                                        //     bool? confirmDelete = await showDialog<bool>(
+                                        //       context: context,
+                                        //       builder: (BuildContext context) {
+                                        //         return AlertDialog(
+                                        //           title: const Text('Are you sure?'),
+                                        //           content: const Text('You want to delete?'),
+                                        //           actions: <Widget>[
+                                        //             TextButton(
+                                        //               onPressed: () {
+                                        //                 Navigator.of(context).pop(false); // User pressed Cancel
+                                        //               },
+                                        //               child: const Text('Cancel'),
+                                        //             ),
+                                        //             TextButton(
+                                        //               onPressed: () {
+                                        //                 Navigator.of(context).pop(true); // User pressed Delete
+                                        //               },
+                                        //               child: const Text('Delete'),
+                                        //             ),
+                                        //           ],
+                                        //         );
+                                        //       },
+                                        //     );
+                                        //
+                                        //     // If user confirmed deletion
+                                        //     if (confirmDelete == true) {
+                                        //       if (pId != null) {
+                                        //         arbSalesAddEditForMob(pId, "DELETE");
+                                        //         print('Delete button pressed$pId');
+                                        //       } else {
+                                        //         print("Receipt ID is null.");
+                                        //       }
+                                        //     } else {
+                                        //       print('Delete action was canceled');
+                                        //     }
+                                        //   },
+                                        // ),
                                         IconButton(
                                           icon: Icon(Icons.delete, color: Colors.red), // Icon for delete
                                           onPressed: () async {
-                                            if (saveFlag) {
-                                              print('saveFlag $saveFlag');
-                                              showFlushBar(context, Constants.dayEndCompleted);
-                                            } else {
-                                              // double? parsedBalance = double.tryParse(balanceAmt!); // Try parsing balanceAmt to double
-                                              int? pId = (payList.aRBSalesId)?.toInt();
-                                              print('Delete button pressed ${payList.aRBSalesId}');
+                                            // double? parsedBalance = double.tryParse(balanceAmt!); // Try parsing balanceAmt to double
+                                            int? pId = (payList.aRBSalesId)?.toInt();
+                                            print('Delete button pressed ${payList.aRBSalesId}');
 
-                                              // Show confirmation dialog only if balanceAmt is not 0
-                                              // if (parsedBalance != null && parsedBalance != 0.0) {
+                                            // Show confirmation dialog only if balanceAmt is not 0
+                                            // if (parsedBalance != null && parsedBalance != 0.0) {
                                               bool? confirmDelete = await showDialog<bool>(
                                                 context: context,
                                                 builder: (BuildContext context) {
@@ -1603,7 +1609,7 @@ void _addNewItem() {
                                               // If user confirmed deletion
                                               if (confirmDelete == true) {
                                                 if (pId != null) {
-                                                  // paymentDetailsAddEditForMob(pId, "DELETE");
+                                                 // paymentDetailsAddEditForMob(pId, "DELETE");
                                                   arbSalesAddEditForMob(pId, "DELETE");
                                                   print('Delete button pressed $pId');
                                                 } else {
@@ -1612,7 +1618,9 @@ void _addNewItem() {
                                               } else {
                                                 print('Delete action was canceled');
                                               }
-                                            }
+                                            // } else {
+                                            //   print('Balance is 0. Cannot delete.');
+                                            // }
                                           },
                                         ),
                                       ],
@@ -1662,7 +1670,7 @@ void _addNewItem() {
       );
   }
 
-  void _initializeItems(List<ItemDetails> itemsToShow) {
+  void _initializeItems(List<ItemDataList> itemsToShow) {
     setState(() {
       items.clear(); // Clear any existing data
       _selectedItems.clear(); // Clear previous selections if any
@@ -2354,20 +2362,6 @@ void _addNewItem() {
           }
         }
       }
-
-      if(cashDenominationMandatory){
-        if (selectedTransMode == 'Cash'){
-          if(totalAmount > 0) {
-            if (totalAmount != amtController) {
-              showFlushBar(context, Constants.denominationAmount);
-              return;
-            }
-          }else{
-            showFlushBar(context, Constants.cashDenominationIsMandatory);
-            return;
-          }
-        }
-      }
     }
     if (selectedTransMode != null && selectedTransMode == "Online") {
       selectedTransMode = 'Bank';
@@ -2631,59 +2625,5 @@ void _addNewItem() {
     }
   }
 
-  Future<void> checkCashDenominationFlagMandatory() async {
-    Constants.isNetworkAvailable =
-    await InternetConnectionChecker().hasConnection;
-
-    if (!Constants.isNetworkAvailable) {
-      showFlushBar(context, Constants.connectionMessage);
-      isLoading = false;
-    } else {
-      try {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        String? distributorId = prefs.getString('DistributorId');
-        String? bearerToken = prefs.getString('token');
-
-        if (bearerToken == null) {
-          isLoading = false;
-          throw Exception('Bearer token is missing');
-        }
-        final response = await http.get(
-          Uri.parse('${AppUrl.GetPageActionPermissionDtls}/$distributorId/All'),
-          headers: {
-            'Authorization': 'Bearer $bearerToken', // Add Bearer token here
-          },
-        );
-        debugPrint("Response body GetPageActionPermissionDtls: ${response.body}");
-        debugPrint("Request body GetPageActionPermissionDtls: ${response.request}");
-
-        if (response.statusCode == 200) {
-          // Parse the JSON response
-          final List<dynamic> data = json.decode(response.body);
-          setState(() {
-            cashDenoMandatoryList = data.map((jsonItem) =>
-                CahsDenominationMandatoryFlagModel.fromJson(jsonItem)).toList();
-            isLoading = false;
-            for (var item in cashDenoMandatoryList) {
-              if (item.distributorId.toString() == distributorId && item.permissionFor == "Cash Denomination" && item.isActive == 1) {
-                print("Flag truet:");
-                cashDenominationMandatory = true;
-                break; // Exit loop after finding the match
-              }else{
-                cashDenominationMandatory = false;
-              }
-            }
-          });
-        } else {
-          isLoading = false;
-          throw Exception('Failed to load sales data');
-        }
-      } catch (error) {
-        isLoading = false;
-        debugPrint("Error: $error");
-        // Return an empty list in case of an error
-      }
-    }
-  }
 }
 

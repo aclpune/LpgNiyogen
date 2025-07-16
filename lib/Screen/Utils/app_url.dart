@@ -3,8 +3,8 @@ class AppUrl {
    // static const String baseUrl = 'https://192.168.2.64:502'; // Local new
   // static const String baseUrl = 'https://20.193.149.194/lpgniyojanapi'; // UAT Client
   //  static const String baseUrl = 'https://20.193.149.194/lpgniyojanuatapi'; // UAT New Development
-  //  static const String baseUrl = 'https://aadyaminfotech.com/lpgniyojanuatapi'; // UAT New Development working
- static const String baseUrl = 'https://lpgniyojan.aadyaminfotech.com/lpgniyojanapi'; // Production New
+   static const String baseUrl = 'https://aadyaminfotech.com/lpgniyojanuatapi'; // UAT New Development working
+ // static const String baseUrl = 'https://lpgniyojan.aadyaminfotech.com/lpgniyojanapi'; // Production New
 
   ///Log in
   // static const String login = '$baseUrl/Login/LoginUser';
@@ -150,11 +150,11 @@ class AppUrl {
   static const String GetARBItemRetList = '$baseUrl/InventoryStock/GetARBItemRetList';
   static const String AddCreditNoteDetails = '$baseUrl/InventoryStock/AddCreditNoteDetails';
 
-  ///ARB Sale
-  ///InventoryStock/ARBSalesAddEdit
-  static const String ARBSalesAddEdit = '$baseUrl/InventoryStock/ARBSalesAddEdit';
-  static const String GetARBSalesList = '$baseUrl/InventoryStock/GetARBSalesList';
-  static const String GetARBSalesCashDenoDtlsById = '$baseUrl/InventoryStock/GetARBSalesCashDenoDtlsById';
+ ///ARB Sale
+ ///InventoryStock/ARBSalesAddEdit
+ static const String ARBSalesAddEdit = '$baseUrl/InventoryStock/ARBSalesAddEdit_V2';
+ static const String GetARBSalesList = '$baseUrl/InventoryStock/GetARBSalesList_V2';
+ static const String GetARBSalesCashDenoDtlsById = '$baseUrl/InventoryStock/GetARBSalesCashDenoDtlsById_V2';
 }
 
 
