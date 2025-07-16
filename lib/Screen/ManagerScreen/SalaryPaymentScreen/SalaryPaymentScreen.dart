@@ -990,7 +990,7 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
                           SizedBox(height: 2),
                           Row(
                             children: [
-                              Expanded(flex:1,child: countTextWidgetText(context,"Payment Mode", payList.paymentMode ?? '')),
+                              Expanded(flex:1,child: countTextWidgetText(context, "Payment Mode", (payList.paymentMode == 'Bank') ? 'Online' : (payList.paymentMode ?? ''))),
                             ],
                           ),
                           SizedBox(height: 2),

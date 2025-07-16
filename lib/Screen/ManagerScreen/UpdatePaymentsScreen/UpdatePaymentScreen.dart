@@ -153,16 +153,14 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
           selectedItemId = int.tryParse(argValue["staffIdV"] ?? '') ?? 0;
           vendorId = int.tryParse(argValue["vendorIdV"] ?? '') ?? 0;
           vehicleId = int.tryParse(argValue["vehIdV"] ?? '') ?? 0;
-          if(getTransMode.contains(paymentModeEdit)){
+
+          if (getTransMode.contains(paymentModeEdit)) {
             selectedTransMode = paymentModeEdit;
-          }
-          // else if(paymentModeEdit == "Bank"){
-          //   selectedTransMode = "Online";
-          // }
-          else{
+          } else if (paymentModeEdit == "Bank") {
+            selectedTransMode = 'Online'; // fallback or handle invalid values
+          } else {
             selectedTransMode = null;
           }
-
           // String payVoucherNoEdit = argValue["payVoucherNoV"] ?? 0;
           // receiptNoText = payVoucherNoEdit;
 
@@ -1327,7 +1325,8 @@ class _UpdatePaymentScreenState extends State<UpdatePaymentScreen>{
                           Row(
                             children: [
                               Expanded(flex:1,child: countTextWidgetText(context,"Total Amount", payList.amount.toString())),
-                              Expanded(flex:1,child: countTextWidgetText(context,"Payment Mode", payList.paymentMode ?? '')),
+                              Expanded(flex:1,child: countTextWidgetText(context, "Receipt Mode", (payList.paymentMode == 'Bank') ? 'Online' : (payList.paymentMode ?? ''))),
+
                             ],
                           ),
                           Divider(

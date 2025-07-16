@@ -24,6 +24,7 @@ import '../Utils/app_url.dart';
 import '../Utils/constants.dart';
 import 'package:http/http.dart' as http;
 
+import 'BootomNavigatinBarManager.dart';
 import 'DSRItemClickUI/ManagerCashInHandScreenDetails.dart';
 import 'DSRItemClickUI/ManagerDSRReportScreenDetails.dart';
 import 'DSRItemClickUI/ManagerExpenseTabScreenDetails.dart';
@@ -2956,8 +2957,6 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
           "SectionType":2,
         };
       }).toList());
-    // "TotalSaleQty": double.tryParse(e.quantity.toString())?.toInt() ?? 0,
-    // "TotalSaleQty": e.quantity,
 
     for (var item in dataIncomeTotalAmount) {
       print('--- Entry ---');
@@ -3013,6 +3012,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Data Save successfully!')),
         );
+        Navigator.pushReplacementNamed(context, BottomNavBarExample.screenName);
       } else {
         // Error response
         print("Error: ${response.statusCode} - ${response.body}");

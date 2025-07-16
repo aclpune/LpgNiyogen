@@ -2500,7 +2500,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                                       );
                                                     },
                                                   );
-
                                                   // If user confirmed deletion
                                                   if (confirmDelete == true) {
                                                     // Check if receiptId is not null
@@ -2515,7 +2514,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                                     print('Delete action was canceled');
                                                   }
                                                 }
-
                                               },
                                             ),
                                           ],
@@ -2593,7 +2591,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                         child: Row(
                                           children: [
                                             Text("Mode : ",style: Styling.itemGreyTextSmall,),
-                                            Text(svSale.paymentMode.toString(),style: Styling.itemBlackTestSmall,),
+                                            Text(svSale.paymentMode == "Bank"?"Online":svSale.paymentMode.toString(),style: Styling.itemBlackTestSmall,),
                                           ],
                                         ),
                                       )

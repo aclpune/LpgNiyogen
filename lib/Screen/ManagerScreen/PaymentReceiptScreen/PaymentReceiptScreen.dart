@@ -155,10 +155,12 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
 
         debugPrint("selectedItemId $selectedItemId");
         debugPrint("_selectedCustomerId $_selectedCustomerId");
-        if(getTransMode.contains(paymentModeEdit)){
+
+        if (getTransMode.contains(paymentModeEdit)) {
           selectedTransMode = paymentModeEdit;
-        }
-        else{
+        } else if (paymentModeEdit == "Bank") {
+          selectedTransMode = 'Online'; // fallback or handle invalid values
+        } else {
           selectedTransMode = null;
         }
 
@@ -1447,7 +1449,8 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
                           SizedBox(height: 2),
                           Row(
                             children: [
-                              Expanded(flex:1,child: countTextWidgetText(context,"Receipt Mode", payList.receiptMode ?? '')),
+                              Expanded(flex:1,child: countTextWidgetText(context, "Receipt Mode", (payList.receiptMode == 'Bank') ? 'Online' : (payList.receiptMode ?? ''))),
+
                               Expanded(flex:1,child: countTextWidgetText(context,"Amount", payList.amount.toString()  )),
                             ],
                           ),
