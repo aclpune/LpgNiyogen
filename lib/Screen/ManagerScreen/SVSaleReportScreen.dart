@@ -1142,7 +1142,14 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                         inputFormatters: <TextInputFormatter>[
                           LengthLimitingTextInputFormatter(6),
                           // Allow only digits
+                          FilteringTextInputFormatter.deny(
+                            RegExp(r'[^\u0000-\u007F]'), // Block emojis and non-ASCII characters
+                          ),
+                          FilteringTextInputFormatter.deny(
+                            RegExp(r'\s'), // Block all whitespace including space, tab, etc.
+                          ),
                         ],
+
                         decoration: InputDecoration(
                           labelText: 'Enter Consumer No./DC No.',
                           errorText: _isConsumerEmpty

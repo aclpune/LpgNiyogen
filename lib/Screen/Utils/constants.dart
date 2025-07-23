@@ -104,6 +104,8 @@ BranchAdminAH	cnf@1234*/
   static String selectConsumerMode = "Please select consumer.";
   static String creditQty = "The quantity cannot exceed the cylinder quantity.";
   static String cashAmount = "Please enter a valid cash amount.";
+  static String discountExceedCashCollection = "Discount amount should not be greater than discount limit.";
+  static String discountExceedCashCollectionRSP = "Discount amount should not be greater than RSP price.";
 
   static String roleIdGodown = "0";
   static String roleIdManager= "3";

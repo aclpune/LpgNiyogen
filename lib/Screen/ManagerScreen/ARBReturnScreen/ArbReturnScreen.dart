@@ -508,7 +508,8 @@ class _ArbReturnScreen extends State<ArbReturnScreen> {
                         Row(
                           children: [
                             Expanded(
-                              child: DropdownButtonFormField<String>(
+                              child:
+                              DropdownButtonFormField<String>(
                                 decoration: InputDecoration(
                                   isDense: true,
                                   label: Row(

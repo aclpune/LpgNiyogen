@@ -122,6 +122,7 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
   bool cashDenominationMandatory = false;
   List<GetBalanceByStaffIdModel> balancemodel = [];
   double balanceAmount = 0.0;
+
   @override
   void initState() {
     super.initState();
@@ -2364,6 +2365,7 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
       EasyLoading.showToast("Request failed. Please try again.", duration: const Duration(milliseconds: 3000));
     }
   }
+
   void cancelAction(){
     setState(() {
       _selectedItem = '';
@@ -2424,6 +2426,7 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
     returnAmount = amountsReturn.fold(0.0, (sum, item) => sum + item);
     finalAmountCashDeno = totalAmount - returnAmount;
   }
+
   Future<void> checkAndSaveDayEndData() async {
     EasyLoading.instance
       ..maskType = EasyLoadingMaskType.black // This creates a modal blocking interaction
@@ -2469,6 +2472,7 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
       print("Exception: $e");
     }
   }
+
   Future<void> checkCashDenominationFlagMandatory() async {
     Constants.isNetworkAvailable =
     await InternetConnectionChecker().hasConnection;
@@ -2523,6 +2527,7 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
       }
     }
   }
+
   Future<void> getBalanceByStaffId(String staffId) async {
     EasyLoading.show();
     SharedPreferences prefs = await SharedPreferences.getInstance();

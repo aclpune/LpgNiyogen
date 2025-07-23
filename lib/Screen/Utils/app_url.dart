@@ -3,8 +3,8 @@ class AppUrl {
    // static const String baseUrl = 'https://192.168.2.64:502'; // Local new
   // static const String baseUrl = 'https://20.193.149.194/lpgniyojanapi'; // UAT Client
   //  static const String baseUrl = 'https://20.193.149.194/lpgniyojanuatapi'; // UAT New Development
-  //  static const String baseUrl = 'https://aadyaminfotech.com/lpgniyojanuatapi'; // UAT New Development working
- static const String baseUrl = 'https://lpgniyojan.aadyaminfotech.com/lpgniyojanapi'; // Production New
+   static const String baseUrl = 'https://aadyaminfotech.com/lpgniyojanuatapi'; // UAT New Development working
+ // static const String baseUrl = 'https://lpgniyojan.aadyaminfotech.com/lpgniyojanapi'; // Production New
 
   ///Log in
   // static const String login = '$baseUrl/Login/LoginUser';
@@ -37,6 +37,7 @@ class AppUrl {
   static const String DefectiveMasterAdd_Mob = '$baseUrl/GodownKeeper/DefectiveMasterAdd_Mob';
   static const String GetDefectiveList_Mob = '$baseUrl/GodownKeeper/GetDefectiveList_Mob';
   static const String GetDailySaleSVTVConsumerDtls_Mob = '$baseUrl/DailyStockCash/GetDailySaleSVTVConsumerDtls_Mob';
+  static const String GetDailySaleSVTVConsumerDtls = '$baseUrl/DailyStockCash/GetDailySaleSVTVConsumerDtls';
 
   ///manager
   static const String GetDailySaleSummaryListDMWiseForMob = '$baseUrl/DailyStockCash/GetDailySaleSummaryListDMWiseForMob';
@@ -64,10 +65,12 @@ class AppUrl {
   static const String GetCashFlowSummaryDSRMob = '$baseUrl/Reports/GetCashFlowSummaryDSRMob';
   static const String DailySaleCheckCashLessConsumerDtls = '$baseUrl/DailyStockCash/DailySaleCheckCashLessConsumerDtls';
   static const String GetCustDiscountList = '$baseUrl/Masters/GetCustDiscountList';
+  static const String GetCustItemCurrDiscount = '$baseUrl/Masters/GetCustItemCurrDiscount';
   static const String GetDailySaleCollByMgrDataByIdForMob = '$baseUrl/DailyStockCash/GetDailySaleCollByMgrDataByIdForMob';
   static const String GetBalanceByStaffId = '$baseUrl/DailyStockCash/GetBalanceByStaffId';
   static const String GetLastUploadedTimeDiff = '$baseUrl/AutoExport/GetLastUploadedTimeDiff';
   static const String DepositCashAddEdit = '$baseUrl/DailyStockCash/DepositCashAddEdit';
+  static const String CustDiscDetailsAddEdit = '$baseUrl/Masters/CustDiscDetailsAddEdit';
 
   ///DSR Click API
   static const String GetCashflowpopupList_Mob = '$baseUrl/Reports/GetCashflowpopupList_Mob';

@@ -1593,7 +1593,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                   ),
                 ),
                 cdcmsListData.isNotEmpty
-                    ? ListView.builder(
+                    ?
+                ListView.builder(
                   shrinkWrap: true,
                   physics: BouncingScrollPhysics(),
                   itemCount: cdcmsListData.length,
@@ -2148,7 +2149,29 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                               showFlushBar(context,
                                   Constants.dayEndCompleted);
                             }else{
-                              _showConfirmationDialog(context);
+
+                                bool allZero = true;
+
+                                for (int i = 0; i < cdcmsListData.length; i++) {
+                                  double filled = double.tryParse(filledCDControllers[i].text) ?? 0.0;
+                                  double empty = double.tryParse(emptyCDControllers[i].text) ?? 0.0;
+                                  double defective = double.tryParse(defectiveCDControllers[i].text) ?? 0.0;
+                                  if (filled > 0 || empty > 0 || defective > 0) {
+                                    allZero = false;
+                                    break; // No need to continue; at least one value is non-zero
+                                  }
+                                }
+                                if (allZero) {
+                                  showCustomAlertDialog(
+                                    context,
+                                    title: 'CDCM Stock Missing',
+                                    content: 'Warning: Please update CDCM stock before confirming the DSR.',
+                                  );
+                                } else {
+                                  // Proceed with save logic (e.g., API call or local state update)
+                                  _showConfirmationDialog(context);
+                                  print('Saving data...');
+                                }
                             }
                           }:null,
                           child: Text("Confirm DSR"),
@@ -3131,7 +3154,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
           saveFlag = false;
           print("The list is empty, no data to save.");
         } else {
-          // If there is data in the response, process it and save
+          saveFlag = true;
           var dayEndData = apiResponse[0]; // Access the first item in the list (assuming it's an object)
 
           // You can validate the fields in the response as needed
@@ -3139,15 +3162,15 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
           int CDCMSStkSaved = dayEndData['CDCMSStkSaved'] ?? 0;
           int OpClSaved = dayEndData['OpClSaved'] ?? 0;
 
-          // Check if all required fields are saved
-          if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
-            saveFlag = true;
-            // If the conditions are met, set the flag and save the data
-            print("Data is valid, proceeding to save.");
-          } else {
-            // If any condition is not met, print a message
-            print("Data is incomplete. Cannot proceed to save.");
-          }
+          // // Check if all required fields are saved
+          // if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
+          //   saveFlag = true;
+          //   // If the conditions are met, set the flag and save the data
+          //   print("Data is valid, proceeding to save.");
+          // } else {
+          //   // If any condition is not met, print a message
+          //   print("Data is incomplete. Cannot proceed to save.");
+          // }
         }
       } else {
         // Handle API error
@@ -3175,5 +3198,79 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
     }
 
     return formattedAmount;
+  }
+
+  void showCustomAlertDialog(
+      BuildContext context, {
+        required String title,
+        required String content,
+        String cancelText = 'OK',
+      }) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // optional: prevent tap outside to dismiss
+      builder: (BuildContext context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 24.0),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.cancel_outlined,
+                size: 48,
+                color: Colors.redAccent,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                title,
+                style: Styling.bodyTitleWithBlueHight,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(
+                    Icons.warning_outlined,
+                    size: 16,
+                    color: Colors.amber,
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      content,
+                      style: Styling.textFormText,
+                      textAlign: TextAlign.left,
+                      softWrap: true,
+                      overflow: TextOverflow.visible,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 20),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    cancelText,
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

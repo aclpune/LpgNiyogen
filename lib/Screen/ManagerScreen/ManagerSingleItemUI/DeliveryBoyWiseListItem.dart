@@ -482,8 +482,8 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                             int? saleGk = sale.saleGKId?.toInt();
                             statusChangeApi(saleGk!, 0, 2, Constants.acceptSale);
                           } else {
-                            if (getLastUploadedFile[0].bkgHrDiff == 0 &&
-                                getLastUploadedFile[0].settHrDiff == 0) {
+                            // if (getLastUploadedFile[0].bkgHrDiff == 0 &&
+                            //     getLastUploadedFile[0].settHrDiff == 0) {
                               Navigator.pushNamed(
                                   context, ManagerUpdateSaleScreen.screenName,
                                   arguments: {
@@ -495,14 +495,14 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                                     "vehicleNo": sale.vehicleNo,
                                     "vehicleID": sale.vehicleId,
                                   });
-                            } else {
-                              showCustomAlertDialog(
-                                context,
-                                title: 'You have not uploaded latest file',
-                                content:
-                                'To complete the cash collection, you need to upload the latest file. Please log in to the Niyojan web portal to upload the file.',
-                              );
-                            }
+                            // } else {
+                            //   showCustomAlertDialog(
+                            //     context,
+                            //     title: 'You have not uploaded latest file',
+                            //     content:
+                            //     'To complete the cash collection, you need to upload the latest file. Please log in to the Niyojan web portal to upload the file.',
+                            //   );
+                            // }
                           }
                         }
 
