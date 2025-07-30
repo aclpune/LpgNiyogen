@@ -226,7 +226,7 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
                             SizedBox(width: 8),
                             SizedBox(
                                 width: 70,
-                                child: Text('Prepaid :',
+                                child: Text('Online/Prepaid :',
                                     style: Styling.itemGreyTextVerySmall)),
                             // Quantity Text
                             Row(
@@ -265,7 +265,7 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
                             SizedBox(width: 8),
                             SizedBox(
                                 width: 70,
-                                child: Text('Postpaid :',
+                                child: Text('Merchant QR :',
                                     style: Styling.itemGreyTextVerySmall)),
                             // Quantity Text
                             Row(

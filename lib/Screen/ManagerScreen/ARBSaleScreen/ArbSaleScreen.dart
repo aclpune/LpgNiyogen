@@ -34,7 +34,6 @@ class ArbSaleScreen extends StatefulWidget {
 
 class _ArbSaleScreen extends State<ArbSaleScreen> {
 
-  // final String formattedDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
   String? formattedDate;
   final GlobalKey<FormState> formKey1 = GlobalKey<FormState>();
   final GlobalKey<FormState> formKey2 = GlobalKey<FormState>();
@@ -61,7 +60,7 @@ class _ArbSaleScreen extends State<ArbSaleScreen> {
   GetArbCurrentStockListModel? _selectStockModel;
   Map<int, int?> _itemStockByIndex = {};
   Map<int, int?> _selectedItemIds = {};
-  List<String> getTransMode = ["Cash", "Online"];
+  List<String> getTransMode = ["Cash", "Merchant QR"];
   String? selectedTransMode;
   int _selectedIndex = 0;
   List<DenomModel>getNoteTypeAndIdFroDenominationListModel = [];
@@ -88,6 +87,8 @@ class _ArbSaleScreen extends State<ArbSaleScreen> {
   int? arbSalesIdEdit;
   List<CahsDenominationMandatoryFlagModel> cashDenoMandatoryList = [];
   bool cashDenominationMandatory = false;
+  List<FocusNode> _discountFocusNodes = [];
+  List<FocusNode> _dropdownFocusNodes = [];
   @override
   void initState() {
     super.initState();
@@ -119,7 +120,7 @@ class _ArbSaleScreen extends State<ArbSaleScreen> {
           conNoController.text = consumerNoEdit;
           conNameController.text = consumerNameEdit;
 
-          loadDenominationData(arbSalesIdEdit!);
+
           if (itemsToShow.isNotEmpty) {
             _initializeItems(itemsToShow);
           } else {
@@ -130,13 +131,32 @@ class _ArbSaleScreen extends State<ArbSaleScreen> {
             selectedTransMode = paymentModeEdit;
           }
           else if(paymentModeEdit == "Bank"){
-            selectedTransMode = "Online";
+            selectedTransMode = "Merchant QR";
           }
           else{
             selectedTransMode = null;
           }
 
-          //await getStaffDetailsList();
+          double amountTotalEdit = double.tryParse(argValue["amountTotalV"] ?? '') ?? 0;
+          String transTimeEdit = argValue["transTimeV"] ?? 0;
+          timeController.text = transTimeEdit;
+          String transationCodeEdit = argValue["transationCodeV"] ?? 0;
+          TranCodeController.text = transationCodeEdit;
+          String transRemarkEdit = argValue["transRemarkV"] ?? 0;
+          transReviewController.text = transRemarkEdit;
+          totalAmountController.text = amountTotalEdit.toString();
+          String bankIdV = argValue["bankIdV"] ?? '';
+          debugPrint("bank id1 $bankIdV");
+          String accMappingIdEdit =argValue["mappingIdV"] ?? 0;
+          _selectBankModel = bankModel.firstWhere(
+                (item) => item.accountNo == bankIdV,
+            orElse: () => GetBankMappingDetailsListModel(
+              bankName: 'Default Bank',
+              accountNo: '',
+            ),
+          );
+
+          await getStaffDetailsList();
           await getStaffDetailsList().whenComplete((){
             debugPrint("referredByNameEdit:$referredByNameEdit");
             if(referredByNameEdit != "null" && referredByNameEdit.isNotEmpty && referredByNameEdit != null){
@@ -152,38 +172,12 @@ class _ArbSaleScreen extends State<ArbSaleScreen> {
             }
           });
 
-          double amountTotalEdit = double.tryParse(argValue["amountTotalV"] ?? '') ?? 0;
-          String transTimeEdit = argValue["transTimeV"] ?? 0;
-          timeController.text = transTimeEdit;
-          String transationCodeEdit = argValue["transationCodeV"] ?? 0;
-          TranCodeController.text = transationCodeEdit;
-          String transRemarkEdit = argValue["transRemarkV"] ?? 0;
-          transReviewController.text = transRemarkEdit;
-          totalAmountController.text = amountTotalEdit.toString();
-         // String selecteBankIdEdit = argValue["bankIdV"] ?? 0;
-          String bankIdV = argValue["bankIdV"] ?? '';
-          debugPrint("bank id1 $bankIdV");
-          //String bankNameEdit = argValue["bankNameV"] ?? 0;
-          String accMappingIdEdit =argValue["mappingIdV"] ?? 0;
-          //
-          _selectBankModel = bankModel.firstWhere(
-                (item) => item.accountNo == bankIdV,
-            orElse: () => GetBankMappingDetailsListModel(
-              bankName: 'Default Bank',
-              accountNo: '',
-            ),
-          );
-
-          // Handle receipt cash denomination details
-          getNoteTypeAndIDList().whenComplete((){
-            getReceiptCashDenominationDtl(arbSalesIdEdit!).whenComplete(() {
-              if (denominationModel.isNotEmpty) {
-                initializeControllers();
-              } else {
-                debugPrint("Denomination data is empty");
-              }
-            });
-          });
+          loadDenominationData(arbSalesIdEdit!);
+          if(denominationModel.isNotEmpty){
+            initializeControllers();
+          }else{
+            debugPrint("empty");
+          }
 
           await fetchBank().whenComplete((){
             debugPrint("bank id2 $bankIdV");// wait for data first
@@ -217,6 +211,8 @@ class _ArbSaleScreen extends State<ArbSaleScreen> {
 
   }
 void _addNewItem() {
+  _discountFocusNodes.add(FocusNode());
+  _dropdownFocusNodes.add(FocusNode());
     // Check if there are existing items
     if (items.isNotEmpty) {
       // Get the last added item
@@ -279,8 +275,17 @@ void _addNewItem() {
       print('Selected Items After: $_selectedItems');
 
     });
-   // _updateSum(index);
 
+  }
+  @override
+  void dispose() {
+    for (var node in _discountFocusNodes) {
+      node.dispose();
+    }
+    for (var node in _dropdownFocusNodes) {
+      node.dispose();
+    }
+    super.dispose();
   }
 
   bool get _isAddNewItemEnabled {
@@ -319,7 +324,7 @@ void _addNewItem() {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Expanded(child: textWidgetBlueColorWithoutStar('Sales Date')),
+                        Expanded(child: textWidgetBlueColorWithoutStar('Sale Date')),
                          Flexible(flex: 1, child: Text(formattedDate != null ? DateFormat('dd-MM-yyyy').format(DateTime.parse(formattedDate!)) : '', style: Styling.itemGreyText,),),
                       ],
                     ),
@@ -385,7 +390,6 @@ void _addNewItem() {
                             onChanged: (value) {
                               setState(() {
                                 _isConsumerEmpty = value.isEmpty;
-                                //Please Enter A Valid Consumer Contact No.
                               });
                             },
                           ),
@@ -455,107 +459,109 @@ void _addNewItem() {
                                 children: [
                                   Expanded(
                                     child:
-                                    // DropdownButtonFormField<String>(
-                                    //   decoration: InputDecoration(
-                                    //     label: Row(
-                                    //       mainAxisSize: MainAxisSize.min,
-                                    //       children: const [
-                                    //         Text('Select Item', style: TextStyle(fontSize: 12)),
-                                    //         SizedBox(width: 4),
-                                    //         Icon(Icons.star, color: Colors.red, size: 10),
-                                    //       ],
-                                    //     ),
-                                    //   ),
-                                    //   value: _selectedItems[index]?.isEmpty ?? true ? null : _selectedItems[index],
-                                    //   items: _items
-                                    //       .where((item) =>
-                                    //   !_selectedItems.values.contains(item.itemName) ||
-                                    //       _selectedItems[index] == item.itemName)
-                                    //       .toSet()
-                                    //       .map((item) {
-                                    //     return DropdownMenuItem<String>(
-                                    //       value: item.itemName,
-                                    //       child: Text(item.itemName ?? 'Unknown'),
-                                    //     );
-                                    //   }).toList(),
-                                    //   onChanged: (selectedItemName) {
-                                    //     if (selectedItemName != null) {
-                                    //       setState(() {
-                                    //         _selectedItems[index] = selectedItemName;
-                                    //
-                                    //         final selectedItem = _items.firstWhere(
-                                    //                 (item) => item.itemName == selectedItemName,
-                                    //             orElse: () => GetArbItemMasterListModel());
-                                    //         int? currentStock = getArbItemCurrentStock(selectedItem.itemId?.toInt())?.toInt();
-                                    //         _itemStockByIndex[index] = currentStock; // Store current stock per index
-                                    //         _selectedItemIds[index] = selectedItem.itemId?.toInt(); // Optional if needed
-                                    //         debugPrint("usfds ${_itemStockByIndex[index]}");
-                                    //         double rate = selectedItem.rate?.toDouble() ?? 0.0;
-                                    //         double amount = rate * 0; // Replace 0 with actual quantity if available
-                                    //         items[index]['rate']?.text = rate.toString();
-                                    //         items[index]['amt']?.text = rate.toString();
-                                    //         items[index]['qty']?.clear();
-                                    //         items[index]['discount']?.clear();
-                                    //         print("Selected item: ${selectedItem.itemName}");
-                                    //         print("Rate: $rate");
-                                    //         print("Amount: $amount");
-                                    //         //calculateGrandTotalAmount();
-                                    //       });
-                                    //     }
-                                    //   },
-                                    // ),
-                                    DropdownButtonFormField<String>(
-                                      decoration: InputDecoration(
-                                        label: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: const [
-                                            Text('Select Item', style: TextStyle(fontSize: 12)),
-                                            SizedBox(width: 4),
-                                            Icon(Icons.star, color: Colors.red, size: 10),
-                                          ],
+                                      DropdownButtonFormField<String>(
+                                        decoration: InputDecoration(
+                                          label: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: const [
+                                              Text('Select Item', style: TextStyle(fontSize: 12)),
+                                              SizedBox(width: 4),
+                                              Icon(Icons.star, color: Colors.red, size: 10),
+                                            ],
+                                          ),
                                         ),
+                                        value: _selectedItems[index]?.isEmpty ?? true ? null : _selectedItems[index],
+                                        items: _items
+                                            .where((item) =>
+                                        !_selectedItems.values.contains(item.itemName) ||
+                                            _selectedItems[index] == item.itemName)
+                                            .toSet()
+                                            .map((item) {
+                                          return DropdownMenuItem<String>(
+                                            value: item.itemName,
+                                            child: Text(item.itemName ?? 'Unknown'),
+                                          );
+                                        }).toList(),
+                                        onChanged: (selectedItemName) {
+                                          if (selectedItemName != null) {
+                                            setState(() {
+                                              _selectedItems[index] = selectedItemName;
+
+                                              final selectedItem = _items.firstWhere(
+                                                    (item) => item.itemName == selectedItemName,
+                                                orElse: () => GetArbItemMasterListModel(), // Default item in case not found
+                                              );
+
+                                              int? currentStock = getArbItemCurrentStock(selectedItem.itemId?.toInt())?.toInt();
+                                              _itemStockByIndex[index] = currentStock;
+                                              _selectedItemIds[index] = selectedItem.itemId?.toInt();
+
+                                              String? category = selectedItem.categoryName;
+
+                                              // Check if stock is available
+                                              if (category != "Non ARB Item" && currentStock == 0 || currentStock == null) {
+                                                // Stock is not available, set amt to 0 and default qty to 1
+                                                items[index]['amt']?.clear();
+                                                items[index]['qty']?.clear();
+                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                  SnackBar(content: Text('The Item Quantity Cannot Exceed The Available Stock: $currentStock')),
+                                                );
+
+                                                // Set rate, amt to 0, and qty to 1
+                                                double rate = selectedItem.rate?.toDouble() ?? 0.0;
+                                                double amount = 0; // Explicitly set amount to 0 when stock is unavailable
+
+                                                // Update the form fields with rate, amt (0), and qty (1)
+                                                items[index]['rate']?.text = rate.toString();
+                                                items[index]['amt']?.text = amount.toString(); // Set amt to 0
+                                                items[index]['qty']?.text = '1'; // Default quantity to 1
+                                                items[index]['discount']?.clear(); // Optionally clear discount
+
+                                                // Log output for debugging
+                                                print("Selected item: ${selectedItem.itemName}");
+                                                print("Rate: $rate");
+                                                print("Amount: $amount");
+
+                                              } else {
+                                                // Stock is available, proceed with normal amount calculation
+                                                double rate = selectedItem.rate?.toDouble() ?? 0.0;
+                                                double amount = rate * 1; // Set amount to rate * 1 (default qty)
+
+                                                // Update the form fields with rate, amt, and qty
+                                                items[index]['rate']?.text = rate.toString();
+                                                items[index]['amt']?.text = amount.toString(); // Set amt based on rate * 1 (default qty)
+                                                items[index]['qty']?.clear(); // Clear previous quantity input
+                                                items[index]['discount']?.clear(); // Optionally clear discount
+
+                                                // Log output for debugging
+                                                print("Selected item: ${selectedItem.itemName}");
+                                                print("Rate: $rate");
+                                                print("Amount: $amount");
+
+                                                // Set default qty = 1 if stock is available
+                                                items[index]['qty']?.text = '1'; // Default quantity to 1
+                                              }
+
+                                              // Update the total amount and other logic
+                                              _updateSum(index);
+                                              updateTotalAmount();
+
+                                              // Move focus to the discount field after a slight delay
+                                              Future.delayed(Duration(milliseconds: 100), () {
+                                                if (_discountFocusNodes.length > index) {
+                                                  FocusScope.of(context).requestFocus(_discountFocusNodes[index]);
+                                                }
+                                              });
+
+                                              // If it's the last item, add a new item (you can adjust this condition as needed)
+                                              if (index == items.length - 1) {
+                                                _addNewItem();
+                                              }
+                                            });
+                                          }
+                                        },
                                       ),
-                                      value: _selectedItems[index]?.isEmpty ?? true ? null : _selectedItems[index],
-                                      items: _items
-                                          .where((item) =>
-                                                 !_selectedItems.values.contains(item.itemName) ||
-                                                  _selectedItems[index] == item.itemName)
-                                          .toSet()
-                                          .map((item) {
-                                        return DropdownMenuItem<String>(
-                                          value: item.itemName,
-                                          child: Text(item.itemName ?? 'Unknown'),
-                                        );
-                                      }).toList(),
-                                      onChanged: (selectedItemName) {
-                                        if (selectedItemName != null) {
-                                          setState(() {
-                                            _selectedItems[index] = selectedItemName;
 
-                                            final selectedItem = _items.firstWhere(
-                                                  (item) => item.itemName == selectedItemName,
-                                              orElse: () => GetArbItemMasterListModel(),
-                                            );
-
-                                            int? currentStock = getArbItemCurrentStock(selectedItem.itemId?.toInt())?.toInt();
-                                            _itemStockByIndex[index] = currentStock;
-                                            _selectedItemIds[index] = selectedItem.itemId?.toInt();
-
-                                            double rate = selectedItem.rate?.toDouble() ?? 0.0;
-                                            double amount = rate * 0; // Replace with actual quantity
-
-                                            items[index]['rate']?.text = rate.toString();
-                                            items[index]['amt']?.text = rate.toString();
-                                            items[index]['qty']?.clear();
-                                            items[index]['discount']?.clear();
-
-                                            print("Selected item: ${selectedItem.itemName}");
-                                            print("Rate: $rate");
-                                            print("Amount: $amount");
-                                          });
-                                        }
-                                      },
-                                    ),
                                   ),
 
                                   ElevatedButton(
@@ -603,33 +609,7 @@ void _addNewItem() {
                                                 showAsterisk: true),
                                           ],
                                         ),
-                                        //errorText: items[index]['qty']?.text.isEmpty ?? true ? 'Qty is required' : null, // Error text check
                                       ),
-                                      // onChanged: (value) {
-                                      //   setState(() {
-                                      //     bool isNotNull = value.isNotEmpty;
-                                      //     int enteredQty = int.tryParse(value) ?? 0;
-                                      //     int? stockLimit = _itemStockByIndex[index];
-                                      //     debugPrint("stockLimit $stockLimit");
-                                      //     if (isNotNull) {
-                                      //       if (stockLimit != null && enteredQty > stockLimit) {
-                                      //         items[index]['qty']?.clear(); // Or retain but show error
-                                      //         ScaffoldMessenger.of(context).showSnackBar(
-                                      //           SnackBar(
-                                      //             content: Text('Entered quantity exceeds current stock: $stockLimit'),
-                                      //             //backgroundColor: Colors.red,
-                                      //           ),
-                                      //         );
-                                      //          _updateSum(index);
-                                      //         return;
-                                      //       }
-                                      //        _updateSum(index);
-                                      //     } else {
-                                      //        _updateSum(index);
-                                      //     }
-                                      //     _updateSum(index);
-                                      //   });
-                                      // },
                                       onChanged: (value) {
                                         setState(() {
                                           bool isNotNull = value.isNotEmpty;
@@ -647,14 +627,15 @@ void _addNewItem() {
                                           debugPrint("Category: $category | stockLimit: $stockLimit");
 
                                           if (isNotNull) {
-                                            // Check stock only for allowed categories
-                                            if (category != "Non ARB Item" && category != "Other") {
+                                            //Check stock only for allowed categories
+                                            if (category != "Non ARB Item") {
                                               if (stockLimit != null && enteredQty > stockLimit) {
-                                                items[index]['qty']?.clear();
+                                                items[index]['amt']?.clear();
                                                 ScaffoldMessenger.of(context).showSnackBar(
                                                   SnackBar(
-                                                    content: Text('The item quantity cannot excced the available stock: $stockLimit'),
+                                                    content: Text('The Item Quantity Cannot Exceed The Available Stock: $stockLimit'),
                                                   ),
+
                                                 );
                                                 _updateSum(index);
                                                 updateTotalAmount();
@@ -676,6 +657,7 @@ void _addNewItem() {
                                   Expanded(
                                     child: TextField(
                                       controller: items[index]['discount'],
+                                      focusNode: _discountFocusNodes[index],
                                       keyboardType: TextInputType.number,
                                       inputFormatters: <TextInputFormatter>[
                                         FilteringTextInputFormatter.digitsOnly,
@@ -751,7 +733,6 @@ void _addNewItem() {
                             ),
                             //value: selectedTransMode,
                             value:getTransMode.contains(selectedTransMode) ? selectedTransMode : null,
-                            //customerModel.contains(selectedCustomer)?selectedCustomer:null ,
                             // Bind the selected value
                             items: getTransMode.map((String value) =>
                                 DropdownMenuItem<String>(
@@ -1039,7 +1020,6 @@ void _addNewItem() {
                                                         "Collected:",
                                                         style: Styling
                                                             .itemBlackTestBold,
-                                                        //textAlign: TextAlign.left,
                                                       ),
                                                     ),
                                                     Expanded(
@@ -1319,7 +1299,7 @@ void _addNewItem() {
                         ],
                       ),
                     ),
-                    if (selectedTransMode == 'Online')
+                    if (selectedTransMode == 'Merchant QR')
                       Column(
                         children: [
                           Row(
@@ -1468,7 +1448,6 @@ void _addNewItem() {
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.blue,
-                            //backgroundColor: modes == "EDIT" ? Colors.blue : Colors.grey,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(50),
                             ),
@@ -1556,8 +1535,6 @@ void _addNewItem() {
                                                   },
                                                 );
                                               }
-                                              // Navigate to the target screen and pass the data
-
                                             });
                                           },
                                         ),
@@ -1572,8 +1549,6 @@ void _addNewItem() {
                                               int? pId = (payList.aRBSalesId)?.toInt();
                                               print('Delete button pressed ${payList.aRBSalesId}');
 
-                                              // Show confirmation dialog only if balanceAmt is not 0
-                                              // if (parsedBalance != null && parsedBalance != 0.0) {
                                               bool? confirmDelete = await showDialog<bool>(
                                                 context: context,
                                                 builder: (BuildContext context) {
@@ -1601,7 +1576,6 @@ void _addNewItem() {
                                               // If user confirmed deletion
                                               if (confirmDelete == true) {
                                                 if (pId != null) {
-                                                  // paymentDetailsAddEditForMob(pId, "DELETE");
                                                   arbSalesAddEditForMob(pId, "DELETE");
                                                   print('Delete button pressed $pId');
                                                 } else {
@@ -1611,10 +1585,6 @@ void _addNewItem() {
                                                 print('Delete action was canceled');
                                               }
                                             }
-
-                                            // } else {
-                                            //   print('Balance is 0. Cannot delete.');
-                                            // }
                                           },
                                         ),
                                       ],
@@ -1626,18 +1596,22 @@ void _addNewItem() {
                               Row(
                                 children: [
                                   Expanded(flex:1,child: countTextWidgetText(context,"Consumer No.", payList.consumerNo ?? '')),
-                                  // Expanded(flex:1,child: countTextWidgetText(context, "Payment Mode", payList.paymentMode ?? '')),
-                                  Expanded(
-                                    flex: 1,
-                                    child: countTextWidgetText(context, "Payment Mode", (payList.paymentMode == 'Bank') ? 'Online' : (payList.paymentMode ?? '')
-                                    ),
-                                  ),
                                 ],
                               ),
                               SizedBox(height: 2),
                               Row(
                                 children: [
                                   Expanded(flex:1,child: countTextWidgetText(context,"Consumer Name", payList.consumerName ?? '')),
+                                ],
+                              ),
+                              SizedBox(height: 2),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: countTextWidgetText(context, "Payment Mode", (payList.paymentMode == 'Bank') ? 'Merchant QR' : (payList.paymentMode ?? '')
+                                    ),
+                                  ),
                                 ],
                               ),
                               SizedBox(height: 2),
@@ -1668,7 +1642,8 @@ void _addNewItem() {
     setState(() {
       items.clear(); // Clear any existing data
       _selectedItems.clear(); // Clear previous selections if any
-
+      _discountFocusNodes.add(FocusNode());
+      _dropdownFocusNodes.add(FocusNode());
       for (var i = 0; i < itemsToShow.length; i++) {
         var item = itemsToShow[i];
 
@@ -1685,6 +1660,8 @@ void _addNewItem() {
         // Directly assign the selected item name for this index in _selectedItems map
         _selectedItems[items.length - 1] = item.itemName ??
             ''; // Ensure this is added correctly for each index
+        _discountFocusNodes.add(FocusNode());
+        _dropdownFocusNodes.add(FocusNode());
 
       }
 
@@ -1694,32 +1671,6 @@ void _addNewItem() {
     });
   }
 
-  // void _updateSum(int index) {
-  //   double qtyNew = double.tryParse(items[index]['qty']?.text ?? '') ?? 0;
-  //   double discountNew = double.tryParse(
-  //       items[index]['discount']?.text ?? '') ?? 0;
-  //   double rateNew = double.tryParse(items[index]['rate']?.text ?? '') ?? 0;
-  //   double newAmt = 0.0;
-  //
-  //   // if (qtyNew != 0) {
-  //   newAmt = qtyNew * rateNew;
-  //
-  //   if (discountNew != 0 && discountNew <= newAmt) {
-  //     double total = newAmt - discountNew;
-  //     items[index]['amt']?.text = total.toStringAsFixed(2);
-  //     debugPrint("totalSum with discount: $total");
-  //   } else if (discountNew == 0) {
-  //     items[index]['amt']?.text = newAmt.toStringAsFixed(2);
-  //     debugPrint("totalSum without discount: $newAmt");
-  //   } else {
-  //     // Invalid discount, reset it and show snackbar
-  //     items[index]['discount']?.clear();
-  //     //items[index]['amt']?.text = newAmt.toStringAsFixed(2);
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text(Constants.discountError)),
-  //     );
-  //   }
-  // }
 
   void _updateSum(int index) {
     // Get the values from the receivedQty, discount, and rate controllers
@@ -1729,6 +1680,27 @@ void _addNewItem() {
     double rateNew = double.tryParse(items[index]['rate']?.text ?? '') ?? 0;
     double totalSum = 0.0;
     double newAmt = 0.0;
+    // Check if stock is available
+    int? currentStock = _itemStockByIndex[index]; // Assuming you have a way to fetch current stock for this item
+    if (currentStock == null || currentStock == 0) {
+      // If no stock, clear amt and set it to 0
+      items[index]['amt']?.text = '0.00';
+      debugPrint("Item is out of stock. Setting amt to 0.");
+      return; // Exit the function to avoid further calculations
+    }
+    if (qtyNew > currentStock) {
+      // If entered quantity exceeds available stock, reset amt to 0 and show a message
+      items[index]['amt']?.text = '0.00';
+
+      debugPrint("Entered quantity exceeds stock. Setting amt to 0.");
+      return; // Exit the function to avoid further calculations
+    }
+
+    if (qtyNew == null || qtyNew == 0) {
+      items[index]['amt']?.text = '0.00';
+      debugPrint("Quantity is null or 0. Setting amt to 0.");
+      return; // Exit the function to avoid further calculations
+    }
     // If qtyNew is not null or empty, calculate the sum
     if (qtyNew != 0) {
       newAmt = qtyNew * rateNew;
@@ -1763,107 +1735,62 @@ void _addNewItem() {
     }
   }
 
+
+  // void updateTotalAmount() {
+  //   double total = 0.0;
+  //
+  //   for (var item in items) {
+  //     // Get the quantity (assuming 'qty' is the key for quantity)
+  //     final qty = item['qty'] ?? 0;
+  //
+  //     // If the quantity is 0, set the total amount to 0.00 immediately
+  //     if (qty == 0) {
+  //       totalAmountController.text = '0.00';
+  //       debugPrint("Quantity is 0, total set to 0.00");
+  //       return; // No need to continue further if qty is 0
+  //     }
+  //     final netAmtText = item['amt']?.text.trim() ?? '';
+  //     final netAmt = double.tryParse(netAmtText) ?? 0.0;
+  //     total += netAmt;
+  //   }
+  //   final formattedTotal = total.toStringAsFixed(2);
+  //
+  //   totalAmountController.text = formattedTotal;
+  //
+  //   debugPrint("formattedTotal $formattedTotal");
+  // }
+
   void updateTotalAmount() {
     double total = 0.0;
 
     for (var item in items) {
+      // Get the quantity (assuming 'qty' is the key for quantity)
+      final qty = item['qty'] ?? 0;
+
+      // If the quantity is 0, set the total amount to 0.00 immediately
+      if (qty == 0) {
+        totalAmountController.text = '0.00';
+        debugPrint("Quantity is 0, total set to 0.00");
+        return; // No need to continue further if qty is 0
+      }
+
+      // Get the net amount for the item
       final netAmtText = item['amt']?.text.trim() ?? '';
       final netAmt = double.tryParse(netAmtText) ?? 0.0;
+
+      // Add the net amount to the total
       total += netAmt;
     }
+
+    // Format the total amount to two decimal places
     final formattedTotal = total.toStringAsFixed(2);
 
+    // Update the total amount field
     totalAmountController.text = formattedTotal;
 
     debugPrint("formattedTotal $formattedTotal");
   }
 
-  // void _updateSum(int index) {
-  //   // Get the values from the receivedQty, discount, and rate controllers
-  //   double qtyNew = double.tryParse(items[index]['qty']?.text ?? '') ?? 0;
-  //   double discountNew =
-  //       double.tryParse(items[index]['discount']?.text ?? '') ?? 0;
-  //   double rateNew = double.tryParse(items[index]['rate']?.text ?? '') ?? 0;
-  //   double totalSum = 0.0;
-  //   double newAmt = 0.0;
-  //   // If qtyNew is not null or empty, calculate the sum
-  //   if (qtyNew != 0) {
-  //     newAmt = qtyNew * rateNew;
-  //     if (discountNew != 0) {
-  //       // If discount is provided, apply the discount
-  //       totalSum = qtyNew * rateNew - discountNew;
-  //       items[index]['amt']?.text = totalSum
-  //           .toStringAsFixed(2); // Update the amount with 2 decimal points
-  //       totalAmountController.text = totalSum.toStringAsFixed(2);
-  //       debugPrint("totalSum with discount: $totalSum");
-  //     } else {
-  //       // If no discount is provided, just multiply qty and rate
-  //       totalSum = qtyNew * rateNew;
-  //       items[index]['amt']?.text = totalSum.toStringAsFixed(2);
-  //       totalAmountController.text = totalSum.toStringAsFixed(2);
-  //       debugPrint("totalSum without discount: $totalSum");
-  //     }
-  //   } else {
-  //     // If qty is 0 or empty, set the amount to 0 regardless of discount
-  //     newAmt =  rateNew;
-  //     totalSum = rateNew - discountNew;
-  //     items[index]['amt']?.text = totalSum.toStringAsFixed(2);
-  //     totalAmountController.text = totalSum.toStringAsFixed(2);
-  //     debugPrint("totalSum (qty is empty): $totalSum");
-  //   }
-  //   if(newAmt >= discountNew){
-  //
-  //   }else{
-  //     items[index]['discount']?.clear();
-  //     _updateSum(index);
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text(Constants.discountError)),
-  //     );
-  //   }
-  // }
-
-
-  // void _updateSum(int index) {
-  //   // Get the values from the receivedQty, discount, and rate controllers
-  //   double qtyNew = double.tryParse(items[index]['qty']?.text ?? '') ?? 0;
-  //   double discountNew = double.tryParse(items[index]['discount']?.text ?? '') ?? 0;
-  //   double rateNew = double.tryParse(items[index]['rate']?.text ?? '') ?? 0;
-  //   double totalSum = 0.0;
-  //   double newAmt = 0.0;
-  //
-  //   if (qtyNew != 0) {
-  //     newAmt = qtyNew * rateNew;
-  //     if (discountNew != 0) {
-  //       totalSum = newAmt - discountNew;
-  //       items[index]['amt']?.text = totalSum.toStringAsFixed(2);
-  //       totalAmountController.text = totalSum.toStringAsFixed(2);
-  //       debugPrint("totalSum with discount: $totalSum");
-  //     } else {
-  //       totalSum = newAmt;
-  //       items[index]['amt']?.text = totalSum.toStringAsFixed(2);
-  //       totalAmountController.text = totalSum.toStringAsFixed(2);
-  //       debugPrint("totalSum without discount: $totalSum");
-  //     }
-  //   } else {
-  //     // Qty is 0, set everything to 0.00
-  //     newAmt = 0.0;
-  //     totalSum = 0.0;
-  //     items[index]['amt']?.text = '0.00';
-  //     totalAmountController.text = '0.00';
-  //     debugPrint("totalSum (qty is 0): $totalSum");
-  //   }
-  //
-  //   // Discount validation
-  //   if (newAmt >= discountNew) {
-  //     // Valid case, no action needed
-  //   } else {
-  //     items[index]['discount']?.clear();
-  //     _updateSum(index); // Recalculate after clearing invalid discount
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text(Constants.discountError)),
-  //     );
-  //   }
-  // }
 
   Future<void> getStaffDetailsList() async {
     EasyLoading.show();
@@ -1896,19 +1823,6 @@ void _addNewItem() {
     debugPrint("GetStaffDetailsList : " + '${response.body}');
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
-
-      // setState(() {
-      //   staffdetailsmodel = data.map((json) {
-      //     // String dateString = json['TransDate'];
-      //     // DateTime date = DateTime.parse(dateString);
-      //     // String formattedDate = DateFormat('yyyy-MM-dd').format(date);
-      //     // json['TransDate'] = formattedDate;
-      //
-      //     return GetStaffDetailsListModel.fromJson(json);
-      //   }).toList();
-      //   isLoading = false;
-      //   EasyLoading.dismiss();
-      // });
       setState(() {
         staffdetailsmodel = data.map((json) {
           return GetStaffDetailsListModel.fromJson(json);
@@ -1982,24 +1896,6 @@ void _addNewItem() {
     }
   }
 
-  // num? getArbItemCurrentStock(int? itemId) {
-  //   if (itemId == null) return null;
-  //
-  //   try {
-  //     final stockItem = svcStock.firstWhere(
-  //           (element) =>
-  //       element.itemId?.toInt() == itemId &&
-  //           element.categoryName != "Non ARB Item" &&
-  //           element.categoryName != "Other",
-  //       orElse: () => GetArbCurrentStockListModel(currentStk: 0),
-  //     );
-  //     print("Selected itemId: $itemId | Stock Found: ${stockItem.currentStk}");
-  //     return stockItem.currentStk ?? 0;
-  //   } catch (e) {
-  //     print("Error: $e");
-  //     return 0;
-  //   }
-  // }
   Future<void> getArbCurrentStockList() async {
     EasyLoading.show();
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -2038,7 +1934,7 @@ void _addNewItem() {
     }
   }
 
-  Future<void> getReceiptCashDenominationDtl(int arbsalesId) async {
+  Future<void> getArbCashDenominationDtl(int arbsalesId) async {
     EasyLoading.show();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? distributorId = prefs.getString('DistributorId');
@@ -2208,8 +2104,6 @@ void _addNewItem() {
     String? userId = prefs.getString("UserId");
     int? addedBys = int.parse(staffId!);
     int? distributorIds = int.parse(distributorId!);
-    // final DateTime now = DateTime.now();
-    // String formattedDate = DateFormat('yyyy-MM-dd').format(now);
 
     String? tranCode;
     String? tranTime;
@@ -2230,14 +2124,18 @@ void _addNewItem() {
             (model) => model.itemName == selectedItemName,
         orElse: () => GetArbItemMasterListModel(itemId: 0, itemName: ''),
       );
+
       return {
-        'ItemId': selectedItem.itemId ?? '',
+        'ItemId': selectedItem.itemId ?? 0,
         'Rate': item['rate']?.text ?? '',
         'ItemQty': item['qty']?.text ?? '',
         'DiscountAmt': item['discount']?.text ?? '',
         'ARBAmount': item['amt']?.text ?? '',
       };
-    }).toList();
+    }).where((item) =>
+    item['ItemId'] != 0 && item['ARBAmount'] != '0.00' && item['ARBAmount'] != '0') // Filter for non-zero amounts
+        .toList();
+        //.where((item) => item['ItemId'] != 0).toList();
 
     final List<Map<String, dynamic>> dataCashDenomination = getNoteTypeAndIdFroDenominationListModel.asMap().entries.map((entry) {
       int index = entry.key;
@@ -2246,8 +2144,8 @@ void _addNewItem() {
         "NoteId": data.id ?? 0, // Use null-aware operator to handle null values
         "NoteQty": qtyController[index].text.isNotEmpty ? int.tryParse(qtyController[index].text) : 0,
         "NoteAmt": amounts[index],
-        "RetNoteQty": 0, // Replace with actual value if available
-        "RetNoteAmt": 0.0, // Replace with actual value if available
+        "RetNoteQty": qtyControllerReturn[index].text.isNotEmpty ? int.tryParse(qtyControllerReturn[index].text) : 0, // Replace with actual value if available
+        "RetNoteAmt":amountsReturn[index], // Replace with actual value if available
       };
     }).toList();
 
@@ -2260,26 +2158,28 @@ void _addNewItem() {
       );
       if (!hasValidItems) {
         showFlushBar(context, "Please Select The Item");
-
         return;
       }
+
       bool hasValidRate = ItemDetails.any((item) =>
       item['ItemId'] != 0 &&
-          item['Rate'].toString().isNotEmpty
+          item['Rate'].toString().isNotEmpty &&
+          num.tryParse(item['Rate'].toString()) != null &&
+          num.parse(item['Rate'].toString()) > 0
       );
       if (!hasValidRate) {
         showFlushBar(context, "Please Select The Rate");
         return;
       }
+
       bool hasValidQty = ItemDetails.any((item) =>
       item['ItemId'] != 0 &&
           item['ItemQty'].toString().isNotEmpty &&
           num.tryParse(item['ItemQty'].toString()) != null &&
           num.parse(item['ItemQty'].toString()) > 0
       );
-
       if (!hasValidQty) {
-        showFlushBar(context, "Please Select a Valid Qty Greater Than 0");
+        showFlushBar(context, "Please Select a Valid Qty");
         return;
       }
 
@@ -2336,7 +2236,7 @@ void _addNewItem() {
         return;
       }
 
-      if(selectedTransMode == "Online"){
+      if(selectedTransMode == "Merchant QR"){
         if(selectedBankName == null || selectedBankId == null){
           showFlushBar(context, "Select Bank.");
           return;
@@ -2349,8 +2249,8 @@ void _addNewItem() {
 
       // Conditional check for cash payment mode
       if (selectedTransMode == 'Cash'){
-        if(totalAmount > 0) {
-          if (totalAmount != amtController) {
+        if(finalAmountCashDeno > 0) {
+          if (finalAmountCashDeno != amtController) {
             showFlushBar(context, Constants.denominationAmount);
             return;
           }
@@ -2359,8 +2259,8 @@ void _addNewItem() {
 
       if(cashDenominationMandatory){
         if (selectedTransMode == 'Cash'){
-          if(totalAmount > 0) {
-            if (totalAmount != amtController) {
+          if(finalAmountCashDeno > 0) {
+            if (finalAmountCashDeno != amtController) {
               showFlushBar(context, Constants.denominationAmount);
               return;
             }
@@ -2371,7 +2271,7 @@ void _addNewItem() {
         }
       }
     }
-    if (selectedTransMode != null && selectedTransMode == "Online") {
+    if (selectedTransMode != null && selectedTransMode == "Merchant QR") {
       selectedTransMode = 'Bank';
     }
 
@@ -2385,8 +2285,6 @@ void _addNewItem() {
       "ConsumerNo": consumerNo ?? '',
       "ConsumerName": consumerName ?? '',
       "TotalAmount": amtController ?? 0,
-      // "PaymentMode":selectedTransMode ?? '',
-      //"PaymentMode":"Bank",
       "PaymentMode": action != "DELETE" ? (selectedTransMode ?? '') : "Bank",
       "BankName": bankName ?? '',
       "TransactionCode": tranCode ?? '',
@@ -2567,7 +2465,7 @@ void _addNewItem() {
   }
 
   Future<void> loadDenominationData(int psvID) async {
-    await getReceiptCashDenominationDtl(psvID.toInt());
+    await getArbCashDenominationDtl(psvID.toInt());
 
     // Now call initializeControllers after list is fetched
     initializeControllers();
@@ -2687,6 +2585,5 @@ void _addNewItem() {
       }
     }
   }
-
 }
 

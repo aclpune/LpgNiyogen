@@ -13,8 +13,6 @@ BranchAdminAH	cnf@1234*/
   static double fontSize = 15;
   static String updateMessageForIos =
       "The new version of the apk is available..So Please update the new version..";
-  static String appleUrl =
-      "https://apps.apple.com/in/app/tirupati-c-f/id1673694668";
   //Firebase
   //Indian Rupee sign
   static String rupee = "\u{20B9}";
@@ -44,8 +42,6 @@ BranchAdminAH	cnf@1234*/
   static String responseFailedMessage = 'Something went wrong..try again';
   static String flag = 'Y';
   static String appName = "Niyojan";
-  // static String androidPlayStoreAppUrl =
-  //     "https://play.google.com/store/apps/details?id=com.aipl.flutter.cnf.flutter_cnf";
   static String androidPlayStoreAppUrl =
       '';
 

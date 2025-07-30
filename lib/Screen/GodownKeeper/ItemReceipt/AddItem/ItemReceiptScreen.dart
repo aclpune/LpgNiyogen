@@ -910,16 +910,17 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
           saveFlag = false;
           print("The list is empty, no data to save.");
         } else {
+          saveFlag = true;
           var dayEndData = apiResponse[0];
           int DSRSaved = dayEndData['DSRSaved'] ?? 0;
           int CDCMSStkSaved = dayEndData['CDCMSStkSaved'] ?? 0;
           int OpClSaved = dayEndData['OpClSaved'] ?? 0;
-          if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
-            saveFlag = true;
-            print("Data is valid, proceeding to save.");
-          } else {
-            print("Data is incomplete. Cannot proceed to save.");
-          }
+          // if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
+          //   saveFlag = true;
+          //   print("Data is valid, proceeding to save.");
+          // } else {
+          //   print("Data is incomplete. Cannot proceed to save.");
+          // }
         }
       } else {
         refreshTokens();

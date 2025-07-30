@@ -108,7 +108,7 @@ class _ArbScreenState extends State<ArbScreen> {
     fetchBank();
     getNoteTypeAndIDList();
     getARBItemPurList();
-    checkAndSaveDayEndData();
+    // checkAndSaveDayEndData();
 
 
     Future.delayed(Duration.zero, () async{
@@ -148,8 +148,6 @@ class _ArbScreenState extends State<ArbScreen> {
                       (item) => item.vendorName == vendorName,
                   orElse: () => GetVendorMasterListModel(vendorName: ''),
                 );
-               // selectedReferredID = int.parse(referredByIdEdit);
-               // selectedReferredName = referredByNameEdit;
               }
               );
             }
@@ -243,25 +241,6 @@ class _ArbScreenState extends State<ArbScreen> {
     super.dispose();
   }
 
-
-  // void _initializeItems(List<ItemDetails> itemsToShow) {
-  //   for (var i = 0; i < itemsToShow.length; i++) {
-  //     var item = itemsToShow[i];
-  //
-  //     items.add({
-  //       'selectItem': TextEditingController(text: item.itemName ?? ''),
-  //       'rate': TextEditingController(text: item.rate?.toString() ?? '0'),
-  //       'qty': TextEditingController(text: item.purQty?.toString() ?? '0'),
-  //       'bamt': TextEditingController(text: item.basicAmount?.toString() ?? '0'),
-  //       'tamt': TextEditingController(text: item.taxAmount?.toString() ?? '0'),
-  //       'namt': TextEditingController(text: item.netAmount?.toString() ?? '0'),
-  //     });
-  //
-  //     //_selectedItems[i] = item.itemName;
-  //     _selectedItems[items.length - 1] = item.itemName ?? '';
-  //   }
-  // }
-
   void _initializeItems(List<ItemDetails> itemsToShow) {
     setState(() {
       items.clear(); // Clear any existing data
@@ -313,8 +292,7 @@ class _ArbScreenState extends State<ArbScreen> {
     Padding(
     padding: const EdgeInsets.only(left: 5.0,right: 5,top: 15,bottom: 15),
     child: SingleChildScrollView(
-    child:
-    Column(
+    child: Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Row(
@@ -499,232 +477,6 @@ class _ArbScreenState extends State<ArbScreen> {
           SizedBox(width: 8),
         ],
       ),
-      // ListView.builder(
-      //   shrinkWrap: true,
-      //   physics: NeverScrollableScrollPhysics(),
-      //   itemCount: items.length,
-      //   itemBuilder: (context, index) {
-      //     return Padding(
-      //       padding: const EdgeInsets.only(bottom: 16.0),
-      //       child: Column(
-      //         children: [
-      //           Row(
-      //             children: [
-      //               Expanded(
-      //                 child: DropdownButtonFormField<String>(
-      //                   decoration: InputDecoration(
-      //                     label: Row(
-      //                       mainAxisSize: MainAxisSize.min,
-      //                       children: const [
-      //                         //Text('Select Item', style: TextStyle(fontSize: 12)),
-      //                         Text('Item', style: TextStyle(fontSize: 12)),
-      //                         SizedBox(width: 4),
-      //                         Icon(Icons.star, color: Colors.red, size: 10),
-      //                       ],
-      //                     ),
-      //                   ),
-      //                   value: _selectedItems[index]?.isEmpty ?? true ? null : _selectedItems[index],
-      //                   items: _items
-      //                       .where((item) =>
-      //                   !_selectedItems.values.contains(item.itemName) ||
-      //                       _selectedItems[index] == item.itemName)
-      //                       .toSet()
-      //                       .map((item) {
-      //                     return DropdownMenuItem<String>(
-      //                       value: item.itemName,
-      //                       child: Text(item.itemName ?? 'Unknown'),
-      //                     );
-      //                   }).toList(),
-      //                   // onChanged: (selectedItemName) {
-      //                   //   //_selectedItems = selectedItemName!;
-      //                   // },
-      //                   onChanged: (selectedItemName) {
-      //                     if (selectedItemName != null) {
-      //                       setState(() {
-      //                         _selectedItems[index] = selectedItemName;
-      //
-      //                         final selectedItem = _items.firstWhere(
-      //                                 (item) => item.itemName == selectedItemName,
-      //                             orElse: () => GetArbItemMasterListModel());
-      //                         int? currentStock = getArbItemCurrentStock(selectedItem.itemId?.toInt())?.toInt();
-      //                         _itemStockByIndex[index] = currentStock; // Store current stock per index
-      //                         _selectedItemIds[index] = selectedItem.itemId?.toInt(); // Optional if needed
-      //                         debugPrint("usfds ${_itemStockByIndex[index]}");
-      //                         double rate = selectedItem.rate?.toDouble() ?? 0.0;
-      //                         //double amount = rate * 0; // Replace 0 with actual quantity if available
-      //                       //  items[index]['rate']?.text = rate.toString();
-      //                         items[index]['qty']?.clear();
-      //                         items[index]['bamt']?.text ;
-      //                         //= rate.toString();
-      //                         items[index]['tamt']?.text ;
-      //                         //= rate.toString();
-      //                         items[index]['namt']?.text ;
-      //                         //= rate.toString();
-      //                         print("Selected item: ${selectedItem.itemName}");
-      //                         print("Rate: $rate");
-      //                         // print("Amount: $amount");
-      //                       });
-      //                     }
-      //                   },
-      //                 ),
-      //               ),
-      //
-      //               ElevatedButton(
-      //                 onPressed: () {
-      //                   _removeItem(index);
-      //                 },
-      //                 child: Icon(Icons.delete, color: Colors.red),
-      //                 style: ElevatedButton.styleFrom(
-      //                   shape: CircleBorder(),
-      //                   padding: EdgeInsets.all(12),
-      //                 ),
-      //               ),
-      //             ],
-      //           ),
-      //           SizedBox(height: 10),
-      //           Row(
-      //             children: [
-      //               Expanded(
-      //                 child: TextField(
-      //                   controller: items[index]['rate'],
-      //                   keyboardType: TextInputType.number,
-      //                   inputFormatters: <TextInputFormatter>[
-      //                     FilteringTextInputFormatter.digitsOnly,
-      //                     LengthLimitingTextInputFormatter(8),
-      //                   ],
-      //                   decoration: InputDecoration(
-      //                     label: Row(
-      //                       mainAxisSize: MainAxisSize.min,
-      //                       children: [countTextWidgetTextStar(context, 'Rate', showAsterisk: true)],
-      //                     ),
-      //                   ),
-      //                   onChanged: (value) {
-      //                     setState(() {
-      //                       basicAmount = calculateBasicAmount(index);
-      //                       items[index]['bamt']?.text = basicAmount!.toStringAsFixed(2);
-      //                       netAmount = calculateNetAmount(index);
-      //                       items[index]['namt']?.text = netAmount!.toStringAsFixed(2);// Update the Basic Amt.
-      //                       //finalAmountController.text = netAmount!.toStringAsFixed(2);
-      //                       updateTotalAmount(); // 👈 Add this here
-      //                     });
-      //                   },
-      //                 ),
-      //               ),
-      //               SizedBox(width: 16),
-      //               // Quantity field
-      //               Expanded(
-      //                 child: TextField(
-      //                   controller: items[index]['qty'],
-      //                   keyboardType: TextInputType.number,
-      //                   inputFormatters: <TextInputFormatter>[
-      //                     FilteringTextInputFormatter.digitsOnly,
-      //                     LengthLimitingTextInputFormatter(3),
-      //                   ],
-      //                   decoration: InputDecoration(
-      //                     label: Row(
-      //                       mainAxisSize: MainAxisSize.min,
-      //                       children: [countTextWidgetTextStar(context, 'Qty', showAsterisk: true)],
-      //                     ),
-      //                   ),
-      //                   onChanged: (value) {
-      //                     setState(() {
-      //                       basicAmount = calculateBasicAmount(index);
-      //                       items[index]['bamt']?.text = basicAmount!.toStringAsFixed(2);
-      //                      netAmount = calculateNetAmount(index);
-      //                       items[index]['namt']?.text = netAmount!.toStringAsFixed(2);// Update the Basic Amt.
-      //                       //finalAmountController.text = netAmount!.toStringAsFixed(2);
-      //                       updateTotalAmount(); // 👈 Add this here
-      //                     });
-      //                   },
-      //                 ),
-      //               ),
-      //               SizedBox(width: 16),
-      //               // Basic Amount field (disabled)
-      //               Expanded(
-      //                 child:
-      //                 TextField(
-      //                   controller: items[index]['bamt'],
-      //                   decoration: InputDecoration(
-      //                     label: Row(
-      //                       mainAxisSize: MainAxisSize.min,
-      //                       children: [Text('Basic Amt.')],
-      //                     ),
-      //                   ),
-      //                   enabled: false,  // Disable editing
-      //                 ),
-      //               ),
-      //             ],
-      //           ),
-      //           Row(
-      //             children: [
-      //               Expanded(
-      //                 child: TextField(
-      //                   controller: items[index]['tamt'],
-      //                   keyboardType: TextInputType.number,
-      //                   inputFormatters: <TextInputFormatter>[
-      //                     FilteringTextInputFormatter.digitsOnly,
-      //                     LengthLimitingTextInputFormatter(8),
-      //                   ],
-      //                   decoration: InputDecoration(
-      //                     label: Row(
-      //                       mainAxisSize: MainAxisSize.min,
-      //                       children: [Text('Tax Amt')],
-      //                     ),
-      //                     errorText: (items[index]['tamt']?.text.isNotEmpty ?? false) &&
-      //                         double.tryParse(items[index]['tamt']?.text ?? '') != null &&
-      //                         double.parse(items[index]['tamt']?.text ?? '0') >
-      //                             double.parse(items[index]['bamt']?.text ?? '0')
-      //                         ? 'Tax amount cannot exceed basic amount'
-      //                         : null,
-      //                   ),
-      //                   onChanged: (value) {
-      //                     setState(() {
-      //                       // Safely parse the basic and tax amounts
-      //                       basicAmt = double.tryParse(items[index]['bamt']?.text ?? '0');
-      //                       taxAmt = double.tryParse(items[index]['tamt']?.text ?? '0');
-      //
-      //                       if (basicAmt != null && taxAmt != null) {
-      //                         if (taxAmt! > basicAmt!) {
-      //                           // If tax exceeds basic, clear the tax amount
-      //                           items[index]['tamt']?.text = ''; // Clear the tax amount field
-      //                           taxAmt = 0.0; // Set taxAmt to 0
-      //                         }
-      //
-      //                         // Calculate net amount only if both values are valid
-      //                         netAmount = calculateNetAmount(index);
-      //                         items[index]['namt']?.text = netAmount!.toStringAsFixed(2);
-      //                        // finalAmountController = netAmount.toStringAsFixed(2); // Update the Total Amt.
-      //                         //finalAmountController.text = netAmount!.toStringAsFixed(2);
-      //                         updateTotalAmount(); // 👈 Add this here
-      //                       }
-      //                     });
-      //                   },
-      //                 ),
-      //               ),
-      //               SizedBox(width: 16),
-      //               Expanded(
-      //                 child:
-      //                 TextField(
-      //                   controller: items[index]['namt'],
-      //                   decoration: InputDecoration(
-      //                     label: Row(
-      //                       mainAxisSize: MainAxisSize.min,
-      //                       children: [
-      //                         Text('Net Amt.')
-      //                       ],
-      //                     ),
-      //                   ),
-      //                   enabled: false,
-      //                 ),
-      //               ),
-      //             ],
-      //           ),
-      //           //SizedBox(height: 1,)
-      //         ],
-      //       ),
-      //     );
-      //   },
-      // ),
       ListView.builder(
         shrinkWrap: true,
         physics: NeverScrollableScrollPhysics(),
@@ -747,67 +499,6 @@ class _ArbScreenState extends State<ArbScreen> {
             ),
             child: Column(
               children: [
-                // Row(
-                //   children: [
-                //     Expanded(
-                //       child: DropdownButtonFormField<String>(
-                //         decoration: InputDecoration(
-                //           label: Row(
-                //             mainAxisSize: MainAxisSize.min,
-                //             children: const [
-                //               Text('Item', style: TextStyle(fontSize: 12)),
-                //               SizedBox(width: 4),
-                //               Icon(Icons.star, color: Colors.red, size: 10),
-                //             ],
-                //           ),
-                //         ),
-                //         value: _selectedItems[index]?.isEmpty ?? true ? null : _selectedItems[index],
-                //         items: _items
-                //             .where((item) =>
-                //         !_selectedItems.values.contains(item.itemName) ||
-                //             _selectedItems[index] == item.itemName)
-                //             .toSet()
-                //             .map((item) {
-                //           return DropdownMenuItem<String>(
-                //             value: item.itemName,
-                //             child: Text(item.itemName ?? 'Unknown'),
-                //           );
-                //         }).toList(),
-                //         onChanged: (selectedItemName) {
-                //           if (selectedItemName != null) {
-                //             setState(() {
-                //               _selectedItems[index] = selectedItemName;
-                //
-                //               final selectedItem = _items.firstWhere(
-                //                       (item) => item.itemName == selectedItemName,
-                //                   orElse: () => GetArbItemMasterListModel());
-                //               int? currentStock = getArbItemCurrentStock(selectedItem.itemId?.toInt())?.toInt();
-                //               _itemStockByIndex[index] = currentStock;
-                //               _selectedItemIds[index] = selectedItem.itemId?.toInt();
-                //               double rate = selectedItem.rate?.toDouble() ?? 0.0;
-                //
-                //               items[index]['qty']?.clear();
-                //               items[index]['bamt']?.text;
-                //               items[index]['tamt']?.text;
-                //               items[index]['namt']?.text;
-                //
-                //               print("Selected item: ${selectedItem.itemName}");
-                //               print("Rate: $rate");
-                //             });
-                //           }
-                //         },
-                //       ),
-                //     ),
-                //     ElevatedButton(
-                //       onPressed: () => _removeItem(index),
-                //       child: Icon(Icons.delete, color: Colors.red),
-                //       style: ElevatedButton.styleFrom(
-                //         shape: CircleBorder(),
-                //         padding: EdgeInsets.all(12),
-                //       ),
-                //     ),
-                //   ],
-                // ),
                 Row(
                   children: [
                     Expanded(
@@ -816,14 +507,19 @@ class _ArbScreenState extends State<ArbScreen> {
                           label: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: const [
-                              Text('Item', style: TextStyle(fontSize: 12)),
+                              Text('Item Name', style: TextStyle(fontSize: 12)),
                               SizedBox(width: 4),
                               Icon(Icons.star, color: Colors.red, size: 10),
                             ],
                           ),
                         ),
                         value: _selectedItems[index]?.isEmpty ?? true ? null : _selectedItems[index],
-                        items: _items.map((item) {
+                        items: _items
+                            .where((item) =>
+                        !_selectedItems.values.contains(item.itemName) ||
+                            _selectedItems[index] == item.itemName)
+                            .toSet()
+                            .map((item) {
                           return DropdownMenuItem<String>(
                             value: item.itemName,
                             child: Text(item.itemName ?? 'Unknown'),
@@ -835,13 +531,9 @@ class _ArbScreenState extends State<ArbScreen> {
                               _selectedItems[index] = selectedItemName;
 
                               final selectedItem = _items.firstWhere(
-                                    (item) => item.itemName == selectedItemName,
-                                orElse: () => GetArbItemMasterListModel(),
-                              );
-                            //  int? currentStock = getArbItemCurrentStock(selectedItem.itemId?.toInt())?.toInt();
-                             // _itemStockByIndex[index] = currentStock;
+                                      (item) => item.itemName == selectedItemName,
+                                  orElse: () => GetArbItemMasterListModel());
                               _selectedItemIds[index] = selectedItem.itemId?.toInt();
-                             // double rate = selectedItem.rate?.toDouble() ?? 0.0;
 
                               items[index]['qty']?.clear();
                               items[index]['bamt']?.text;
@@ -849,7 +541,6 @@ class _ArbScreenState extends State<ArbScreen> {
                               items[index]['namt']?.text;
 
                               print("Selected item: ${selectedItem.itemName}");
-                              //print("Rate: $rate");
                             });
                           }
                         },
@@ -865,7 +556,6 @@ class _ArbScreenState extends State<ArbScreen> {
                     ),
                   ],
                 ),
-
                 SizedBox(height: 10),
                 Row(
                   children: [
@@ -1303,20 +993,6 @@ class _ArbScreenState extends State<ArbScreen> {
                           }
                         },
                         child:
-                        // Text(
-                        //   (payList.balanceAmount == 0 || payList.balanceAmount == 0.0)
-                        //       ? "Payment Done"
-                        //       : 'Add Payment',
-                        //   style: TextStyle(
-                        //     color: (payList.balanceAmount == 0 || payList.balanceAmount == 0.0)
-                        //         ? Colors.blue
-                        //         : (payList.balanceAmount! < 0 ? Colors.grey : Colors.red),
-                        //     decoration: TextDecoration.underline,
-                        //     decorationColor: (payList.balanceAmount == 0 || payList.balanceAmount == 0.0)
-                        //         ? Colors.blue
-                        //         : (payList.balanceAmount! < 0 ? Colors.grey : Colors.red),
-                        //   ),
-                        // ),
                           (payList.balanceAmount ?? 0.0) < 0
                               ? SizedBox.shrink() // renders nothing
                               : Text(
@@ -1561,39 +1237,7 @@ class _ArbScreenState extends State<ArbScreen> {
     }
   }
 
-  double calculateBasicAmount(int index) {
-    // Get the rate and quantity controllers safely
-    var rateController = items[index]['rate'];
-    var qtyController = items[index]['qty'];
 
-    // Parse the values, ensuring they are not null or empty
-    double rate = double.tryParse(rateController?.text.trim() ?? '0') ?? 0.0;
-    double qty = double.tryParse(qtyController?.text.trim() ?? '0') ?? 0.0;
-
-    // Log the values for debugging purposes
-    print("Rate: $rate, Qty: $qty");
-
-    // Return the calculated basic amount (rate * qty)
-    return rate * qty;
-  }
-
-  double calculateNetAmount(int index) {
-    // Get the values from the controllers
-    double qty = double.tryParse(items[index]['qty']?.text ?? '0') ?? 0;
-    double rate = double.tryParse(items[index]['rate']?.text ?? '0') ?? 0;
-    double tamt = double.tryParse(items[index]['tamt']?.text ?? '0') ?? 0;
-
-    // Calculate the basic amount
-    double basicAmount = qty * rate;
-    debugPrint("basicAmount $basicAmount");
-
-    // The net amount is the sum of the basic amount and the tax amount
-    double netAmount = basicAmount + tamt;
-    debugPrint("netAmount $netAmount");
-
-    // Return the net amount
-    return netAmount;
-  }
 
   String formatCurrency(double amount) {
     if (amount == 0) {
@@ -1663,19 +1307,31 @@ class _ArbScreenState extends State<ArbScreen> {
       }
       bool hasValidRate = ItemDetails.any((item) =>
       item['ItemId'] != 0 &&
-          item['Rate'].toString().isNotEmpty
+          item['Rate'].toString().isNotEmpty &&
+          num.tryParse(item['Rate'].toString()) != null &&
+          num.parse(item['Rate'].toString()) > 0
       );
       if (!hasValidRate) {
         showFlushBar(context, "Please Select The Rate");
         return;
       }
 
+      // bool hasValidQty = ItemDetails.any((item) =>
+      // item['ItemId'] != 0 &&
+      //     item['PurQty'].toString().isNotEmpty
+      // );
+      // if (!hasValidQty) {
+      //   showFlushBar(context, "Please Select The Qty");
+      //   return;
+      // }
       bool hasValidQty = ItemDetails.any((item) =>
       item['ItemId'] != 0 &&
-          item['PurQty'].toString().isNotEmpty
+          item['ItemQty'].toString().isNotEmpty &&
+          num.tryParse(item['ItemQty'].toString()) != null &&
+          num.parse(item['ItemQty'].toString()) > 0
       );
       if (!hasValidQty) {
-        showFlushBar(context, "Please Select The Qty");
+        showFlushBar(context, "Please Select a Valid Qty");
         return;
       }
 
@@ -1962,6 +1618,7 @@ class _ArbScreenState extends State<ArbScreen> {
           saveFlag = false;
           print("The list is empty, no data to save.");
         } else {
+          saveFlag = true;
           // If there is data in the response, process it and save
           var dayEndData = apiResponse[0]; // Access the first item in the list (assuming it's an object)
 
@@ -1971,14 +1628,14 @@ class _ArbScreenState extends State<ArbScreen> {
           int OpClSaved = dayEndData['OpClSaved'] ?? 0;
 
           // Check if all required fields are saved
-          if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
-            saveFlag = true;
-            // If the conditions are met, set the flag and save the data
-            print("Data is valid, proceeding to save.");
-          } else {
-            // If any condition is not met, print a message
-            print("Data is incomplete. Cannot proceed to save.");
-          }
+          // if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
+          //   saveFlag = true;
+          //   // If the conditions are met, set the flag and save the data
+          //   print("Data is valid, proceeding to save.");
+          // } else {
+          //   // If any condition is not met, print a message
+          //   print("Data is incomplete. Cannot proceed to save.");
+          // }
         }
       } else {
         // Handle API error
@@ -1995,25 +1652,23 @@ class _ArbScreenState extends State<ArbScreen> {
 
   void cancelAction(){
     setState(() {
-    //   _invoiceController.clear();
-    //   //_selectedItems.clear();
-    // //  items.clear();
-    //   finalAmountController.clear();
-    //   selectedBankName = '';
-    //   balanceAmount = '0.0';
-    //   selectedTransMode = null;
-    //   selectedBankId = null;
-    //   selectedTransMode = null;
-    //   _selectBankModel = null;
-    //   selectedTransMode = null;
-    //   _selectVendor = null;
-    //   TranCodeController.clear();
-    //   timeController.clear();
-    //   remarkController.clear();
-    //   TranCodeController.clear();
-    //   timeController.clear();
-    //   transReviewController.clear();
-    //   modes = "Save";
+      _invoiceController.clear();
+      finalAmountController.clear();
+      selectedBankName = '';
+      balanceAmount = '0.0';
+      selectedTransMode = null;
+      selectedBankId = null;
+      selectedTransMode = null;
+      _selectBankModel = null;
+      selectedTransMode = null;
+      _selectVendor = null;
+      TranCodeController.clear();
+      timeController.clear();
+      remarkController.clear();
+      TranCodeController.clear();
+      timeController.clear();
+      transReviewController.clear();
+      modes = "Save";
       Navigator.pop(context);
       Navigator.pushNamed(
           context,
@@ -2148,6 +1803,44 @@ class _ArbScreenState extends State<ArbScreen> {
         );
       },
     );
+  }
+
+  double calculateBasicAmount(int index) {
+    // Get the rate and quantity controllers safely
+    var rateController = items[index]['rate'];
+    var qtyController = items[index]['qty'];
+
+    // Parse the values, ensuring they are not null or empty
+    double rate = double.tryParse(rateController?.text.trim() ?? '0') ?? 0.0;
+    double qty = double.tryParse(qtyController?.text.trim() ?? '0') ?? 0.0;
+
+    // Log the values for debugging purposes
+    print("Rate: $rate, Qty: $qty");
+
+    // Return the calculated basic amount (rate * qty)
+    return rate * qty;
+  }
+
+  double calculateNetAmount(int index) {
+    // Get the values from the controllers
+    double qty = double.tryParse(items[index]['qty']?.text ?? '0') ?? 0;
+    double rate = double.tryParse(items[index]['rate']?.text ?? '0') ?? 0;
+    double tamt = double.tryParse(items[index]['tamt']?.text ?? '0') ?? 0;
+
+    // Calculate the basic amount
+    double basicAmount = qty * rate;
+    debugPrint("basicAmount $basicAmount");
+
+    // The net amount is the sum of the basic amount and the tax amount
+    double netAmount = basicAmount + tamt;
+    debugPrint("netAmount $netAmount");
+
+    final formattedTotal = netAmount.toStringAsFixed(2);
+    finalAmountController.text = formattedTotal;
+
+    debugPrint("formattedTotal $formattedTotal");
+    // Return the net amount
+    return netAmount;
   }
 
   void updateTotalAmount() {

@@ -1216,6 +1216,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           saveFlag = false;
           print("The list is empty, no data to save.");
         } else {
+          saveFlag = true;
           // If there is data in the response, process it and save
           var dayEndData = apiResponse[0]; // Access the first item in the list (assuming it's an object)
 
@@ -1225,14 +1226,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
           int OpClSaved = dayEndData['OpClSaved'] ?? 0;
 
           // Check if all required fields are saved
-          if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
-            saveFlag = true;
-            // If the conditions are met, set the flag and save the data
-            print("Data is valid, proceeding to save.");
-          } else {
-            // If any condition is not met, print a message
-            print("Data is incomplete. Cannot proceed to save.");
-          }
+          // if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
+          //   saveFlag = true;
+          //   // If the conditions are met, set the flag and save the data
+          //   print("Data is valid, proceeding to save.");
+          // } else {
+          //   // If any condition is not met, print a message
+          //   print("Data is incomplete. Cannot proceed to save.");
+          // }
         }
       } else {
         refreshTokens();

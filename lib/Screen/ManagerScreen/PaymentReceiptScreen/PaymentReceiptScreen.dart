@@ -53,7 +53,6 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
   String? selectedCustomerMode;
   bool isCashDenominationListViewVisible = false;
   int _selectedIndex = 0;
-  //List<ManagerDsrReportCashDeniminationModel>getNoteTypeAndIdFroDenominationListModel = [];
   List<DenomModel>getNoteTypeAndIdFroDenominationListModel = [];
   List<dynamic> dataCashDenominationList = [];
   bool isLoading = true;
@@ -89,7 +88,6 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
   final remarkController = TextEditingController();
   List<GetReceiptCashDenominationDtl> denominationModel = [];
   GetReceiptCashDenominationDtl? _selectDenomination;
-  // List<GetPaymentDetailListModel> paymentModel = [];
   GetStaffDetailsListModel? selectedstaff;
   List<GetStaffDetailsListModel> staffmodel = [];
   String? _selectedItem;
@@ -112,23 +110,19 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
   }
   var argValue;
   String? modes;
-  //String? receiptNoTextEdit;
   int? customerId;
   int? receiptId;
-  //String editModeType = "Reticulated Or ND";
   bool isReticulatedOrNDMode = false;
   bool saveFlag = false;
   List<CahsDenominationMandatoryFlagModel> cashDenoMandatoryList = [];
   bool cashDenominationMandatory = false;
   List<GetBalanceByStaffIdModel> balancemodel = [];
   double balanceAmount = 0.0;
-
   @override
   void initState() {
     super.initState();
     checkCashDenominationFlagMandatory();
     checkAndSaveDayEndData();
-    // Initializing necessary data fetches
     getNoteTypeAndIDList();
     fetchBank();
     getStaffDetailsList();
@@ -196,8 +190,9 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
           ),
         );
 
-        receiptId = int.tryParse(argValue["receiptIdEdit"] ?? '') ?? 0;
+        receiptId = int.tryParse(argValue["receiptIdEdit"] ?? 0);
 
+        loadDenominationData(receiptId!);
         // Handle receipt cash denomination details
         getNoteTypeAndIDList().whenComplete((){
           getReceiptCashDenominationDtl(receiptId!).whenComplete(() {
@@ -209,9 +204,9 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
           });
         });
 
-
         if (selectedItemId != 0) {
           selectedStaffMode = "Staff";
+          await getStaffDetailsList(); // Make sure the list is fetched before accessing
           await getStaffDetailsList(); // Make sure the list is fetched before accessing
           selectedstaff = staffmodel.firstWhere(
                 (item) => item.staffId == selectedItemId,
@@ -224,6 +219,7 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
             debugPrint("receiptFromID: ${receiptFromID}");
             selectedStaffMode = "Reticulated Or ND";
             await getCustomerList();
+            await getCustomerList();
             selectedCustomer = customerModel.firstWhere(
                   (item) => item.customerId == _selectedCustomerId,
               orElse: () => GetCustomerListModel(customerName: ''),
@@ -232,6 +228,7 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
           } else if (receiptFromID == 3) {
             debugPrint("receiptFromID2: ${receiptFromID}");
             selectedStaffMode = "Other";
+            await getCustomerList();
             await getCustomerList();
             selectedCustomer = customerModel.firstWhere(
                   (item) => item.customerId == _selectedCustomerId,
@@ -927,9 +924,6 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
                             TextField(
                               controller: TranCodeController,
                               maxLengthEnforcement: MaxLengthEnforcement.enforced, // Enforce max length
-                              // inputFormatters: <TextInputFormatter>[
-                              //   LengthLimitingTextInputFormatter(30), // Limit the length to 30 characters
-                              // ],
                               inputFormatters: <TextInputFormatter>[
                                 LengthLimitingTextInputFormatter(30), // Limit to 30 characters
                                 FilteringTextInputFormatter.deny(
@@ -1193,9 +1187,6 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
                                 amountController.clear();
                               }
                             }
-                            // if (val > totalAmount || val < totalAmount) {
-                            //   amountController.clear();
-                            // }
                           });
                         },
                         decoration: InputDecoration(
@@ -1327,6 +1318,7 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
                                       icon: Icon(Icons.edit, color:saveFlag?Colors.blueGrey:Colors.blue),  // Icon for edit
                                       onPressed: () {
                                         setState(() {
+                                          loadDenominationData(payList.receiptId!.toInt());
                                           var payVoucherNo = payList.receiptNo.toString();
                                           var depositDate = payList.receiptDate.toString();
                                           var paymentMode = payList.receiptMode.toString();
@@ -1343,7 +1335,6 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
                                           var bankId = payList.bankId.toString();
                                           var mappingId = payList.mappingId.toString();
                                           var accountNo = payList.accountNo.toString();
-                                          //var remark = payList.remarkForVendor.toString();
                                           var receiptId = payList.receiptId.toString();
                                           var receiptFromID = payList.receiptFrom.toString();
                                           int payId = int.parse(receiptId);
@@ -1602,6 +1593,17 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
       throw Exception('Failed to load items');
     }
   }
+
+  Future<void> loadDenominationData(int psvID) async {
+    await getReceiptCashDenominationDtl(psvID.toInt());
+
+    // Now call initializeControllers after list is fetched
+    initializeControllers();
+
+    // Refresh UI
+    setState(() {});
+  }
+
 
   Future<void> fetchBank() async {
     EasyLoading.show();
@@ -2135,8 +2137,8 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
         "NoteId": data.id ?? 0, // Use null-aware operator to handle null values
         "NoteQty": qtyController[index].text.isNotEmpty ? int.tryParse(qtyController[index].text) : 0,
         "NoteAmt": amounts[index],
-        "RetNoteQty": 0, // Replace with actual value if available
-        "RetNoteAmt": 0.0, // Replace with actual value if available
+        "RetNoteQty": qtyControllerReturn[index].text.isNotEmpty ? int.tryParse(qtyControllerReturn[index].text) : 0, // Replace with actual value if available
+        "RetNoteAmt":amountsReturn[index], // Replace with actual value if available
       };
     }).toList();
     if(action != "DELETE"){
@@ -2166,10 +2168,7 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
       }
 
       if (selectedTransMode == null || selectedTransMode!.isEmpty
-      //&&
-      //selectedStaffMode == null || selectedStaffMode!.isEmpty &&
-      // _selectedItem == null &&
-      //amountController.text.isEmpty
+
       )  {
         showFlushBar(context, Constants.reqfield);
         return;
@@ -2191,13 +2190,6 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
         return;
       }
 
-      // Check if selectedStaffMode is 'Staff' and _selectedItem is mandatory
-      //    if (selectedStaffMode == 'Staff') {
-      //      if (selectedstaff == null || selectedstaff!.isEmpty) {
-      //        showFlushBar(context, 'Item selection is mandatory for Staff.');
-      //        return;
-      //      }
-      //    }
       if (selectedStaffMode == 'Staff') {
         if (selectedstaff == null || selectedstaff!.staffName == null || selectedstaff!.staffName!.isEmpty) {
           showFlushBar(context, 'Item selection is mandatory for Staff.');
@@ -2212,21 +2204,10 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
           return;
         }
       }
-      //
-      // if ((selectedStaffMode == 'Reticulated Or ND' ||
-      //     selectedStaffMode == 'Other')
-      //     &&
-      //     (_selectedCustomer == null)
-      // ) {
-      //   showFlushBar(context, 'Customer selection is mandatory for the selected Staff Mode.');
-      //   return;
-      // }
+
 
       if (selectedTransMode == 'Online') {
-        // if (_selectBankModel == null || _selectBankModel!.isEmpty) {
-        //   showFlushBar(context, Constants.bankname);
-        //   return;
-        // }
+
         if (_selectBankModel == null || _selectBankModel!.accountNo == null ||
             _selectBankModel!.accountNo!.isEmpty
         ) {
@@ -2242,8 +2223,8 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
 
       // Conditional check for cash payment mode
       if (selectedTransMode == 'Cash'){
-        if(totalAmount != null || totalAmount>0){
-          if(amtController != totalAmount || amtController <= 0) {
+        if(finalAmountCashDeno != null || finalAmountCashDeno>0){
+          if(amtController != finalAmountCashDeno || amtController <= 0) {
             showFlushBar(context, Constants.denominationAmount);
             return;
           }
@@ -2251,8 +2232,8 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
       }
       if (selectedTransMode == 'Cash'){
         if(cashDenominationMandatory){
-          if(totalAmount != null || totalAmount>0){
-            if(amtController != totalAmount || amtController <= 0) {
+          if(finalAmountCashDeno != null || finalAmountCashDeno>0){
+            if(amtController != finalAmountCashDeno || amtController <= 0) {
               showFlushBar(context, Constants.denominationAmount);
               return;
             }
@@ -2365,7 +2346,6 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
       EasyLoading.showToast("Request failed. Please try again.", duration: const Duration(milliseconds: 3000));
     }
   }
-
   void cancelAction(){
     setState(() {
       _selectedItem = '';
@@ -2378,7 +2358,6 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
       selectedItemId = null;
       _selectBankModel = null;
       selectedTransMode = null;
-      //selectedStaffMode = null;
       selectedCustomerType = null;
       TranCodeController.clear();
       timeController.clear();
@@ -2388,8 +2367,13 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
       transReviewController.clear();
       amountController.clear();
       modes = "Save";
+      Navigator.pushNamed(
+          context,
+          PaymentReceiptScreen.screenName// This opens the third tab
+      );
     });
   }
+
 
   void initializeControllers() {
     qtyController = List.generate(denominationModel.length, (index) {
@@ -2404,7 +2388,9 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
       return qty * noteType; // Now returns double
     });
 
+
     totalAmount = amounts.fold(0.0, (sum, item) => sum + item);
+
 
     isQtyFilled = Map.fromIterable(
       List.generate(denominationModel.length, (index) => index),
@@ -2425,6 +2411,7 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
     });
     returnAmount = amountsReturn.fold(0.0, (sum, item) => sum + item);
     finalAmountCashDeno = totalAmount - returnAmount;
+
   }
 
   Future<void> checkAndSaveDayEndData() async {
@@ -2454,16 +2441,17 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
           saveFlag = false;
           print("The list is empty, no data to save.");
         } else {
+          saveFlag = true;
           var dayEndData = apiResponse[0];
           int DSRSaved = dayEndData['DSRSaved'] ?? 0;
           int CDCMSStkSaved = dayEndData['CDCMSStkSaved'] ?? 0;
           int OpClSaved = dayEndData['OpClSaved'] ?? 0;
-          if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
-            saveFlag = true;
-            print("Data is valid, proceeding to save.");
-          } else {
-            print("Data is incomplete. Cannot proceed to save.");
-          }
+          // if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
+          //   saveFlag = true;
+          //   print("Data is valid, proceeding to save.");
+          // } else {
+          //   print("Data is incomplete. Cannot proceed to save.");
+          // }
         }
       } else {
         print("Error: ${response.statusCode}");
@@ -2527,7 +2515,6 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
       }
     }
   }
-
   Future<void> getBalanceByStaffId(String staffId) async {
     EasyLoading.show();
     SharedPreferences prefs = await SharedPreferences.getInstance();

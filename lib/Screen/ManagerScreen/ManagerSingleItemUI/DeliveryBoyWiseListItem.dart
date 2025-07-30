@@ -311,7 +311,7 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                             SizedBox(width: 8),
                             SizedBox(
                                 width: 70,
-                                child: Text('Prepaid :',
+                                child: Text('Online/Prepaid :',
                                     style: TextStyle(
                                         fontSize: 12,
                                         color: Colors.grey[700],
@@ -358,7 +358,7 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                             SizedBox(width: 8),
                             SizedBox(
                                 width: 70,
-                                child: Text('Postpaid :',
+                                child: Text('Merchant QR :',
                                     style: TextStyle(
                                         fontSize: 12,
                                         color: Colors.grey[700],
@@ -482,8 +482,8 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                             int? saleGk = sale.saleGKId?.toInt();
                             statusChangeApi(saleGk!, 0, 2, Constants.acceptSale);
                           } else {
-                            // if (getLastUploadedFile[0].bkgHrDiff == 0 &&
-                            //     getLastUploadedFile[0].settHrDiff == 0) {
+                            if (getLastUploadedFile[0].bkgHrDiff == 0 &&
+                                getLastUploadedFile[0].settHrDiff == 0) {
                               Navigator.pushNamed(
                                   context, ManagerUpdateSaleScreen.screenName,
                                   arguments: {
@@ -495,14 +495,14 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                                     "vehicleNo": sale.vehicleNo,
                                     "vehicleID": sale.vehicleId,
                                   });
-                            // } else {
-                            //   showCustomAlertDialog(
-                            //     context,
-                            //     title: 'You have not uploaded latest file',
-                            //     content:
-                            //     'To complete the cash collection, you need to upload the latest file. Please log in to the Niyojan web portal to upload the file.',
-                            //   );
-                            // }
+                            } else {
+                              showCustomAlertDialog(
+                                context,
+                                title: 'You have not uploaded latest file',
+                                content:
+                                'To complete the cash collection, you need to upload the latest file. Please log in to the Niyojan web portal to upload the file.',
+                              );
+                            }
                           }
                         }
 
@@ -797,16 +797,17 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
           saveFlag = false;
           print("The list is empty, no data to save.");
         } else {
+          saveFlag = true;
           var dayEndData = apiResponse[0];
           int DSRSaved = dayEndData['DSRSaved'] ?? 0;
           int CDCMSStkSaved = dayEndData['CDCMSStkSaved'] ?? 0;
           int OpClSaved = dayEndData['OpClSaved'] ?? 0;
-          if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
-            saveFlag = true;
-            print("Data is valid, proceeding to save.");
-          } else {
-            print("Data is incomplete. Cannot proceed to save.");
-          }
+          // if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
+          //   saveFlag = true;
+          //   print("Data is valid, proceeding to save.");
+          // } else {
+          //   print("Data is incomplete. Cannot proceed to save.");
+          // }
         }
       } else {
         print("Error: ${response.statusCode}");

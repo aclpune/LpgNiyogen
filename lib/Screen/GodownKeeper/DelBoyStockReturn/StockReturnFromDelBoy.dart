@@ -4630,6 +4630,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
           print("The list is empty, no data to save.");
           // EasyLoading.dismiss();
         } else {
+          saveFlag = true;
           // If there is data in the response, process it and save
           var dayEndData = apiResponse[0]; // Access the first item in the list (assuming it's an object)
 
@@ -4639,16 +4640,16 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
           int OpClSaved = dayEndData['OpClSaved'] ?? 0;
 
           // Check if all required fields are saved
-          if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
-            saveFlag = true;
-            // If the conditions are met, set the flag and save the data
-            print("Data is valid, proceeding to save.");
-            // EasyLoading.dismiss();
-          } else {
-            // If any condition is not met, print a message
-            print("Data is incomplete. Cannot proceed to save.");
-            // EasyLoading.dismiss();
-          }
+          // if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
+          //   saveFlag = true;
+          //   // If the conditions are met, set the flag and save the data
+          //   print("Data is valid, proceeding to save.");
+          //   // EasyLoading.dismiss();
+          // } else {
+          //   // If any condition is not met, print a message
+          //   print("Data is incomplete. Cannot proceed to save.");
+          //   // EasyLoading.dismiss();
+          // }
         }
       } else {
         // Handle API error

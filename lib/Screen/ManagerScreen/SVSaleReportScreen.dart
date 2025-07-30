@@ -80,6 +80,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
   final cylinderQtyAddController = TextEditingController();
   final totalAmountController = TextEditingController();
   final nameChangeAmtChargesController = TextEditingController();
+  String? previousRegulatorDepositAmount;
   int _selectedIndex = 0;
   double? arbTotalAmount;
   double? arbTotalDiscount;
@@ -116,7 +117,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
   double returnAmount = 0.0;
   double finalAmountCashDeno = 0.0;
   Map<int, bool> isQtyFilled = {};
-  List<String> getTransMode = ["Cash", "Online"];
+  List<String> getTransMode = ["Cash", "Merchant QR"];
   List<GetAddEditDataSvSaleItemModel> receiptList = [];
   List<GetDenominationListForAddEdit> getDenominationLis = [];
 
@@ -130,6 +131,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
   int? arbCurrentStock;
   Map<int, int?> _itemStockByIndex = {};
   Map<int, int?> _selectedItemIds = {};
+  Map<int, String?> _selectedCategoryName = {};
   List<GetArbItemMasterListModel> _items = [];
   Map<int, String?> _selectedItems = {};
   List<GetRspDetailsListModel> getrsplistmodel = [];
@@ -211,6 +213,8 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
 
         depositCylinderAmountController.text = depositCylEdit;
         refillCylinderAmountController.text = cylRefillRSPEdit;
+        depositAmount = double.tryParse(depositCylEdit);
+        refillAmountCyl = double.tryParse(cylRefillRSPEdit);
         debugPrint("regulatorDepositEdit $regulatorDepositEdit");
         if(regulatorDepositEdit.isEmpty || regulatorDepositEdit == null || regulatorDepositEdit == "null"){
           regulatorDepositAmountController.text = "0";
@@ -233,7 +237,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
         if (getTransMode.contains(paymentModeEdit)) {
           selectedTransMode = paymentModeEdit;
         } else if(paymentModeEdit == "Bank") {
-          selectedTransMode = 'Online';// fallback or handle invalid values
+          selectedTransMode = 'Merchant QR';// fallback or handle invalid values
         }else{
           selectedTransMode = null;
         }
@@ -311,16 +315,23 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
 
         if (getTransacc.contains(sVTypeEdit)) {
           selectedTransacc = sVTypeEdit;
+        } else if(sVTypeEdit == "NameChange"){
+          selectedTransacc = "Name Change";
+          nameChangeAmtChargesController.text = amtChargesEdit;
         } else {
           selectedTransacc = null; // fallback or handle invalid values
         }
+        debugPrint("selectedTranqty $cylQtyEdit");
         if(productNameEdit != "14.2 KG" || isExemptRetiEdit == "1"){
           cylinderQtyAddController.text = cylQtyEdit;
+          debugPrint("cylinderQtyAddController.text $cylQtyEdit");
         }else{
           if (getTransqty.contains(cylQtyEdit)) {
             selectedTranqty = cylQtyEdit;
+            debugPrint("selectedTranqty $cylQtyEdit");
           } else {
-            selectedTranqty = null; // fallback or handle invalid values
+            selectedTranqty = null;
+            debugPrint("selectedTranqty1 $cylQtyEdit");// fallback or handle invalid values
           }
         }
           debugPrint("fTLRegulatorEdit $fTLRegulatorEdit");
@@ -702,12 +713,19 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                     refillCylinderAmountController.text = refillamount.toString();
                                     calculateBasicAmountSum();
                                     calculateGrandTotalAmount();
-
-                                  }else{
+                                  }else if(selectedTransacc == "Name Change"){
+                                    regulatorDepositAmountController.text = '';
+                                    depositCylinderAmountController.text = '';
+                                    double refillamount = 0;
+                                    refillCylinderAmountController.text = refillamount.toString();
+                                    calculateBasicAmountSum();
+                                    calculateGrandTotalAmount();
+                                  } else{
                                     if(selectedTransacc == "DBC"){
                                       depositCylinderAmountController.text = depositAmount.toString();
                                       regulatorDepositAmountController.text = '';
                                       selectedTranqty = "1";
+                                      cylinderQty = 1;
                                       double refillamount = refillAmountCyl! * 1;
                                       refillCylinderAmountController.text = refillamount.toString();
                                       calculateBasicAmountSum();
@@ -764,7 +782,15 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                     onChanged: (bool? value) {
                                       setState(() {
                                         isExemptedReticulated = value!;
-                                        regulatorDepositAmountController.text = "0";
+                                        // regulatorDepositAmountController.text = "0";
+                                        if (isExemptedReticulated) {
+                                          // Save the current value before overwriting
+                                          previousRegulatorDepositAmount = regulatorDepositAmountController.text;
+                                          regulatorDepositAmountController.text = "0";
+                                        } else {
+                                          // Restore the saved value if available
+                                          regulatorDepositAmountController.text = previousRegulatorDepositAmount ?? "0";
+                                        }
                                       });
                                     },
                                   ),
@@ -1119,7 +1145,25 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                             RegExp(r'^\d*\.?\d*$')),
                         LengthLimitingTextInputFormatter(7),
                       ],
-                      onChanged: (value) {},
+                      onChanged: (value) {
+                        // Trim any leading/trailing spaces and check if the value is not empty
+                        value = value.trim();
+
+                        // Check if the value is not empty and is a valid number
+                        if (value.isNotEmpty) {
+                          try {
+                            // Try parsing the value into a double
+                            calculateBasicAmountSum();
+                            calculateGrandTotalAmount();
+                          } catch (e) {
+                            // Handle the error gracefully if the value is not a valid number
+                            showFlushBar(context, "Invalid amount format. Please enter a valid number.");
+                          }
+                        } else {
+                          // If the value is empty, set it to 0.00 or handle as needed
+                        }
+                      },
+
                     ),
                   ),
                 ],
@@ -1301,14 +1345,17 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                             orElse: () => GetArbItemMasterListModel());
                                         int? currentStock = getArbItemCurrentStock(selectedItem.itemId?.toInt())?.toInt();
                                         _itemStockByIndex[index] = currentStock; // Store current stock per index
-                                        _selectedItemIds[index] = selectedItem.itemId?.toInt(); // Optional if needed
+                                        _selectedItemIds[index] = selectedItem.itemId?.toInt();
+                                        _selectedCategoryName[index] = selectedItem.categoryName;// Optional if needed
                                         debugPrint("usfds ${_itemStockByIndex[index]}");
+                                        debugPrint(" _selectedCategoryName[index] ${_selectedCategoryName[index]}");
                                         double rate = selectedItem.rate?.toDouble() ?? 0.0;
                                         double amount = rate * 0; // Replace 0 with actual quantity if available
                                         items[index]['rate']?.text = rate.toString();
                                         items[index]['amt']?.text = rate.toString();
-                                        if(selectedItem.categoryName == "Non ARB Item" || selectedItem.categoryName == "Other"){
-                                          items[index]['qty']?.text = "0";
+
+                                        if(selectedItem.categoryName == "Non ARB Item"){
+                                          items[index]['qty']?.text = "1";
                                           items[index]['discount']?.clear();
                                           print("Rate3:");
                                           _updateSum(index);
@@ -1415,27 +1462,34 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                       bool isNotNull = value.isNotEmpty;
                                       int enteredQty = int.tryParse(value) ?? 0;
                                       int? stockLimit = _itemStockByIndex[index];
+                                      String? categoryCheck = _selectedCategoryName[index];
                                       debugPrint("stockLimit $stockLimit");
-                                      if (isNotNull) {
-                                        if (stockLimit != null && enteredQty > stockLimit) {
-                                          items[index]['qty']?.clear(); // Or retain but show error
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(
-                                              content: Text('Entered quantity exceeds current stock: $stockLimit'),
-                                              backgroundColor: Colors.red,
-                                            ),
-                                          );
-                                          _updateSum(index);
-                                          calculateGrandTotalAmount();
-                                          return;
-                                        }else{
+                                      if(categoryCheck != "Non ARB Item"){
+                                        if (isNotNull) {
+                                          if (stockLimit != null && enteredQty > stockLimit) {
+                                            items[index]['qty']?.clear(); // Or retain but show error
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                content: Text('Entered quantity exceeds current stock: $stockLimit'),
+                                                backgroundColor: Colors.red,
+                                              ),
+                                            );
+                                            _updateSum(index);
+                                            calculateGrandTotalAmount();
+                                            return;
+                                          }else{
+                                            _updateSum(index);
+                                            calculateGrandTotalAmount();
+                                          }
+                                        } else {
                                           _updateSum(index);
                                           calculateGrandTotalAmount();
                                         }
-                                      } else {
+                                      }else{
                                         _updateSum(index);
                                         calculateGrandTotalAmount();
                                       }
+
                                     });
                                   },
                                 ),
@@ -1581,7 +1635,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                   padding: const EdgeInsets.all(0.0),
                   child: Column(
                     children: [
-                      if (selectedTransMode == 'Online')
+                      if (selectedTransMode == 'Merchant QR')
                         Column(
                           children: [
                             Row(
@@ -2317,9 +2371,9 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                         showFlushBar(context, Constants.dayEndCompleted);
                         } else {
                           if(modes == "Edit"){
-                            updateSVAddEditForMob(psvIdEdit!,"EDIT");
+                            updateSVAddEditForMob(context,psvIdEdit!,"EDIT");
                           }else{
-                            updateSVAddEditForMob(0,"ADD");
+                            updateSVAddEditForMob(context,0,"ADD");
                           }
                         }
                       },
@@ -2415,6 +2469,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                                 var bankName = svSale.bankName.toString();
                                                 var isExemptReti = svSale.isExemptReti.toString();
                                                 var sVDiscountAmt = svSale.sVDiscountAmt.toString();
+                                                debugPrint("cylQty $cylQty");
                                                   // Navigate to the target screen and pass the data
                                                 if (saveFlag) {
                                                   print('saveFlag $saveFlag');
@@ -2512,7 +2567,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                                     // Check if receiptId is not null
                                                     // int? pId = payList.receiptId;
                                                     if (psv != null) {
-                                                      updateSVAddEditForMob(psv!,"DELETE");
+                                                      updateSVAddEditForMob(context,psv!,"DELETE");
                                                       print('Delete button pressed$psv');
                                                     } else {
                                                       print("Receipt ID is null.");
@@ -2542,7 +2597,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                         child: Row(
                                           children: [
                                             Text("SV Pending : ",style: Styling.itemGreyTextSmall,),
-                                            Text(svSale.sVType.toString(),style: Styling.itemBlackTestSmall,),
+                                            Text(svSale.isUndocument == true ?"Yes":"No",style: Styling.itemBlackTestSmall,),
                                           ],
                                         ),
                                       )
@@ -2598,7 +2653,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                         child: Row(
                                           children: [
                                             Text("Mode : ",style: Styling.itemGreyTextSmall,),
-                                            Text(svSale.paymentMode == "Bank"?"Online":svSale.paymentMode.toString(),style: Styling.itemBlackTestSmall,),
+                                            Text(svSale.paymentMode == "Bank"?"Merchant QR":svSale.paymentMode.toString(),style: Styling.itemBlackTestSmall,),
                                           ],
                                         ),
                                       )
@@ -3163,8 +3218,17 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     double regulator = double.tryParse(regulatorDepositAmountController.text) ?? 0;
     double stampDuty = double.tryParse(stampDutyController.text) ?? 0;
     double discountAmt = double.tryParse(regulatorDiscountAmountController.text) ?? 0;
-    double newAmt = deposit + refill + regulator + stampDuty;
-    double total = deposit + refill + regulator + stampDuty - discountAmt;
+    double nameChangeAmt = double.tryParse(nameChangeAmtChargesController.text) ?? 0;
+    double newAmt=0;
+    double total=0;
+    if(selectedTransacc == "Name Change"){
+      newAmt = nameChangeAmt;
+      total = nameChangeAmt;
+    }else{
+       newAmt = deposit + refill + regulator + stampDuty;
+       total = deposit + refill + regulator + stampDuty - discountAmt;
+    }
+
       debugPrint("total $total");
       debugPrint("newAmt $newAmt");
     regulatorBasicAmountController.text = total.toStringAsFixed(2);
@@ -3361,7 +3425,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     setState(() {});
   }
 
-  Future<void> updateSVAddEditForMob(int psvID, String actionMode) async {
+  Future<void> updateSVAddEditForMob(BuildContext context,int psvID, String actionMode) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? distributorId = prefs.getString('DistributorId');
     String? bearerToken = prefs.getString('token');
@@ -3406,9 +3470,11 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
       if(refillCylinderAmountController.text.isNotEmpty){
         cylRefillRSP = double.parse(refillCylinderAmountController.text);
       }
+      if(regulatorDepositAmountController.text.isNotEmpty){
+        if(regulatorDepositAmountController.text.isNotEmpty || regulatorDepositAmountController.text != null || regulatorDepositAmountController.text != "null"){
+          regDeposit = double.parse(regulatorDepositAmountController.text);
+        }
 
-      if(regulatorDepositAmountController.text.isNotEmpty || regulatorDepositAmountController.text != null || regulatorDepositAmountController.text != "null"){
-        regDeposit = double.parse(regulatorDepositAmountController.text);
       }
 
       if(stampDutyController.text.isNotEmpty){
@@ -3466,7 +3532,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
         showFlushBar(context, "Select SV Type.");
         return;
       }
-      if(selectedTranssvItemName == "14.2 KG" && !isExemptedReticulated){
+      if((selectedTranssvItemName == "14.2 KG" && !isExemptedReticulated) && selectedTransacc != "Name Change"){
         if(selectedTranqty == null){
           showFlushBar(context, "Select Cylinder Quantity.");
           return;
@@ -3484,13 +3550,15 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
           return;
         }
       }
-
-      if(depositCylinderAmountController.text.isEmpty){
-        showFlushBar(context, "Enter Cylinder Deposit Amount.");
-        return;
+      if(selectedTransacc != "Name Change"){
+        if(depositCylinderAmountController.text.isEmpty){
+          showFlushBar(context, "Enter Cylinder Deposit Amount.");
+          return;
+        }
       }
 
-      if(selectedTransacc != "DBC"){
+
+      if(selectedTransacc != "DBC" && selectedTransacc != "Name Change"){
         if(regulatorDepositAmountController.text.isEmpty){
           showFlushBar(context, "Enter Regulator Deposit Amount.");
           return;
@@ -3503,6 +3571,8 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
           return;
         }
       }
+
+
 
       if(conNoController.text.isEmpty){
         showFlushBar(context,"Enter Consumer Number.");
@@ -3520,9 +3590,9 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
       }
 
 
-      if(selectedTransMode == "Online"){
+      if(selectedTransMode == "Merchant QR"){
         if(selectedBankName == null || selectedBankId == null){
-          showFlushBar(context, "Select Bank.");
+          showFlushBar(context, "Select Merchant QR.");
           return;
         }
         if(TranCodeController.text.isEmpty){
@@ -3557,7 +3627,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
         showFlushBar(context, "The Entered Receipt Payment Amount Should Be Equal To Total Amount.");
         return;
       }
-      if(selectedTransMode == "Online"){
+      if(selectedTransMode == "Merchant QR"){
         payMode = "Bank";
       }else if(selectedTransMode == "Cash"){
         payMode = "Cash";
@@ -3565,12 +3635,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
         payMode = "";
       }
     }
-
-
-
-
-
-
       //   int cylQty;
     // if(selectedTranssvItemName != "14.2 KG" || isExemptedReticulated){
     //   cylQty = int.parse(cylinderQtyAddController.text);
@@ -3606,10 +3670,69 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     //   };
     // }).toList();
 
-    List<Map<String, dynamic>> itemDetails = items.where((item) {
+    // List<Map<String, dynamic>> itemDetails = items.where((item) {
+    //   int index = items.indexOf(item);
+    //   String? selectedItemName = _selectedItems[index];
+    //
+    //   GetArbItemMasterListModel selectedItem = _items.firstWhere(
+    //         (model) => model.itemName == selectedItemName,
+    //     orElse: () => GetArbItemMasterListModel(itemId: 0, itemName: ''),
+    //   );
+    //
+    //   int? currentStock = getArbItemCurrentStock(selectedItem.itemId?.toInt())?.toInt();
+    //   _itemStockByIndex[index] = currentStock;
+    //
+    //   int itemId = selectedItem.itemId?.toInt() ?? 0;
+    //   int qty = int.tryParse(item['qty']?.text ?? '0') ?? 0;
+    //   debugPrint("selectedItem.categoryName ${selectedItem.categoryName}");
+    //   debugPrint("qty ${qty}");
+    //   debugPrint("currentStock ${currentStock}");
+    //
+    //   if (selectedItem.categoryName != "Non ARB Item") {
+    //     if (qty <= 0) {
+    //       // Show a message and stop the process
+    //       showFlushBar(context, "Quantity must be greater than 0 for item ${selectedItem.itemName}");
+    //       throw Exception("Quantity must be greater than 0 for item ${selectedItem.itemName}");
+    //     }
+    //     if (qty > currentStock!) {
+    //       // Show a message and return early to stop further processing
+    //       showFlushBar(context,"Quantity exceeds available stock for item ${selectedItem.itemName}");
+    //       throw Exception("Quantity exceeds available stock for item ${selectedItem.itemName}"); // <-- Stop process here
+    //
+    //     }
+    //   }
+    //   // Filter condition: only include if both > 0
+    //   return itemId > 0;
+    // }).map((item) {
+    //   int index = items.indexOf(item);
+    //   String? selectedItemName = _selectedItems[index];
+    //
+    //   GetArbItemMasterListModel selectedItem = _items.firstWhere(
+    //         (model) => model.itemName == selectedItemName,
+    //     orElse: () => GetArbItemMasterListModel(itemId: 0, itemName: ''),
+    //   );
+    //
+    //   return {
+    //     'ItemId': selectedItem.itemId ?? '',
+    //     'Rate': item['rate']?.text ?? '',
+    //     'ItemQty': item['qty']?.text ?? '',
+    //     'DiscountAmt': item['discount']?.text ?? '',
+    //     'ARBAmount': item['amt']?.text ?? '',
+    //   };
+    // }).toList();
+
+    List<Map<String, dynamic>> itemDetails = [];
+
+    for (var item in items) {
       int index = items.indexOf(item);
       String? selectedItemName = _selectedItems[index];
 
+      // Skip empty rows (no item selected or quantity is 0)
+      if (selectedItemName == null || selectedItemName.isEmpty || item['qty']?.text == '0') {
+        continue; // Skip this iteration and go to the next row
+      }
+
+      // Find selected item details from the master list
       GetArbItemMasterListModel selectedItem = _items.firstWhere(
             (model) => model.itemName == selectedItemName,
         orElse: () => GetArbItemMasterListModel(itemId: 0, itemName: ''),
@@ -3621,41 +3744,72 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
       int itemId = selectedItem.itemId?.toInt() ?? 0;
       int qty = int.tryParse(item['qty']?.text ?? '0') ?? 0;
 
-      if (selectedItem.categoryName != "Non ARB Item" && selectedItem.categoryName != "Other") {
-        if (qty > currentStock!) {
-          // Show a message and return early to stop further processing
-          showFlushBar(context,"Quantity exceeds available stock for item ${selectedItem.itemName}");
-          throw Exception("Quantity exceeds available stock for item ${selectedItem.itemName}"); // <-- Stop process here
+      // Debugging prints
+      debugPrint("selectedItem.categoryName: ${selectedItem.categoryName}");
+      debugPrint("qty: $qty");
+      debugPrint("currentStock: $currentStock");
 
+      // Check if the selected item is not a "Non ARB Item"
+      if (selectedItem.categoryName != "Non ARB Item") {
+        // Condition 1: Quantity must be greater than 0
+        if (qty <= 0) {
+          showFlushBar(context, "Quantity must be greater than 0 for item ${selectedItem.itemName}");
+          return; // Exit the function immediately if the quantity is invalid
+        }
+
+        // Condition 2: Quantity must not exceed available stock
+        if (qty > currentStock!) {
+          showFlushBar(context, "Quantity exceeds available stock for item ${selectedItem.itemName}");
+          return; // Exit the function immediately if the quantity exceeds stock
+        }
+      }else{
+        if (qty <= 0) {
+          showFlushBar(context, "Quantity must be greater than 0 for item ${selectedItem.itemName}");
+          return; // Exit the function immediately if the quantity is invalid
         }
       }
-      // Filter condition: only include if both > 0
-      return itemId > 0;
-    }).map((item) {
-      int index = items.indexOf(item);
-      String? selectedItemName = _selectedItems[index];
 
-      GetArbItemMasterListModel selectedItem = _items.firstWhere(
-            (model) => model.itemName == selectedItemName,
-        orElse: () => GetArbItemMasterListModel(itemId: 0, itemName: ''),
-      );
-
-      return {
-        'ItemId': selectedItem.itemId ?? '',
-        'Rate': item['rate']?.text ?? '',
-        'ItemQty': item['qty']?.text ?? '',
-        'DiscountAmt': item['discount']?.text ?? '',
-        'ARBAmount': item['amt']?.text ?? '',
-      };
-    }).toList();
-
-
-    if(selectedTranssvItemName == "14.2 KG"){
-      if(itemDetails.isEmpty){
-        showFlushBar(context, "Add ARB Item.");
-        return;
+      // Only add valid items to the list
+      if (itemId > 0 && qty > 0) {
+        itemDetails.add({
+          'ItemId': selectedItem.itemId ?? '',
+          'Rate': item['rate']?.text ?? '',
+          'ItemQty': item['qty']?.text ?? '',
+          'DiscountAmt': item['discount']?.text ?? '',
+          'ARBAmount': item['amt']?.text ?? '',
+        });
       }
     }
+
+    if(selectedTranssvItemName == "14.2 KG"){
+      if(selectedTransacc == "RC" || selectedTransacc == "NC"){
+        if(itemDetails.isEmpty){
+          showFlushBar(context, "Add ARB Item.");
+          return;
+        }
+      }else{
+        if(itemDetails.isEmpty){
+          itemDetails.add({
+            'ItemId': 0 ?? '',
+            'Rate': '' ?? '',
+            'ItemQty': '' ?? '',
+            'DiscountAmt': '' ?? '',
+            'ARBAmount': '' ?? '',
+          });
+        }
+      }
+    }else{
+      if(itemDetails.isEmpty){
+        itemDetails.add({
+          'ItemId': 0 ?? '',
+          'Rate': '' ?? '',
+          'ItemQty': '' ?? '',
+          'DiscountAmt': '' ?? '',
+          'ARBAmount': '' ?? '',
+        });
+      }
+    }
+
     int? bankId;
     int? accMappingIds;
     if(selectedBankName != null) {
@@ -3684,7 +3838,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
       "ProductId": selectedProductID ?? '',
       "ProductName":selectedTranssvItemName ?? '' ,
       "IsUndocument":isSVPending,
-      "SvType":selectedTransacc ?? '',
+      "SvType":(selectedTransacc == "Name Change"?"NameChange":selectedTransacc) ?? '',
       "CylQty": cylinderQty ?? '',
       "ScRegulator":scRegulators,
       "DepositCyl": cylDeposit,
@@ -3738,6 +3892,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     requestBody.forEach((key, value) {
       print('$key: $value');
     });
+    print("Response UpdateSaleAddEditForMob: ${response.body}");
     // Handling response
     if (response.statusCode == 200) {
       if(response == -1 || response.body == -1 || response == "-1" || response.body == "-1"){
@@ -3749,18 +3904,29 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
       }else{
         // Successful response
         print("Response UpdateSaleAddEditForMob: ${response.body}");
-          if(actionMode != "DELETE"){
+          if(actionMode == "ADD"){
+            print("save");
             EasyLoading.showToast(Constants.expenseSendMgr,
                 duration: const Duration(milliseconds: 3000));
-          }else{
+          }else if(actionMode == "EDIT"){
+            print("edit");
+            EasyLoading.showToast(Constants.dataUpdated,
+                duration: const Duration(milliseconds: 3000));
+          } else{
+            print("Delete");
             EasyLoading.showToast(Constants.dataDeleted,
                 duration: const Duration(milliseconds: 3000));
           }
         Navigator.pushNamed(
           context,
-          BottomNavBarExample.screenName,
-          arguments: 3, // This opens the third tab
+          SVSaleReportScreen.screenName,
+          //arguments: 3, // This opens the third tab
         );
+        // Navigator.pushNamed(
+        //   context,
+        //   BottomNavBarExample.screenName,
+        //   arguments: 3, // This opens the third tab
+        // );
         setState(() {
           fetchItemSvAddEditList();
         });
@@ -3782,9 +3948,14 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     double regulator = double.tryParse(regulatorDepositAmountController.text) ?? 0;
     double stampDuty = double.tryParse(stampDutyController.text) ?? 0;
     double discountAmt = double.tryParse(regulatorDiscountAmountController.text) ?? 0;
-
-    double fixedTotal = deposit + refill + regulator + stampDuty - discountAmt;
-    print("Grand Total: $deposit $refill $regulator $stampDuty $discountAmt");
+    double nameChangeAmt = double.tryParse(nameChangeAmtChargesController.text) ?? 0;
+    double fixedTotal=0;
+    if(selectedTransacc == "Name Change"){
+       fixedTotal = nameChangeAmt;
+    }else{
+       fixedTotal = deposit + refill + regulator + stampDuty - discountAmt;
+      print("Grand Total: $deposit $refill $regulator $stampDuty $discountAmt");
+    }
     // 2. Sum up item amounts from the ListView
     double dynamicItemTotal = 0.0;
     double dynamicItemTotalD = 0.0;
@@ -3944,16 +4115,17 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
           saveFlag = false;
           print("The list is empty, no data to save.");
         } else {
+          saveFlag = true;
           var dayEndData = apiResponse[0];
           int DSRSaved = dayEndData['DSRSaved'] ?? 0;
           int CDCMSStkSaved = dayEndData['CDCMSStkSaved'] ?? 0;
           int OpClSaved = dayEndData['OpClSaved'] ?? 0;
-          if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
-            saveFlag = true;
-            print("Data is valid, proceeding to save.");
-          } else {
-            print("Data is incomplete. Cannot proceed to save.");
-          }
+          // if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
+          //   saveFlag = true;
+          //   print("Data is valid, proceeding to save.");
+          // } else {
+          //   print("Data is incomplete. Cannot proceed to save.");
+          // }
         }
       } else {
         print("Error: ${response.statusCode}");
@@ -4018,4 +4190,8 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     }
   }
 }
+
+
+
+
 

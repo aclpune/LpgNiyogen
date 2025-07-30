@@ -369,7 +369,7 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
                   children: [
                     Expanded(
                       child: textWidgetBlueColorWithStar(
-                        'Paid Salary Amount',
+                        'Paid Salary Amt',
                         "*",
                       ),
                     ),
@@ -762,7 +762,7 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
                                           children: [
                                             Expanded(
                                                 flex: 0,
-                                                child: Text("Amount : ",
+                                                child: Text("Total : ",
                                                     style: Styling.itemBlackTestBold,
                                                     textAlign: TextAlign.left)),
                                             Expanded(
@@ -984,7 +984,7 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
                           SizedBox(height: 2),
                           Row(
                             children: [
-                              Expanded(flex:1,child: countTextWidgetText(context,"Paid Salary Amount", payList.paidSalaryAmt.toString())),
+                              Expanded(flex:1,child: countTextWidgetText(context,"Paid Salary Amt", payList.paidSalaryAmt.toString())),
                             ],
                           ),
                           SizedBox(height: 2),
@@ -1817,16 +1817,17 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
           saveFlag = false;
           print("The list is empty, no data to save.");
         } else {
+          saveFlag = true;
           var dayEndData = apiResponse[0];
           int DSRSaved = dayEndData['DSRSaved'] ?? 0;
           int CDCMSStkSaved = dayEndData['CDCMSStkSaved'] ?? 0;
           int OpClSaved = dayEndData['OpClSaved'] ?? 0;
-          if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
-            saveFlag = true;
-            print("Data is valid, proceeding to save.");
-          } else {
-            print("Data is incomplete. Cannot proceed to save.");
-          }
+          // if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
+          //   saveFlag = true;
+          //   print("Data is valid, proceeding to save.");
+          // } else {
+          //   print("Data is incomplete. Cannot proceed to save.");
+          // }
         }
       } else {
         print("Error: ${response.statusCode}");

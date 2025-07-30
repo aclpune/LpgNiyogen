@@ -99,6 +99,8 @@ class _ArbReturnScreen extends State<ArbReturnScreen> {
   final creditNoteAmtController = TextEditingController();
   final creditRemarkController = TextEditingController();
   bool _isCustomerName = false;
+  double? netAmount;
+  double? basicAmount;
 
   @override
   void initState() {
@@ -111,7 +113,7 @@ class _ArbReturnScreen extends State<ArbReturnScreen> {
 
     Future.delayed(Duration.zero, () async{
 
-      argValue = ModalRoute.of(context)?.settings.arguments as Map;
+      argValue = ModalRoute.of(context)?.settings.arguments as Map?;
       modes = argValue?["modeChange"]?? '';
 
       if (argValue != null) {
@@ -220,37 +222,6 @@ class _ArbReturnScreen extends State<ArbReturnScreen> {
     });
   }
 
-  // void _removeItem(int index) {
-  //   setState(() {
-  //     // Debugging: Print before removing
-  //     print('Removing item at index: $index');
-  //     print('Selected Items Before: $_selectedItems');
-  //
-  //     // Dispose the TextEditingController instances associated with the index
-  //     items[index]['rate']?.dispose();
-  //     items[index]['qty']?.dispose();
-  //     items[index]['amount']?.dispose();
-  //     items[index]['reason']?.dispose();
-  //
-  //     items.removeAt(index);
-  //
-  //     _selectedItems.remove(index);
-  //     _selectedItems = Map.fromEntries(
-  //       _selectedItems.entries.map((entry) {
-  //         return entry.key > index
-  //             ? MapEntry(entry.key - 1,
-  //             entry.value) // Shift keys down after the removed index
-  //             : entry;
-  //
-  //       }),
-  //
-  //     );
-  //     updateTotalAmount();
-  //     print('Selected Items After: $_selectedItems');
-  //   });
-  //   updateTotalAmount();
-  // }
-
   void _removeItem(int index) {
     setState(() {
       // Debugging: Print before removing
@@ -282,16 +253,6 @@ class _ArbReturnScreen extends State<ArbReturnScreen> {
     //_updateSum(index);
 
   }
-
-  // @override
-  // void dispose() {
-  //   for (var item in items) {
-  //     item['amt']!.dispose();
-  //   }
-  //   totalAmountController.dispose();
-
-  //   super.dispose();
-  // }
 
   final String formattedDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
 
@@ -443,73 +404,10 @@ class _ArbReturnScreen extends State<ArbReturnScreen> {
                     ),
                     child: Column(
                       children: [
-                        // Row(
-                        //   children: [
-                        //     Expanded(
-                        //       child: DropdownButtonFormField<String>(
-                        //         decoration: InputDecoration(
-                        //           isDense: true,
-                        //           label: Row(
-                        //             mainAxisSize: MainAxisSize.min,
-                        //             children: const [
-                        //               Text('Select Item', style: TextStyle(fontSize: 12)),
-                        //               SizedBox(width: 4),
-                        //               Icon(Icons.star, color: Colors.red, size: 10),
-                        //             ],
-                        //           ),
-                        //         ),
-                        //         value: _selectedItems[index]?.isEmpty ?? true
-                        //             ? null
-                        //             : _selectedItems[index],
-                        //         items: _items
-                        //             .where((item) =>
-                        //         !_selectedItems.values.contains(item.itemName) ||
-                        //             _selectedItems[index] == item.itemName)
-                        //             .toSet()
-                        //             .map((item) {
-                        //           return DropdownMenuItem<String>(
-                        //             value: item.itemName,
-                        //             child: Text(item.itemName ?? 'Unknown'),
-                        //           );
-                        //         }).toList(),
-                        //         onChanged: (selectedItemName) {
-                        //           if (selectedItemName != null) {
-                        //             setState(() {
-                        //               _selectedItems[index] = selectedItemName;
-                        //               final selectedItem = _items.firstWhere(
-                        //                     (item) => item.itemName == selectedItemName,
-                        //                 orElse: () => GetArbItemMasterListModel(),
-                        //               );
-                        //               int? currentStock =
-                        //               getArbItemCurrentStock(selectedItem.itemId?.toInt())
-                        //                   ?.toInt();
-                        //               _itemStockByIndex[index] = currentStock;
-                        //               _selectedItemIds[index] = selectedItem.itemId?.toInt();
-                        //               double rate = selectedItem.rate?.toDouble() ?? 0.0;
-                        //               items[index]['qty']?.clear();
-                        //               items[index]['amount']?.text;
-                        //               items[index]['reason']?.text;
-                        //             });
-                        //           }
-                        //         },
-                        //       ),
-                        //     ),
-                        //     SizedBox(width: 8),
-                        //     ElevatedButton(
-                        //       onPressed: () => _removeItem(index),
-                        //       child: Icon(Icons.delete, color: Colors.red),
-                        //       style: ElevatedButton.styleFrom(
-                        //         shape: CircleBorder(),
-                        //         padding: EdgeInsets.all(12),
-                        //       ),
-                        //     ),
-                        //   ],
-                        // ),
                         Row(
                           children: [
                             Expanded(
-                              child:
-                              DropdownButtonFormField<String>(
+                              child: DropdownButtonFormField<String>(
                                 decoration: InputDecoration(
                                   isDense: true,
                                   label: Row(
@@ -524,7 +422,12 @@ class _ArbReturnScreen extends State<ArbReturnScreen> {
                                 value: _selectedItems[index]?.isEmpty ?? true
                                     ? null
                                     : _selectedItems[index],
-                                items: _items.map((item) {
+                                items: _items
+                                    .where((item) =>
+                                !_selectedItems.values.contains(item.itemName) ||
+                                    _selectedItems[index] == item.itemName)
+                                    .toSet()
+                                    .map((item) {
                                   return DropdownMenuItem<String>(
                                     value: item.itemName,
                                     child: Text(item.itemName ?? 'Unknown'),
@@ -534,17 +437,16 @@ class _ArbReturnScreen extends State<ArbReturnScreen> {
                                   if (selectedItemName != null) {
                                     setState(() {
                                       _selectedItems[index] = selectedItemName;
-
                                       final selectedItem = _items.firstWhere(
                                             (item) => item.itemName == selectedItemName,
                                         orElse: () => GetArbItemMasterListModel(),
                                       );
-
-                                      int? currentStock = getArbItemCurrentStock(selectedItem.itemId?.toInt())?.toInt();
+                                      int? currentStock =
+                                      getArbItemCurrentStock(selectedItem.itemId?.toInt())
+                                          ?.toInt();
                                       _itemStockByIndex[index] = currentStock;
                                       _selectedItemIds[index] = selectedItem.itemId?.toInt();
                                       double rate = selectedItem.rate?.toDouble() ?? 0.0;
-
                                       items[index]['qty']?.clear();
                                       items[index]['amount']?.text;
                                       items[index]['reason']?.text;
@@ -564,7 +466,6 @@ class _ArbReturnScreen extends State<ArbReturnScreen> {
                             ),
                           ],
                         ),
-
                         SizedBox(height: 8),
                         Row(
                           children: [
@@ -588,9 +489,10 @@ class _ArbReturnScreen extends State<ArbReturnScreen> {
                                 ),
                                 onChanged: (value) {
                                   setState(() {
-                                    updateTotalAmount();
+                                    basicAmount = _updateSum(index);
+                                    items[index]['amount']?.text = basicAmount!.toStringAsFixed(2);
                                   });
-                                },
+                                  },
                               ),
                             ),
                             SizedBox(width: 8),
@@ -618,25 +520,27 @@ class _ArbReturnScreen extends State<ArbReturnScreen> {
                                     int enteredQty = int.tryParse(value) ?? 0;
                                     int? stockLimit = _itemStockByIndex[index];
                                     debugPrint("stockLimit $stockLimit");
-                                    if (isNotNull) {
-                                      if (stockLimit != null && enteredQty > stockLimit) {
-                                        items[index]['qty']?.clear(); // Or retain but show error
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: Text('Entered quantity exceeds current stock: $stockLimit'),
-                                           // backgroundColor: Colors.red,
-                                          ),
-                                        );
-                                        _updateSum(index);
-                                        updateTotalAmount();
-                                        return;
-                                      }
-                                      _updateSum(index);
-                                      updateTotalAmount();
-                                    } else {
-                                      _updateSum(index);
-                                      updateTotalAmount();
-                                    }
+
+                               if (isNotNull && enteredQty > 0) {
+                               if (stockLimit != null && enteredQty > stockLimit) {
+                              items[index]['qty']?.clear(); // Or retain but show error
+                              ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                              content: Text('Entered Quantity Exceeds Current Stock: $stockLimit'),
+                              // backgroundColor: Colors.red,
+                              ),
+                             );
+                          _updateSum(index);
+                          updateTotalAmount();
+                          return;
+                          }
+                          _updateSum(index);
+                          updateTotalAmount();
+                          } else {
+                          _updateSum(index);
+                          updateTotalAmount();
+                          }
+
                                   });
                                 },
                               ),
@@ -1181,25 +1085,38 @@ class _ArbReturnScreen extends State<ArbReturnScreen> {
           item['ItemName'].toString().isNotEmpty
       );
       if (!hasValidItems) {
-        showFlushBar(context, "Please select the item");
+        showFlushBar(context, "Please Select The Item");
 
         return;
       }
       bool hasValidRate = ItemDetails.any((item) =>
       item['ItemId'] != 0 &&
-          item['Rate'].toString().isNotEmpty
+          item['Rate'].toString().isNotEmpty &&
+          num.tryParse(item['Rate'].toString()) != null &&
+          num.parse(item['Rate'].toString()) > 0
       );
       if (!hasValidRate) {
-        showFlushBar(context, "Please select the rate");
+        showFlushBar(context, "Please Select The Rate");
         return;
       }
 
+      // bool hasValidQty = ItemDetails.any((item) =>
+      // item['ItemId'] != 0 &&
+      //     item['RetQty'].toString().isNotEmpty
+      // );
+      // if (!hasValidQty) {
+      //   showFlushBar(context, "Please Select The Qty");
+      //   return;
+      // }
+
       bool hasValidQty = ItemDetails.any((item) =>
       item['ItemId'] != 0 &&
-          item['RetQty'].toString().isNotEmpty
+          item['ItemQty'].toString().isNotEmpty &&
+          num.tryParse(item['RetQty'].toString()) != null &&
+          num.parse(item['RetQty'].toString()) > 0
       );
       if (!hasValidQty) {
-        showFlushBar(context, "Please select the qty");
+        showFlushBar(context, "Please Select a Valid Qty");
         return;
       }
 
@@ -1369,7 +1286,6 @@ class _ArbReturnScreen extends State<ArbReturnScreen> {
         EasyLoading.showToast("Something went wrong. Please try again.", duration: const Duration(milliseconds: 3000));
         print("Error: Response returned 0");
       } else {
-        // totalAmount = totalAmount - discountAmt;
 
         // Process the valid response (JSON or data)
         print("Response AddCreditNoteDetails: ${response.body}");
@@ -1434,43 +1350,25 @@ class _ArbReturnScreen extends State<ArbReturnScreen> {
     }
   }
 
-  // void calculateAmount(int index) {
-  //   final rateText = items[index]['rate']?.text;
-  //   final qtyText = items[index]['qty']?.text;
-  //
-  //   final rate = int.tryParse(rateText!) ?? 0;
-  //   final qty = int.tryParse(qtyText!) ?? 0;
-  //
-  //   final amount = rate * qty;
-  //
-  //   // Update the amount TextEditingController
-  //   items[index]['amount']?.text = amount.toStringAsFixed(2);
-  //   totalAmountController.text = amount.toStringAsFixed(2);
-  // }
+  double _updateSum(int index) {
+    var rateController = items[index]['rate'];
+    var qtyController = items[index]['qty'];
+    var amountController = items[index]['amount']; // 🔧 Add this
 
-  void _updateSum(int index) {
-    // Get the values from the receivedQty and rate controllers
-    double qtyNew = double.tryParse(items[index]['qty']?.text ?? '') ?? 0;
-    double rateNew = double.tryParse(items[index]['rate']?.text ?? '') ?? 0;
-    double totalSum = 0.0;
+    double rate = double.tryParse(rateController?.text.trim() ?? '0') ?? 0.0;
+    double qty = double.tryParse(qtyController?.text.trim() ?? '0') ?? 0.0;
 
-    // If qtyNew is not 0, calculate the amount
-    if (qtyNew != 0) {
-      totalSum = qtyNew * rateNew;
-      items[index]['amount']?.text = totalSum.toStringAsFixed(2);
-      debugPrint("totalSum: $totalSum");
-    } else {
-      // If qty is 0, just show rate as amount
-      totalSum = rateNew;
-      items[index]['amount']?.text = totalSum.toStringAsFixed(2);
-      debugPrint("totalSum (qty is empty): $totalSum");
-    }
+    double total = rate * qty;
 
-    updateTotalAmount(); // Update grand total or related UI
+    // 🔧 Set the value to amount controller
+    amountController?.text = total.toStringAsFixed(2);
+
+    debugPrint("Rate: $rate, Qty: $qty, Total: $total");
+
+    return total;
   }
 
-
-  void updateTotalAmount() {
+  double updateTotalAmount() {
     double total = 0.0;
 
     for (var item in items) {
@@ -1478,11 +1376,13 @@ class _ArbReturnScreen extends State<ArbReturnScreen> {
       final amt = double.tryParse(amtText) ?? 0.0;
       total += amt;
     }
-    final formattedTotal = total.toStringAsFixed(2);
 
+    final formattedTotal = total.toStringAsFixed(2);
     totalAmountController.text = formattedTotal;
 
     debugPrint("formattedTotal $formattedTotal");
+
+    return total; // Ensure a non-null double is returned
   }
 
   void _showAddCustomerPopup() {
@@ -1598,21 +1498,6 @@ class _ArbReturnScreen extends State<ArbReturnScreen> {
                   child: Text("Cancel"),
                 ),
                 ElevatedButton(
-                  // onPressed: () {
-            // String creditNo = creditNoController.text.trim();
-            // String creditAmt = creditNoteAmtController.text.trim();
-            // String creditRemark = creditRemarkController.text.trim();
-            //
-            // // Check if required fields are empty
-            // if (creditNo.isEmpty || creditAmt.isEmpty) {
-            // showFlushBar(context, "All fields are required.");
-            // return;
-            // }
-            //
-            // arbCreditNoteAddEditForMob();
-            // Navigator.of(context).pop();
-            // // }
-            // },
                   onPressed: () {
                     String creditNo = creditNoController.text.trim();
                     String creditAmt = creditNoteAmtController.text.trim();

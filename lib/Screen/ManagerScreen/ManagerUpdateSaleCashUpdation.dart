@@ -176,7 +176,7 @@ class _ManagerUpdateSaleCashUpdationState
 
   String? saleQty1, svQty1, tvQty1, amountTotal1, expAmount1, dmBal1;
   double? itemRates, expenseAmtTotal,discountedRateCredit,discountCreditGet,amountTotal,
-      delMenBalance,postpaidAmountApi,creditAmountApi,cashAmountApi,prepaidAmountApi,cashTotalExpectedAmount,cashTotalReceiveAmounts,cashBalanceAmount;
+      delMenBalance,postpaidAmountApi,creditAmountApi,cashAmountApi,prepaidAmountApi,cashTotalExpectedAmount,cashTotalReceiveAmounts,cashBalanceAmount,totalDiscountOfReticulatedByQty;
 
   List<GetConsumerDetailsCredit> getConsumerCreditDetailListModel = [];
   GetConsumerDetailsCredit? selectedCustomerModel;
@@ -1944,8 +1944,8 @@ class _ManagerUpdateSaleCashUpdationState
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          _buildTabText('Prepaid', 0),
-                          _buildTabText('Postpaid', 1),
+                          _buildTabText('Online/Prepaid', 0),
+                          _buildTabText('Merchant QR', 1),
                           _buildTabText('Reticulated', 2),
                           _buildTabText('Cash', 3),
                         ],
@@ -5237,7 +5237,7 @@ class _ManagerUpdateSaleCashUpdationState
               action: "Add",
               // Example action
               addedBy: staffIds,
-              discountAmount :discountCreditGet,
+              discountAmount :totalDiscountOfReticulatedByQty,
               // Example value
             ),
           );
@@ -5313,6 +5313,7 @@ class _ManagerUpdateSaleCashUpdationState
         amountCreditCylinderByVendor = qty * discountedRateCredit!;
         _vendorCylinderAmountControllerCredit.text =
             amountCreditCylinderByVendor.toStringAsFixed(2);
+        totalDiscountOfReticulatedByQty = qty * discountCreditGet!;
       }else{
         amountCreditCylinderByVendor = qty * itemRates!;
         _vendorCylinderAmountControllerCredit.text =
@@ -7695,7 +7696,7 @@ class _ManagerUpdateSaleCashUpdationState
                    Row(
                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                      children: [
-                       textWidgetBlueColorWithStar("Customer Name", "*"),
+                       textWidgetBlueColorWithStar("Customer Name:", "*"),
                        Container(
                          width: MediaQuery.of(contexts).size.width * 0.6,
                          // Use relative width (60% of screen width)
@@ -7735,7 +7736,7 @@ class _ManagerUpdateSaleCashUpdationState
                    Row(
                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                      children: [
-                       textWidgetBlueColorWithStar("Select Item", "*"),
+                       textWidgetBlueColorWithStar("Select Item:", "*"),
                        Container(
                          width: MediaQuery.of(contexts).size.width * 0.6,
                          // Use relative width (60% of screen width)
@@ -7836,7 +7837,7 @@ class _ManagerUpdateSaleCashUpdationState
                    Row(
                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                      children: [
-                       textWidgetBlueColorWithoutStar("Discount Amount:"),
+                       textWidgetBlueColorWithStar("Discount Amount:", "*"),
                        Container(
                          width: MediaQuery.of(contexts).size.width * 0.6,
                          // Use relative width (60% of screen width)

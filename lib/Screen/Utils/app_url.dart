@@ -3,8 +3,8 @@ class AppUrl {
    // static const String baseUrl = 'https://192.168.2.64:502'; // Local new
   // static const String baseUrl = 'https://20.193.149.194/lpgniyojanapi'; // UAT Client
   //  static const String baseUrl = 'https://20.193.149.194/lpgniyojanuatapi'; // UAT New Development
-   static const String baseUrl = 'https://aadyaminfotech.com/lpgniyojanuatapi'; // UAT New Development working
- // static const String baseUrl = 'https://lpgniyojan.aadyaminfotech.com/lpgniyojanapi'; // Production New
+  //  static const String baseUrl = 'https://aadyaminfotech.com/lpgniyojanuatapi'; // UAT New Development working
+ static const String baseUrl = 'https://lpgniyojan.aadyaminfotech.com/lpgniyojanapi'; // Production New
 
   ///Log in
   // static const String login = '$baseUrl/Login/LoginUser';
