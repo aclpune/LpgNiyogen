@@ -1,13 +1,14 @@
 /// DistributorId : 0
 /// pkId : 0
-/// SVTVDate : "2025-02-04T00:00:00"
-/// ConsumerNo : "234234"
-/// ConsumerName : null
+/// SVTVDate : "2025-02-13T17:47:18"
+/// ConsumerNo : "675"
+/// ConsumerName : "Chayan"
 /// CylQty : 2
 /// StaffId : 0
 /// SaleGKId : 0
 /// SaleGKItemId : 0
 /// ConsumerNoStr : null
+/// PSVId : 10
 /// FlagForSVTV : null
 /// AddedBy : 0
 
@@ -17,12 +18,13 @@ class GetSvtvConsumerListModel {
       num? pkId, 
       String? sVTVDate, 
       String? consumerNo, 
-      dynamic consumerName, 
+      String? consumerName, 
       num? cylQty, 
       num? staffId, 
       num? saleGKId, 
       num? saleGKItemId, 
       dynamic consumerNoStr, 
+      num? pSVId, 
       dynamic flagForSVTV, 
       num? addedBy,}){
     _distributorId = distributorId;
@@ -35,6 +37,7 @@ class GetSvtvConsumerListModel {
     _saleGKId = saleGKId;
     _saleGKItemId = saleGKItemId;
     _consumerNoStr = consumerNoStr;
+    _pSVId = pSVId;
     _flagForSVTV = flagForSVTV;
     _addedBy = addedBy;
 }
@@ -50,6 +53,7 @@ class GetSvtvConsumerListModel {
     _saleGKId = json['SaleGKId'];
     _saleGKItemId = json['SaleGKItemId'];
     _consumerNoStr = json['ConsumerNoStr'];
+    _pSVId = json['PSVId'];
     _flagForSVTV = json['FlagForSVTV'];
     _addedBy = json['AddedBy'];
   }
@@ -57,24 +61,26 @@ class GetSvtvConsumerListModel {
   num? _pkId;
   String? _sVTVDate;
   String? _consumerNo;
-  dynamic _consumerName;
+  String? _consumerName;
   num? _cylQty;
   num? _staffId;
   num? _saleGKId;
   num? _saleGKItemId;
   dynamic _consumerNoStr;
+  num? _pSVId;
   dynamic _flagForSVTV;
   num? _addedBy;
 GetSvtvConsumerListModel copyWith({  num? distributorId,
   num? pkId,
   String? sVTVDate,
   String? consumerNo,
-  dynamic consumerName,
+  String? consumerName,
   num? cylQty,
   num? staffId,
   num? saleGKId,
   num? saleGKItemId,
   dynamic consumerNoStr,
+  num? pSVId,
   dynamic flagForSVTV,
   num? addedBy,
 }) => GetSvtvConsumerListModel(  distributorId: distributorId ?? _distributorId,
@@ -87,6 +93,7 @@ GetSvtvConsumerListModel copyWith({  num? distributorId,
   saleGKId: saleGKId ?? _saleGKId,
   saleGKItemId: saleGKItemId ?? _saleGKItemId,
   consumerNoStr: consumerNoStr ?? _consumerNoStr,
+  pSVId: pSVId ?? _pSVId,
   flagForSVTV: flagForSVTV ?? _flagForSVTV,
   addedBy: addedBy ?? _addedBy,
 );
@@ -94,12 +101,13 @@ GetSvtvConsumerListModel copyWith({  num? distributorId,
   num? get pkId => _pkId;
   String? get sVTVDate => _sVTVDate;
   String? get consumerNo => _consumerNo;
-  dynamic get consumerName => _consumerName;
+  String? get consumerName => _consumerName;
   num? get cylQty => _cylQty;
   num? get staffId => _staffId;
   num? get saleGKId => _saleGKId;
   num? get saleGKItemId => _saleGKItemId;
   dynamic get consumerNoStr => _consumerNoStr;
+  num? get pSVId => _pSVId;
   dynamic get flagForSVTV => _flagForSVTV;
   num? get addedBy => _addedBy;
 
@@ -115,6 +123,7 @@ GetSvtvConsumerListModel copyWith({  num? distributorId,
     map['SaleGKId'] = _saleGKId;
     map['SaleGKItemId'] = _saleGKItemId;
     map['ConsumerNoStr'] = _consumerNoStr;
+    map['PSVId'] = _pSVId;
     map['FlagForSVTV'] = _flagForSVTV;
     map['AddedBy'] = _addedBy;
     return map;

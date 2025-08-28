@@ -48,7 +48,7 @@ class _DashboardSVDetailUI extends State<DashboardSVDetailUI> {
           SizedBox(height: 2),
           Row(
             children: [
-              Expanded(flex:1,child: countTextWidgetText(context,"Doc. Status", nullToDash("Received"))),
+              Expanded(flex:1,child: countTextWidgetText(context, "Doc. Status", nullToDash(sale.isUndocument == true ? "Pending" : (sale.isUndocument == false ? "Received" : ""))),),
               Expanded(flex:1,child: countTextWidgetText(context,"Amount", nullToDash(formatCurrency((sale.totalAmount ?? 0.0).toDouble())))),
             ],
           ),

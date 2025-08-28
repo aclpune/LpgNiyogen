@@ -168,5 +168,26 @@ Widget countTextWidgetTextStar(BuildContext context, String label, {bool showAst
     ),
   );
 }
+Widget countTextWidgetTextStarWithBlue(BuildContext context, String label, {bool showAsterisk = false}) {
+
+  return RichText(
+    text: TextSpan(
+      children: [
+        TextSpan(
+          text: label,
+          style:Styling.blueClrText,
+        ),
+        if (showAsterisk)
+          TextSpan(
+            text: ' *',
+            style: TextStyle(
+              color: Colors.red, // Asterisk in red
+              fontSize: 16,
+            ),
+          ),
+      ],
+    ),
+  );
+}
 
 

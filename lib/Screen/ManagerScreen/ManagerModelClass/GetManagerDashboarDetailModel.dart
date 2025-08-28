@@ -66,7 +66,9 @@ class GetManagerDashboarDetailModel {
       num? postPaidVerifPendAmt, 
       num? totalPendingSettCnt, 
       num? totalPendingSettAmt, 
-      String? totalPendingSettSince,}){
+      String? totalPendingSettSince,
+      num? UndocumentedSV
+  }){
     _distributorId = distributorId;
     _itemId = itemId;
     _itemName = itemName;
@@ -100,6 +102,7 @@ class GetManagerDashboarDetailModel {
     _totalPendingSettCnt = totalPendingSettCnt;
     _totalPendingSettAmt = totalPendingSettAmt;
     _totalPendingSettSince = totalPendingSettSince;
+    _UndocumentedSV = UndocumentedSV;
 }
 
   GetManagerDashboarDetailModel.fromJson(dynamic json) {
@@ -136,6 +139,7 @@ class GetManagerDashboarDetailModel {
     _totalPendingSettCnt = json['TotalPendingSettCnt'];
     _totalPendingSettAmt = json['TotalPendingSettAmt'];
     _totalPendingSettSince = json['TotalPendingSettSince'];
+    _UndocumentedSV = json['UndocumentedSV'];
   }
   num? _distributorId;
   num? _itemId;
@@ -170,6 +174,7 @@ class GetManagerDashboarDetailModel {
   num? _totalPendingSettCnt;
   num? _totalPendingSettAmt;
   String? _totalPendingSettSince;
+  num? _UndocumentedSV;
 GetManagerDashboarDetailModel copyWith({  num? distributorId,
   num? itemId,
   String? itemName,
@@ -203,6 +208,7 @@ GetManagerDashboarDetailModel copyWith({  num? distributorId,
   num? totalPendingSettCnt,
   num? totalPendingSettAmt,
   String? totalPendingSettSince,
+  num? UndocumentedSV,
 }) => GetManagerDashboarDetailModel(  distributorId: distributorId ?? _distributorId,
   itemId: itemId ?? _itemId,
   itemName: itemName ?? _itemName,
@@ -236,6 +242,7 @@ GetManagerDashboarDetailModel copyWith({  num? distributorId,
   totalPendingSettCnt: totalPendingSettCnt ?? _totalPendingSettCnt,
   totalPendingSettAmt: totalPendingSettAmt ?? _totalPendingSettAmt,
   totalPendingSettSince: totalPendingSettSince ?? _totalPendingSettSince,
+  UndocumentedSV: UndocumentedSV ?? _UndocumentedSV,
 );
   num? get distributorId => _distributorId;
   num? get itemId => _itemId;
@@ -270,6 +277,7 @@ GetManagerDashboarDetailModel copyWith({  num? distributorId,
   num? get totalPendingSettCnt => _totalPendingSettCnt;
   num? get totalPendingSettAmt => _totalPendingSettAmt;
   String? get totalPendingSettSince => _totalPendingSettSince;
+  num? get UndocumentedSV => _UndocumentedSV;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -306,6 +314,7 @@ GetManagerDashboarDetailModel copyWith({  num? distributorId,
     map['TotalPendingSettCnt'] = _totalPendingSettCnt;
     map['TotalPendingSettAmt'] = _totalPendingSettAmt;
     map['TotalPendingSettSince'] = _totalPendingSettSince;
+    map['UndocumentedSV'] = _UndocumentedSV;
     return map;
   }
 

@@ -187,7 +187,8 @@ class _DashboardPostPaidVerifPendDetails extends State<DashboardPostPaidVerifPen
           ),
         ),
       ),
-      body: isLoading
+      body:
+      isLoading
           ? const Center(
         child: CircularProgressIndicator(),
       )
@@ -227,146 +228,58 @@ class _DashboardPostPaidVerifPendDetails extends State<DashboardPostPaidVerifPen
               ),
           ),
           // This is the only scrollable part
-          Expanded(
-            child: postpaidverifipending.isNotEmpty
-                ?
-            ListView.builder(
-              physics: const BouncingScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: postpaidverifipending.length,
-              itemBuilder: (context, index) {
-                final sale = postpaidverifipending[index];
-                debugPrint("Rendering Expense Item: ${postpaidverifipending[index]}");
-                return Column(
-                  children: [
-                    // Row(
-                    //   children: [
-                    //     Expanded(
-                    //       flex: 1,
-                    //       child: Row(
-                    //         children: [
-                    //           Text(
-                    //             sale.selectedDate != null?
-                    //             "${sale.selectedDate!.toLocal()}".split(' ')[0]:'',
-                    //             // Display date as "yyyy-MM-dd"
-                    //             style: TextStyle(fontSize: 14),
-                    //
-                    //           ),
-                    //           IconButton(
-                    //             icon: Icon(Icons.calendar_today),
-                    //             // Icon for the calendar
-                    //             onPressed: () => _selectDate(context,index),
-                    //             iconSize: 24,
-                    //           ),
-                    //         ],
-                    //       ),
-                    //     ),
-                    //      // Flexible(
-                    //      //   child: SizedBox(
-                    //      //      child: DropdownButtonFormField<GetBankMappingDetailsListModel>(
-                    //      //            isExpanded: true,
-                    //      //            decoration: buildInputBorderUpdateStatus("Select Bank", context),
-                    //      //            style: Styling.textFormText,
-                    //      //            items: bankmappingModel.map((GetBankMappingDetailsListModel item) {
-                    //      //              return DropdownMenuItem<GetBankMappingDetailsListModel>(
-                    //      //                value: item,
-                    //      //                child: Text(
-                    //      //                  item.bankName != null
-                    //      //                      ? '${item.bankName} - ${item.accountNo ?? 'Unknown Account'}'
-                    //      //                      : 'Bank not available',
-                    //      //                  style: Styling.textFormText,
-                    //      //                ),
-                    //      //              );
-                    //      //            }).toList(),
-                    //      //            onChanged: (GetBankMappingDetailsListModel? selectedItem) {
-                    //      //              setState(() {
-                    //      //                if (selectedItem != null) {
-                    //      //                  // When a bank is selected, update the sale object
-                    //      //                  sale.bankName = selectedItem.bankName;
-                    //      //                  sale.accountNo = selectedItem.accountNo;
-                    //      //                  selectedBankName = selectedItem.bankName;
-                    //      //                  selectedBankId = selectedItem.accountNo;
-                    //      //                } else {
-                    //      //                  // Reset to "Select Bank"
-                    //      //                  sale.bankName = null;
-                    //      //                  sale.accountNo = null;
-                    //      //                  sale.isChecked = false;  // Uncheck the checkbox when no bank is selected
-                    //      //                }
-                    //      //              });
-                    //      //            },
-                    //      //          ),
-                    //      //    ),
-                    //      // ),
-                    //   ],
-                    // ),
-                    // SizedBox(height: 2),
-                    Row(
-                      children: [
-                        Expanded(flex:1,child: countTextWidgetText(context,"Trans Time", nullToDash(sale.transTime))),
-                        Expanded(flex:1,child: countTextWidgetText(context,"Amount", nullToDash(formatCurrency((sale.amount ?? 0.0).toDouble())))),
-                      ],
-                    ),
-                    SizedBox(height: 2),
-                    Row(
-                      children: [
-                        Expanded(flex:1,child: countTextWidgetText(context,"Trans For", nullToDash(sale.transFor))),
-                        Expanded(flex:1,child: countTextWidgetText(context,"Trans Date", nullToDash(sale.transDate))),
-                      ],
-                    ),
-                    SizedBox(height: 2),
-                    Row(
-                      children: [
-                        Expanded(flex:1,child: countTextWidgetText(context,"Trans Code", nullToDash(sale.transCode))),
-
-                        // Expanded(
-                        //   flex: 1,
-                        //   child:
-                        //   CheckboxListTile(
-                        //     value: sale.isChecked ?? false,
-                        //     onChanged: (sale.bankName != null && sale.selectedDate != null)
-                        //         ? (bool? value) {
-                        //       setState(() {
-                        //         sale.isChecked = value ?? false; // Only updates on user tap
-                        //       });
-                        //     }
-                        //     : null, // disables checkbox if any required field is missing
-                        //     controlAffinity: ListTileControlAffinity.leading,
-                        //     fillColor: MaterialStateProperty.resolveWith<Color>(
-                        //           (Set<MaterialState> states) {
-                        //  if (sale.bankName == null && sale.selectedDate ==null) {
-                        //     return Colors.grey.withOpacity(0.3); // Change to grey if `selectedDate` is `null`
-                        //  }
-                        //   if (states.contains(MaterialState.selected)) {
-                        //     return Colors.blue; // When checked, background is blue
-                        //   }
-                        //     return Colors.white;  // Unchecked state = white
-                        //       },
-                        //     ),
-                        //   ),
-                        // ),
-                      ],
-                    ),
-                    SizedBox(height: 2),
-                    Row(
-                      children: [
-                        Expanded(flex:1,child: countTextWidgetText(context,"Staff Name", nullToDash(sale.staffName))),
-                      ],
-                    ),
-                    SizedBox(height: 2),
-                    Row(
-                      children: [
-                        Expanded(flex: 1, child: countTextWidgetRemark(context,"Remark", sale.remark ?? '')),
-                      ],
-                    ),
-                    Divider(),
-                  ],
-                );
-              },
-            )
-                : Center(
-              child: Text('No Records Found'),
-            ),
-          ),
+          // Expanded(
+          //   child: postpaidverifipending.isNotEmpty
+          //       ?
+          //   ListView.builder(
+          //     physics: const BouncingScrollPhysics(),
+          //     shrinkWrap: true,
+          //     itemCount: postpaidverifipending.length,
+          //     itemBuilder: (context, index) {
+          //       final sale = postpaidverifipending[index];
+          //       debugPrint("Rendering Expense Item: ${postpaidverifipending[index]}");
+          //       return Column(
+          //         children: [
+          //           Row(
+          //             children: [
+          //               Expanded(flex:1,child: countTextWidgetText(context,"Trans Time", nullToDash(sale.transTime))),
+          //               Expanded(flex:1,child: countTextWidgetText(context,"Amount", nullToDash(formatCurrency((sale.amount ?? 0.0).toDouble())))),
+          //             ],
+          //           ),
+          //           SizedBox(height: 2),
+          //           Row(
+          //             children: [
+          //               Expanded(flex:1,child: countTextWidgetText(context,"Trans For", nullToDash(sale.transFor))),
+          //               Expanded(flex:1,child: countTextWidgetText(context,"Trans Date", nullToDash(sale.transDate))),
+          //             ],
+          //           ),
+          //           SizedBox(height: 2),
+          //           Row(
+          //             children: [
+          //               Expanded(flex:1,child: countTextWidgetText(context,"Trans Code", nullToDash(sale.transCode))),
+          //             ],
+          //           ),
+          //           SizedBox(height: 2),
+          //           Row(
+          //             children: [
+          //               Expanded(flex:1,child: countTextWidgetText(context,"Staff Name", nullToDash(sale.staffName))),
+          //             ],
+          //           ),
+          //           SizedBox(height: 2),
+          //           Row(
+          //             children: [
+          //               Expanded(flex: 1, child: countTextWidgetRemark(context,"Remark", sale.remark ?? '')),
+          //             ],
+          //           ),
+          //           Divider(),
+          //         ],
+          //       );
+          //     },
+          //   )
+          //       : Center(
+          //     child: Text('No Records Found'),
+          //   ),
+          // ),
           // Row(
           //   mainAxisAlignment: MainAxisAlignment.end,
           //   children: [
@@ -408,10 +321,61 @@ class _DashboardPostPaidVerifPendDetails extends State<DashboardPostPaidVerifPen
           //     ),
           //   ],
           // ),
+          Expanded(
+            child: isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : postpaidverifipending.isNotEmpty
+                ? ListView.builder(
+              physics: const BouncingScrollPhysics(),
+              itemCount: postpaidverifipending.length,
+              itemBuilder: (context, index) {
+                final sale = postpaidverifipending[index];
+                debugPrint("Rendering Expense Item: $sale");
+                return Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(flex: 1, child: countTextWidgetText(context, "Trans Time", nullToDash(sale.transTime))),
+                        Expanded(flex: 1, child: countTextWidgetText(context, "Amount", nullToDash(formatCurrency((sale.amount ?? 0.0).toDouble())))),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      children: [
+                        Expanded(flex: 1, child: countTextWidgetText(context, "Trans For", nullToDash(sale.transFor))),
+                        Expanded(flex: 1, child: countTextWidgetText(context, "Trans Date", nullToDash(sale.transDate))),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      children: [
+                        Expanded(flex: 1, child: countTextWidgetText(context, "Trans Code", nullToDash(sale.transCode))),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      children: [
+                        Expanded(flex: 1, child: countTextWidgetText(context, "Staff Name", nullToDash(sale.staffName))),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      children: [
+                        Expanded(flex: 1, child: countTextWidgetRemark(context, "Remark", sale.remark ?? '')),
+                      ],
+                    ),
+                    const Divider(),
+                  ],
+                );
+              },
+            )
+                : const Center(child: Text('No Records Found')),
+          ),
         ],
       ),
     );
   }
+
   String nullToDash(String? value) {
     if (value == null || value.toLowerCase() == "null") {
       return "-";

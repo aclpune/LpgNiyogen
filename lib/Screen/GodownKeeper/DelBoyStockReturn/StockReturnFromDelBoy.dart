@@ -72,6 +72,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
   TextEditingController consumerController = TextEditingController();
   double totalCylinderQty = 0;
   List<int> selectedCylinderQuantities = [];
+  List<int> selectedSVUniqueID = [];
 
   ///tv consumer
   List<GetSvtvConsumerListModel> getSvtvConsumerListTV = [];
@@ -148,6 +149,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
       int emptyValue = int.tryParse(_emptyController.text) ?? 0;
       int defectiveValue = int.tryParse(_defectiveController.text) ?? 0;
       int lessEmptyValue = int.tryParse(_lessEmptyController.text) ?? 0;
+      debugPrint("filledStock $filledStock");
       if (filledValue <= (filledStock ?? 0)) {
         if (filledValue >= lessEmptyValue) {
           if (filledValue >= svValue) {
@@ -190,13 +192,20 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                               setState(() {
                                 List<String> consumerNumberss = getConsumerNumbers();
                                 List<int> cylinderQuantities = getCylinderQuantities();
+
                                 print("Consumer Numbers: $consumerNumberss");
                                 print("Cylinder Quantities: $cylinderQuantities");
+
                                 String remarksString = consumerNumberss.isEmpty ? '' : consumerNumberss.join(', ');
                                 print('Sending remarks to API: $remarksString');
 
                                 String svCounts = cylinderQuantities.isEmpty ? '' : cylinderQuantities.join(', ');
                                 print('Sending remarks to API: $svCounts');
+
+                                List<int> sVUniqueconsumerNumberss = getSVUniqueConsumerNumbers();
+                                print("Cylinder sVUniqueconsumerNumberss: $sVUniqueconsumerNumberss");
+                                String svUniqueConsString = sVUniqueconsumerNumberss.isEmpty ? '' : sVUniqueconsumerNumberss.join(', ');
+                                print('Sending remarks to API: $svUniqueConsString');
 
                                 // String tvConsumerNoString = tvConsumerList.isEmpty ? '' : tvConsumerList.join(', ');
                                 // print('Sending tvConsumerNoString to API: $tvConsumerNoString');
@@ -262,6 +271,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                   tvCount: tvCount,
                                   updateFlag: 'pending',
                                   itemAddedDate: formattedDate,
+                                  sVUniqueId: svUniqueConsString,
                                 );
 
                                 // Insert the ItemData object into the database
@@ -290,6 +300,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                 tvConsumerList.clear();
                                 selectedConsumerNumbers.clear();
                                 selectedCylinderQuantities.clear();
+                                selectedSVUniqueID.clear();
                                 totalCylinderQty = 0;
                                 selectedConsumerNumbersTV.clear();
                                 selectedCylinderQuantitiesTV.clear();
@@ -320,6 +331,11 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
 
                     String svCounts = cylinderQuantities.isEmpty ? '' : cylinderQuantities.join(', ');
                     print('Sending remarks to API: $svCounts');
+
+                    List<int> sVUniqueconsumerNumberss = getSVUniqueConsumerNumbers();
+                    print("Cylinder sVUniqueconsumerNumberss: $sVUniqueconsumerNumberss");
+                    String svUniqueConsString = sVUniqueconsumerNumberss.isEmpty ? '' : sVUniqueconsumerNumberss.join(', ');
+                    print('Sending remarks to API: $svUniqueConsString');
 
                     ///tv
                     List<String> consumerNumberssTV = getConsumerNumbersTV();
@@ -374,6 +390,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                       tvCount: tvCount,
                       updateFlag: 'pending',
                       itemAddedDate: formattedDate,
+                      sVUniqueId: svUniqueConsString,
                     );
 
                     // Insert the ItemData object into the database
@@ -401,6 +418,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                     tvConsumerList.clear();
                     selectedConsumerNumbers.clear();
                     selectedCylinderQuantities.clear();
+                    selectedSVUniqueID.clear();
                     totalCylinderQty = 0;
                     selectedConsumerNumbersTV.clear();
                     selectedCylinderQuantitiesTV.clear();
@@ -430,6 +448,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(Constants.totalSaleQtyDailySale)),
         );
+        debugPrint("sale1");
       }
     }
   }
@@ -542,6 +561,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
   void _onEditItem(ItemList item, StockSubmitToManagerListModel v) {
     selectedConsumerNumbers.clear();
     selectedCylinderQuantities.clear();
+    selectedSVUniqueID.clear();
 
     selectedConsumerNumbersTV.clear();
     selectedCylinderQuantitiesTV.clear();
@@ -574,8 +594,6 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
       // }
       // debugPrint("svRemark $svRemark");
 
-
-
       String? tvRemark = item.TVConsStr?.toString();
       if (tvRemark != null &&
           tvRemark.isNotEmpty &&
@@ -585,25 +603,29 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
 
       debugPrint("TVConsStr $tvRemark");
 
-
       String? svRemark = item.sVConsStr?.toString();
       String? svCount = item.SVQtyStr?.toString();
+      String? svUniqueCons = item.PSVIdStr?.toString();
       debugPrint("svCount $svCount");
 
       if (svRemark != null && svCount != null && svRemark.isNotEmpty && svCount.isNotEmpty) {
         // Split the comma-separated consumer numbers and quantities
         List<String> consumerNumbers = svRemark.split(',').map((e) => e.trim()).toList();
         List<String> quantities = svCount.split(',').map((e) => e.trim()).toList();
+        List<String> svUniqueNo = svUniqueCons!.split(',').map((e) => e.trim()).toList();
 
         // Debugging to check values of consumerNumbers and quantities
         debugPrint("consumerNumbers: $consumerNumbers");
         debugPrint("quantities: $quantities");
+        debugPrint("svUniqueNo: $svUniqueNo");
 
         // Populate the selectedConsumerNumbers and selectedCylinderQuantities lists
         for (int i = 0; i < consumerNumbers.length; i++) {
           String consumerNo = consumerNumbers[i];
           String qtyStr = quantities[i];
+          String svUniqueConId = svUniqueNo[i];
           int cylQty = int.tryParse(qtyStr) ?? 0; // Ensure safe parsing
+          int svUniqNo = int.tryParse(svUniqueConId) ?? 0; // Ensure safe parsing
 
           // Log the consumerNo and cylQty to check if the values are correct
           debugPrint("consumerNo: $consumerNo, cylQty: $cylQty");
@@ -612,11 +634,13 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
           if (!selectedConsumerNumbers.contains(consumerNo)) {
             selectedConsumerNumbers.add(consumerNo);
             selectedCylinderQuantities.add(cylQty);
+            selectedSVUniqueID.add(svUniqNo);
           }
         }
       } else {
         selectedConsumerNumbers.clear();
         selectedCylinderQuantities.clear();
+        selectedSVUniqueID.clear();
       }
 
 
@@ -716,6 +740,9 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
     print("consumerNumberssTV Qty: ${consumerNumberssTV}");
     print("cylinderQuantitiesTV Qty: ${cylinderQuantitiesTV}");
 
+    List<int> sVUniqueconsumerNumberss = getSVUniqueConsumerNumbers();
+    print("Cylinder sVUniqueconsumerNumberss: $sVUniqueconsumerNumberss");
+
 
     await updateRefillSale!.updateItemInDatabase(
       itemId: selectedItemId!.toInt() ?? 0,
@@ -733,6 +760,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
       tvList: consumerNumberssTV.join(', ') ?? '',
       svQtyList: cylinderQuantities.join(', ') ?? '',
       tvQtyList: cylinderQuantitiesTV.join(', ') ?? '',
+      svUniqueConsList: sVUniqueconsumerNumberss.join(', ') ?? '',
     );
 
     // Update state after async operation
@@ -756,6 +784,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
       _selectedItem = '';
       selectedConsumerNumbers.clear();
       selectedCylinderQuantities.clear();
+      selectedSVUniqueID.clear();
       totalCylinderQty = 0;
       selectedConsumerNumbersTV.clear();
       selectedCylinderQuantitiesTV.clear();
@@ -1443,6 +1472,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                         DateFormat('yyyy-MM-dd').format(now);
                         if (_editingItemId != null) {
                           if(flagEditMode == "editMode"){
+                            debugPrint("filledStock $filledStock");
                             if (filledValue <= (filledStock ?? 0) + (editFilledStock ?? 0)){
                               if (filledValue >= lessEmptyValue) {
                                 if (filledValue >= svValue) {
@@ -1531,9 +1561,11 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                               }
                             }else{
                               showFlushBar(context, Constants.totalSaleQtyDailySale);
+                              debugPrint("sale2");
                             }
                           }else{
                             if(_dataGetFromDBDelBoy.isNotEmpty) {
+                              debugPrint("filledStock $filledStock");
                               // if(filledValue > 0) {
                               if (filledValue <= (filledStock ?? 0)) {
                                 if (filledValue >= lessEmptyValue) {
@@ -1574,6 +1606,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                               } else {
                                                 List<String> consumerNumberss = getConsumerNumbers();
                                                 List<int> cylinderQuantities = getCylinderQuantities();
+                                                List<int> sVUniqueconsumerNumberss = getSVUniqueConsumerNumbers();
 
                                                 List<String> consumerNumberssTV = getConsumerNumbersTV();
                                                 List<int> cylinderQuantitiesTV = getCylinderQuantitiesTV();
@@ -1615,6 +1648,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                     tvCount: cylinderQuantitiesTV.join(', '),
                                                     updateFlag: 'pending',
                                                     itemAddedDate: formattedDate,
+                                                    sVUniqueId: sVUniqueconsumerNumberss.join(', '),
                                                   ),
                                                 );
 
@@ -1647,6 +1681,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                     _selectedItem = '';
                                                     selectedConsumerNumbers.clear();
                                                     selectedCylinderQuantities.clear();
+                                                    selectedSVUniqueID.clear();
                                                     totalCylinderQty = 0;
                                                     selectedConsumerNumbersTV.clear();
                                                     selectedCylinderQuantitiesTV.clear();
@@ -1661,6 +1696,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                             } else {
                                               List<String> consumerNumberss = getConsumerNumbers();
                                               List<int> cylinderQuantities = getCylinderQuantities();
+                                              List<int> sVUniqueconsumerNumberss = getSVUniqueConsumerNumbers();
 
                                               List<String> consumerNumberssTV = getConsumerNumbersTV();
                                               List<int> cylinderQuantitiesTV = getCylinderQuantitiesTV();
@@ -1702,6 +1738,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                   tvCount: cylinderQuantitiesTV.join(', '),
                                                   updateFlag: 'pending',
                                                   itemAddedDate: formattedDate,
+                                                  sVUniqueId: sVUniqueconsumerNumberss.join(', '),
                                                 ),
                                               );
 
@@ -1734,6 +1771,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                   _selectedItem = '';
                                                   selectedConsumerNumbers.clear();
                                                   selectedCylinderQuantities.clear();
+                                                  selectedSVUniqueID.clear();
                                                   totalCylinderQty = 0;
                                                   selectedConsumerNumbersTV.clear();
                                                   selectedCylinderQuantitiesTV.clear();
@@ -1763,6 +1801,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                             } else {
                                               List<String> consumerNumberss = getConsumerNumbers();
                                               List<int> cylinderQuantities = getCylinderQuantities();
+                                              List<int> sVUniqueconsumerNumberss = getSVUniqueConsumerNumbers();
 
                                               List<String> consumerNumberssTV = getConsumerNumbersTV();
                                               List<int> cylinderQuantitiesTV = getCylinderQuantitiesTV();
@@ -1804,6 +1843,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                   tvCount: cylinderQuantitiesTV.join(', '),
                                                   updateFlag: 'pending',
                                                   itemAddedDate: formattedDate,
+                                                  sVUniqueId: sVUniqueconsumerNumberss.join(', '),
                                                 ),
                                               );
 
@@ -1836,6 +1876,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                   _selectedItem = '';
                                                   selectedConsumerNumbers.clear();
                                                   selectedCylinderQuantities.clear();
+                                                  selectedSVUniqueID.clear();
                                                   totalCylinderQty = 0;
                                                   selectedConsumerNumbersTV.clear();
                                                   selectedCylinderQuantitiesTV.clear();
@@ -1849,6 +1890,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                           } else {
                                             List<String> consumerNumberss = getConsumerNumbers();
                                             List<int> cylinderQuantities = getCylinderQuantities();
+                                            List<int> sVUniqueconsumerNumberss = getSVUniqueConsumerNumbers();
 
                                             List<String> consumerNumberssTV = getConsumerNumbersTV();
                                             List<int> cylinderQuantitiesTV = getCylinderQuantitiesTV();
@@ -1890,6 +1932,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                 tvCount: cylinderQuantitiesTV.join(', '),
                                                 updateFlag: 'pending',
                                                 itemAddedDate: formattedDate,
+                                                sVUniqueId: sVUniqueconsumerNumberss.join(', '),
                                               ),
                                             );
 
@@ -1922,6 +1965,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                                 _selectedItem = '';
                                                 selectedConsumerNumbers.clear();
                                                 selectedCylinderQuantities.clear();
+                                                selectedSVUniqueID.clear();
                                                 totalCylinderQty = 0;
                                                 selectedConsumerNumbersTV.clear();
                                                 selectedCylinderQuantitiesTV.clear();
@@ -1956,6 +2000,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                 // }
                               }else{
                                 showFlushBar(context, Constants.totalSaleQtyDailySale);
+                                debugPrint("sale3");
                               }
                             }else{
 
@@ -2012,6 +2057,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                             tvConsumerList.clear();
                             selectedConsumerNumbers.clear();
                             selectedCylinderQuantities.clear();
+                            selectedSVUniqueID.clear();
                             totalCylinderQty = 0;
                             selectedConsumerNumbersTV.clear();
                             selectedCylinderQuantitiesTV.clear();
@@ -2030,6 +2076,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                             tvConsumerList.clear();
                             selectedConsumerNumbers.clear();
                             selectedCylinderQuantities.clear();
+                            selectedSVUniqueID.clear();
                             totalCylinderQty = 0;
                             selectedConsumerNumbersTV.clear();
                             selectedCylinderQuantitiesTV.clear();
@@ -2854,7 +2901,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
     Constants.isNetworkAvailable =
         await InternetConnectionChecker().hasConnection;
     if (Constants.isNetworkAvailable) {
-      try {
+      // try {
         // Get shared preferences for distributorId and bearerToken
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String? distributorId = prefs.getString('DistributorId');
@@ -2872,11 +2919,13 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
         var getUpdateRefillSale =
             await updateRefillSale?.getUpdateRefillSaleData2(
                 deliveryBoyId.toString(), delDate.toString());
-
+        print('No data found for this deliveryBoyId $getUpdateRefillSale');
         if (getUpdateRefillSale == null) {
           print('No data found for this deliveryBoyId');
           return;
         }
+
+
 
         List<ItemData> itemList = [];
 
@@ -2905,6 +2954,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
             "TVConsStr": item.tvConsumerNo ?? "",
             "SVQtyStr": item.svCount ?? "",
             "TVQtyStr": item.tvCount ?? "",
+            "PSVIdStr": item.sVUniqueId ?? "",
           };
         }).toList();
 
@@ -2992,10 +3042,10 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
           // );
           EasyLoading.dismiss();
         }
-      } catch (e) {
-        EasyLoading.dismiss();
-        print('Error sending data to API: $e');
-      }
+      // } catch (e) {
+      //   EasyLoading.dismiss();
+      //   print('Error sending data to API: $e');
+      // }
     } else {
       EasyLoading.dismiss();
       showFlushBar(
@@ -3065,6 +3115,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
       // Populate text fields with data from the item
       selectedConsumerNumbers.clear();
       selectedCylinderQuantities.clear();
+      selectedSVUniqueID.clear();
 
       selectedConsumerNumbersTV.clear();
       selectedCylinderQuantitiesTV.clear();
@@ -3081,6 +3132,9 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
       // Set the selected item in the dropdown by finding the item in the list
       _selectedItem = item['itemName'].toString();
       selectedItemId = int.parse(item['itemID'].toString());
+
+      debugPrint("selectedItemId: $selectedItemId");
+      debugPrint("_selectedItem: $_selectedItem");
 
       // String? svRemark = item['svRemark']?.toString();
       // if (svRemark != null &&
@@ -3114,28 +3168,37 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
       // Split the svRemark and svCount values and populate the lists
       String? svRemark = item['svRemark']?.toString();
       String? svCount = item['svCount']?.toString();
+      String? svUniqNo = item['SVUniqueID']?.toString();
 
+      debugPrint("consumerNumbers: $svRemark");
+      debugPrint("quantities: $svCount");
+      debugPrint("svUniqueNo: $svUniqNo");
       if (svRemark != null && svCount != null && svRemark.isNotEmpty && svCount.isNotEmpty) {
 
         // Split the comma-separated consumer numbers and quantities
         List<String> consumerNumbers = svRemark.split(',').map((e) => e.trim()).toList();
         List<String> quantities = svCount.split(',').map((e) => e.trim()).toList();
+        List<String> svUniqueNo = svUniqNo!.split(',').map((e) => e.trim()).toList();
 
         // Populate the selectedConsumerNumbers and selectedCylinderQuantities lists
         for (int i = 0; i < consumerNumbers.length; i++) {
           String consumerNo = consumerNumbers[i];
           String qtyStr = quantities[i];
+          String svNoUniq = svUniqueNo[i];
           int cylQty = int.tryParse(qtyStr) ?? 0; // Ensure safe parsing
+          int svNo = int.tryParse(svNoUniq) ?? 0; // Ensure safe parsing
 
           // Only add if the consumer number is not already in the list
           if (!selectedConsumerNumbers.contains(consumerNo)) {
             selectedConsumerNumbers.add(consumerNo);
             selectedCylinderQuantities.add(cylQty);
+            selectedSVUniqueID.add(svNo);
           }
         }
       }else{
         selectedConsumerNumbers.clear();
         selectedCylinderQuantities.clear();
+        selectedSVUniqueID.clear();
 
       }
 
@@ -3173,6 +3236,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
 
       // Save the ID of the row being edited (optional for database update)
       _editingItemId = int.parse(item['ID'].toString());
+      _fetchFilledStockForSelectedItem(selectedItemId!);
     });
   }
 
@@ -3588,6 +3652,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                 "TVConsStr": item.TVConsStr,
                 "SVQtyStr": item.SVQtyStr ?? "",
                 "TVQtyStr": item.TVQtyStr ?? "",
+                "PSVIdStr": item.PSVIdStr ?? "",
               });
             }
           }
@@ -3784,7 +3849,8 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
       orElse: () => GetCurrentStcOfGodownKeeperModel(), // Return an empty object if not found
     );
 
-    filledStock = selectedItemStock.currentStkFilled; // Save the filled stock value
+    filledStock = selectedItemStock.currentStkFilled;
+    debugPrint("filledStockmethod $filledStock");// Save the filled stock value
     EasyLoading.dismiss();
   }
 
@@ -4042,6 +4108,7 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                                             if (index != -1) {
                                               selectedConsumerNumbers.removeAt(index);
                                               selectedCylinderQuantities.removeAt(index);
+                                              selectedSVUniqueID.removeAt(index);
                                             }
                                           });
                                           updateTotalCylinderQty(); // Recalculate total cylinder quantity
@@ -4162,7 +4229,8 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                               (c) => c.consumerNo == consumerNo,
                           orElse: () => GetSvtvConsumerListModel(consumerNo: '', cylQty: 0),
                         );
-                        selectedCylinderQuantities.add(consumer.cylQty?.toInt() ?? 0); // Add cylinder quantity to the corresponding list
+                        selectedCylinderQuantities.add(consumer.cylQty?.toInt() ?? 0);
+                        selectedSVUniqueID.add(consumer.pSVId?.toInt() ?? 0);// Add cylinder quantity to the corresponding list
                         consumerController.clear();
                         // Clear the input field after adding
                         setShowAddedConsumers(true);
@@ -4189,6 +4257,10 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
 
   List<int> getCylinderQuantities() {
     return selectedCylinderQuantities;
+  }
+
+  List<int> getSVUniqueConsumerNumbers() {
+    return selectedSVUniqueID;
   }
 
   // This method calculates the total cylinder quantity based on selected consumers

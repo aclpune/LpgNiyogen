@@ -349,6 +349,54 @@ class Styling {
       fontWeight: FontWeight.normal,
       color: Colors.grey[700]);
 
+  static final TextStyle bodyTitleBigBoldDashQuick = TextStyle(
+      fontSize:
+      2.10 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
+      fontWeight: FontWeight.normal,
+      color: Colors.black);
+
+  static final TextStyle bodyTitleBigBoldDash = TextStyle(
+      fontSize:
+      3.0 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
+      fontWeight: FontWeight.bold,
+      color: Colors.black);
+
+  static final TextStyle bodyTitleBigBoldDashGrey = TextStyle(
+      fontSize:
+      2.7 * SizeConfig.textMultiplier!,
+      fontWeight: FontWeight.normal,
+      fontFamily: 'Inter',// Size = 18-- [18/8.66] = 2.07
+      color: Color(0xFF605f70));
+
+  static final TextStyle bodyTitleWithBlueHightDash = TextStyle(
+      fontSize:
+      2.5 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
+      fontFamily: 'OpenSans',
+      color: Colors.blue);
+
+  static final TextStyle bodyTitleWithBlueHightDashOrange = TextStyle(
+      fontSize:
+      2.5 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
+      fontFamily: 'OpenSans',
+      color: Colors.orange);
+
+  static final TextStyle bodyTitleWithBlueHightDashHeading = TextStyle(
+      fontSize:
+      2.7 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
+      fontFamily: 'OpenSans',
+      color: Colors.white);
+
+  static final TextStyle itemTitleDash = TextStyle(
+    color: Colors.black87,
+    fontFamily: 'OpenSans',
+    fontSize: 2.5 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
+  );
+
+  static final TextStyle itemBlackTestVerySmallBold = TextStyle(
+    fontSize: 1.6 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
+    fontFamily: 'OpenSans',
+    fontWeight: FontWeight.bold,
+    color: Color(0xff1280b3),);
   /* static final TextStyle selectedTabLight = TextStyle(
     color: Colors.black,
     fontWeight: FontWeight.bold,

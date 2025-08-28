@@ -38,6 +38,7 @@ import 'Screen/ManagerScreen/DashboardItemClickUI/DashboardPrepaidDetails.dart';
 import 'Screen/ManagerScreen/DashboardItemClickUI/DashboardSVDetails.dart';
 import 'Screen/ManagerScreen/DashboardItemClickUI/DashboardTVDetails.dart';
 import 'Screen/ManagerScreen/DashboardItemClickUI/ImbalanceCountClickUI.dart';
+import 'Screen/ManagerScreen/DashboardItemClickUI/OnAccountPopupScreen.dart';
 import 'Screen/ManagerScreen/DashboardItemClickUI/TodaysCashSummaryOnAccountList.dart';
 import 'Screen/ManagerScreen/DashboardItemClickUI/UnsettledSaleDetailList.dart';
 import 'Screen/ManagerScreen/DeliveryBoyWiseListShow.dart';
@@ -52,6 +53,7 @@ import 'Screen/ManagerScreen/SVSaleReportScreen.dart';
 import 'Screen/ManagerScreen/SalaryPaymentScreen/SalaryPaymentScreen.dart';
 import 'Screen/ManagerScreen/TVSaleScreen/TVSalesScreen.dart';
 import 'Screen/ManagerScreen/UpdatePaymentsScreen/UpdatePaymentScreen.dart';
+import 'Screen/UndocumentedSVDash/DashboardUndocumentedDetails.dart';
 import 'Screen/User/Login/Screen/MyLogin.dart';
 import 'Screen/User/Login/Screen/VerifyOTP.dart';
 import 'Screen/User/Login/provider/LoginProvider.dart';
@@ -215,6 +217,9 @@ class MyApp extends StatelessWidget {
             ArbSaleScreen.screenName: (context) => ArbSaleScreen(),
             ArbScreen.screenName: (context) => ArbScreen(),
             AddPaymentPopupScreen.screenName: (context) => AddPaymentPopupScreen(),
+            OnAccountPopupScreen.screenName: (context) => OnAccountPopupScreen(),
+            DashboardUndocumentedDetails.screenName: (context) => DashboardUndocumentedDetails(),
+
             //ManagerCashInHandScreenDetails.screenName: (context) => ManagerCashInHandScreenDetails(),
 
 

@@ -132,7 +132,7 @@ BranchAdminAH	cnf@1234*/
 
   static String DSRMessage =
       "Warning: Once you confirm the DSR,\nApplication will close the day and save the closing entries for inventory (cyl and ARB), along with cash flow transactions.\nYou will not be allowed to make any changes to any transaction once you confirm, and today’s closing will be done.\nAre you sure you want to proceed?";
-
+  static String OnAccErr = "Please select the specific staff for payment.";
   ///
   static String discountError = "The Entered Discount Should Not Be Greater Than Amt.";
 

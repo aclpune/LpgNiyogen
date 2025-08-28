@@ -13,7 +13,7 @@ import '../../Screen/GodownKeeper/DeliveryBoyModel/StockSubmitToManagerListModel
 class UpdateRefillSale{
   static Database? _database;
   static const _databaseName = 'GKDatabase.db';
-  static const _databaseVersion = 1;
+  static const _databaseVersion = 2;
   static String path = '';
 
   UpdateRefillSale.internal();
@@ -38,7 +38,11 @@ class UpdateRefillSale{
     Directory documentDirectory = await getApplicationDocumentsDirectory();
     path = join(documentDirectory.path, _databaseName);
     var database = await openDatabase(path,
-        version: _databaseVersion, onCreate: _onCreate);
+        version: _databaseVersion,
+        onCreate: _onCreate,
+        onUpgrade: _onUpgrade,
+        onOpen: _onOpen,
+    );
 
     SharedPreferences preferences = await SharedPreferences.getInstance();
     // userId = preferences.getString('userId').toString();
@@ -66,6 +70,7 @@ class UpdateRefillSale{
   String coltvCount = "tvCount";
   String colupdateFlag = "updateFlag";
   String colitemAddedDate = "itemAddedDate";
+  String colSVUniqueID = "SVUniqueID";
 
   ///Get list Del stock
   static const tableGetDelBoyStock = 'tableGetDelBoyStock';
@@ -104,6 +109,7 @@ class UpdateRefillSale{
   String colStockGetTVQtyStr = "TVQtyStr";
   String colFlagColumnUpdate  = "FlagColumnUpdate";
   String colFlagColumnEdit  = "FlagColumnEdit";
+  String colStockSVUniqueID  = "PSVIdStr";
 
   ///stock add list
   Future _onCreate(Database db, int version) async {
@@ -128,7 +134,9 @@ class UpdateRefillSale{
             $coltvConsumerNo TEXT NOT NULL ,
             $coltvCount TEXT NOT NULL ,
             $colupdateFlag TEXT NOT NULL,
-            $colitemAddedDate TEXT NOT NULL
+            $colitemAddedDate TEXT NOT NULL,
+            $colSVUniqueID TEXT NOT NULL
+
           )
           ''');
 
@@ -168,9 +176,73 @@ class UpdateRefillSale{
         $colStockGetSVQtyStr TEXT NOT NULL, 
         $colStockGetTVQtyStr TEXT NOT NULL, 
         $colFlagColumnUpdate TEXT NOT NULL, 
-        $colFlagColumnEdit TEXT NOT NULL
+        $colFlagColumnEdit TEXT NOT NULL,
+        $colStockSVUniqueID TEXT NOT NULL
           )
           ''');
+  }
+
+  // Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+  //   if (oldVersion < 2) {
+  //     // Add column to UpdateRefillSale table
+  //     await db.execute('''
+  //     ALTER TABLE $tableUpdateRefillSale ADD COLUMN $colSVUniqueID TEXT DEFAULT ''
+  //   ''');
+  //
+  //     // Add column to tableGetDelBoyStock
+  //     await db.execute('''
+  //     ALTER TABLE $tableGetDelBoyStock ADD COLUMN $colStockSVUniqueID TEXT DEFAULT ''
+  //   ''');
+  //   }
+  //
+  //   // You can add further conditions for future versions here
+  // }
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      // Check and add column to UpdateRefillSale table
+      final updateRefillSaleColumns = await db.rawQuery('PRAGMA table_info($tableUpdateRefillSale)');
+      final hasSVUniqueID = updateRefillSaleColumns.any((column) => column['name'] == colSVUniqueID);
+      if (!hasSVUniqueID) {
+        await db.execute('''
+        ALTER TABLE $tableUpdateRefillSale ADD COLUMN $colSVUniqueID TEXT DEFAULT ''
+      ''');
+      }
+
+      // Check and add column to tableGetDelBoyStock
+      final delBoyStockColumns = await db.rawQuery('PRAGMA table_info($tableGetDelBoyStock)');
+      final hasStockSVUniqueID = delBoyStockColumns.any((column) => column['name'] == colStockSVUniqueID);
+      if (!hasStockSVUniqueID) {
+        await db.execute('''
+        ALTER TABLE $tableGetDelBoyStock ADD COLUMN $colStockSVUniqueID TEXT DEFAULT ''
+      ''');
+      }
+    }
+
+    // You can add further upgrade steps for other versions here
+  }
+
+  void _onOpen(Database db) async {
+    await _ensureSchemaIntegrity(db);
+  }
+
+  Future<void> _ensureSchemaIntegrity(Database db) async {
+    // Ensure UpdateRefillSale has colSVUniqueID
+    final refillColumns = await db.rawQuery('PRAGMA table_info($tableUpdateRefillSale)');
+    final hasSVUniqueID = refillColumns.any((col) => col['name'] == colSVUniqueID);
+    if (!hasSVUniqueID) {
+      await db.execute('''
+      ALTER TABLE $tableUpdateRefillSale ADD COLUMN $colSVUniqueID TEXT DEFAULT ''
+    ''');
+    }
+
+    // Ensure tableGetDelBoyStock has colStockSVUniqueID
+    final stockColumns = await db.rawQuery('PRAGMA table_info($tableGetDelBoyStock)');
+    final hasStockSVUniqueID = stockColumns.any((col) => col['name'] == colStockSVUniqueID);
+    if (!hasStockSVUniqueID) {
+      await db.execute('''
+      ALTER TABLE $tableGetDelBoyStock ADD COLUMN $colStockSVUniqueID TEXT DEFAULT ''
+    ''');
+    }
   }
 
   Future<void> insertUpdateRefillSale(List<ItemData> updateRefillSale) async {
@@ -345,6 +417,7 @@ class UpdateRefillSale{
         'tvConsumerNo': data.tvConsumerNo,
         'tvCount': data.tvCount,
         'updateFlag': data.updateFlag,
+        'sVUniqueId': data.sVUniqueId,
       },
       where: 'ID = ?',
       whereArgs: [id],
@@ -572,6 +645,7 @@ class UpdateRefillSale{
             'ClosingEmpty': item.closingEmpty,
             'ClosingDef': item.closingDef,
             'SVConsStr': item.sVConsStr ?? '',
+            'PSVIdStr': item.PSVIdStr ?? '',
             'TVConsStr': item.TVConsStr ?? '',
             'SVQtyStr': item.SVQtyStr ?? '',
             'TVQtyStr': item.TVQtyStr ?? '',
@@ -725,6 +799,7 @@ class UpdateRefillSale{
     required String tvList,
     required String svQtyList,
     required String tvQtyList,
+    required String svUniqueConsList,
   }) async {
     Database db = await initDatabase(); // Assuming `initDatabase()` initializes the database.
 
@@ -744,6 +819,7 @@ class UpdateRefillSale{
         'TVConsStr': tvList, // Update the item name// Update the item name
         'SVQtyStr': svQtyList, // Update the item name// Update the item name
         'TVQtyStr': tvQtyList, // Update the item name// Update the item name
+        'PSVIdStr': svUniqueConsList, // Update the item name// Update the item name
       },
       where: 'ItemId = ? AND SaleGKId = ? AND DistributorId = ?', // WHERE clause
       whereArgs: [itemId, saleGKId, distributorId], // Arguments for the WHERE clause

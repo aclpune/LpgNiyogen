@@ -89,7 +89,8 @@ class AppUrl {
   static const String GetDashboardOnAccAmtCtnListMob_V1 = '$baseUrl/Dashboard/GetDashboardOnAccAmtCtnListMob_V1';
   static const String GetDashboardUnsettledAmtListMob_V1 = '$baseUrl/Dashboard/GetDashboardUnsettledAmtListMob_V1';
   static const String GetDashboardImbalanceDtlsListMob_V1 = '$baseUrl/Dashboard/GetDashboardImbalanceDtlsListMob_V1';
-
+ static const String GetStaffLedgerReportMob_V1 = '$baseUrl/Reports/GetStaffLedgerReportMob_V1';
+ static const String StaffLedgerSettlementAddEditMob_V1 = '$baseUrl/DailyStockCash/StaffLedgerSettlementAddEditMob_V1';
   ///Cash Handover API
    static const String GetStaffDetailsListUserIsMade = '$baseUrl/Masters/GetStaffDetailsListUserIsMade';
    // static const String GetBankMappingDetailsList = '$baseUrl/Masters/GetBankMappingDetailsList';
@@ -158,6 +159,10 @@ class AppUrl {
  static const String ARBSalesAddEdit = '$baseUrl/InventoryStock/ARBSalesAddEdit_V2';
  static const String GetARBSalesList = '$baseUrl/InventoryStock/GetARBSalesList_V2';
  static const String GetARBSalesCashDenoDtlsById = '$baseUrl/InventoryStock/GetARBSalesCashDenoDtlsById_V2';
+
+ ///Undocumented SV
+ static const String GetUndocSVStockMovementList = '$baseUrl/DailyStockCash/GetUndocSVStockMovementList';
+ static const String VerifyUnDocSVDetails = '$baseUrl/DailyStockCash/VerifyUnDocSVDetails';
 }
 
 

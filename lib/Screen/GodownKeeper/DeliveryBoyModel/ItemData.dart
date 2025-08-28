@@ -18,6 +18,7 @@ class ItemData {
   final String tvCount;
   final String updateFlag;
   final String itemAddedDate;
+  final String sVUniqueId;
 
   ItemData({
     required this.date,
@@ -39,6 +40,7 @@ class ItemData {
     required this.tvCount,
     required this.updateFlag,
     required this.itemAddedDate,
+    required this.sVUniqueId,
   });
 
   // Convert Map to ItemData (from the database)
@@ -63,6 +65,7 @@ class ItemData {
       tvCount: json['tvCount'],
       updateFlag: json['updateFlag'],
       itemAddedDate: json['itemAddedDate'],
+      sVUniqueId: json['SVUniqueID']?.toString() ?? '',
     );
   }
 
@@ -88,6 +91,7 @@ class ItemData {
       'tvCount': tvCount,
       'updateFlag': updateFlag,
       'itemAddedDate': itemAddedDate,
+      'sVUniqueId': sVUniqueId,
     };
   }
 }

@@ -652,6 +652,7 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
         );
 
         debugPrint("Response body: ${response.body}");
+        debugPrint("Response body: ${AppUrl.UpdateDailyRefillSaleList}/$distributorId/0'");
         if (response.statusCode == 200) {
           var data = json.decode(response.body);
 
