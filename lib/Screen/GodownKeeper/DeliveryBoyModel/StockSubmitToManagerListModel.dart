@@ -197,6 +197,7 @@ class ItemList {
       num? closingEmpty,
       num? closingDef,
     String? sVConsStr,
+    String? PSVIdStr,
     String? TVConsStr,
     String? SVQtyStr,
     String? TVQtyStr,
@@ -215,6 +216,7 @@ class ItemList {
     _closingEmpty = closingEmpty;
     _closingDef = closingDef;
     _sVConsStr = sVConsStr;
+    _PSVIdStr = PSVIdStr;
     _TVConsStr = TVConsStr;
     _SVQtyStr = SVQtyStr;
     _TVQtyStr = TVQtyStr;
@@ -236,6 +238,7 @@ class ItemList {
     _closingEmpty = json['ClosingEmpty'];
     _closingDef = json['ClosingDef'];
     _sVConsStr = json['SVConsStr'];
+    _PSVIdStr = json['PSVIdStr'];
     _TVConsStr = json['TVConsStr'];
     _SVQtyStr = json['SVQtyStr'];
     _TVQtyStr = json['TVQtyStr'];
@@ -255,6 +258,7 @@ class ItemList {
   num? _closingEmpty;
   num? _closingDef;
   String? _sVConsStr;
+  String? _PSVIdStr;
   String? _TVConsStr;
   String? _SVQtyStr;
   String? _TVQtyStr;
@@ -274,6 +278,7 @@ ItemList copyWith({
   num? closingEmpty,
   num? closingDef,
   String? sVConsStr,
+  String? PSVIdStr,
   String? TVConsStr,
   String? SVQtyStr,
   String? TVQtyStr,
@@ -293,6 +298,7 @@ ItemList copyWith({
   closingEmpty: closingEmpty ?? _closingEmpty,
   closingDef: closingDef ?? _closingDef,
   sVConsStr: sVConsStr ?? _sVConsStr,
+  PSVIdStr: PSVIdStr ?? _PSVIdStr,
   TVConsStr: TVConsStr ?? _TVConsStr,
   SVQtyStr: SVQtyStr ?? _SVQtyStr,
   TVQtyStr: TVQtyStr ?? _TVQtyStr,
@@ -312,6 +318,7 @@ ItemList copyWith({
   num? get closingEmpty => _closingEmpty;
   num? get closingDef => _closingDef;
   String? get sVConsStr => _sVConsStr;
+  String? get PSVIdStr => _PSVIdStr;
   String? get TVConsStr => _TVConsStr;
   String? get SVQtyStr => _SVQtyStr;
   String? get TVQtyStr => _TVQtyStr;
@@ -333,6 +340,7 @@ ItemList copyWith({
     map['ClosingEmpty'] = _closingEmpty;
     map['ClosingDef'] = _closingDef;
     map['SVConsStr'] = _sVConsStr;
+    map['PSVIdStr'] = _PSVIdStr;
     map['TVConsStr'] = _TVConsStr;
     map['SVQtyStr'] = _SVQtyStr;
     map['TVQtyStr'] = _TVQtyStr;
