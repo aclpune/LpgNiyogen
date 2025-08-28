@@ -9,14 +9,17 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../ConstantScreen/widgets.dart';
+import '../GodownKeeper/ItemReceipt/CylItemList/CylItemListModel.dart';
 import '../Utils/Styling.dart';
 import '../Utils/Widget.dart';
 import '../Utils/app_url.dart';
 import '../Utils/constants.dart';
 import 'BootomNavigatinBarManager.dart';
+import 'CashDenominationMandatoryFlag/CahsDenominationMandatoryFlagModel.dart';
 import 'ManagerModelClass/CheckConsumerNumberIsValidPrepaid.dart';
 import 'ManagerModelClass/ConsumerModel.dart';
 import 'ManagerModelClass/DenomModel.dart';
+import 'ManagerModelClass/GetConsumerCurrentDiscountDetailForCredtModel.dart';
 import 'ManagerModelClass/GetConsumerDetailsCredit.dart';
 import 'ManagerModelClass/GetConsumerDiscountDetailCredit.dart';
 import 'ManagerModelClass/GetExpenceHeadAmountListModel.dart';
@@ -108,6 +111,8 @@ class _ManagerUpdateSaleCashUpdationState
   String? selectedPaymentMode;
   String? selectedVendorName;
   int? selectedVendorId;
+  String? selectedVendorNameDisPopUp;
+  int? selectedVendorIdDisPopUp;
   int _selectedIndex = 0;
 
   double result500 = 0.0;
@@ -171,15 +176,18 @@ class _ManagerUpdateSaleCashUpdationState
 
   String? saleQty1, svQty1, tvQty1, amountTotal1, expAmount1, dmBal1;
   double? itemRates, expenseAmtTotal,discountedRateCredit,discountCreditGet,amountTotal,
-      delMenBalance,postpaidAmountApi,creditAmountApi,cashAmountApi,prepaidAmountApi,cashTotalExpectedAmount,cashTotalReceiveAmounts,cashBalanceAmount;
+      delMenBalance,postpaidAmountApi,creditAmountApi,cashAmountApi,prepaidAmountApi,cashTotalExpectedAmount,cashTotalReceiveAmounts,cashBalanceAmount,totalDiscountOfReticulatedByQty;
 
   List<GetConsumerDetailsCredit> getConsumerCreditDetailListModel = [];
   GetConsumerDetailsCredit? selectedCustomerModel;
+  GetConsumerDetailsCredit? selectedCustomerModelDisPopup;
+
 
   // List<String> paymentModeCredit = ['Prepaid','Credit','Cash'];
   List<PaymentModeModel> paymentModeCredit = [];
   PaymentModeModel? paymode;
   List<GetConsumerDiscountDetailCredit> getConsumerCreditDiscountDetailListModel = [];
+  List<GetConsumerCurrentDiscountDetailForCredtModel> getConsumerCurrentDiscountDetailForCredtModel = [];
   List<GetExpenseDetailListModel> getExpenseDetailListModel = [];
   List<GetNoteTypeAndIdFroDenominationListModel>
       getNoteTypeAndIdFroDenominationListModel = [];
@@ -197,15 +205,42 @@ class _ManagerUpdateSaleCashUpdationState
   int? _selectedExpenseHeadId;
   final TextEditingController _expenseAmountController =
       TextEditingController();
-  final TextEditingController _expenseRemarkController =
-      TextEditingController();
+  final TextEditingController _expenseRemarkController = TextEditingController();
   List<GetExpenceHeadAmountListModel> _expensesHeaders = [];
   GetExpenceHeadAmountListModel? _selectedexpensesHeaders;
   bool isCheckedBalanceCash = false;
   int pendingCDCMSCount = 0;
   bool isLumsumAmountAdd = true;
+  bool saveFlag = false;
+  List<CahsDenominationMandatoryFlagModel> cashDenoMandatoryList = [];
+  bool cashDenominationMandatory = false;
+  List<CylItemListModel> _items = [];
+  String? _selectedItem;
+  int? selectedItemId;
+  CylItemListModel? _selectedItemModel;
+  double? retailSalePriceDisPopup = 0.0;
+  final TextEditingController _retailSalePriceDisPopupController = TextEditingController();
+  final TextEditingController _discountAmountDisPopupController = TextEditingController();
+  double? maxAllowedDiscountPopUp = 0.0;
+  DateTime? _selectedDate;
+  bool hasPermissionLimit = false;
+  Future<void> _pickDate(BuildContext context) async {
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+    if (pickedDate != null && pickedDate != _selectedDate) {
+      setState(() {
+        _selectedDate = pickedDate;
+      });
+    }
+  }
   @override
   void initState() {
+    checkCashDenominationFlagMandatory();
     Future.delayed(Duration.zero, () {
       setState(() {
         argValue = ModalRoute.of(context)?.settings.arguments as Map;
@@ -304,8 +339,10 @@ class _ManagerUpdateSaleCashUpdationState
         }
         fetchConsumerDetailsCredit();
         fetchConsumerDiscountDetailsCredit();
+        fetchConsumerCurrebtDiscountDetailsCredit();
         getNoteTypeAndIDList();
         fetchExpenseHeaderDetails();
+        fetchItems();
         prepareDenominationData(getNoteTypeAndIdFroDenominationListModel);
         // Add listeners to controllers to rebuild the widget
         _qtyControllerPrepaid.addListener(() {
@@ -316,6 +353,8 @@ class _ManagerUpdateSaleCashUpdationState
           setState(() {}); // Triggers a rebuild when the text changes
         });
         fetchDeliveryMenBalance(delBoyIDs!);
+
+
       });
     });
 
@@ -1832,27 +1871,67 @@ class _ManagerUpdateSaleCashUpdationState
                                       ),
                                     ],
                                   ),
+                                  // Column(
+                                  //   children: [
+                                  //     ElevatedButton(
+                                  //       onPressed: () {
+                                  //         _showExpenseBottomSheet(context, delBoyNameName!, vehicleNumber!);
+                                  //       },
+                                  //       style: ButtonStyle(
+                                  //         backgroundColor:
+                                  //             MaterialStateProperty.all<Color>(
+                                  //                 const Color(0xff1280b3)),
+                                  //       ),
+                                  //       child: Text(
+                                  //         'Exp',
+                                  //         style: TextStyle(
+                                  //             color: Colors.white,
+                                  //             fontWeight: FontWeight.bold,
+                                  //             fontSize: 16),
+                                  //       ),
+                                  //     ),
+                                  //     ElevatedButton(
+                                  //       onPressed: () {
+                                  //         _showDiscountBottomSheet(context);
+                                  //       },
+                                  //       style: ButtonStyle(
+                                  //         backgroundColor:
+                                  //         MaterialStateProperty.all<Color>(
+                                  //             const Color(0xff1280b3)),
+                                  //       ),
+                                  //       child: Text(
+                                  //         'Discount',
+                                  //         style: TextStyle(
+                                  //             color: Colors.white,
+                                  //             fontWeight: FontWeight.bold,
+                                  //             fontSize: 16),
+                                  //       ),
+                                  //     ),
+                                  //   ],
+                                  // ),
                                   Column(
                                     children: [
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          _showExpenseBottomSheet(context, delBoyNameName!, vehicleNumber!);
-                                        },
-                                        style: ButtonStyle(
-                                          backgroundColor:
-                                              MaterialStateProperty.all<Color>(
-                                                  const Color(0xff1280b3)),
+                                        GestureDetector(
+                                          onTap: (){
+                                            _showExpenseBottomSheet(context, delBoyNameName!, vehicleNumber!);
+                                          },
+                                          child: Text(
+                                            'Add Exp.',
+                                            style: Styling.blueClrTextWithUnderlineBold
+                                          ),
                                         ),
-                                        child: Text(
-                                          'Exp',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16),
+                                        SizedBox(height: 15),
+                                        GestureDetector(
+                                          onTap: (){
+                                            _showDiscountBottomSheet(context);
+                                          },
+                                          child: Text(
+                                            'Add Disc.',
+                                            style: Styling.blueClrTextWithUnderlineBold
+                                          ),
                                         ),
-                                      ),
                                     ],
-                                  )
+                                  ),
                                 ],
                               ),
                             ],
@@ -1865,8 +1944,8 @@ class _ManagerUpdateSaleCashUpdationState
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          _buildTabText('Prepaid', 0),
-                          _buildTabText('Postpaid', 1),
+                          _buildTabText('Online/Prepaid', 0),
+                          _buildTabText('Merchant QR', 1),
                           _buildTabText('Reticulated', 2),
                           _buildTabText('Cash', 3),
                         ],
@@ -1897,13 +1976,11 @@ class _ManagerUpdateSaleCashUpdationState
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
                   onPressed: () {
-                    if(actionMode == "EDIT"){
-                      updateSaleAddEditForMob("EDIT");
-                    }else{
-                      updateSaleAddEditForMob("ADD");
-                    }
-
-
+                      if(actionMode == "EDIT"){
+                        updateSaleAddEditForMob("EDIT");
+                      }else{
+                        updateSaleAddEditForMob("ADD");
+                      }
                     // prepareDenominationData(
                     //     getNoteTypeAndIdFroDenominationListModel);
                   },
@@ -2738,7 +2815,8 @@ class _ManagerUpdateSaleCashUpdationState
                     child: textWidgetBlueColorWithStar("Customer Name:", "*")),
                 Flexible(
                   flex: 2,
-                  child: DropdownButtonFormField<GetConsumerDetailsCredit>(
+                  child:
+                  DropdownButtonFormField<GetConsumerDetailsCredit>(
                     decoration: InputDecoration(
                       contentPadding:
                           EdgeInsets.symmetric(vertical: 12, horizontal: 10),
@@ -2763,11 +2841,11 @@ class _ManagerUpdateSaleCashUpdationState
                         _vendorCylinderQtyControllerCredit.clear();
                         _vendorCylinderAmountControllerCredit.clear();
 
-                        final discountMatch = getConsumerCreditDiscountDetailListModel.firstWhere(
+                        final discountMatch = getConsumerCurrentDiscountDetailForCredtModel.firstWhere(
                               (discount) =>
                           discount.customerId == selectedVendorId &&
                               discount.itemId == itemIDs,
-                          orElse: () => GetConsumerDiscountDetailCredit(), // return empty model if not found
+                          orElse: () => GetConsumerCurrentDiscountDetailForCredtModel(), // return empty model if not found
                         );
 
                         if (discountMatch.customerId != null && discountMatch.itemId != null) {
@@ -3395,6 +3473,7 @@ class _ManagerUpdateSaleCashUpdationState
                           ),
                         ),
                         child: Text(
+                          cashDenominationMandatory?"Cash Denomination Is Mandatory":
                           "Cash Denomination",
                           style: Styling.buttonTextBlack.copyWith(
                             color: _selectedIndex == 0
@@ -5158,7 +5237,7 @@ class _ManagerUpdateSaleCashUpdationState
               action: "Add",
               // Example action
               addedBy: staffIds,
-              discountAmount :discountCreditGet,
+              discountAmount :totalDiscountOfReticulatedByQty,
               // Example value
             ),
           );
@@ -5234,6 +5313,7 @@ class _ManagerUpdateSaleCashUpdationState
         amountCreditCylinderByVendor = qty * discountedRateCredit!;
         _vendorCylinderAmountControllerCredit.text =
             amountCreditCylinderByVendor.toStringAsFixed(2);
+        totalDiscountOfReticulatedByQty = qty * discountCreditGet!;
       }else{
         amountCreditCylinderByVendor = qty * itemRates!;
         _vendorCylinderAmountControllerCredit.text =
@@ -5472,6 +5552,7 @@ class _ManagerUpdateSaleCashUpdationState
   }
 
   Future<void> fetchConsumerDetailsCredit() async {
+    EasyLoading.show();
     Constants.isNetworkAvailable =
         await InternetConnectionChecker().hasConnection;
 
@@ -5479,6 +5560,7 @@ class _ManagerUpdateSaleCashUpdationState
       // Return an empty list if there is no network connection
       showFlushBar(context, Constants.connectionMessage);
       isLoading = false;
+      EasyLoading.dismiss();
     } else {
       try {
         SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -5510,14 +5592,20 @@ class _ManagerUpdateSaleCashUpdationState
             getConsumerCreditDetailListModel = data
                 .map((jsonItem) => GetConsumerDetailsCredit.fromJson(jsonItem))
                 .toList();
+            getConsumerCreditDetailListModel.sort((a, b) {
+              return (a.customerName ?? '').compareTo(b.customerName ?? '');
+            });
             isLoading = false;
+            EasyLoading.dismiss();
           });
         } else {
           isLoading = false;
+          EasyLoading.dismiss();
           throw Exception('Failed to load sales data');
         }
       } catch (error) {
         isLoading = false;
+        EasyLoading.dismiss();
         debugPrint("Error: $error");
         // Return an empty list in case of an error
       }
@@ -5695,6 +5783,22 @@ class _ManagerUpdateSaleCashUpdationState
           return;
         }
       }
+
+      if(qtyControllerCashs > 0){
+          if(cashDenominationMandatory) {
+            if (finalsAmount > 0) {
+              if (finalsAmount != totalReceivedAmountCash) {
+                showFlushBar(context, Constants.denominationAmount);
+                // You can also return this message from a function or show a snackbar/dialog
+                return;
+              }
+            } else {
+              showFlushBar(context, Constants.cashDenominationIsMandatory);
+              return;
+            }
+          }
+        }
+
       if(totalBalanceAmountCash! > 0){
         if(isCheckedBalanceCash == false){
           if(finalsAmount != totalReceivedAmountCash){
@@ -7288,6 +7392,60 @@ class _ManagerUpdateSaleCashUpdationState
     }
   }
 
+  /// credit consumer diacount fetch current discount
+  Future<void> fetchConsumerCurrebtDiscountDetailsCredit() async {
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+
+    if (!Constants.isNetworkAvailable) {
+      // Return an empty list if there is no network connection
+      showFlushBar(context, Constants.connectionMessage);
+      isLoading = false;
+    } else {
+      try {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? distributorId = prefs.getString('DistributorId');
+        String? bearerToken = prefs.getString('token');
+
+        if (bearerToken == null) {
+          isLoading = false;
+          throw Exception('Bearer token is missing');
+        }
+
+        final response = await http.get(
+          Uri.parse('${AppUrl.GetCustItemCurrDiscount}/$distributorId'),
+          headers: {
+            'Authorization': 'Bearer $bearerToken',
+          },
+        );
+
+        debugPrint("Response body GetCustItemCurrDiscount: ${response.body}");
+        debugPrint("request body GetCustItemCurrDiscount: ${response.request}");
+
+        if (response.statusCode == 200) {
+          // Parse the JSON response
+          final List<dynamic> data = json.decode(response.body);
+          // return data
+          //     .map((jsonItem) => DailySaleSaummaryListModel.fromJson(jsonItem))
+          //     .toList();
+          setState(() {
+            getConsumerCurrentDiscountDetailForCredtModel = data
+                .map((jsonItem) => GetConsumerCurrentDiscountDetailForCredtModel.fromJson(jsonItem))
+                .toList();
+            isLoading = false;
+          });
+        } else {
+          isLoading = false;
+          throw Exception('Failed to load sales data');
+        }
+      } catch (error) {
+        isLoading = false;
+        debugPrint("Error: $error");
+        // Return an empty list in case of an error
+      }
+    }
+  }
+
   int getTotalQuantity() {
     return _reticulatedList.fold(0, (sum, item) => sum + (item.quantity ?? 0));
   }
@@ -7439,5 +7597,757 @@ class _ManagerUpdateSaleCashUpdationState
     }
 
     return formattedAmount;
+  }
+
+  Future<void> checkCashDenominationFlagMandatory() async {
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+
+    if (!Constants.isNetworkAvailable) {
+      showFlushBar(context, Constants.connectionMessage);
+      isLoading = false;
+    } else {
+      try {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? distributorId = prefs.getString('DistributorId');
+        String? bearerToken = prefs.getString('token');
+
+        if (bearerToken == null) {
+          isLoading = false;
+          throw Exception('Bearer token is missing');
+        }
+        final response = await http.get(
+          Uri.parse('${AppUrl.GetPageActionPermissionDtls}/$distributorId/All'),
+          headers: {
+            'Authorization': 'Bearer $bearerToken', // Add Bearer token here
+          },
+        );
+        debugPrint("Response body GetPageActionPermissionDtls: ${response.body}");
+        debugPrint("Request body GetPageActionPermissionDtls: ${response.request}");
+
+        if (response.statusCode == 200) {
+          // Parse the JSON response
+          final List<dynamic> data = json.decode(response.body);
+          setState(() {
+            cashDenoMandatoryList = data.map((jsonItem) =>
+                CahsDenominationMandatoryFlagModel.fromJson(jsonItem)).toList();
+            isLoading = false;
+            for (var item in cashDenoMandatoryList) {
+              if (item.distributorId.toString() == distributorId && item.permissionFor == "Cash Denomination" && item.isActive == 1) {
+                print("Flag truet:");
+                cashDenominationMandatory = true;
+                break; // Exit loop after finding the match
+              }else{
+                cashDenominationMandatory = false;
+              }
+            }
+          });
+        } else {
+          isLoading = false;
+          throw Exception('Failed to load sales data');
+        }
+      } catch (error) {
+        isLoading = false;
+        debugPrint("Error: $error");
+        // Return an empty list in case of an error
+      }
+    }
+  }
+
+  void _showDiscountBottomSheet(
+      BuildContext context) {
+    selectedVendorNameDisPopUp = null;
+    selectedVendorIdDisPopUp = null;
+    selectedCustomerModelDisPopup = null;
+    _selectedItem = null;
+    selectedItemId = null;
+    _selectedItemModel = null;
+    _retailSalePriceDisPopupController.clear();
+    _discountAmountDisPopupController.clear();
+    _selectedDate = DateTime.now();
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      // Allows the bottom sheet to adapt its height to the content
+      builder: (BuildContext context) {
+        return
+         StatefulBuilder(builder: (BuildContext contexts, StateSetter sheetSetState){
+           return Container(
+             width:
+             MediaQuery.of(contexts).size.width, // Set width to device's width
+             padding: EdgeInsets.all(5),
+             decoration: BoxDecoration(
+               color: Colors.white,
+               borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+             ),
+             child: SingleChildScrollView(
+               // Wrap content in a scrollable view
+               child: Column(
+                 mainAxisSize: MainAxisSize.min,
+                 // Ensure column size is based on children
+                 children: [
+                   Text(
+                     "Add Discount",
+                     style: Styling.bodyTitle,
+                   ),
+                   SizedBox(height: 16),
+
+                   // Expense Head dropdown
+                   Row(
+                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                     children: [
+                       textWidgetBlueColorWithStar("Customer Name:", "*"),
+                       Container(
+                         width: MediaQuery.of(contexts).size.width * 0.6,
+                         // Use relative width (60% of screen width)
+                         child:
+                         DropdownButtonFormField<GetConsumerDetailsCredit>(
+                           decoration: InputDecoration(
+                             contentPadding:
+                             EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                           ),
+                           style: Styling.itemBlackTest,
+                           value: selectedCustomerModelDisPopup,
+                           items: getConsumerCreditDetailListModel
+                               .map((GetConsumerDetailsCredit vendor) {
+                             return DropdownMenuItem<GetConsumerDetailsCredit>(
+                               value: vendor,
+                               child: Text(vendor.customerName ?? ''),
+                             );
+                           }).toList(),
+                           onChanged: (GetConsumerDetailsCredit? selectedVendor) {
+                             if (selectedVendor != null) {
+                               selectedVendorNameDisPopUp = selectedVendor.customerName;
+                               selectedVendorIdDisPopUp = selectedVendor.customerId?.toInt();
+                               // Handle dropdown selection here
+                               print("Selected Vendor Name dic: $selectedVendorNameDisPopUp");
+                               print("Selected Vendor ID dis: $selectedVendorIdDisPopUp");
+                               selectedCustomerModelDisPopup = selectedVendor;
+
+                             }
+                           },
+                         ),
+                       ),
+                     ],
+                   ),
+                   SizedBox(height: 10),
+
+                   // Expense Amount input field
+                   Row(
+                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                     children: [
+                       textWidgetBlueColorWithStar("Select Item:", "*"),
+                       Container(
+                         width: MediaQuery.of(contexts).size.width * 0.6,
+                         // Use relative width (60% of screen width)
+                         child:
+                         DropdownButtonFormField<CylItemListModel>(
+                             decoration: InputDecoration(
+                               contentPadding:
+                               EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                             ),
+                             value: _selectedItemModel,
+                             // Bind the value to the selected item model
+                             items: _items.map((CylItemListModel item) {
+                               return DropdownMenuItem<CylItemListModel>(
+                                 value: item,
+                                 child: Text(
+                                   item.itemName ?? 'Unknown',
+                                   style: TextStyle(
+                                       fontSize: 14.0, fontWeight: FontWeight.normal),
+                                 ),
+                               );
+                             }).toList(),
+                             onChanged: (CylItemListModel? selectedItem) {
+                               if (selectedItem == null) return;
+
+                               // 1️⃣ Synchronously update UI with the selection
+                               setState(() {
+                                 _selectedItem = selectedItem.itemName;
+                                 selectedItemId = selectedItem.itemId!.toInt();
+                                 _selectedItemModel = selectedItem;
+                                 debugPrint("selectedItemId $selectedItemId");
+
+                               });
+
+                               // 2️⃣ Perform async fetch and then update UI again
+                               fetchItemRate(selectedItemId!).then((rate) {
+                                 if (!mounted) return; // ensure widget still exists
+
+                                 final discountItem = cashDenoMandatoryList.firstWhere(
+                                       (item) => item.itemId == selectedItemId,
+                                   orElse: () => CahsDenominationMandatoryFlagModel(),
+                                 );
+                                 // final discountLimit = discountItem.discount?.toDouble() ?? 0.0;
+
+                                  hasPermissionLimit = discountItem.itemId != null
+                                     && discountItem.permissionFor == 'Customer Discount Limit';
+
+                                 // double? maxDiscount;
+                                 // if (discountItem.itemId != null &&
+                                 //     discountItem.permissionFor == 'Customer Discount Limit') {
+                                 //   maxDiscount = discountItem.discount?.toDouble() ?? rate;
+                                 // } else {
+                                 //   // No special limit, allow up to RSP
+                                 //   maxDiscount = rate;
+                                 // }
+
+                                 setState(() {
+                                   retailSalePriceDisPopup = rate;
+                                   _retailSalePriceDisPopupController.text = rate.toString();
+                                   if (hasPermissionLimit) {
+                                     maxAllowedDiscountPopUp = discountItem.discount?.toDouble() ?? rate;
+                                   } else {
+                                     // No special limit — users can only discount up to RSP
+                                     maxAllowedDiscountPopUp = rate;
+                                   }
+                                   // maxAllowedDiscountPopUp = maxDiscount;
+                                   _discountAmountDisPopupController.clear();
+                                   debugPrint("maxAllowedDiscountPopUp $maxAllowedDiscountPopUp");
+                                 });
+                               });
+                             }
+
+                         ),
+                       ),
+                     ],
+                   ),
+                   SizedBox(height: 10),
+                   // Remark input field
+                   Row(
+                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                     children: [
+                       textWidgetBlueColorWithoutStar("Retail Sales Price:"),
+                       Container(
+                         width: MediaQuery.of(contexts).size.width * 0.6,
+                         // Use relative width (60% of screen width)
+                         child: TextField(
+                           controller: _retailSalePriceDisPopupController,
+                           decoration: InputDecoration(
+                             labelStyle: TextStyle(color: Colors.blueAccent),
+                           ),
+                           textAlign: TextAlign.center,
+                           style: Styling.itemBlackTest,
+                           enabled: false,
+                         ),
+                       ),
+                     ],
+                   ),
+                   SizedBox(height: 20),
+                   Row(
+                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                     children: [
+                       textWidgetBlueColorWithStar("Discount Amount:", "*"),
+                       Container(
+                         width: MediaQuery.of(contexts).size.width * 0.6,
+                         // Use relative width (60% of screen width)
+                         child: TextField(
+                           controller: _discountAmountDisPopupController ,
+                           keyboardType: TextInputType.number,
+                           decoration: InputDecoration(
+                             labelStyle: TextStyle(color: Colors.blueAccent),
+                           ),
+                           inputFormatters: [
+                             FilteringTextInputFormatter.digitsOnly,
+                           ],
+                           textAlign: TextAlign.center,
+                           style: Styling.itemBlackTest,
+                           onChanged: (value) {
+                             double? amtDis = double.tryParse(value);
+                             double amt = double.tryParse(value) ?? 0.0;
+                             double limit = maxAllowedDiscountPopUp ?? retailSalePriceDisPopup ?? 0.0;
+                             if (amt > limit) {
+                               _discountAmountDisPopupController.clear();
+                               if (hasPermissionLimit) {
+                                 showFlushBar(contexts, Constants.discountExceedCashCollection);
+                               } else {
+                                 showFlushBar(contexts, Constants.discountExceedCashCollectionRSP);
+                               }
+                             }
+                             // if(amtDis != null){
+                             //   if(hasPermissionLimit){
+                             //     if (amtDis > maxAllowedDiscountPopUp!) {
+                             //       _discountAmountDisPopupController.clear();
+                             //       showFlushBar(contexts, Constants.discountExceedCashCollection);
+                             //     } else {
+                             //       // Continue saving
+                             //       print("Discount accepted");
+                             //     }
+                             //   }else{
+                             //
+                             //   }
+                             //
+                             // }
+
+                           },
+                         ),
+                       ),
+                     ],
+                   ),
+                   SizedBox(height: 20),
+                   Row(
+                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                     children: [
+                       textWidgetBlueColorWithoutStar("Effective Date:"),
+                       Container(
+                         width: MediaQuery.of(contexts).size.width * 0.6,
+                         child: Row(mainAxisAlignment: MainAxisAlignment.start,
+                           children: [
+                             Text(
+                               "${_selectedDate!.toLocal()}".split(' ')[0],
+                             ),
+                             SizedBox(width: 8),
+                             InkWell(
+                               onTap: () async {
+                                 // _pickDate(context);
+                                 final picked = await showDatePicker(
+                                   context: contexts,
+                                   initialDate: _selectedDate ?? DateTime.now(),
+                                   firstDate: DateTime.now(),       // ❌ Disable all past dates
+                                   lastDate: DateTime(2100),
+                                 );
+                                 if (picked != null && picked != _selectedDate) {
+                                   sheetSetState(() {
+                                     _selectedDate = picked;
+                                   });
+                                 }
+                               },
+                               child: Icon(Icons.date_range, color: Colors.blue),
+                             ),
+                           ],
+                         ),
+                       ),
+                     ],
+                   ),
+                   // Save button
+                   SizedBox(height: 20),
+                   Row(
+                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                     children: [
+                       ElevatedButton(
+                         style: ButtonStyle(
+                           backgroundColor: MaterialStateProperty.all<Color>(
+                               (_discountAmountDisPopupController.text.isNotEmpty &&
+                                   selectedVendorNameDisPopUp != null)
+                                   ? Color(0xff1280b3)
+                                   : Color(0xff666666)),
+                         ),
+                         onPressed: () {
+                             if((selectedVendorNameDisPopUp ?? '').isNotEmpty){
+                               if((_selectedItem ?? '').isNotEmpty){
+                                   if(_discountAmountDisPopupController.text.isNotEmpty){
+                                     double discountAmt = double.parse(_discountAmountDisPopupController.text);
+                                     double rspAmt = double.parse(_retailSalePriceDisPopupController.text);
+                                     addDiscountAPI(contexts,"ADD",selectedVendorIdDisPopUp!,discountAmt,_selectedDate!,selectedItemId!,rspAmt);
+                                   }else{
+                                     EasyLoading.showToast("Enter Discount Amount.",
+                                         duration: const Duration(milliseconds: 3000));
+                                   }
+                               }else{
+                                 EasyLoading.showToast("Select Item.",
+                                     duration: const Duration(milliseconds: 3000));
+                               }
+                             }else{
+                               EasyLoading.showToast("Select Customer Name.",
+                                   duration: const Duration(milliseconds: 3000));
+                             }
+
+                         },
+                         child: Text(
+                           "Save",
+                           style: TextStyle(color: Colors.white),
+                         ),
+                       ),
+                       ElevatedButton(
+                         style: ButtonStyle(
+                           backgroundColor:
+                           MaterialStateProperty.all<Color>(Color(0xff1280b3)),
+                         ),
+                         onPressed: () {
+                           Navigator.pop(
+                               contexts); // Close bottom sheet after saving
+                         },
+                         child: const Text("Close",
+                             style: TextStyle(color: Colors.white)),
+                       ),
+                     ],
+                   ),
+                   SizedBox(height: 20),
+                   Column(
+                     children: [
+                       Container(
+                         decoration: BoxDecoration(
+                           borderRadius: BorderRadius.only(
+                             topLeft: Radius.circular(4),
+                             topRight: Radius.circular(4),
+                           ),
+                         ),
+                         child: Padding(
+                           padding: const EdgeInsets.only(top: 8.0,bottom: 8),
+                           child: Row(
+                             mainAxisAlignment: MainAxisAlignment.center,
+                             children: [
+                               Expanded(
+                                 flex: 3,
+                                 child: Text(
+                                   'Customer Name',
+                                   style: Styling.blueClrTextSmallBold,
+                                   textAlign: TextAlign.left,
+                                 ),
+                               ),
+                               Expanded(
+                                 flex: 2,
+                                 child: Text(
+                                   'Item Name',
+                                   style: Styling.blueClrTextSmallBold,
+                                   textAlign: TextAlign.left,
+                                 ),
+                               ),
+                               Expanded(
+                                 flex: 2,
+                                 child: Text(
+                                   'RSP Amt.',
+                                   style: Styling.blueClrTextSmallBold,
+                                   textAlign: TextAlign.center,
+                                 ),
+                               ),
+                               Expanded(
+                                 flex: 2,
+                                 child: Text(
+                                   'Discount',
+                                   style: Styling.blueClrTextSmallBold,
+                                   textAlign: TextAlign.center,
+                                 ),
+                               ),
+                               Expanded(
+                                 flex: 1,
+                                 child: Text(
+                                   'Action',
+                                   style: Styling.blueClrTextSmallBold,
+                                   textAlign: TextAlign.center,
+                                 ),
+                               ),
+                             ],
+                           ),
+                         ),
+                       ),
+                       getConsumerCreditDiscountDetailListModel.isNotEmpty
+                           ? ListView.builder(
+                         shrinkWrap: true,
+                         physics: NeverScrollableScrollPhysics(),
+                         itemCount: getConsumerCreditDiscountDetailListModel.length,
+                         itemBuilder: (context, index) {
+                           final items = getConsumerCreditDiscountDetailListModel[index];
+                           Color backgroundColor = (index % 2 == 0)
+                               ? Colors.grey[
+                           300]! // Color for even index (first, third, fifth...)
+                               : Colors.white70!;
+                           return Container(
+                             color: backgroundColor,
+                             child: Padding(
+                               padding: const EdgeInsets.only(top: 8.0,bottom: 8,left: 2),
+                               child: Column(
+                                 crossAxisAlignment:
+                                 CrossAxisAlignment.start,
+                                 children: [
+                                   Row(
+                                     mainAxisAlignment:
+                                     MainAxisAlignment.center,
+                                     children: [
+                                       Expanded(
+                                         flex: 3,
+                                         child: Text(
+                                           items.customerName.toString(),
+                                           style: Styling.buttonTextBlack,
+                                           textAlign: TextAlign.left,
+                                         ),
+                                       ),
+                                       Expanded(
+                                         flex: 2,
+                                         child: Text(
+                                           items.itemName!.toString(),
+                                           style: Styling.buttonTextBlack,
+                                           textAlign: TextAlign.left,
+                                         ),
+                                       ),
+                                       Expanded(
+                                         flex: 2,
+                                         child: Text(
+                                           items.rSPPrice.toString(),
+                                           style: Styling.buttonTextBlack,
+                                           textAlign: TextAlign.center,
+                                         ),
+                                       ),
+                                       Expanded(
+                                         flex: 2,
+                                         child: Text(
+                                           items.discount.toString(),
+                                           style: Styling.buttonTextBlack,
+                                           textAlign: TextAlign.center,
+                                         ),
+                                       ),
+                                       Expanded(
+                                         flex: 1,
+                                         child: GestureDetector(
+                                           onTap: () {
+                                             showDialog(
+                                               context: context,
+                                               builder:
+                                                   (BuildContext context) {
+                                                 return AlertDialog(
+                                                   title: Text(
+                                                       "Confirm Deletion"),
+                                                   content: Text(
+                                                       "Are you sure you want to delete this record?"),
+                                                   actions: [
+                                                     TextButton(
+                                                       onPressed: () {
+                                                         Navigator.of(
+                                                             context)
+                                                             .pop(); // Close dialog without action
+                                                       },
+                                                       child: Text("No"),
+                                                     ),
+                                                     TextButton(
+                                                       onPressed:
+                                                           () async {
+                                                             addDiscountAPI(contexts,"DELETE",items.customerId!.toInt(),0,_selectedDate!,items.itemId!.toInt()!,0);
+                                                             Navigator.of(
+                                                             context)
+                                                             .pop(); // Close dialog
+
+                                                       },
+                                                       child: Text("Yes"),
+                                                     ),
+                                                   ],
+                                                 );
+                                               },
+                                             );
+                                           },
+                                           child: Icon(
+                                             Icons.delete,
+                                             size: 18,
+                                             color: Colors.red,
+                                           ),
+                                         ),
+                                       ),
+                                     ],
+                                   ),
+                                 ],
+                               ),
+                             ),
+                           );
+                         },
+                       )
+                           : Container(
+                         child: Text("No Data Available"),
+                       ),
+                     ],
+                   ),
+                 ],
+               ),
+             ),
+           );
+         });
+
+      },
+    );
+  }
+
+  Future<void> fetchItems() async {
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+    if (Constants.isNetworkAvailable) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? distributorId = prefs.getString('DistributorId');
+      String? bearerToken =
+      prefs.getString('token'); // Assuming the token is stored here
+
+      if (bearerToken == null) {
+        throw Exception('Bearer Token Is Missing');
+      }
+
+      final response = await http.get(
+        Uri.parse('${AppUrl.GetItemMasterList}/$distributorId/1/C'),
+        headers: {
+          'Authorization': 'Bearer $bearerToken', // Add Bearer token here
+        },
+      );
+      debugPrint("item" + '${AppUrl.GetItemMasterList}/$distributorId/1/C');
+      debugPrint("item" + response.body);
+      if (response.statusCode == 200) {
+        // Parse the response
+        List<dynamic> data = json.decode(response.body);
+        setState(() {
+          _items = data.map((json) => CylItemListModel.fromJson(json)).toList();
+        });
+      } else {
+        throw Exception('Unable To Load Data At This Time. Please Try Again');
+      }
+    } else {
+      showFlushBar(
+          context, Constants.connectionMessage);
+    }
+  }
+
+  Future<double?> fetchItemRate(int itemID) async {
+    EasyLoading.show();
+    Constants.isNetworkAvailable = await InternetConnectionChecker().hasConnection;
+
+    if (!Constants.isNetworkAvailable) {
+      showFlushBar(context, Constants.connectionMessage);
+      EasyLoading.dismiss();
+      isLoading = false;
+      return null;  // Returning null if there's no connection
+    } else {
+      try {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? distributorId = prefs.getString('DistributorId');
+        String? bearerToken = prefs.getString('token');
+
+        if (bearerToken == null) {
+          isLoading = false;
+          throw Exception('Bearer token is missing');
+        }
+
+        final response = await http.get(
+          Uri.parse('${AppUrl.GetRSPDetailsList}/$distributorId/Today'),
+          headers: {
+            'Authorization': 'Bearer $bearerToken',
+          },
+        );
+
+        debugPrint("Response body GetRSPDetailsList: ${response.body}");
+
+        if (response.statusCode == 200) {
+          // Parse the JSON response
+          final List<dynamic> data = json.decode(response.body);
+
+          // Find the item rate for the given itemId
+          var item = data.firstWhere((jsonItem) => jsonItem['ItemId'] == itemID, orElse: () => null);
+          EasyLoading.dismiss();
+          if (item != null) {
+            double? itemRate = item['RSP_Price']?.toDouble();
+            return itemRate;
+          } else {
+            debugPrint('Item not found');
+            return null;
+          }
+
+        } else {
+          EasyLoading.dismiss();
+          throw Exception('Failed to load sales data');
+        }
+      } catch (error) {
+        EasyLoading.dismiss();
+        debugPrint("Error: $error");
+        return null;  // Return null in case of an error
+      }
+    }
+  }
+
+  Future<void> addDiscountAPI(BuildContext contexts,String mode, int customerId,double discountAmt,DateTime effectiveDate,int itemId,double rspAmt) async {
+    EasyLoading.show();
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+
+    if (!Constants.isNetworkAvailable) {
+      // Return an empty list if there is no network connection
+      showFlushBar(contexts, Constants.connectionMessage);
+      isLoading = false;
+      EasyLoading.dismiss();
+    } else {
+      try {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? distributorId = prefs.getString('DistributorId');
+        String? bearerToken = prefs.getString('token');
+        String? StaffId = prefs.getString('StaffId');
+        int? staffIds = int.parse(StaffId!);
+        int? distributorIds = int.parse(distributorId!);
+
+        DateTime dt = DateTime.parse(effectiveDate.toString());
+        String formatted = dt.toUtc().toIso8601String();
+        print(formatted); // "2025-07-21T15:03:01.000Z"
+
+        if (bearerToken == null) {
+          isLoading = false;
+          EasyLoading.dismiss();
+          throw Exception('Bearer token is missing');
+        }
+
+        // Construct the request body for the POST request
+        Map<String, dynamic> requestBody = {
+          "Action": mode ??'',
+          "AddedBy": staffIds ?? '',
+          "CustomerId": customerId ?? '',
+          "Discount": discountAmt ?? '',
+          "DistributorId": distributorIds ?? '',
+          "EffectiveDate": formatted ?? '',
+          "ItemId": itemId ?? '',
+          "RSP_Price": rspAmt ?? '',
+        };
+
+        final response = await http.post(
+          Uri.parse('${AppUrl.CustDiscDetailsAddEdit}'),
+          headers: {
+            'Authorization': 'Bearer $bearerToken',
+            'Content-Type': 'application/json',
+            // Ensure the request body is JSON
+          },
+          body: json.encode(requestBody), // Encode the request body as JSON
+        );
+
+        debugPrint("Response body CustDiscDetailsAddEdit: ${response.body}");
+        debugPrint(
+            "Request body CustDiscDetailsAddEdit: ${response.request}${requestBody}");
+
+        if (response.statusCode == 200) {
+          debugPrint("Response body CustDiscDetailsAddEdit: ${response.body}");
+          // fetchExpenseDetailList();
+          selectedVendorNameDisPopUp = null;
+          selectedVendorIdDisPopUp = null;
+          selectedCustomerModelDisPopup = null;
+          _selectedItem = null;
+          selectedItemId = null;
+          _selectedItemModel = null;
+          _retailSalePriceDisPopupController.clear();
+          _discountAmountDisPopupController.clear();
+
+          // Refresh the list (you might want to pass a setter or callback instead)
+          await fetchConsumerDiscountDetailsCredit();
+          EasyLoading.dismiss();
+          Navigator.of(contexts).pop(true);
+          _showDiscountBottomSheet(context);
+          if (response == -1 ||
+              response.body == -1 ||
+              response == "-1" ||
+              response.body == "-1") {
+            EasyLoading.showToast(Constants.expenseExistMgr,
+                duration: const Duration(milliseconds: 3000));
+          } else if (response == 0 ||
+              response.body == 0 ||
+              response == "0" ||
+              response.body == "0") {
+            EasyLoading.showToast(Constants.failToInserRecord,
+                duration: const Duration(milliseconds: 3000));
+          } else {
+            EasyLoading.showToast(
+              mode == "ADD" ? Constants.expenseSendMgr : Constants.dataDeleted,
+              duration: const Duration(milliseconds: 3000),
+            );
+          }
+
+        } else {
+          isLoading = false;
+          EasyLoading.dismiss();
+          throw Exception('Failed to load sales data');
+        }
+      } catch (error) {
+        isLoading = false;
+        EasyLoading.dismiss();
+        debugPrint("Error: $error");
+        // Return an empty list in case of an error
+      }
+    }
   }
 }

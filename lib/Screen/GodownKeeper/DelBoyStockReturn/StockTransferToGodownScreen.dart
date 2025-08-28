@@ -54,7 +54,7 @@ class _StockTransferTOGodownScreenState
   int? itemIds, filledCount, emptyCount, defectiveCount;
   String? mobileNo;
   bool stockTransferFlag = false;
-
+  bool saveFlag = false;
 
   @override
   void initState() {
@@ -72,6 +72,7 @@ class _StockTransferTOGodownScreenState
     });
     fetchGodownInfo();
     fetchTransactionList();
+    checkAndSaveDayEndData();
   }
 
   @override
@@ -277,21 +278,26 @@ class _StockTransferTOGodownScreenState
                     margin: const EdgeInsets.symmetric(horizontal: 10),
                     child: ElevatedButton(
                       onPressed: () {
-                        if (_selectedGodownName != null) {
-                          if (_filledQtyController.text.isNotEmpty ||
-                              _emptyQtyController.text.isNotEmpty ||
-                              _defectiveQtyController.text.isNotEmpty) {
-                            if (stockTransferFlag) {
-                              submitStockToApi();
+                        if (saveFlag) {
+                          print('saveFlag $saveFlag');
+                          showFlushBar(context, Constants.dayEndCompleted);
+                        } else {
+                          if (_selectedGodownName != null) {
+                            if (_filledQtyController.text.isNotEmpty ||
+                                _emptyQtyController.text.isNotEmpty ||
+                                _defectiveQtyController.text.isNotEmpty) {
+                              if (stockTransferFlag) {
+                                submitStockToApi();
+                              } else {
+                                CustomAlertDialog.showCustomAlert(
+                                    context, Constants.stockNotAccepted);
+                              }
                             } else {
-                              CustomAlertDialog.showCustomAlert(
-                                  context, Constants.stockNotAccepted);
+                              showFlushBar(context, Constants.validCountEnter);
                             }
                           } else {
-                            showFlushBar(context, Constants.validCountEnter);
+                            showFlushBar(context, "Select godown.");
                           }
-                        } else {
-                          showFlushBar(context, "Select godown.");
                         }
                       },
                       child:
@@ -655,6 +661,48 @@ class _StockTransferTOGodownScreenState
       refreshTokens();
       isLoading = false;
       showFlushBar(context, Constants.connectionMessage);
+    }
+  }
+
+  Future<void> checkAndSaveDayEndData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? distributorId = prefs.getString('DistributorId');
+    String? bearerToken = prefs.getString('token');
+    int? distributorIds = int.parse(distributorId!);
+    try {
+      final response = await http.get(
+        Uri.parse('${AppUrl.CheckDayEndConfirmation}/$distributorIds'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $bearerToken",
+          // Pass bearer token in headers
+        },
+      );
+      debugPrint("Response bodyCheckDayEndConfirmation: ${response.body}");
+      debugPrint("requesr bodyCheckDayEndConfirmation: ${response.request}");
+      if (response.statusCode == 200) {
+        List<dynamic> apiResponse = json.decode(response.body);
+        if (apiResponse.isEmpty) {
+          saveFlag = false;
+          print("The list is empty, no data to save.");
+        } else {
+          saveFlag = true;
+          var dayEndData = apiResponse[0];
+          int DSRSaved = dayEndData['DSRSaved'] ?? 0;
+          int CDCMSStkSaved = dayEndData['CDCMSStkSaved'] ?? 0;
+          int OpClSaved = dayEndData['OpClSaved'] ?? 0;
+          // if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
+          //   saveFlag = true;
+          //   print("Data is valid, proceeding to save.");
+          // } else {
+          //   print("Data is incomplete. Cannot proceed to save.");
+          // }
+        }
+      } else {
+        print("Error: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Exception: $e");
     }
   }
 }

@@ -16,6 +16,7 @@ import '../../Utils/Widget.dart';
 import '../../Utils/app_url.dart';
 import '../../Utils/constants.dart';
 import '../BootomNavigatinBarManager.dart';
+import '../CashDenominationMandatoryFlag/CahsDenominationMandatoryFlagModel.dart';
 import '../CashHandoverModelClass/GetBankMappingDetailsListModel.dart';
 import '../CashHandoverModelClass/GetCashHandOverDtlsModel.dart';
 import '../ManagerModelClass/DenomModel.dart';
@@ -104,133 +105,14 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
   String? modes;
   int? salaryEntryId;
   int? payId;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   getNoteTypeAndIDList();
-  //   fetchBank();
-  //   fetchSavedData();
-  //    getCashHandOverDtlsList(selectedDate);
-  //   getStaffDetailsList();
-  //   loadInitialStaffData();
-  //   getSalaryPaymentList();
-  //   getVoucherNoForExpense();
-  //
-  //   Future.delayed(Duration.zero, () {
-  //     setState(() async {
-  //       argValue = ModalRoute.of(context)?.settings.arguments as Map;
-  //       modes = argValue?["modeChange"]?? '';
-  //       if (argValue != null) {
-  //         String paymentModeEdit = argValue["paymentModeV"] ?? 0;
-  //          selectedTransMode = paymentModeEdit;
-  //         String staffNameEdit = argValue["staffNameV"] ?? 0;
-  //         selectedItemId = int.tryParse(argValue["staffIdV"] ?? '') ?? 0;
-  //         String paidModeEdit = argValue["paidModeV"] ?? 0;
-  //         selectedpaidAgainstSalary = paidModeEdit;
-  //         int selectecteItemTypeEdit = argValue["ItemTypeV"];
-  //         selectedItemType = selectecteItemTypeEdit;
-  //         //updateSelectedPaidAgainstSalary() = paidModeEdit;
-  //         //updateSelectedPaidAgainstSalary();
-  //        // filteredPaidAgainstSalary = paidModeEdit;
-  //         double amountTotalEdit = double.tryParse(argValue["amountTotalV"] ?? '') ?? 0;
-  //         selectedExpId = int.tryParse(argValue["expHeadId"] ?? '') ?? 0;
-  //         String payRemarkEdit = argValue["payRemarkV"] ?? 0;
-  //         String transTimeEdit = argValue["transTimeV"] ?? 0;
-  //         String transRemarkEdit = argValue["transRemarkV"] ?? 0;
-  //         String transationCodeEdit = argValue["transationCodeV"] ?? 0;
-  //         String accountNoEdit = argValue["accountNoV"] ?? 0;
-  //         selecteBankIDApi = int.tryParse(argValue["bankIdV"] ?? '') ?? 0;
-  //         accMappingId = int.tryParse(argValue["mappingIdV"] ?? '') ?? 0;
-  //         salaryEntryId = int.tryParse(argValue["salaryEntryIDV"] ?? '') ?? 0;
-  //
-  //         timeController.text = transTimeEdit;
-  //         TranCodeController.text = transationCodeEdit;
-  //         transReviewController.text = transRemarkEdit;
-  //         _balanceController.text = amountTotalEdit.toString();
-  //         remarkController.text = payRemarkEdit;
-  //
-  //
-  //         if(filteredPaidAgainstSalary.contains(paidModeEdit)){
-  //           selectedpaidAgainstSalary = paidModeEdit;
-  //           selectedItemType = selectecteItemTypeEdit;
-  //         } else{
-  //           selectedpaidAgainstSalary = null;
-  //         }
-  //
-  //         // if(getpaidAgainstSalary.contains(paidModeEdit)){
-  //         //   selectedpaidAgainstSalary = paidModeEdit;
-  //         //   selectedItemType = selectecteItemTypeEdit;
-  //         // } else{
-  //         //   selectedpaidAgainstSalary = null;
-  //         // }
-  //
-  //         //Edit Action For Transaction Mode
-  //         if(getTransMode.contains(paymentModeEdit)){
-  //           selectedTransMode = paymentModeEdit;
-  //         }else if(paymentModeEdit == "Bank"){
-  //            selectedTransMode = "Online";
-  //          } else{
-  //           selectedTransMode = null;
-  //         }
-  //
-  //         //Edit Action On Selected Staff
-  //         if (selectedItemId != 0) {
-  //           getStaffDetailsList().whenComplete(() {
-  //             selectedstaff = staffmodel.firstWhere(
-  //                   (item) => item.staffName == staffNameEdit,
-  //               orElse: () => GetStaffDetailsListModel(staffName: ''),
-  //             );
-  //             debugPrint("Staff selected during edit: ${selectedstaff?.staffName}");
-  //           });
-  //         }
-  //
-  //         //Edit Action On Cash Denomination
-  //         getNoteTypeAndIDList().whenComplete((){
-  //           getReceiptCashDenominationDtl(salaryEntryId!).whenComplete(() {
-  //             if (returndenominationModel.isNotEmpty) {
-  //               initializeControllers();
-  //             } else {
-  //               debugPrint("Denomination data is empty");
-  //             }
-  //           });
-  //         });
-  //
-  //         //Edit Action On Bank Mode
-  //         // await fetchBank();
-  //         // if(accountNoEdit.isNotEmpty && accountNoEdit != "null"){
-  //         //   final match = bankModel.firstWhere(
-  //         //         (item) => item.accountNo?.trim() == accountNoEdit.trim(),
-  //         //     orElse: () => GetBankMappingDetailsListModel(),
-  //         //   );
-  //         //
-  //         //   if((match.accountNo ?? '').isNotEmpty){
-  //         //     setState(() {
-  //         //       _selectBankModel = match;
-  //         //     });
-  //         //   }
-  //         // }
-  //         await fetchBank();
-  //         if(accountNoEdit.isNotEmpty && accountNoEdit != "null"){
-  //           final match = bankModel.firstWhere(
-  //                 (item) => item.accountNo?.trim() == accountNoEdit.trim(),
-  //             orElse: () => GetBankMappingDetailsListModel(),
-  //           );
-  //
-  //           if((match.accountNo ?? '').isNotEmpty){
-  //             setState(() {
-  //               _selectBankModel = match;
-  //             });
-  //           }
-  //         }
-  //       }
-  //     });
-  //   });
-  // }
+  bool saveFlag = false;
+  List<CahsDenominationMandatoryFlagModel> cashDenoMandatoryList = [];
+  bool cashDenominationMandatory = false;
   @override
   void initState() {
     super.initState();
-
+    checkAndSaveDayEndData();
+    checkCashDenominationFlagMandatory();
     // First, execute asynchronous operations without calling setState
     getNoteTypeAndIDList();
     fetchBank();
@@ -336,14 +218,6 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
       }
     });
   }
-
-  // void updateSelectedPaidAgainstSalary() {
-  //   if (filteredPaidAgainstSalary.contains(paidModeEdit)) {
-  //     selectedpaidAgainstSalary = paidModeEdit;
-  //   } else {
-  //     selectedpaidAgainstSalary = null; // or some default value
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -462,28 +336,6 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
                     Flexible(
                  flex: 1,
                         child:
-                        // DropdownButtonFormField<String>(
-                        //   key: formKey2,
-                        //   decoration: InputDecoration(
-                        //     contentPadding: EdgeInsets.symmetric(
-                        //         vertical: 12, horizontal: 10),
-                        //   ),
-                        //   value: selectedpaidAgainstSalary,
-                        //   // Bind the selected value
-                        //   items: filteredPaidAgainstSalary.map((String value) =>
-                        //       DropdownMenuItem<String>(
-                        //         value: value,
-                        //         child: Text(value),
-                        //       ))
-                        //       .toList(),
-                        //   onChanged: (value) {
-                        //     setState(() {
-                        //       selectedpaidAgainstSalary =
-                        //           value;
-                        //     });
-                        //   },
-                        //   isExpanded: true,
-                        // ),
                         DropdownButtonFormField<String>(
                           key: formKey2,
                           decoration: InputDecoration(
@@ -517,42 +369,10 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
                   children: [
                     Expanded(
                       child: textWidgetBlueColorWithStar(
-                        'Paid Salary Amount',
+                        'Paid Salary Amt',
                         "*",
                       ),
                     ),
-                    // Flexible(
-                    //   flex: 1,
-                    //   child: TextField(
-                    //     controller: _balanceController,
-                    //     keyboardType: TextInputType.number,
-                    //     // inputFormatters: [
-                    //     //   FilteringTextInputFormatter.deny(RegExp(r'\s')), // Disallow spaces
-                    //     //
-                    //     // ],
-                    //     onChanged: (value) {
-                    //
-                    //       setState(() {
-                    //         _isDepositEmpty = value.isEmpty;
-                    //         double val = double.tryParse(value.replaceAll(',', '')) ?? 0;
-                    //         if (val > totalAmt!) {
-                    //           _balanceController.clear();
-                    //         }
-                    //       });
-                    //     },
-                    //     decoration: InputDecoration(
-                    //       hintText: 'Enter paid Salary Amount',
-                    //       errorText: _isDepositEmpty ? 'Paid Salary Amt is required' : null,
-                    //       errorStyle: TextStyle(color: Colors.red),
-                    //       focusedErrorBorder: UnderlineInputBorder(
-                    //         borderSide: BorderSide(color: Colors.red),
-                    //       ),
-                    //       errorBorder: UnderlineInputBorder(
-                    //         borderSide: BorderSide(color: Colors.red),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
                     Flexible(
                       flex: 1,
                       child: TextField(
@@ -567,8 +387,6 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
                           setState(() {
                             _isDepositEmpty = value.isEmpty;
                             double val = double.tryParse(value.replaceAll(',', '')) ?? 0;
-
-
                           });
                         },
                         decoration: InputDecoration(
@@ -606,6 +424,7 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
                           contentPadding: EdgeInsets.symmetric(
                               vertical: 12, horizontal: 10),
                         ),
+
                         value: selectedTransMode,
                         // Bind the selected value
                         items: getTransMode.map((String value) =>
@@ -666,9 +485,6 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
                             TextField(
                               controller: TranCodeController,
                               maxLengthEnforcement: MaxLengthEnforcement.enforced, // Enforce max length
-                              // inputFormatters: <TextInputFormatter>[
-                              //   LengthLimitingTextInputFormatter(30), // Limit the length to 30 characters
-                              // ],
                               inputFormatters: <TextInputFormatter>[
                                 LengthLimitingTextInputFormatter(30), // Limit to 30 characters
                                 FilteringTextInputFormatter.deny(
@@ -706,11 +522,6 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
                           Expanded(
                             child: TextField(
                               controller: timeController,
-                              // inputFormatters: [
-                              //   FilteringTextInputFormatter.allow(
-                              //     RegExp(r'^\d{0,5}:?$'), // up to 5 digits, optional 1 colon at end
-                              //   ),
-                              // ],
                               inputFormatters: [
                                 FilteringTextInputFormatter.allow(RegExp(r'^\d{0,2}:?\d{0,2}$')),
                                 LengthLimitingTextInputFormatter(5),
@@ -794,6 +605,7 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
                                     MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
+                                        cashDenominationMandatory?"Cash Denomination Is Mandatory":
                                         "Cash denomination",
                                         style: TextStyle(
                                           fontSize: 16,
@@ -950,7 +762,7 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
                                           children: [
                                             Expanded(
                                                 flex: 0,
-                                                child: Text("Amount : ",
+                                                child: Text("Total : ",
                                                     style: Styling.itemBlackTestBold,
                                                     textAlign: TextAlign.left)),
                                             Expanded(
@@ -1001,15 +813,21 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
                     SizedBox(width: 10), // Adds space between buttons
                     ElevatedButton(
                       onPressed: () {
-                        if (modes == "EDIT") {
-                          SalaryIncentiveEntryAddEdit(salaryEntryId!, "EDIT");
-
+                        if (saveFlag) {
+                          print('saveFlag $saveFlag');
+                          showFlushBar(context, Constants.dayEndCompleted);
                         } else {
-                          SalaryIncentiveEntryAddEdit(0, "ADD");
+                          if (modes == "EDIT") {
+                            SalaryIncentiveEntryAddEdit(salaryEntryId!, "EDIT");
+
+                          } else {
+                            SalaryIncentiveEntryAddEdit(0, "ADD");
+                          }
                         }
+
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
+                        backgroundColor:saveFlag?Colors.grey:Colors.blue,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50),
                         ),
@@ -1053,7 +871,7 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
                                   children: [
                                     // Edit Icon
                                     IconButton(
-                                      icon: Icon(Icons.edit, color: Colors.blue),  // Icon for edit
+                                      icon: Icon(Icons.edit, color:saveFlag?Colors.blueGrey:Colors.blue),  // Icon for edit
                                       onPressed: () {
                                         setState(() {
                                           var paidDate = payList.paidDate.toString();
@@ -1071,75 +889,85 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
                                           var accountNo = payList.accountNo.toString();
                                           var remark = payList.remark.toString();
                                           var salaryEntryId = payList.salaryEntryId.toString();
-                                          //int payId = int.parse(salaryEntryId);
-                                          // Navigate to the target screen and pass the data
-                                          Navigator.pushNamed(
-                                            context,
-                                           SalaryPaymentScreen.screenName,
-                                            arguments: {
-                                              'depositDateV': paidDate,
-                                              'paymentModeV': paymentMode,
-                                              'staffNameV' : staffName,
-                                              'staffIdV': staffId,
-                                              'paidModeV': paidAgainst,
-                                              'amountTotalV': amountTotal,
-                                              'payRemarkV': remark,
-                                              'transTimeV': transTime,
-                                              'transationCodeV': transationCode,
-                                              'transRemarkV': transRemark,
-                                              'bankIdV': bankId,
-                                              'ItemTypeV': itemType,
-                                              'mappingIdV': mappingId,
-                                              'accountNoV': accountNo,
-                                              'salaryEntryIDV': salaryEntryId,
-                                              'modeChange': "EDIT"
-                                            },
-                                          );
+
+                                          if (saveFlag) {
+                                            print('saveFlag $saveFlag');
+                                            showFlushBar(context, Constants.dayEndCompleted);
+                                          } else {
+                                            Navigator.pushNamed(
+                                              context,
+                                              SalaryPaymentScreen.screenName,
+                                              arguments: {
+                                                'depositDateV': paidDate,
+                                                'paymentModeV': paymentMode,
+                                                'staffNameV' : staffName,
+                                                'staffIdV': staffId,
+                                                'paidModeV': paidAgainst,
+                                                'amountTotalV': amountTotal,
+                                                'payRemarkV': remark,
+                                                'transTimeV': transTime,
+                                                'transationCodeV': transationCode,
+                                                'transRemarkV': transRemark,
+                                                'bankIdV': bankId,
+                                                'ItemTypeV': itemType,
+                                                'mappingIdV': mappingId,
+                                                'accountNoV': accountNo,
+                                                'salaryEntryIDV': salaryEntryId,
+                                                'modeChange': "EDIT"
+                                              },
+                                            );
+                                          }
                                         });
                                       },
                                     ),
                                     // Icon for delete
                                     IconButton(
-                                      icon: Icon(Icons.delete, color: Colors.red), // Icon for delete
+                                      icon: Icon(Icons.delete, color:saveFlag?Colors.redAccent:Colors.red), // Icon for delete
                                       onPressed: () async {
-                                        int? pId = (payList.salaryEntryId)?.toInt();
-                                        print('Delete button pressedd${payList.salaryEntryId}');
-                                        // Show confirmation dialog
-                                        bool? confirmDelete = await showDialog<bool>(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title: const Text('Are you sure?'),
-                                              content: const Text('You want to delete?'),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop(false); // User pressed Cancel
-                                                  },
-                                                  child: const Text('Cancel'),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop(true); // User pressed Delete
-                                                  },
-                                                  child: const Text('Delete'),
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
-
-                                        // If user confirmed deletion
-                                        if (confirmDelete == true) {
-                                          if (pId != null) {
-                                            SalaryIncentiveEntryAddEdit(pId, "DELETE");
-                                            print('Delete button pressed$pId');
-                                          } else {
-                                            print("Receipt ID is null.");
-                                          }
+                                        if (saveFlag) {
+                                          print('saveFlag $saveFlag');
+                                          showFlushBar(context, Constants.dayEndCompleted);
                                         } else {
-                                          print('Delete action was canceled');
+                                          int? pId = (payList.salaryEntryId)?.toInt();
+                                          print('Delete button pressedd${payList.salaryEntryId}');
+                                          // Show confirmation dialog
+                                          bool? confirmDelete = await showDialog<bool>(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: const Text('Are you sure?'),
+                                                content: const Text('You want to delete?'),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context).pop(false); // User pressed Cancel
+                                                    },
+                                                    child: const Text('Cancel'),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context).pop(true); // User pressed Delete
+                                                    },
+                                                    child: const Text('Delete'),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+
+                                          // If user confirmed deletion
+                                          if (confirmDelete == true) {
+                                            if (pId != null) {
+                                              SalaryIncentiveEntryAddEdit(pId, "DELETE");
+                                              print('Delete button pressed$pId');
+                                            } else {
+                                              print("Receipt ID is null.");
+                                            }
+                                          } else {
+                                            print('Delete action was canceled');
+                                          }
                                         }
+
                                       },
                                     ),
                                   ],
@@ -1156,13 +984,13 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
                           SizedBox(height: 2),
                           Row(
                             children: [
-                              Expanded(flex:1,child: countTextWidgetText(context,"Paid Salary Amount", payList.paidSalaryAmt.toString())),
+                              Expanded(flex:1,child: countTextWidgetText(context,"Paid Salary Amt", payList.paidSalaryAmt.toString())),
                             ],
                           ),
                           SizedBox(height: 2),
                           Row(
                             children: [
-                              Expanded(flex:1,child: countTextWidgetText(context,"Payment Mode", payList.paymentMode ?? '')),
+                              Expanded(flex:1,child: countTextWidgetText(context, "Payment Mode", (payList.paymentMode == 'Bank') ? 'Online' : (payList.paymentMode ?? ''))),
                             ],
                           ),
                           SizedBox(height: 2),
@@ -1752,7 +1580,12 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
         return;
       }
       if(selectedTransMode == 'Cash'){
-        if (discountAmt > totalAmt!) {
+        if(totalAmt != null){
+          if (discountAmt > totalAmt!) {
+            showFlushBar(context, "Salary Amount Can Not Be Greater Than Cash In Hand Amount.");
+            return;
+          }
+        }else{
           showFlushBar(context, "Salary Amount Can Not Be Greater Than Cash In Hand Amount.");
           return;
         }
@@ -1772,10 +1605,27 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
         }
       }
       // Conditional check for cash payment mode
+
       if (selectedTransMode == 'Cash'){
-        if(discountAmt != totalAmount || discountAmt <= 0) {
-          showFlushBar(context, Constants.denominationAmount);
-          return;
+        if(totalAmount != null || totalAmount>0){
+          if(discountAmt != totalAmount || discountAmt <= 0) {
+            showFlushBar(context, Constants.denominationAmount);
+            return;
+          }
+        }
+      }
+
+      if (selectedTransMode == 'Cash'){
+        if(cashDenominationMandatory){
+          if(totalAmount != null || totalAmount>0){
+            if(discountAmt != totalAmount || discountAmt <= 0) {
+              showFlushBar(context, Constants.denominationAmount);
+              return;
+            }
+          }else{
+            showFlushBar(context, Constants.cashDenominationIsMandatory);
+            return;
+          }
         }
       }
     }
@@ -1837,7 +1687,7 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
 
         Navigator.pushNamed(
           context,
-          ManagerMoreScree.screenName,
+          SalaryPaymentScreen.screenName,
         );
 
         Future.delayed(Duration(milliseconds: 300), () {
@@ -1940,7 +1790,107 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
     }
   }
 
+  Future<void> checkAndSaveDayEndData() async {
+    EasyLoading.instance
+      ..maskType = EasyLoadingMaskType.black // This creates a modal blocking interaction
+      ..loadingStyle = EasyLoadingStyle.light
+      ..dismissOnTap = false // Disable dismissing the loader by tapping
+      ..userInteractions = false;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? distributorId = prefs.getString('DistributorId');
+    String? bearerToken = prefs.getString('token');
+    int? distributorIds = int.parse(distributorId!);
+    try {
+      final response = await http.get(
+        Uri.parse('${AppUrl.CheckDayEndConfirmation}/$distributorIds'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $bearerToken",
+          // Pass bearer token in headers
+        },
+      );
+      debugPrint("Response bodyCheckDayEndConfirmation: ${response.body}");
+      debugPrint("requesr bodyCheckDayEndConfirmation: ${response.request}");
+      if (response.statusCode == 200) {
+        List<dynamic> apiResponse = json.decode(response.body);
+        if (apiResponse.isEmpty) {
+          saveFlag = false;
+          print("The list is empty, no data to save.");
+        } else {
+          saveFlag = true;
+          var dayEndData = apiResponse[0];
+          int DSRSaved = dayEndData['DSRSaved'] ?? 0;
+          int CDCMSStkSaved = dayEndData['CDCMSStkSaved'] ?? 0;
+          int OpClSaved = dayEndData['OpClSaved'] ?? 0;
+          // if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
+          //   saveFlag = true;
+          //   print("Data is valid, proceeding to save.");
+          // } else {
+          //   print("Data is incomplete. Cannot proceed to save.");
+          // }
+        }
+      } else {
+        print("Error: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Exception: $e");
+    }
+  }
 
+  Future<void> checkCashDenominationFlagMandatory() async {
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+
+    if (!Constants.isNetworkAvailable) {
+      showFlushBar(context, Constants.connectionMessage);
+      isLoading = false;
+    } else {
+      try {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? distributorId = prefs.getString('DistributorId');
+        String? bearerToken = prefs.getString('token');
+
+        if (bearerToken == null) {
+          isLoading = false;
+          throw Exception('Bearer token is missing');
+        }
+        final response = await http.get(
+          Uri.parse('${AppUrl.GetPageActionPermissionDtls}/$distributorId/All'),
+          headers: {
+            'Authorization': 'Bearer $bearerToken', // Add Bearer token here
+          },
+        );
+        debugPrint("Response body GetPageActionPermissionDtls: ${response.body}");
+        debugPrint("Request body GetPageActionPermissionDtls: ${response.request}");
+
+        if (response.statusCode == 200) {
+          // Parse the JSON response
+          final List<dynamic> data = json.decode(response.body);
+          setState(() {
+            cashDenoMandatoryList = data.map((jsonItem) =>
+                CahsDenominationMandatoryFlagModel.fromJson(jsonItem)).toList();
+            isLoading = false;
+            for (var item in cashDenoMandatoryList) {
+              if (item.distributorId.toString() == distributorId && item.permissionFor == "Cash Denomination" && item.isActive == 1) {
+                print("Flag truet:");
+                cashDenominationMandatory = true;
+                break; // Exit loop after finding the match
+              }else{
+                cashDenominationMandatory = false;
+              }
+            }
+          });
+        } else {
+          isLoading = false;
+          throw Exception('Failed to load sales data');
+        }
+      } catch (error) {
+        isLoading = false;
+        debugPrint("Error: $error");
+        // Return an empty list in case of an error
+      }
+    }
+  }
 }
 
 

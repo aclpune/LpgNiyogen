@@ -4,6 +4,9 @@ import 'package:lpgsalesandinventory/Screen/Utils/Styling.dart';
 
 import '../User/splashscreen/page/splash_screen.dart';
 import '../Utils/shared_preference.dart';
+import 'ARBReturnScreen/ArbReturnScreen.dart';
+import 'ARBSaleScreen/ArbSaleScreen.dart';
+import 'ARBScreen/ArbScreen.dart';
 import 'CashDepositToBankScreen.dart';
 import 'CashHandoverScreen.dart';
 import 'PaymentReceiptScreen/PaymentReceiptScreen.dart';
@@ -54,7 +57,6 @@ class _ManagerMoreScreeState extends State<ManagerMoreScree> {
                         padding: const EdgeInsets.only(left: 10.0),
                         child: Text("Daily Transaction",style:Styling.itemGreyTextBigMore,),
                       ),
-
                         Card(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5),
@@ -210,198 +212,93 @@ class _ManagerMoreScreeState extends State<ManagerMoreScree> {
                             ],
                           ),
                         ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10.0),
+                        child: Text("ARB",style:Styling.itemGreyTextBigMore,),
+                      ),
+                      Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        elevation: 1,
+                        color: Colors.white,
+                        child:
+                        Column(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(context, ArbScreen.screenName
+                                );
+                              },
+                              child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child:
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Icon(Icons.payments_outlined),
+                                          SizedBox(width: 10,),
+                                          Text("ARB Purchase",style: Styling.itemBlackTestMore,),
+                                        ],
+                                      ),
+                                      Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+                                    ],
+                                  )
+                              ),
+                            ),
+                            Container(height: 1,color: Colors.grey[300],),
+                            GestureDetector(
+                              onTap: (){
+                                Navigator.pushReplacementNamed(context, ArbReturnScreen.screenName);
+                              },
+                              child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
 
-                      // GestureDetector(
-                      //   onTap: (){
-                      //     Navigator.pushReplacementNamed(context, TVSalesScreen.screenName);
-                      //   },
-                      //   child: Card(
-                      //     shape: RoundedRectangleBorder(
-                      //       borderRadius: BorderRadius.circular(5),
-                      //     ),
-                      //     elevation: 1,
-                      //     color: Colors.white,
-                      //     child:
-                      //     Column(
-                      //       crossAxisAlignment: CrossAxisAlignment.start,
-                      //       children: [
-                      //         // Title for Cylinder Categories Table
-                      //         Padding(
-                      //             padding: const EdgeInsets.all(10.0),
-                      //             child: Row(
-                      //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //               children: [
-                      //
-                      //                 Row(
-                      //                   children: [
-                      //                     Icon(Icons.currency_rupee_sharp),
-                      //                     SizedBox(width: 10,),
-                      //                     Text("TV Receipt",style: Styling.itemBlackTestMore,),
-                      //                   ],
-                      //                 ),
-                      //
-                      //                 Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
-                      //               ],
-                      //             )
-                      //         ),
-                      //
-                      //       ],
-                      //     ),
-                      //   ),
-                      // ),
-                      // GestureDetector(
-                      //   onTap: (){
-                      //     Navigator.pushReplacementNamed(context, PaymentReceiptScreen.screenName);
-                      //   },
-                      //   child: Card(
-                      //     shape: RoundedRectangleBorder(
-                      //       borderRadius: BorderRadius.circular(5),
-                      //     ),
-                      //     elevation: 1,
-                      //     color: Colors.white,
-                      //     child:
-                      //     Column(
-                      //       crossAxisAlignment: CrossAxisAlignment.start,
-                      //       children: [
-                      //         // Title for Cylinder Categories Table
-                      //         Padding(
-                      //             padding: const EdgeInsets.all(10.0),
-                      //             child: Row(
-                      //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //               children: [
-                      //
-                      //                 Row(
-                      //                   children: [
-                      //                     Icon(Icons.currency_rupee_sharp),
-                      //                     SizedBox(width: 10,),
-                      //                     Text("Payments Receipt",style: Styling.itemBlackTestMore,),
-                      //                   ],
-                      //                 ),
-                      //
-                      //                 Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
-                      //               ],
-                      //             )
-                      //         ),
-                      //
-                      //       ],
-                      //     ),
-                      //   ),
-                      // ),
-                      // GestureDetector(
-                      //   onTap: (){
-                      //     Navigator.pushReplacementNamed(context, UpdatePaymentScreen.screenName);
-                      //   },
-                      //   child: Card(
-                      //     shape: RoundedRectangleBorder(
-                      //       borderRadius: BorderRadius.circular(5),
-                      //     ),
-                      //     elevation: 1,
-                      //     color: Colors.white,
-                      //     child:
-                      //     Column(
-                      //       crossAxisAlignment: CrossAxisAlignment.start,
-                      //       children: [
-                      //         // Title for Cylinder Categories Table
-                      //         Padding(
-                      //             padding: const EdgeInsets.all(10.0),
-                      //             child: Row(
-                      //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //               children: [
-                      //
-                      //                 Row(
-                      //                   children: [
-                      //                     Icon(Icons.currency_rupee_sharp),
-                      //                     SizedBox(width: 10,),
-                      //                     Text("Update Payments",style: Styling.itemBlackTestMore,),
-                      //                   ],
-                      //                 ),
-                      //
-                      //                 Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
-                      //               ],
-                      //             )
-                      //         ),
-                      //
-                      //       ],
-                      //     ),
-                      //   ),
-                      // ),
-                      // GestureDetector(
-                      //   onTap: (){
-                      //     Navigator.pushReplacementNamed(context, SalaryPaymentScreen.screenName);
-                      //   },
-                      //   child: Card(
-                      //     shape: RoundedRectangleBorder(
-                      //       borderRadius: BorderRadius.circular(5),
-                      //     ),
-                      //     elevation: 1,
-                      //     color: Colors.white,
-                      //     child:
-                      //     Column(
-                      //       crossAxisAlignment: CrossAxisAlignment.start,
-                      //       children: [
-                      //         // Title for Cylinder Categories Table
-                      //         Padding(
-                      //             padding: const EdgeInsets.all(10.0),
-                      //             child: Row(
-                      //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //               children: [
-                      //
-                      //                 Row(
-                      //                   children: [
-                      //                     Icon(Icons.currency_rupee_sharp),
-                      //                     SizedBox(width: 10,),
-                      //                     Text("Salary Payments",style: Styling.itemBlackTestMore,),
-                      //                   ],
-                      //                 ),
-                      //
-                      //                 Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
-                      //               ],
-                      //             )
-                      //         ),
-                      //
-                      //       ],
-                      //     ),
-                      //   ),
-                      // ),
-                      // GestureDetector(
-                      //   onTap: (){
-                      //     Navigator.pushReplacementNamed(context, CashHandoverScreen.screenName);
-                      //   },
-                      //   child:
-                      //   Card(
-                      //     shape: RoundedRectangleBorder(
-                      //       borderRadius: BorderRadius.circular(5),
-                      //     ),
-                      //     elevation: 1,
-                      //     color: Colors.white,
-                      //     child:
-                      //     Column(
-                      //       crossAxisAlignment: CrossAxisAlignment.start,
-                      //       children: [
-                      //         // Title for Cylinder Categories Table
-                      //         Padding(
-                      //             padding: const EdgeInsets.all(10.0),
-                      //             child: Row(
-                      //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      //               children: [
-                      //
-                      //                 Row(
-                      //                   children: [
-                      //                     Icon(Icons.currency_rupee_sharp),
-                      //                     SizedBox(width: 10,),
-                      //                     Text("Cash Handover-Bank Deposit",style: Styling.itemBlackTestMore,),
-                      //                   ],
-                      //                 ),
-                      //
-                      //                 Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
-                      //               ],
-                      //             )
-                      //         ),
-                      //       ],
-                      //     ),
-                      //
-                      //   ),
-                      // ),
+                                      Row(
+                                        children: [
+                                          Icon(Icons.assignment_return_outlined),
+                                          SizedBox(width: 10,),
+                                          Text("ARB Purchase Return",style: Styling.itemBlackTestMore,),
+                                        ],
+                                      ),
+
+                                      Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+                                    ],
+                                  )
+                              ),
+                            ),
+                            Container(height: 1,color: Colors.grey[300],),
+                            GestureDetector(
+                              onTap: (){
+                                Navigator.pushReplacementNamed(context, ArbSaleScreen.screenName);
+                              },
+                              child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+
+                                      Row(
+                                        children: [
+                                          Icon(Icons.sell_outlined),
+                                          SizedBox(width: 10,),
+                                          Text("ARB Sale",style: Styling.itemBlackTestMore,),
+                                        ],
+                                      ),
+
+                                      Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+                                    ],
+                                  )
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.only(left: 10.0),
                         child: Text("LOGOUT",style:Styling.itemGreyTextBigMore,),

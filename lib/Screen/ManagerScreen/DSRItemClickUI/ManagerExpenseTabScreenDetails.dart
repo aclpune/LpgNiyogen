@@ -167,6 +167,17 @@ class _ManagerExpenseTabScreenDetailsState extends State<ManagerExpenseTabScreen
                           textAlign: TextAlign.left,
                         ),
                       ),
+                      Expanded(
+                        flex: 2,
+                        child: Text(
+                          'Qty',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                          textAlign: TextAlign.left,
+                        ),
+                      ),
                       const Expanded(
                         flex: 3,
                         child: Text(

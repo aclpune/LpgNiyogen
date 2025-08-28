@@ -652,6 +652,7 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
         );
 
         debugPrint("Response body: ${response.body}");
+        debugPrint("Response body: ${AppUrl.UpdateDailyRefillSaleList}/$distributorId/0'");
         if (response.statusCode == 200) {
           var data = json.decode(response.body);
 
@@ -1068,6 +1069,7 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
           print("The list is empty, no data to save.");
         } else {
           // If there is data in the response, process it and save
+          saveFlag = true;
           var dayEndData = apiResponse[0]; // Access the first item in the list (assuming it's an object)
 
           // You can validate the fields in the response as needed
@@ -1076,14 +1078,14 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
           int OpClSaved = dayEndData['OpClSaved'] ?? 0;
 
           // Check if all required fields are saved
-          if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
-            saveFlag = true;
-            // If the conditions are met, set the flag and save the data
-            print("Data is valid, proceeding to save.");
-          } else {
-            // If any condition is not met, print a message
-            print("Data is incomplete. Cannot proceed to save.");
-          }
+          // if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
+          //   saveFlag = true;
+          //   // If the conditions are met, set the flag and save the data
+          //   print("Data is valid, proceeding to save.");
+          // } else {
+          //   // If any condition is not met, print a message
+          //   print("Data is incomplete. Cannot proceed to save.");
+          // }
         }
       } else {
         // Handle API error

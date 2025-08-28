@@ -792,7 +792,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> _fetchImbalanceData() async {
-    EasyLoading.show();
+    EasyLoading.show(status: 'Loading..');
     Constants.isNetworkAvailable = await InternetConnectionChecker().hasConnection;
     if (Constants.isNetworkAvailable) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -849,7 +849,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> _fetchTodaysOpeningStockData() async {
-    EasyLoading.show();
+    EasyLoading.instance
+      ..maskType = EasyLoadingMaskType.black // This creates a modal blocking interaction
+      ..loadingStyle = EasyLoadingStyle.light
+      ..dismissOnTap = false // Disable dismissing the loader by tapping
+      ..userInteractions = false;
     Constants.isNetworkAvailable = await InternetConnectionChecker().hasConnection;
     if (Constants.isNetworkAvailable) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -906,7 +910,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> fetchCurrentStock() async {
-    EasyLoading.show();
+    EasyLoading.show(status: 'Loading..');
     Constants.isNetworkAvailable =
     await InternetConnectionChecker().hasConnection;
     if(Constants.isNetworkAvailable){
@@ -981,6 +985,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
       if (bearerToken == null) {
         throw Exception('Bearer token is missing');
       }
+      try{
+
 
       final response = await http.get(
         Uri.parse('${AppUrl.GetStockTransferDtls}/$dId/$gId'),
@@ -988,6 +994,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           'Authorization': 'Bearer $bearerToken', // Add Bearer token here
         },
       );
+
+
       debugPrint(
           "GetStockTransferDtls" + '${AppUrl.GetStockTransferDtls}/$distributorId/1/2');
       debugPrint("GetStockTransferDtls" + response.body);
@@ -1020,6 +1028,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           showFlushBar(context,
               Constants.listGettingFail);
         });
+      }
+      }catch(e){
+        debugPrint("GetStockTransferDtls" + e.toString());
       }
     } else {
       refreshTokens();
@@ -1205,6 +1216,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           saveFlag = false;
           print("The list is empty, no data to save.");
         } else {
+          saveFlag = true;
           // If there is data in the response, process it and save
           var dayEndData = apiResponse[0]; // Access the first item in the list (assuming it's an object)
 
@@ -1214,14 +1226,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
           int OpClSaved = dayEndData['OpClSaved'] ?? 0;
 
           // Check if all required fields are saved
-          if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
-            saveFlag = true;
-            // If the conditions are met, set the flag and save the data
-            print("Data is valid, proceeding to save.");
-          } else {
-            // If any condition is not met, print a message
-            print("Data is incomplete. Cannot proceed to save.");
-          }
+          // if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
+          //   saveFlag = true;
+          //   // If the conditions are met, set the flag and save the data
+          //   print("Data is valid, proceeding to save.");
+          // } else {
+          //   // If any condition is not met, print a message
+          //   print("Data is incomplete. Cannot proceed to save.");
+          // }
         }
       } else {
         refreshTokens();

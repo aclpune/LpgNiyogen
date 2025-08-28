@@ -21,7 +21,6 @@ import 'StockReturnFromDelBoy.dart';
 class DeliveryMenListShowScreenItemUI extends StatefulWidget {
   DeliveryMenSaleListModel _listModel;
 
-
   DeliveryMenListShowScreenItemUI(this._listModel,{Key? key}) : super(key: key);
 
   @override
@@ -38,8 +37,7 @@ class _DeliveryMenListShowScreenItemUIState extends State<DeliveryMenListShowScr
   void initState() {
     // TODO: implement initState
     super.initState();
-    fetchTransactionList();
-    checkAndSaveDayEndData();
+    // fetchTransactionList();
   }
   @override
   Widget build(BuildContext context) {
@@ -66,11 +64,11 @@ class _DeliveryMenListShowScreenItemUIState extends State<DeliveryMenListShowScr
                               child:
                               GestureDetector(
                                 onTap: (){
-                                  if(stockTransferFlag){
-                                    if(saveFlag){
-                                      showFlushBar(context,
-                                          Constants.dayEndCompleted);
-                                    }else{
+                                  // if(stockTransferFlag){
+                                  //   if(saveFlag){
+                                  //     showFlushBar(context,
+                                  //         Constants.dayEndCompleted);
+                                  //   }else{
                                       Navigator.pushNamed(
                                           context,
                                           DailyRefillSalePage
@@ -80,17 +78,17 @@ class _DeliveryMenListShowScreenItemUIState extends State<DeliveryMenListShowScr
                                             "delBoyID" : value.dMId,
                                             "vehicleNo" :value.vehicleNo,
                                           });
-                                    }
-                                  }else{
-                                    CustomAlertDialog.showCustomAlert(context,Constants.stockNotAccepted);
-                                  }
+                                    // }
+                                  // }else{
+                                  //   CustomAlertDialog.showCustomAlert(context,Constants.stockNotAccepted);
+                                  // }
                                 },
                                 child: Padding(
                                   padding: const EdgeInsets.only(left: 8.0),
                                   child: Text(
                                     value.staffName.toString(),
                                     textAlign: TextAlign.left,
-                                    style:saveFlag? Styling.blueClrTextWithUnderlineGrey:Styling.blueClrTextWithUnderline,
+                                    style:Styling.blueClrTextWithUnderline,
                                     textScaler: TextScaler.noScaling,
                                   ),
                                 ),
@@ -130,68 +128,6 @@ class _DeliveryMenListShowScreenItemUIState extends State<DeliveryMenListShowScr
       );
   }
 
-  Future<void> checkAndSaveDayEndData() async {
-    EasyLoading.show();
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? distributorId = prefs.getString('DistributorId');
-    String? bearerToken = prefs.getString('token');
-    String? StaffId = prefs.getString('StaffId');
-    int? staffIds = int.parse(StaffId!);
-    int? distributorIds = int.parse(distributorId!);
-    try {
-      // Make the GET request
-      final response = await http.get(
-        Uri.parse('${AppUrl.CheckDayEndConfirmation}/$distributorIds'),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $bearerToken", // Pass bearer token in headers
-        },
-      );
-      debugPrint("Response bodyCheckDayEndConfirmation: ${response.body}");
-      debugPrint("requesr bodyCheckDayEndConfirmation: ${response.request}");
-      if (response.statusCode == 200) {
-        // Parse the API response
-        List<dynamic> apiResponse = json.decode(response.body);
-
-        // Check if the response list is empty
-        if (apiResponse.isEmpty) {
-          // If the list is empty, do not save
-          saveFlag = false;
-          print("The list is empty, no data to save.");
-          EasyLoading.dismiss();
-        } else {
-          // If there is data in the response, process it and save
-          var dayEndData = apiResponse[0]; // Access the first item in the list (assuming it's an object)
-
-          // You can validate the fields in the response as needed
-          int DSRSaved = dayEndData['DSRSaved'] ?? 0;
-          int CDCMSStkSaved = dayEndData['CDCMSStkSaved'] ?? 0;
-          int OpClSaved = dayEndData['OpClSaved'] ?? 0;
-
-          // Check if all required fields are saved
-          if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
-            saveFlag = true;
-            // If the conditions are met, set the flag and save the data
-            print("Data is valid, proceeding to save.");
-            EasyLoading.dismiss();
-          } else {
-            // If any condition is not met, print a message
-            print("Data is incomplete. Cannot proceed to save.");
-            EasyLoading.dismiss();
-          }
-        }
-      } else {
-        // Handle API error
-        print("Error: ${response.statusCode}");
-        EasyLoading.dismiss();
-      }
-    }
-    catch (e) {
-      // Exception handling
-      print("Exception: $e");
-      EasyLoading.dismiss();
-    }
-  }
   Future<void> fetchTransactionList() async {
     EasyLoading.show();
     Constants.isNetworkAvailable =

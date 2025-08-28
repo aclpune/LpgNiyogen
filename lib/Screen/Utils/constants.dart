@@ -13,8 +13,6 @@ BranchAdminAH	cnf@1234*/
   static double fontSize = 15;
   static String updateMessageForIos =
       "The new version of the apk is available..So Please update the new version..";
-  static String appleUrl =
-      "https://apps.apple.com/in/app/tirupati-c-f/id1673694668";
   //Firebase
   //Indian Rupee sign
   static String rupee = "\u{20B9}";
@@ -44,8 +42,6 @@ BranchAdminAH	cnf@1234*/
   static String responseFailedMessage = 'Something went wrong..try again';
   static String flag = 'Y';
   static String appName = "Niyojan";
-  // static String androidPlayStoreAppUrl =
-  //     "https://play.google.com/store/apps/details?id=com.aipl.flutter.cnf.flutter_cnf";
   static String androidPlayStoreAppUrl =
       '';
 
@@ -88,6 +84,7 @@ BranchAdminAH	cnf@1234*/
   static String expenseSendMgr = "Data saved successfully.";
   static String expenseExistMgr = "Record already exist.";
   static String cashHandOverDeno = "The Entered Cash Denomination Total Should Be Equal To Cash Handover/Deposit Amount.";
+  static String cashDenominationIsMandatory = "Cash Denomination Is Mandatory.";
   ///update sale
   static String transactionDetails = "Please enter transaction details.";
   static String customerDetails = "Please enter customer details.";
@@ -103,6 +100,8 @@ BranchAdminAH	cnf@1234*/
   static String selectConsumerMode = "Please select consumer.";
   static String creditQty = "The quantity cannot exceed the cylinder quantity.";
   static String cashAmount = "Please enter a valid cash amount.";
+  static String discountExceedCashCollection = "Discount amount should not be greater than discount limit.";
+  static String discountExceedCashCollectionRSP = "Discount amount should not be greater than RSP price.";
 
   static String roleIdGodown = "0";
   static String roleIdManager= "3";
@@ -133,9 +132,15 @@ BranchAdminAH	cnf@1234*/
 
   static String DSRMessage =
       "Warning: Once you confirm the DSR,\nApplication will close the day and save the closing entries for inventory (cyl and ARB), along with cash flow transactions.\nYou will not be allowed to make any changes to any transaction once you confirm, and today’s closing will be done.\nAre you sure you want to proceed?";
-
+  static String OnAccErr = "Please select the specific staff for payment.";
   ///
   static String discountError = "The Entered Discount Should Not Be Greater Than Amt.";
+
+  static String partialPayErr = "After partial payment or payment completion, the invoice cannot be deleted";
+  static String partialPayErr1 = "After partial payment or payment completion, the invoice cannot be edited";
+  static String creditPayErr = "After adding a credit note, you cannot edit the record.";
+  static String creditPayErr1 = "After adding a credit note, you cannot delete the record.";
+  static String creditCheck = "The Credit note amount is equal to the total amount.";
 /*
   //Picklist -
 0	Created	PL

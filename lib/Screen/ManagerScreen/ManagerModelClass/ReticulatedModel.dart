@@ -43,7 +43,7 @@ class ReticulatedModel {
       reticulatedRemark: json['ReticulatedRemark'],
       action: json['Action'],
       addedBy: json['AddedBy'],
-      discountAmount: json['discountAmount'],
+      discountAmount: json['DiscountAmt'],
     );
   }
 
@@ -61,7 +61,7 @@ class ReticulatedModel {
       'ReticulatedRemark': reticulatedRemark,
       'Action': action,
       'AddedBy': addedBy,
-      'discountAmount': discountAmount,
+      'DiscountAmt': discountAmount,
     };
   }
 }

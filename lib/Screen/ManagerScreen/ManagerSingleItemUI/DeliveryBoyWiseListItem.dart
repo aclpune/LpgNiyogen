@@ -31,13 +31,18 @@ class DeliveryBoyWiseListItem extends StatefulWidget {
 class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
   bool isListViewVisible = false; // Tracks if ListView is visible
   bool _isExpanded = false;
-  List<GetLastUploadedFrileDifferenceModel> getLastUploadedFile = []; // List for filtered results
-@override
+  List<GetLastUploadedFrileDifferenceModel> getLastUploadedFile =
+      []; // List for filtered results
+  bool saveFlag = false;
+
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    checkAndSaveDayEndData();
     getLastUploadedFileDifference();
   }
+
   @override
   Widget build(BuildContext context) {
     var sale = widget.filteredSales;
@@ -67,7 +72,6 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                 ),
                 Row(
                   children: [
-
                     Text('Status :',
                         style: TextStyle(
                             fontSize: 14,
@@ -88,7 +92,8 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(flex: 1,
+                Expanded(
+                  flex: 1,
                   child: Row(
                     children: [
                       Text('SV ',
@@ -96,11 +101,11 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                               fontSize: 14,
                               fontFamily: 'OpenSans',
                               color: Colors.grey[700])),
-
                     ],
                   ),
                 ),
-                Expanded(flex: 1,
+                Expanded(
+                  flex: 1,
                   child: Row(
                     children: [
                       Text('TV',
@@ -108,11 +113,11 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                               fontSize: 14,
                               fontFamily: 'OpenSans',
                               color: Colors.grey[700])),
-
                     ],
                   ),
                 ),
-                Expanded(flex: 1,
+                Expanded(
+                  flex: 1,
                   child: Row(
                     children: [
                       Text('Sale',
@@ -120,11 +125,11 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                               fontSize: 14,
                               fontFamily: 'OpenSans',
                               color: Colors.grey[700])),
-
                     ],
                   ),
                 ),
-                Expanded(flex: 1,
+                Expanded(
+                  flex: 1,
                   child: Row(
                     children: [
                       Text('Def.',
@@ -132,11 +137,11 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                               fontSize: 14,
                               fontFamily: 'OpenSans',
                               color: Colors.grey[700])),
-
                     ],
                   ),
                 ),
-                Expanded(flex: 1,
+                Expanded(
+                  flex: 1,
                   child: Row(
                     children: [
                       Text('Act. Sale',
@@ -153,44 +158,53 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
             Row(
               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(flex: 1,
+                Expanded(
+                  flex: 1,
                   child: Row(
                     children: [
                       Text('${sale.totalSVQty ?? 0}',
-                          style: TextStyle(fontSize: 14, fontFamily: 'OpenSans')),
+                          style:
+                              TextStyle(fontSize: 14, fontFamily: 'OpenSans')),
                     ],
                   ),
                 ),
-
-                Expanded(flex: 1,
+                Expanded(
+                  flex: 1,
                   child: Row(
                     children: [
                       Text('${sale.totalTVQty ?? 0}',
-                          style: TextStyle(fontSize: 14, fontFamily: 'OpenSans')),
+                          style:
+                              TextStyle(fontSize: 14, fontFamily: 'OpenSans')),
                     ],
                   ),
                 ),
-                Expanded(flex: 1,
+                Expanded(
+                  flex: 1,
                   child: Row(
                     children: [
                       Text('${sale.totalFilledQty ?? 0}',
-                          style: TextStyle(fontSize: 14, fontFamily: 'OpenSans')),
+                          style:
+                              TextStyle(fontSize: 14, fontFamily: 'OpenSans')),
                     ],
                   ),
                 ),
-                Expanded(flex: 1,
+                Expanded(
+                  flex: 1,
                   child: Row(
                     children: [
                       Text('${sale.totalDefQty ?? 0}',
-                          style: TextStyle(fontSize: 14, fontFamily: 'OpenSans')),
+                          style:
+                              TextStyle(fontSize: 14, fontFamily: 'OpenSans')),
                     ],
                   ),
                 ),
-                Expanded(flex: 1,
+                Expanded(
+                  flex: 1,
                   child: Row(
                     children: [
                       Text('${sale.totalActualSaleQty ?? 0}',
-                          style: TextStyle(fontSize: 14, fontFamily: 'OpenSans')),
+                          style:
+                              TextStyle(fontSize: 14, fontFamily: 'OpenSans')),
                     ],
                   ),
                 ),
@@ -200,7 +214,8 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(flex:0,
+                Expanded(
+                  flex: 0,
                   child: Row(
                     children: [
                       Text('Total Amt.: ',
@@ -215,7 +230,8 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                     ],
                   ),
                 ),
-                Expanded(flex:0,
+                Expanded(
+                  flex: 0,
                   child: Row(
                     children: [
                       Text('Recieved Amt.',
@@ -270,7 +286,9 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                                   Icons.currency_rupee,
                                   size: 12,
                                 ),
-                                Text(formatCurrency((sale.cashAmt ?? 0).toDouble()),
+                                Text(
+                                    formatCurrency(
+                                        (sale.cashAmt ?? 0).toDouble()),
                                     style: TextStyle(
                                         fontSize: 12,
                                         color: Colors.black,
@@ -293,7 +311,7 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                             SizedBox(width: 8),
                             SizedBox(
                                 width: 70,
-                                child: Text('Prepaid :',
+                                child: Text('Online/Prepaid :',
                                     style: TextStyle(
                                         fontSize: 12,
                                         color: Colors.grey[700],
@@ -312,7 +330,9 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                                   size: 12,
                                 ),
 
-                                Text(formatCurrency((sale.prepaidAmt ?? 0).toDouble()),
+                                Text(
+                                    formatCurrency(
+                                        (sale.prepaidAmt ?? 0).toDouble()),
                                     style: TextStyle(
                                         fontSize: 12,
                                         color: Colors.black,
@@ -338,7 +358,7 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                             SizedBox(width: 8),
                             SizedBox(
                                 width: 70,
-                                child: Text('Postpaid :',
+                                child: Text('Merchant QR :',
                                     style: TextStyle(
                                         fontSize: 12,
                                         color: Colors.grey[700],
@@ -356,7 +376,9 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                                   Icons.currency_rupee,
                                   size: 12,
                                 ),
-                                Text(formatCurrency((sale.postPaidAmt ?? 0).toDouble()),
+                                Text(
+                                    formatCurrency(
+                                        (sale.postPaidAmt ?? 0).toDouble()),
                                     style: TextStyle(
                                         fontSize: 12,
                                         color: Colors.black,
@@ -400,7 +422,9 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                                   size: 12,
                                 ),
 
-                                Text(formatCurrency((sale.retiCrAmt ?? 0).toDouble()),
+                                Text(
+                                    formatCurrency(
+                                        (sale.retiCrAmt ?? 0).toDouble()),
                                     style: TextStyle(
                                         fontSize: 12,
                                         color: Colors.black,
@@ -449,37 +473,53 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        if((sale.dailySaleStatus == 1 || sale.dailySaleStatus == 4)){
-                          int? saleGk = sale.saleGKId?.toInt();
-                          statusChangeApi(saleGk!,0,2,Constants.acceptSale);
-                        }else{
-                          if(getLastUploadedFile[0].bkgHrDiff == 0 && getLastUploadedFile[0].settHrDiff == 0){
-                            Navigator.pushNamed(
-                                context, ManagerUpdateSaleScreen.screenName,
-                                arguments: {
-                                  "delBoyName": sale.staffName,
-                                  "receiptNo": "",
-                                  "receiptDate": sale.delDate,
-                                  "delBoyId": sale.dMId,
-                                  "saledgkID": sale.saleGKId,
-                                  "vehicleNo": sale.vehicleNo,
-                                  "vehicleID": sale.vehicleId,
-                                });
-                          }else{
-                            showCustomAlertDialog(
-                              context,
-                              title: 'You have not uploaded latest file',
-                              content: 'To complete the cash collection, you need to upload the latest file. Please log in to the Niyojan web portal to upload the file.',
-                            );
+                        if (saveFlag) {
+                          print('saveFlag $saveFlag');
+                          showFlushBar(context, Constants.dayEndCompleted);
+                        } else {
+                          if ((sale.dailySaleStatus == 1 ||
+                              sale.dailySaleStatus == 4)) {
+                            int? saleGk = sale.saleGKId?.toInt();
+                            statusChangeApi(saleGk!, 0, 2, Constants.acceptSale);
+                          } else {
+                            if (getLastUploadedFile[0].bkgHrDiff == 0 &&
+                                getLastUploadedFile[0].settHrDiff == 0) {
+                              Navigator.pushNamed(
+                                  context, ManagerUpdateSaleScreen.screenName,
+                                  arguments: {
+                                    "delBoyName": sale.staffName,
+                                    "receiptNo": "",
+                                    "receiptDate": sale.delDate,
+                                    "delBoyId": sale.dMId,
+                                    "saledgkID": sale.saleGKId,
+                                    "vehicleNo": sale.vehicleNo,
+                                    "vehicleID": sale.vehicleId,
+                                  });
+                            } else {
+                              showCustomAlertDialog(
+                                context,
+                                title: 'You have not uploaded latest file',
+                                content:
+                                'To complete the cash collection, you need to upload the latest file. Please log in to the Niyojan web portal to upload the file.',
+                              );
+                            }
                           }
-
                         }
 
                       },
                       child: Padding(
                         padding: const EdgeInsets.only(top: 8.0),
-                        child: Text((sale.dailySaleStatus == 1 || sale.dailySaleStatus == 4)?"Accept" :
-                        ((sale.dailySaleStatus == 2 )||( sale.dailySaleStatus != 3 && sale.dailySaleStatus != 1 && sale.dailySaleStatus != 4 && sale.dailySaleStatus != 7))?"Update":"",
+                        child: Text(
+                            (sale.dailySaleStatus == 1 ||
+                                    sale.dailySaleStatus == 4)
+                                ? "Accept"
+                                : ((sale.dailySaleStatus == 2) ||
+                                        (sale.dailySaleStatus != 3 &&
+                                            sale.dailySaleStatus != 1 &&
+                                            sale.dailySaleStatus != 4 &&
+                                            sale.dailySaleStatus != 7))
+                                    ? "Update"
+                                    : "",
                             style: Styling.blueClrTextWithUnderline),
                       ),
                     ),
@@ -488,16 +528,26 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        if((sale.dailySaleStatus != 3 && sale.dailySaleStatus != 5 && sale.dailySaleStatus != 6 && sale.dailySaleStatus != 7 && sale.dailySaleStatus != 8)){
+                        if ((sale.dailySaleStatus != 3 &&
+                            sale.dailySaleStatus != 5 &&
+                            sale.dailySaleStatus != 6 &&
+                            sale.dailySaleStatus != 7 &&
+                            sale.dailySaleStatus != 8)) {
                           int? saleGk = sale.saleGKId?.toInt();
-                          statusChangeApi(saleGk!,0,3,Constants.correctionRequestMethod);
-                        }else{
-
-                        }
+                          statusChangeApi(
+                              saleGk!, 0, 3, Constants.correctionRequestMethod);
+                        } else {}
                       },
                       child: Padding(
                         padding: const EdgeInsets.only(top: 8.0),
-                        child: Text( (sale.dailySaleStatus != 3 && sale.dailySaleStatus != 5 && sale.dailySaleStatus != 6 && sale.dailySaleStatus != 7 && sale.dailySaleStatus != 8)?"Correction":"",
+                        child: Text(
+                            (sale.dailySaleStatus != 3 &&
+                                    sale.dailySaleStatus != 5 &&
+                                    sale.dailySaleStatus != 6 &&
+                                    sale.dailySaleStatus != 7 &&
+                                    sale.dailySaleStatus != 8)
+                                ? "Correction"
+                                : "",
                             style: Styling.blueClrTextWithUnderline),
                       ),
                     ),
@@ -511,14 +561,15 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
     );
   }
 
-  Future<void> statusChangeApi(int salesGKId, int salesGKItemId,int flagUpdate,String messageShow) async {
-    Constants.isNetworkAvailable = await InternetConnectionChecker().hasConnection;
+  Future<void> statusChangeApi(int salesGKId, int salesGKItemId, int flagUpdate,
+      String messageShow) async {
+    Constants.isNetworkAvailable =
+        await InternetConnectionChecker().hasConnection;
 
     if (!Constants.isNetworkAvailable) {
       // Return an empty list if there is no network connection
-      showFlushBar(context,
-          Constants.connectionMessage);
-    }else {
+      showFlushBar(context, Constants.connectionMessage);
+    } else {
       try {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String? distributorId = prefs.getString('DistributorId');
@@ -536,28 +587,29 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
           },
         );
 
-        debugPrint("Response body DailySaleByGK_StatusUpdate: ${response.body}");
-        debugPrint("request body DailySaleByGK_StatusUpdate: ${response.request}");
+        debugPrint(
+            "Response body DailySaleByGK_StatusUpdate: ${response.body}");
+        debugPrint(
+            "request body DailySaleByGK_StatusUpdate: ${response.request}");
 
         if (response.statusCode == 200) {
           final body = response.body;
 
-            EasyLoading.showToast(messageShow,
-                duration: const Duration(milliseconds: 3000));
-            // Example: refresh screen or go back to previous screen
-            // Navigator.pop(context); // or do a refresh using setState()
-            Navigator.pushNamed(
-              context,
-              BottomNavBarExample.screenName,
-              arguments: 2, // This opens the third tab
-            );
+          EasyLoading.showToast(messageShow,
+              duration: const Duration(milliseconds: 3000));
+          // Example: refresh screen or go back to previous screen
+          // Navigator.pop(context); // or do a refresh using setState()
+          Navigator.pushNamed(
+            context,
+            BottomNavBarExample.screenName,
+            arguments: 2, // This opens the third tab
+          );
           setState(() {
             // update your UI or state variables if needed
           });
         } else {
           throw Exception('Failed to load sales data');
         }
-
       } catch (error) {
         debugPrint("Error: $error");
         // Return an empty list in case of an error
@@ -569,7 +621,8 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
     if (amount == 0) {
       return '0.00'; // Return "0.00" if the amount is zero
     }
-    final format = NumberFormat('#,##,###.00', 'en_IN'); // Indian locale with comma separator
+    final format = NumberFormat(
+        '#,##,###.00', 'en_IN'); // Indian locale with comma separator
 
     // Ensure the result always shows a leading zero before the decimal point
     String formattedAmount = format.format(amount);
@@ -581,15 +634,15 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
 
     return formattedAmount;
   }
+
   Future<void> getLastUploadedFileDifference() async {
-    Constants.isNetworkAvailable = await InternetConnectionChecker().hasConnection;
+    Constants.isNetworkAvailable =
+        await InternetConnectionChecker().hasConnection;
 
     if (!Constants.isNetworkAvailable) {
       // Return an empty list if there is no network connection
-      showFlushBar(context,
-          Constants.connectionMessage);
-
-    }else {
+      showFlushBar(context, Constants.connectionMessage);
+    } else {
       try {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         String? distributorId = prefs.getString('DistributorId');
@@ -600,8 +653,7 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
         }
 
         final response = await http.get(
-          Uri.parse(
-              '${AppUrl.GetLastUploadedTimeDiff}/$distributorId'),
+          Uri.parse('${AppUrl.GetLastUploadedTimeDiff}/$distributorId'),
           headers: {
             'Authorization': 'Bearer $bearerToken',
           },
@@ -614,16 +666,15 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
           // Parse the JSON response
           final List<dynamic> data = json.decode(response.body);
           setState(() {
-            getLastUploadedFile = data.map((jsonItem) =>
-                GetLastUploadedFrileDifferenceModel.fromJson(jsonItem)).toList();
-
+            getLastUploadedFile = data
+                .map((jsonItem) =>
+                    GetLastUploadedFrileDifferenceModel.fromJson(jsonItem))
+                .toList();
           });
         } else {
-
           throw Exception('Failed to load sales data');
         }
       } catch (error) {
-
         debugPrint("Error: $error");
         // Return an empty list in case of an error
       }
@@ -662,11 +713,11 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
   //   );
   // }
   void showCustomAlertDialog(
-      BuildContext context, {
-        required String title,
-        required String content,
-        String cancelText = 'OK',
-      }) {
+    BuildContext context, {
+    required String title,
+    required String content,
+    String cancelText = 'OK',
+  }) {
     showDialog(
       context: context,
       barrierDismissible: false, // optional: prevent tap outside to dismiss
@@ -719,4 +770,50 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
     );
   }
 
+  Future<void> checkAndSaveDayEndData() async {
+    EasyLoading.instance
+      ..maskType = EasyLoadingMaskType.black // This creates a modal blocking interaction
+      ..loadingStyle = EasyLoadingStyle.light
+      ..dismissOnTap = false // Disable dismissing the loader by tapping
+      ..userInteractions = false;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? distributorId = prefs.getString('DistributorId');
+    String? bearerToken = prefs.getString('token');
+    int? distributorIds = int.parse(distributorId!);
+    try {
+      final response = await http.get(
+        Uri.parse('${AppUrl.CheckDayEndConfirmation}/$distributorIds'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $bearerToken",
+          // Pass bearer token in headers
+        },
+      );
+      debugPrint("Response bodyCheckDayEndConfirmation: ${response.body}");
+      debugPrint("requesr bodyCheckDayEndConfirmation: ${response.request}");
+      if (response.statusCode == 200) {
+        List<dynamic> apiResponse = json.decode(response.body);
+        if (apiResponse.isEmpty) {
+          saveFlag = false;
+          print("The list is empty, no data to save.");
+        } else {
+          saveFlag = true;
+          var dayEndData = apiResponse[0];
+          int DSRSaved = dayEndData['DSRSaved'] ?? 0;
+          int CDCMSStkSaved = dayEndData['CDCMSStkSaved'] ?? 0;
+          int OpClSaved = dayEndData['OpClSaved'] ?? 0;
+          // if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
+          //   saveFlag = true;
+          //   print("Data is valid, proceeding to save.");
+          // } else {
+          //   print("Data is incomplete. Cannot proceed to save.");
+          // }
+        }
+      } else {
+        print("Error: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Exception: $e");
+    }
+  }
 }

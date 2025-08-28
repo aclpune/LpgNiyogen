@@ -24,6 +24,7 @@ import '../Utils/app_url.dart';
 import '../Utils/constants.dart';
 import 'package:http/http.dart' as http;
 
+import 'BootomNavigatinBarManager.dart';
 import 'DSRItemClickUI/ManagerCashInHandScreenDetails.dart';
 import 'DSRItemClickUI/ManagerDSRReportScreenDetails.dart';
 import 'DSRItemClickUI/ManagerExpenseTabScreenDetails.dart';
@@ -75,6 +76,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
 
   List<double> totalDiffList = [];
   String? startOnDate;
+  ///regulator
+  List<dynamic> dataIncomeRegulatorReplacementList = [];
 
   double totalCashAmountCashFlow = 0.0;
   double totalBankAmountCashFlow = 0.0;
@@ -118,13 +121,13 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
   bool saveFlag = false;
   GlobalKey _globalKey = GlobalKey();
   bool isGenerating = false;
+
   @override
   void initState() {
     super.initState();
     // _fetchData("Y");
     checkIfSavedOrNot(selectedDate);
     checkAndSaveDayEndData();
-
   }
 
   @override
@@ -141,6 +144,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
     }
     super.dispose();
   }
+
   late bool isDateValid;
   @override
   Widget build(BuildContext context) {
@@ -1371,6 +1375,221 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                 ),
               )
                   : Container(),
+              dataIncomeRegulatorReplacementList.isNotEmpty
+                  ? Container(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 8.0),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            "Regulator Replacement",
+                            style: Styling.bodyTitleBigBold,
+                          )),
+                    ),
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(0),
+                          topRight: Radius.circular(0),
+                        ),
+                        // Add a color to differentiate header row
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              flex: 4,
+                              child: Text(
+                                'Item Name',
+                                style:
+                                Styling.itemBlackTestSmallReportBold,
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Text(
+                                'Qty',
+                                style:
+                                Styling.itemBlackTestSmallReportBold,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Text(
+                                '',
+                                style:
+                                Styling.itemBlackTestSmallReportBold,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Text(
+                                '',
+                                style:
+                                Styling.itemBlackTestSmallReportBold,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                '',
+                                style:
+                                Styling.itemBlackTestSmallReportBold,
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            Expanded(
+                              flex: 3,
+                              child: Text(
+                                'Amt',
+                                style:
+                                Styling.itemBlackTestSmallReportBold,
+                                textAlign: TextAlign.right,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: BouncingScrollPhysics(),
+                      itemCount: dataIncomeRegulatorReplacementList.length,
+                      // Change this to the length of your data
+                      itemBuilder: (context, index) {
+                        var item = dataIncomeRegulatorReplacementList[index];
+                        // Check if quantity and amount are zero and display empty text
+                        String? displayQuantity = (item
+                        is ManagerDsrReportIncomeSalesModel)
+                            ? (item.quantity == 0
+                            ? ''
+                            : item.quantity
+                            ?.toInt()
+                            .toString()) // Convert to integer if quantity is a double
+                            : (item.quantity == 0
+                            ? ''
+                            : item.quantity
+                            .toInt()
+                            .toString()); // For other cases
+
+                        String displayUnsettledQuantity =
+                        (item is ManagerDsrReportIncomeSalesModel)
+                            ? (item.unsettQty == 0
+                            ? ''
+                            : item.unsettQty.toString())
+                            : (item.unsettQty == 0
+                            ? ''
+                            : item.unsettQty.toString());
+
+                        String displaySettledQuantity =
+                        (item is ManagerDsrReportIncomeSalesModel)
+                            ? (item.settQty == 0
+                            ? ''
+                            : item.settQty.toString())
+                            : (item.settQty == 0
+                            ? ''
+                            : item.settQty.toString());
+
+                        String displayMode =
+                        (item is ManagerDsrReportIncomeSalesModel)
+                            ? (item.mode == null || item.mode == 0
+                            ? ''
+                            : item.mode.toString())
+                            : (item.mode == null || item.mode == 0
+                            ? ''
+                            : item.mode.toString());
+
+                        // Check if mode is null, 0, or empty and set the displayAmount accordingly
+                        double displayAmount =
+                        (item is ManagerDsrReportIncomeSalesModel)
+                            ? (item.amount == null || item.amount == 0
+                            ? 0.0
+                            : item.amount!)
+                            : (item.amount == null || item.amount == 0
+                            ? 0.0
+                            : item.amount);
+
+// Apply different styles based on the condition
+                        TextStyle amountStyle = (item.mode == null ||
+                            item.mode == 0 ||
+                            item.mode == "")
+                            ? Styling
+                            .itemBlackTestSmallReport // Normal style if condition is true
+                            : Styling
+                            .itemBlackTestSmallReportBold; // Bold and bigger font if condition is false
+
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                flex: 4,
+                                child: Text(
+                                  item is ManagerDsrReportIncomeSalesModel
+                                      ? item.itemName ?? ''
+                                      : item.itemName ?? '',
+                                  style: Styling.itemBlackTestSmallReport,
+                                  textAlign: TextAlign.left,
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  displayQuantity!,
+                                  style: Styling.itemBlackTestSmallReport,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Text(
+                                  displayUnsettledQuantity,
+                                  style: Styling.itemBlackTestSmallReport,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Text(
+                                  displaySettledQuantity,
+                                  style: Styling.itemBlackTestSmallReport,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  displayMode,
+                                  style: Styling.itemBlackTestSmallReport,
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                              Expanded(
+                                flex: 3,
+                                child: Text(
+                                  formatCurrency(displayAmount),
+                                  style: amountStyle,
+                                  textAlign: TextAlign.right,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              )
+                  :Container(),
             ],
           ),
         ),
@@ -1423,7 +1642,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                 dataExpenseList[index - 1].transCate);
 
                         return Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.all(0.0),
                           child: Column(
                             children: [
                               // If TransCate is different, show the header row
@@ -1449,6 +1668,17 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                           style: Styling
                                               .itemBlackTestSmallReportBold,
                                           textAlign: TextAlign.left,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex: 1,
+                                        child: Text(
+                                          item.transCate == "TV Refund"?
+                                          'Qty':
+                                          '',
+                                          style: Styling
+                                              .itemBlackTestSmallReportBold,
+                                          textAlign: TextAlign.center,
                                         ),
                                       ),
                                       Expanded(
@@ -1518,6 +1748,14 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                       ),
                                     ),
                                     Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        item.transCate == "TV Refund"?item.quantity == 0 ? ' ' : item.quantity.toString():' ',
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    Expanded(
                                       flex: 2,
                                       child: Text(
                                         item.mode.isEmpty ? '' : item.mode,
@@ -1572,7 +1810,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                   ),
                 ),
                 cdcmsListData.isNotEmpty
-                    ? ListView.builder(
+                    ?
+                ListView.builder(
                   shrinkWrap: true,
                   physics: BouncingScrollPhysics(),
                   itemCount: cdcmsListData.length,
@@ -2127,7 +2366,29 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                               showFlushBar(context,
                                   Constants.dayEndCompleted);
                             }else{
-                              _showConfirmationDialog(context);
+
+                                bool allZero = true;
+
+                                for (int i = 0; i < cdcmsListData.length; i++) {
+                                  double filled = double.tryParse(filledCDControllers[i].text) ?? 0.0;
+                                  double empty = double.tryParse(emptyCDControllers[i].text) ?? 0.0;
+                                  double defective = double.tryParse(defectiveCDControllers[i].text) ?? 0.0;
+                                  if (filled > 0 || empty > 0 || defective > 0) {
+                                    allZero = false;
+                                    break; // No need to continue; at least one value is non-zero
+                                  }
+                                }
+                                if (allZero) {
+                                  showCustomAlertDialog(
+                                    context,
+                                    title: 'CDCM Stock Missing',
+                                    content: 'Warning: Please update CDCM stock before confirming the DSR.',
+                                  );
+                                } else {
+                                  // Proceed with save logic (e.g., API call or local state update)
+                                  _showConfirmationDialog(context);
+                                  print('Saving data...');
+                                }
                             }
                           }:null,
                           child: Text("Confirm DSR"),
@@ -2208,6 +2469,12 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                 ManagerDsrReportIncomeSalesModel.fromJson(item)) // Map to model
             .toList();
 
+        var filteredDataRegReplacementSale = jsonResponse
+            .where((item) => item['TransCate'] == 'Regulator Replacement') // Filter the list
+            .map((item) =>
+            ManagerDsrReportIncomeSalesModel.fromJson(item)) // Map to model
+            .toList();
+
         dataIncomeTotalAmountList = jsonResponse.map((json) => ManagerDsrReportIncomeSalesModel.fromJson(json)).toList();
 
         setState(() {
@@ -2216,6 +2483,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
           dataIncomeArbSaleList = filteredDataArbSale;
           dataIncomeSVSaleList = filteredDataSVSale;
           dataIncomeReceiptSaleList = filteredDataReceiptSale;
+          dataIncomeRegulatorReplacementList = filteredDataRegReplacementSale;
           isLoading = false;
         });
       } else {
@@ -2562,6 +2830,13 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                   .map((item) => IncDtls.fromJson(item)) // Map to IncDtls model
                   .toList();
 
+          var filteredDataRegReplacementSale =
+          List.from(jsonResponse['IncDtls']) // Access the list 'IncDtls'
+              .where((item) =>
+          item['TransCate'] == 'Regulator Replacement') // Filter the list
+              .map((item) => IncDtls.fromJson(item)) // Map to IncDtls model
+              .toList();
+
           var filteredDataExpenseList =
               List.from(jsonResponse['expDtls']) // Access the list 'IncDtls'
                   .map((item) => ExpDtls.fromJson(item)) // Map to IncDtls model
@@ -2594,6 +2869,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
               .map((item) => CashflowDtls.fromJson(item)) // Map to IncDtls model
               .toList();
 
+
+
           setState(() {
             dataIncomeDailySaleList = filteredData;
             dataIncomeArbSaleList = filteredDataArbSale;
@@ -2603,6 +2880,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
             dataCashInHandList = filteredDataCashInHandList;
             dataCashDenominationList = filteredDataCashDenominationList;
             dataCashFlowSummaryList = filteredDataCashFlowSummaryList;
+            dataIncomeRegulatorReplacementList = filteredDataRegReplacementSale;
             isLoading = false;
           });
         } else {
@@ -2898,8 +3176,6 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
       };
     }).toList();
 
-
-
     final List<Map<String, dynamic>> dataCashFlowSummary= dataCashFlowSummaryList.map((e) {
       return {
         "StaffId": e.staffId ?? 0,
@@ -2910,7 +3186,9 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
         "MappingId":e.mappingId ?? 0
       };
     }).toList();
-
+    for (var e in dataIncomeTotalAmountList) {
+      print('quantity: ${e.quantity}, type: ${e.quantity.runtimeType}');
+    }
     // Process Income & Expense Data
     final List<Map<String, dynamic>> dataIncomeTotalAmount = []
       ..addAll(dataIncomeTotalAmountList.map((e) {
@@ -2918,7 +3196,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
           "TransCate": e.transCate,
           "ItemId": e.itemId,
           "ItemName": e.itemName,
-          "TotalSaleQty": e.quantity,
+          "TotalSaleQty": double.tryParse(e.quantity.toString())?.toInt() ?? 0,
           "UnsettQty": e.unsettQty,
           "SettQty": e.settQty,
           "Mode": e.mode,
@@ -2931,11 +3209,19 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
           "TransCate": e.transCate,
           "ItemName": e.expenseItemName,
           "Mode": e.mode,
+          "TotalSaleQty": e.quantity,
           "Amount": e.expenseAmount,
           "SectionType":2,
         };
       }).toList());
 
+    for (var item in dataIncomeTotalAmount) {
+      print('--- Entry ---');
+      item.forEach((key, value) {
+        print('$key: $value');
+      });
+    }
+    print(jsonEncode(dataIncomeTotalAmount));
     // Request Body to send data to the API
     final Map<String, dynamic> requestBody = {
       "DSRId": 0,
@@ -2958,6 +3244,10 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
     };
     // print("response SaveAllDSRDataFromMob: ${response.statusCode} - ${response.body}");
     print("requestBody SaveAllDSRDataFromMob: $requestBody");
+    print("requestBody SaveAllDSRDataFromMob1: ${requestBody}");
+    requestBody.forEach((key, value) {
+      print('$key: $value');
+    });
     // Making the POST request
     try {
       final response = await http.post(
@@ -2979,6 +3269,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Data Save successfully!')),
         );
+        Navigator.pushReplacementNamed(context, BottomNavBarExample.screenName);
       } else {
         // Error response
         print("Error: ${response.statusCode} - ${response.body}");
@@ -3097,7 +3388,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
           saveFlag = false;
           print("The list is empty, no data to save.");
         } else {
-          // If there is data in the response, process it and save
+          saveFlag = true;
           var dayEndData = apiResponse[0]; // Access the first item in the list (assuming it's an object)
 
           // You can validate the fields in the response as needed
@@ -3105,15 +3396,15 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
           int CDCMSStkSaved = dayEndData['CDCMSStkSaved'] ?? 0;
           int OpClSaved = dayEndData['OpClSaved'] ?? 0;
 
-          // Check if all required fields are saved
-          if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
-            saveFlag = true;
-            // If the conditions are met, set the flag and save the data
-            print("Data is valid, proceeding to save.");
-          } else {
-            // If any condition is not met, print a message
-            print("Data is incomplete. Cannot proceed to save.");
-          }
+          // // Check if all required fields are saved
+          // if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
+          //   saveFlag = true;
+          //   // If the conditions are met, set the flag and save the data
+          //   print("Data is valid, proceeding to save.");
+          // } else {
+          //   // If any condition is not met, print a message
+          //   print("Data is incomplete. Cannot proceed to save.");
+          // }
         }
       } else {
         // Handle API error
@@ -3141,5 +3432,79 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
     }
 
     return formattedAmount;
+  }
+
+  void showCustomAlertDialog(
+      BuildContext context, {
+        required String title,
+        required String content,
+        String cancelText = 'OK',
+      }) {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // optional: prevent tap outside to dismiss
+      builder: (BuildContext context) {
+        return AlertDialog(
+          contentPadding: const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 24.0),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.cancel_outlined,
+                size: 48,
+                color: Colors.redAccent,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                title,
+                style: Styling.bodyTitleWithBlueHight,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(
+                    Icons.warning_outlined,
+                    size: 16,
+                    color: Colors.amber,
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(
+                    child: Text(
+                      content,
+                      style: Styling.textFormText,
+                      textAlign: TextAlign.left,
+                      softWrap: true,
+                      overflow: TextOverflow.visible,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 20),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    cancelText,
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

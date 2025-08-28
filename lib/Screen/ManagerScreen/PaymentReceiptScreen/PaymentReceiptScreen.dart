@@ -16,9 +16,11 @@ import '../../Utils/Widget.dart';
 import '../../Utils/app_url.dart';
 import '../../Utils/constants.dart';
 import '../BootomNavigatinBarManager.dart';
+import '../CashDenominationMandatoryFlag/CahsDenominationMandatoryFlagModel.dart';
 import '../CashHandoverModelClass/GetBankMappingDetailsListModel.dart';
 import '../ManagerModelClass/DenomModel.dart';
 import '../ManagerModelClass/ManagerDSRReportCashDeniminationModel.dart';
+import '../UpdatePaymentsScreen/GetBalanceByStaffIdModel.dart';
 import '../UpdatePaymentsScreen/GetPaymentdetailCashDenominationDtlModel.dart';
 import '../UpdatePaymentsScreen/GetStaffDetailsListModel.dart';
 import 'GetBankcashReceiptListModel.dart';
@@ -51,7 +53,6 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
   String? selectedCustomerMode;
   bool isCashDenominationListViewVisible = false;
   int _selectedIndex = 0;
-  //List<ManagerDsrReportCashDeniminationModel>getNoteTypeAndIdFroDenominationListModel = [];
   List<DenomModel>getNoteTypeAndIdFroDenominationListModel = [];
   List<dynamic> dataCashDenominationList = [];
   bool isLoading = true;
@@ -87,7 +88,6 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
   final remarkController = TextEditingController();
   List<GetReceiptCashDenominationDtl> denominationModel = [];
   GetReceiptCashDenominationDtl? _selectDenomination;
-  // List<GetPaymentDetailListModel> paymentModel = [];
   GetStaffDetailsListModel? selectedstaff;
   List<GetStaffDetailsListModel> staffmodel = [];
   String? _selectedItem;
@@ -110,17 +110,19 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
   }
   var argValue;
   String? modes;
-  //String? receiptNoTextEdit;
   int? customerId;
   int? receiptId;
-  //String editModeType = "Reticulated Or ND";
   bool isReticulatedOrNDMode = false;
-
+  bool saveFlag = false;
+  List<CahsDenominationMandatoryFlagModel> cashDenoMandatoryList = [];
+  bool cashDenominationMandatory = false;
+  List<GetBalanceByStaffIdModel> balancemodel = [];
+  double balanceAmount = 0.0;
   @override
   void initState() {
     super.initState();
-
-    // Initializing necessary data fetches
+    checkCashDenominationFlagMandatory();
+    checkAndSaveDayEndData();
     getNoteTypeAndIDList();
     fetchBank();
     getStaffDetailsList();
@@ -148,10 +150,12 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
 
         debugPrint("selectedItemId $selectedItemId");
         debugPrint("_selectedCustomerId $_selectedCustomerId");
-        if(getTransMode.contains(paymentModeEdit)){
+
+        if (getTransMode.contains(paymentModeEdit)) {
           selectedTransMode = paymentModeEdit;
-        }
-        else{
+        } else if (paymentModeEdit == "Bank") {
+          selectedTransMode = 'Online'; // fallback or handle invalid values
+        } else {
           selectedTransMode = null;
         }
 
@@ -186,8 +190,9 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
           ),
         );
 
-        receiptId = int.tryParse(argValue["receiptIdEdit"] ?? '') ?? 0;
+        receiptId = int.tryParse(argValue["receiptIdEdit"] ?? 0);
 
+        loadDenominationData(receiptId!);
         // Handle receipt cash denomination details
         getNoteTypeAndIDList().whenComplete((){
           getReceiptCashDenominationDtl(receiptId!).whenComplete(() {
@@ -199,9 +204,9 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
           });
         });
 
-
         if (selectedItemId != 0) {
           selectedStaffMode = "Staff";
+          await getStaffDetailsList(); // Make sure the list is fetched before accessing
           await getStaffDetailsList(); // Make sure the list is fetched before accessing
           selectedstaff = staffmodel.firstWhere(
                 (item) => item.staffId == selectedItemId,
@@ -214,6 +219,7 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
             debugPrint("receiptFromID: ${receiptFromID}");
             selectedStaffMode = "Reticulated Or ND";
             await getCustomerList();
+            await getCustomerList();
             selectedCustomer = customerModel.firstWhere(
                   (item) => item.customerId == _selectedCustomerId,
               orElse: () => GetCustomerListModel(customerName: ''),
@@ -222,6 +228,7 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
           } else if (receiptFromID == 3) {
             debugPrint("receiptFromID2: ${receiptFromID}");
             selectedStaffMode = "Other";
+            await getCustomerList();
             await getCustomerList();
             selectedCustomer = customerModel.firstWhere(
                   (item) => item.customerId == _selectedCustomerId,
@@ -374,6 +381,7 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
                                 ),
                               ),
                               child: Text(
+                                cashDenominationMandatory?"Cash Denomination Is Mandatory":
                                 "Cash Denomination",
                                 style: Styling.buttonTextBlack.copyWith(
                                   color: _selectedIndex == 0
@@ -916,9 +924,6 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
                             TextField(
                               controller: TranCodeController,
                               maxLengthEnforcement: MaxLengthEnforcement.enforced, // Enforce max length
-                              // inputFormatters: <TextInputFormatter>[
-                              //   LengthLimitingTextInputFormatter(30), // Limit the length to 30 characters
-                              // ],
                               inputFormatters: <TextInputFormatter>[
                                 LengthLimitingTextInputFormatter(30), // Limit to 30 characters
                                 FilteringTextInputFormatter.deny(
@@ -1064,6 +1069,9 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
                                 selectedstaff = selectedItem;
                                 _selectedItem = selectedItem?.staffName ?? '';
                                 selectedItemId = selectedItem?.staffId?.toInt();
+                                if (selectedItem?.staffId != null) {
+                                  getBalanceByStaffId(selectedItem!.staffId.toString());
+                                }
                               });
 
                             },
@@ -1083,7 +1091,7 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
                       Flexible(
                         flex: 1,
                         child: Text(
-                          '0',
+                          balanceAmount != null && balanceAmount != 0.0 ? balanceAmount.toString() : '0.0',
                           style: TextStyle(color: Colors.grey),
                         ),
                       ),
@@ -1179,9 +1187,6 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
                                 amountController.clear();
                               }
                             }
-                            // if (val > totalAmount || val < totalAmount) {
-                            //   amountController.clear();
-                            // }
                           });
                         },
                         decoration: InputDecoration(
@@ -1253,16 +1258,19 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
 
                     ElevatedButton(
                       onPressed: () {
-                        if (modes == "EDIT") {
-                          // Null check for paymentIdEdit
-                          customerAddEditForMob(receiptId!, "EDIT");
+                        if (saveFlag) {
+                          print('saveFlag $saveFlag');
+                          showFlushBar(context, Constants.dayEndCompleted);
                         } else {
-                          customerAddEditForMob(0, "ADD");
+                          if (modes == "EDIT") {
+                            customerAddEditForMob(receiptId!, "EDIT");
+                          } else {
+                            customerAddEditForMob(0, "ADD");
+                          }
                         }
-                        //customerAddEditForMob(0, "ADD");
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
+                        backgroundColor:saveFlag?Colors.grey:Colors.blue,
                         //backgroundColor: modes == "EDIT" ? Colors.blue : Colors.grey,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50),
@@ -1307,9 +1315,10 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
                                   children: [
                                     // Edit Icon
                                     IconButton(
-                                      icon: Icon(Icons.edit, color: Colors.blue),  // Icon for edit
+                                      icon: Icon(Icons.edit, color:saveFlag?Colors.blueGrey:Colors.blue),  // Icon for edit
                                       onPressed: () {
                                         setState(() {
+                                          loadDenominationData(payList.receiptId!.toInt());
                                           var payVoucherNo = payList.receiptNo.toString();
                                           var depositDate = payList.receiptDate.toString();
                                           var paymentMode = payList.receiptMode.toString();
@@ -1326,85 +1335,96 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
                                           var bankId = payList.bankId.toString();
                                           var mappingId = payList.mappingId.toString();
                                           var accountNo = payList.accountNo.toString();
-                                          //var remark = payList.remarkForVendor.toString();
                                           var receiptId = payList.receiptId.toString();
                                           var receiptFromID = payList.receiptFrom.toString();
                                           int payId = int.parse(receiptId);
-                                          Navigator.pushNamed(
-                                            context,
-                                            PaymentReceiptScreen.screenName,
-                                            arguments: {
+                                          if (saveFlag) {
+                                            print('saveFlag $saveFlag');
+                                            showFlushBar(context, Constants.dayEndCompleted);
+                                          } else {
+                                            Navigator.pushNamed(
+                                              context,
+                                              PaymentReceiptScreen.screenName,
+                                              arguments: {
 
-                                              'receiptNoV': payVoucherNo,
-                                              'depositDateV': depositDate,
-                                              'paymentModeV': paymentMode,
-                                              'paymentToIDV': paymentToId,
-                                              'staffNameV' : staffName,
-                                              'customerIdV' : customerId,
-                                              'customerNameV' : customerName,
-                                              'staffIdV': staffId,
-                                              'remarkEditV': payRemark,
-                                              'amountTotalV': amountTotal,
-                                              'payRemarkV': payRemark,
-                                              'transTimeV': transTime,
-                                              'transationCodeV': transationCode,
-                                              'transRemarkV': transRemark,
-                                              'bankIdV': bankId,
-                                              'mappingIdV': mappingId,
-                                              'accountNoV': accountNo,
-                                              'receiptIdEdit': receiptId,
-                                              'receiptFromIDs': receiptFromID,
-                                              'modeChange': "EDIT"
-                                            },
-                                          );
+                                                'receiptNoV': payVoucherNo,
+                                                'depositDateV': depositDate,
+                                                'paymentModeV': paymentMode,
+                                                'paymentToIDV': paymentToId,
+                                                'staffNameV' : staffName,
+                                                'customerIdV' : customerId,
+                                                'customerNameV' : customerName,
+                                                'staffIdV': staffId,
+                                                'remarkEditV': payRemark,
+                                                'amountTotalV': amountTotal,
+                                                'payRemarkV': payRemark,
+                                                'transTimeV': transTime,
+                                                'transationCodeV': transationCode,
+                                                'transRemarkV': transRemark,
+                                                'bankIdV': bankId,
+                                                'mappingIdV': mappingId,
+                                                'accountNoV': accountNo,
+                                                'receiptIdEdit': receiptId,
+                                                'receiptFromIDs': receiptFromID,
+                                                'modeChange': "EDIT"
+                                              },
+                                            );
+                                          }
+
                                         });
                                       },
                                     ),
                                     IconButton(
-                                      icon: Icon(Icons.delete, color: Colors.red), // Icon for delete
+                                      icon: Icon(Icons.delete, color:saveFlag?Colors.redAccent:Colors.red), // Icon for delete
                                       onPressed: () async {
-                                        int? pId = (payList.receiptId)?.toInt();
-                                        print('Delete button pressedd${payList.receiptId}');
-                                        // Show confirmation dialog
-                                        bool? confirmDelete = await showDialog<bool>(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title: const Text('Are you sure?'),
-                                              content: const Text('You want to delete?'),
-                                              actions: <Widget>[
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop(false); // User pressed Cancel
-                                                  },
-                                                  child: const Text('Cancel'),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop(true); // User pressed Delete
-                                                  },
-                                                  child: const Text('Delete'),
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
-
-                                        // If user confirmed deletion
-                                        if (confirmDelete == true) {
-                                          // Check if receiptId is not null
-                                          // int? pId = payList.receiptId;
-                                          if (pId != null) {
-                                            selectedItemId  = payList.staffId?.toInt()?? 0;
-                                            _selectedCustomerId  = payList.customerId?.toInt()?? 0;
-                                            customerAddEditForMob(pId, "DELETE");
-                                            print('Delete button pressed$pId');
-                                          } else {
-                                            print("Receipt ID is null.");
-                                          }
+                                        if (saveFlag) {
+                                          print('saveFlag $saveFlag');
+                                          showFlushBar(context, Constants.dayEndCompleted);
                                         } else {
-                                          print('Delete action was canceled');
+                                          int? pId = (payList.receiptId)?.toInt();
+                                          print('Delete button pressedd${payList.receiptId}');
+                                          // Show confirmation dialog
+                                          bool? confirmDelete = await showDialog<bool>(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: const Text('Are you sure?'),
+                                                content: const Text('You want to delete?'),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context).pop(false); // User pressed Cancel
+                                                    },
+                                                    child: const Text('Cancel'),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context).pop(true); // User pressed Delete
+                                                    },
+                                                    child: const Text('Delete'),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+
+                                          // If user confirmed deletion
+                                          if (confirmDelete == true) {
+                                            // Check if receiptId is not null
+                                            // int? pId = payList.receiptId;
+                                            if (pId != null) {
+                                              selectedItemId  = payList.staffId?.toInt()?? 0;
+                                              _selectedCustomerId  = payList.customerId?.toInt()?? 0;
+                                              customerAddEditForMob(pId, "DELETE");
+                                              print('Delete button pressed$pId');
+                                            } else {
+                                              print("Receipt ID is null.");
+                                            }
+                                          } else {
+                                            print('Delete action was canceled');
+                                          }
                                         }
+
                                       },
                                     ),
                                   ],
@@ -1421,7 +1441,8 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
                           SizedBox(height: 2),
                           Row(
                             children: [
-                              Expanded(flex:1,child: countTextWidgetText(context,"Receipt Mode", payList.receiptMode ?? '')),
+                              Expanded(flex:1,child: countTextWidgetText(context, "Receipt Mode", (payList.receiptMode == 'Bank') ? 'Online' : (payList.receiptMode ?? ''))),
+
                               Expanded(flex:1,child: countTextWidgetText(context,"Amount", payList.amount.toString()  )),
                             ],
                           ),
@@ -1572,6 +1593,17 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
       throw Exception('Failed to load items');
     }
   }
+
+  Future<void> loadDenominationData(int psvID) async {
+    await getReceiptCashDenominationDtl(psvID.toInt());
+
+    // Now call initializeControllers after list is fetched
+    initializeControllers();
+
+    // Refresh UI
+    setState(() {});
+  }
+
 
   Future<void> fetchBank() async {
     EasyLoading.show();
@@ -2105,8 +2137,8 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
         "NoteId": data.id ?? 0, // Use null-aware operator to handle null values
         "NoteQty": qtyController[index].text.isNotEmpty ? int.tryParse(qtyController[index].text) : 0,
         "NoteAmt": amounts[index],
-        "RetNoteQty": 0, // Replace with actual value if available
-        "RetNoteAmt": 0.0, // Replace with actual value if available
+        "RetNoteQty": qtyControllerReturn[index].text.isNotEmpty ? int.tryParse(qtyControllerReturn[index].text) : 0, // Replace with actual value if available
+        "RetNoteAmt":amountsReturn[index], // Replace with actual value if available
       };
     }).toList();
     if(action != "DELETE"){
@@ -2136,10 +2168,7 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
       }
 
       if (selectedTransMode == null || selectedTransMode!.isEmpty
-      //&&
-      //selectedStaffMode == null || selectedStaffMode!.isEmpty &&
-      // _selectedItem == null &&
-      //amountController.text.isEmpty
+
       )  {
         showFlushBar(context, Constants.reqfield);
         return;
@@ -2161,13 +2190,6 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
         return;
       }
 
-      // Check if selectedStaffMode is 'Staff' and _selectedItem is mandatory
-      //    if (selectedStaffMode == 'Staff') {
-      //      if (selectedstaff == null || selectedstaff!.isEmpty) {
-      //        showFlushBar(context, 'Item selection is mandatory for Staff.');
-      //        return;
-      //      }
-      //    }
       if (selectedStaffMode == 'Staff') {
         if (selectedstaff == null || selectedstaff!.staffName == null || selectedstaff!.staffName!.isEmpty) {
           showFlushBar(context, 'Item selection is mandatory for Staff.');
@@ -2182,21 +2204,10 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
           return;
         }
       }
-      //
-      // if ((selectedStaffMode == 'Reticulated Or ND' ||
-      //     selectedStaffMode == 'Other')
-      //     &&
-      //     (_selectedCustomer == null)
-      // ) {
-      //   showFlushBar(context, 'Customer selection is mandatory for the selected Staff Mode.');
-      //   return;
-      // }
+
 
       if (selectedTransMode == 'Online') {
-        // if (_selectBankModel == null || _selectBankModel!.isEmpty) {
-        //   showFlushBar(context, Constants.bankname);
-        //   return;
-        // }
+
         if (_selectBankModel == null || _selectBankModel!.accountNo == null ||
             _selectBankModel!.accountNo!.isEmpty
         ) {
@@ -2212,9 +2223,24 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
 
       // Conditional check for cash payment mode
       if (selectedTransMode == 'Cash'){
-        if(amtController != totalAmount || amtController <= 0) {
-          showFlushBar(context, Constants.denominationAmount);
-          return;
+        if(finalAmountCashDeno != null || finalAmountCashDeno>0){
+          if(amtController != finalAmountCashDeno || amtController <= 0) {
+            showFlushBar(context, Constants.denominationAmount);
+            return;
+          }
+        }
+      }
+      if (selectedTransMode == 'Cash'){
+        if(cashDenominationMandatory){
+          if(finalAmountCashDeno != null || finalAmountCashDeno>0){
+            if(amtController != finalAmountCashDeno || amtController <= 0) {
+              showFlushBar(context, Constants.denominationAmount);
+              return;
+            }
+          }else{
+            showFlushBar(context, Constants.cashDenominationIsMandatory);
+            return;
+          }
         }
       }
 
@@ -2237,6 +2263,7 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
         bankId = 0;
         accMappingIds = 0;
       }
+
     }
 
 
@@ -2248,7 +2275,7 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
       "ReceiptMode": selectedTransMode ?? '',
       "ReceiptFrom":receiptFrom ?? '',
       "StaffId": selectedItemId ?? 0,
-      "Balance": 0,
+      "Balance": balanceAmount,
       "CustomerId":_selectedCustomerId ?? 0,
       "Amount": amtController ?? '',
       "RemarkForVendor": remark ?? '',
@@ -2331,7 +2358,6 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
       selectedItemId = null;
       _selectBankModel = null;
       selectedTransMode = null;
-      //selectedStaffMode = null;
       selectedCustomerType = null;
       TranCodeController.clear();
       timeController.clear();
@@ -2341,8 +2367,13 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
       transReviewController.clear();
       amountController.clear();
       modes = "Save";
+      Navigator.pushNamed(
+          context,
+          PaymentReceiptScreen.screenName// This opens the third tab
+      );
     });
   }
+
 
   void initializeControllers() {
     qtyController = List.generate(denominationModel.length, (index) {
@@ -2357,7 +2388,9 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
       return qty * noteType; // Now returns double
     });
 
+
     totalAmount = amounts.fold(0.0, (sum, item) => sum + item);
+
 
     isQtyFilled = Map.fromIterable(
       List.generate(denominationModel.length, (index) => index),
@@ -2378,5 +2411,143 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
     });
     returnAmount = amountsReturn.fold(0.0, (sum, item) => sum + item);
     finalAmountCashDeno = totalAmount - returnAmount;
+
+  }
+
+  Future<void> checkAndSaveDayEndData() async {
+    EasyLoading.instance
+      ..maskType = EasyLoadingMaskType.black // This creates a modal blocking interaction
+      ..loadingStyle = EasyLoadingStyle.light
+      ..dismissOnTap = false // Disable dismissing the loader by tapping
+      ..userInteractions = false;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? distributorId = prefs.getString('DistributorId');
+    String? bearerToken = prefs.getString('token');
+    int? distributorIds = int.parse(distributorId!);
+    try {
+      final response = await http.get(
+        Uri.parse('${AppUrl.CheckDayEndConfirmation}/$distributorIds'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $bearerToken",
+          // Pass bearer token in headers
+        },
+      );
+      debugPrint("Response bodyCheckDayEndConfirmation: ${response.body}");
+      debugPrint("requesr bodyCheckDayEndConfirmation: ${response.request}");
+      if (response.statusCode == 200) {
+        List<dynamic> apiResponse = json.decode(response.body);
+        if (apiResponse.isEmpty) {
+          saveFlag = false;
+          print("The list is empty, no data to save.");
+        } else {
+          saveFlag = true;
+          var dayEndData = apiResponse[0];
+          int DSRSaved = dayEndData['DSRSaved'] ?? 0;
+          int CDCMSStkSaved = dayEndData['CDCMSStkSaved'] ?? 0;
+          int OpClSaved = dayEndData['OpClSaved'] ?? 0;
+          // if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
+          //   saveFlag = true;
+          //   print("Data is valid, proceeding to save.");
+          // } else {
+          //   print("Data is incomplete. Cannot proceed to save.");
+          // }
+        }
+      } else {
+        print("Error: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Exception: $e");
+    }
+  }
+
+  Future<void> checkCashDenominationFlagMandatory() async {
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+
+    if (!Constants.isNetworkAvailable) {
+      showFlushBar(context, Constants.connectionMessage);
+      isLoading = false;
+    } else {
+      try {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? distributorId = prefs.getString('DistributorId');
+        String? bearerToken = prefs.getString('token');
+
+        if (bearerToken == null) {
+          isLoading = false;
+          throw Exception('Bearer token is missing');
+        }
+        final response = await http.get(
+          Uri.parse('${AppUrl.GetPageActionPermissionDtls}/$distributorId/All'),
+          headers: {
+            'Authorization': 'Bearer $bearerToken', // Add Bearer token here
+          },
+        );
+        debugPrint("Response body GetPageActionPermissionDtls: ${response.body}");
+        debugPrint("Request body GetPageActionPermissionDtls: ${response.request}");
+
+        if (response.statusCode == 200) {
+          // Parse the JSON response
+          final List<dynamic> data = json.decode(response.body);
+          setState(() {
+            cashDenoMandatoryList = data.map((jsonItem) =>
+                CahsDenominationMandatoryFlagModel.fromJson(jsonItem)).toList();
+            isLoading = false;
+            for (var item in cashDenoMandatoryList) {
+              if (item.distributorId.toString() == distributorId && item.permissionFor == "Cash Denomination" && item.isActive == 1) {
+                print("Flag truet:");
+                cashDenominationMandatory = true;
+                break; // Exit loop after finding the match
+              }else{
+                cashDenominationMandatory = false;
+              }
+            }
+          });
+        } else {
+          isLoading = false;
+          throw Exception('Failed to load sales data');
+        }
+      } catch (error) {
+        isLoading = false;
+        debugPrint("Error: $error");
+        // Return an empty list in case of an error
+      }
+    }
+  }
+  Future<void> getBalanceByStaffId(String staffId) async {
+    EasyLoading.show();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? distributorId = prefs.getString('DistributorId');
+    String? bearerToken = prefs.getString('token');
+
+    if (bearerToken == null) {
+      throw Exception('Bearer token is missing');
+    }
+
+    final response = await http.get(
+      Uri.parse('${AppUrl.GetBalanceByStaffId}/$staffId/$distributorId'),
+      headers: {
+        'Authorization': 'Bearer $bearerToken',
+      },
+    );
+    debugPrint("Response body GetBalanceByStaffId: ${response.body}");
+    debugPrint("Request body GetBalanceByStaffId: ${response.request}");
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      setState(() {
+        balancemodel = data.map((json) => GetBalanceByStaffIdModel.fromJson(json)).toList();
+        // balanceAmount = balancemodel.isNotEmpty ? balancemodel.first.balanceAmt.toString() : '';
+        //balanceAmount = balancemodel.isNotEmpty ? balancemodel.first.balanceAmt : 0.0;
+        balanceAmount = (balancemodel.isNotEmpty && balancemodel.first.balanceAmt != null)
+            ? balancemodel.first.balanceAmt!.toDouble()  // force unwrap to double
+            : 0.0;
+        EasyLoading.dismiss();
+        debugPrint("GetBalanceByStaffId: $balanceAmount");
+      });
+    } else {
+      EasyLoading.dismiss();
+      throw Exception('Failed to load balance');
+    }
   }
 }

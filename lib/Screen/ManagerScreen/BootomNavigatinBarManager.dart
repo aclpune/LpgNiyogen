@@ -5,6 +5,7 @@ import 'package:lpgsalesandinventory/Screen/ManagerScreen/ManagerDSRReportScreen
 import 'package:lpgsalesandinventory/Screen/ManagerScreen/ManagerDashboard.dart';
 import 'package:lpgsalesandinventory/Screen/ManagerScreen/ManagerUpdateSaleScreen.dart';
 
+import '../Utils/CustomeAppBarManagerDashboard.dart';
 import '../Utils/CutomeAppBarManagerBottomNavigationBar.dart';
 import '../Utils/constants.dart';
 import 'ManagerMoreScreen.dart';
@@ -50,7 +51,7 @@ class _BottomNavBarExampleState extends State<BottomNavBarExample> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:AppBarCustom(),
+      appBar:CustomeAppBarmanagerDashboard(),
       body: _pages[_selectedIndex], // Display the selected page
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,

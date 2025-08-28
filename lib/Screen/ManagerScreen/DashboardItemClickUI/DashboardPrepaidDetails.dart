@@ -357,41 +357,78 @@ class _DashboardPrepaidDetailsState extends State<DashboardPrepaidDetails> {
             ),
           ),
           // Scrollable ListView for content
+          // Expanded(
+          //   child: SingleChildScrollView(
+          //     child: Column(
+          //       children: [
+          //         flag == "Delivered" || flag == "Settled" || flag == "TotalOutstanding" || flag == "cDCMS" || flag == "DelDonNiyoJanPunPend" || flag == "OldBkgPendNewBkgRecv"
+          //             ? filteredPrepaidModel.isNotEmpty
+          //             ? ListView.builder(
+          //           physics: const BouncingScrollPhysics(),
+          //           shrinkWrap: true,
+          //           itemCount: filteredPrepaidModel.length,
+          //           itemBuilder: (context, index) {
+          //             debugPrint("Rendering Prepaid Item: ${filteredPrepaidModel[index]}");
+          //             return DashboardPrepaidDetailUI(
+          //               filteredPrepaidModel[index],
+          //               index + 1,
+          //             );
+          //           },
+          //         )
+          //             : const Text('No Records Found')
+          //             : (filteredPunchModel.isNotEmpty &&
+          //             (flag == "Punching" || flag == "Incorrect" || flag == "NiyoJanPunDelPend"))
+          //             ? ListView.builder(
+          //           physics: const BouncingScrollPhysics(),
+          //           shrinkWrap: true,
+          //           itemCount: filteredPunchModel.length,
+          //           itemBuilder: (context, index) {
+          //             debugPrint("Rendering Punch Item: ${filteredPunchModel[index]}");
+          //             return DashbobardPunchDetailUI(
+          //               filteredPunchModel[index],
+          //             );
+          //           },
+          //         )
+          //             : const Text('No Records Found'),
+          //       ],
+          //     ),
+          //   ),
+          // ),
           Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  flag == "Delivered" || flag == "Settled" || flag == "TotalOutstanding" || flag == "cDCMS" || flag == "DelDonNiyoJanPunPend" || flag == "OldBkgPendNewBkgRecv"
-                      ? filteredPrepaidModel.isNotEmpty
-                      ? ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: filteredPrepaidModel.length,
-                    itemBuilder: (context, index) {
-                      debugPrint("Rendering Prepaid Item: ${filteredPrepaidModel[index]}");
-                      return DashboardPrepaidDetailUI(
-                        filteredPrepaidModel[index],
-                        index + 1,
-                      );
-                    },
-                  )
-                      : const Text('No Records Found')
-                      : (filteredPunchModel.isNotEmpty &&
-                      (flag == "Punching" || flag == "Incorrect" || flag == "NiyoJanPunDelPend"))
-                      ? ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: filteredPunchModel.length,
-                    itemBuilder: (context, index) {
-                      debugPrint("Rendering Punch Item: ${filteredPunchModel[index]}");
-                      return DashbobardPunchDetailUI(
-                        filteredPunchModel[index],
-                      );
-                    },
-                  )
-                      : const Text('No Records Found'),
-                ],
-              ),
+            child: isLoading
+                ? const Center(
+              child: CircularProgressIndicator(),
+            )
+                : flag == "Delivered" ||
+                flag == "Settled" ||
+                flag == "TotalOutstanding" ||
+                flag == "cDCMS" ||
+                flag == "DelDonNiyoJanPunPend" ||
+                flag == "OldBkgPendNewBkgRecv"
+                ? ListView.builder(
+              physics: const BouncingScrollPhysics(),
+              itemCount: filteredPrepaidModel.length,
+              itemBuilder: (context, index) {
+                return DashboardPrepaidDetailUI(
+                  filteredPrepaidModel[index],
+                  index + 1,
+                );
+              },
+            )
+                : (flag == "Punching" ||
+                flag == "Incorrect" ||
+                flag == "NiyoJanPunDelPend")
+                ? ListView.builder(
+              physics: const BouncingScrollPhysics(),
+              itemCount: filteredPunchModel.length,
+              itemBuilder: (context, index) {
+                return DashbobardPunchDetailUI(
+                  filteredPunchModel[index],
+                );
+              },
+            )
+                : const Center(
+              child: CircularProgressIndicator(),
             ),
           ),
         ],

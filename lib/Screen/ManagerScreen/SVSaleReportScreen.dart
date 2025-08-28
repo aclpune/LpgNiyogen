@@ -14,6 +14,7 @@ import '../Utils/Widget.dart';
 import '../Utils/app_url.dart';
 import '../Utils/constants.dart';
 import 'BootomNavigatinBarManager.dart';
+import 'CashDenominationMandatoryFlag/CahsDenominationMandatoryFlagModel.dart';
 import 'CashHandoverModelClass/GetBankMappingDetailsListModel.dart';
 import 'ManagerModelClass/DenomModel.dart';
 import 'ManagerModelClass/ManagerDSRReportCashDeniminationModel.dart';
@@ -37,8 +38,7 @@ class SVSaleReportScreen extends StatefulWidget {
 }
 
 class _SVSaleReportScreen extends State<SVSaleReportScreen> {
-  List<DenomModel>
-      getNoteTypeAndIdFroDenominationListModel = [];
+  List<DenomModel>getNoteTypeAndIdFroDenominationListModel = [];
   List<dynamic> dataCashDenominationList = [];
   List<TextEditingController> qtyController = [];
   List<TextEditingController> qtyControllerReturn = [];
@@ -80,6 +80,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
   final cylinderQtyAddController = TextEditingController();
   final totalAmountController = TextEditingController();
   final nameChangeAmtChargesController = TextEditingController();
+  String? previousRegulatorDepositAmount;
   int _selectedIndex = 0;
   double? arbTotalAmount;
   double? arbTotalDiscount;
@@ -116,7 +117,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
   double returnAmount = 0.0;
   double finalAmountCashDeno = 0.0;
   Map<int, bool> isQtyFilled = {};
-  List<String> getTransMode = ["Cash", "Online"];
+  List<String> getTransMode = ["Cash", "Merchant QR"];
   List<GetAddEditDataSvSaleItemModel> receiptList = [];
   List<GetDenominationListForAddEdit> getDenominationLis = [];
 
@@ -130,6 +131,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
   int? arbCurrentStock;
   Map<int, int?> _itemStockByIndex = {};
   Map<int, int?> _selectedItemIds = {};
+  Map<int, String?> _selectedCategoryName = {};
   List<GetArbItemMasterListModel> _items = [];
   Map<int, String?> _selectedItems = {};
   List<GetRspDetailsListModel> getrsplistmodel = [];
@@ -138,207 +140,16 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
   var argValue;
   String? modes;
   int? psvIdEdit;
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _addNewItem();
-  //   // fetchItems();
-  //   getNoteTypeAndIDList();
-  //   getStaffDetailsList();
-  //   getItemMasterList();
-  //   getDistStampDuty();
-  //   fetchBank();
-  //   getArbCurrentStockList();
-  //   getArbItemMasterListModel();
-  //   getRspDetailsListModel();
-  //   fetchItemSvAddEditList();
-  //
-  //   Future.delayed(Duration.zero, () {
-  //     setState(() async {
-  //       argValue = ModalRoute.of(context)?.settings.arguments as Map;
-  //       modes = argValue?["modeChange"]?? '';
-  //       if (argValue != null) {
-  //         final itemsToShow = argValue["itemsToShow"] ?? [];
-  //          psvIdEdit = int.tryParse(argValue["psvIDV"] ?? 0);
-  //          String sVDateEdit = argValue["sVDateV"] ?? 0;
-  //          String referredByIdEdit = argValue["referredByIdV"] ?? 0;
-  //          String referredByNameEdit = argValue["referredByNameV"] ?? 0;
-  //          String otherNameEdit = argValue["otherNameV"] ?? 0;
-  //          String productIdEdit = argValue["productIdV"] ?? 0;
-  //          String productNameEdit = argValue["productNameV"] ?? 0;
-  //          String isUndocumentEdit = argValue["isUndocumentV"] ?? 0;
-  //          String sVTypeEdit = argValue["sVTypeV"] ?? 0;
-  //          String cylQtyEdit = argValue["cylQtyV"] ?? 0;
-  //          String sCRegulatorEdit = argValue["sCRegulatorV"] ?? 0;
-  //          String depositCylEdit = argValue["depositCylV"] ?? 0;
-  //          String cylRefillRSPEdit = argValue["cylRefillRSPV"] ?? 0;
-  //          String regulatorDepositEdit = argValue["regulatorDepositV"] ?? 0;
-  //          String stampDutyEdit = argValue["stampDutyV"] ?? 0;
-  //          String fTLRegulatorEdit = argValue["fTLRegulatorV"] ?? 0;
-  //          String basicAmtEdit = argValue["basicAmtV"] ?? 0;
-  //          String consuDCNoEdit = argValue["consuDCNoV"] ?? 0;
-  //          String consumerNameEdit = argValue["consumerNameV"] ?? 0;
-  //          String consuContactNoEdit = argValue["consuContactNoV"] ?? 0;
-  //          String totalAmountEdit = argValue["totalAmountV"] ?? 0;
-  //          String receiptAmtEdit = argValue["receiptAmtV"] ?? 0;
-  //          String paymentModeEdit = argValue["paymentModeV"] ?? 0;
-  //          String transactionCodeEdit = argValue["transactionCodeV"] ?? 0;
-  //          String transactionTimeEdit = argValue["transactionTimeV"] ?? 0;
-  //          String transactionRemarkEdit = argValue["transactionRemarkV"] ?? 0;
-  //          String addedByEdit = argValue["addedByV"] ?? 0;
-  //          String actionEdit = argValue["actionV"] ?? 0;
-  //          String itemIdEdit = argValue["itemIdV"] ?? 0;
-  //          String itemNameEdit = argValue["itemNameV"] ?? 0;
-  //          String rateEdit = argValue["rateV"] ?? 0;
-  //          String itemQtyEdit = argValue["itemQtyV"] ?? 0;
-  //          String discountAmtEdit = argValue["discountAmtV"] ?? 0;
-  //          String aRBAmountEdit = argValue["aRBAmountV"] ?? 0;
-  //          String amtChargesEdit = argValue["amtChargesV"] ?? 0;
-  //          String categoryNameEdit = argValue["categoryNameV"] ?? 0;
-  //          String bankIdEdit = argValue["bankIdV"] ?? 0;
-  //          String bankMappingIdEdit = argValue["bankMappingIdV"] ?? 0;
-  //          String accountNoEdit = argValue["accountNoV"] ?? 0;
-  //          String bankNameEdit = argValue["bankNameV"] ?? 0;
-  //          String isExemptRetiEdit = argValue["isExemptRetiV"] ?? 0;
-  //          String sVDiscountAmtEdit = argValue["sVDiscountAmtV"] ?? 0;
-  //         selectedProductID = int.parse(productIdEdit);
-  //         cylinderQty = int.parse(cylQtyEdit);
-  //
-  //         depositCylinderAmountController.text = depositCylEdit;
-  //         refillCylinderAmountController.text = cylRefillRSPEdit;
-  //         regulatorDepositAmountController.text = regulatorDepositEdit;
-  //         stampDutyController.text = stampDutyEdit;
-  //         regulatorDiscountAmountController.text = discountAmtEdit;
-  //         regulatorBasicAmountController.text = basicAmtEdit;
-  //         conNoController.text = consuDCNoEdit;
-  //         conNameController.text = consumerNameEdit;
-  //         conContactController.text = consuContactNoEdit;
-  //         recPaymentController.text = receiptAmtEdit;
-  //         TranCodeController.text = transactionCodeEdit;
-  //         timeController.text = transactionTimeEdit;
-  //         transReviewController.text = transactionRemarkEdit;
-  //         totalAmountController.text = totalAmountEdit;
-  //
-  //         if (getTransMode.contains(paymentModeEdit)) {
-  //           selectedTransMode = paymentModeEdit;
-  //         } else if(paymentModeEdit == "Bank") {
-  //           selectedTransMode = 'Online';// fallback or handle invalid values
-  //         }else{
-  //           selectedTransMode = null;
-  //         }
-  //         await getStaffDetailsList();
-  //         getStaffDetailsList().whenComplete((){
-  //           debugPrint("referredByNameEdit:$referredByNameEdit");
-  //           if(referredByNameEdit != "null" && referredByNameEdit.isNotEmpty && referredByNameEdit != null){
-  //             setState(() {
-  //               selectedStaff = staffdetailsmodel.firstWhere(
-  //                     (item) => item.staffName == referredByNameEdit,
-  //                 orElse: () => GetStaffDetailsListModel(staffName: ''),
-  //               );
-  //               selectedReferredID = int.parse(referredByIdEdit);
-  //               selectedReferredName = referredByNameEdit;
-  //             }
-  //             );
-  //           }
-  //         });
-  //
-  //         // fetchBank().whenComplete((){
-  //         //   debugPrint("empty:$accountNoEdit");
-  //         //   if(accountNoEdit != "null" && accountNoEdit.isNotEmpty && accountNoEdit != null){
-  //         //     setState(() {
-  //         //       _selectBankModel = bankModel.firstWhere(
-  //         //             (item) => item.accountNo == accountNoEdit,
-  //         //         orElse: () => GetBankMappingDetailsListModel(accountNo:'', ),
-  //         //       );
-  //         //     });
-  //         //   }
-  //         // });
-  //         await fetchBank(); // wait for data first
-  //         if (accountNoEdit.isNotEmpty && accountNoEdit != "null") {
-  //           final match = bankModel.firstWhere(
-  //                 (item) => item.accountNo?.trim() == accountNoEdit.trim(),
-  //             orElse: () => GetBankMappingDetailsListModel(), // fallback empty object
-  //           );
-  //
-  //           // Only set if a valid match found
-  //           if ((match.accountNo ?? '').isNotEmpty) {
-  //             setState(() {
-  //               _selectBankModel = match;
-  //               selectedBankName = match.bankName;
-  //               selectedBankId = match.accountNo;
-  //               selecteBankIDApi = match.bankId?.toInt();
-  //               accMappingId = match.mappingId?.toInt();
-  //             });
-  //           }
-  //         }
-  //         // await getItemMasterList();
-  //         getItemMasterList().whenComplete((){
-  //           debugPrint("productNameEdit:$productNameEdit");
-  //           if(productNameEdit != "null" && productNameEdit.isNotEmpty && productNameEdit != null){
-  //             setState(() {
-  //               selectedMaster = masterListModel.firstWhere(
-  //                     (item) => item.itemName == productNameEdit,
-  //                 orElse: () => GetItemMasterListModel(itemId: 0, itemName: ''),
-  //               );
-  //               selectedTranssvItemName = productNameEdit;
-  //             });
-  //           }
-  //         });
-  //         if(isUndocumentEdit == "true"){
-  //           isSVPending = true;
-  //         }else{
-  //           isSVPending =  false;
-  //         }
-  //         debugPrint("isExemptRetiEdit$isExemptRetiEdit");
-  //         if(isExemptRetiEdit == "1"){
-  //           isExemptedReticulated = true;
-  //           debugPrint("isExemptRetiEdittrue");
-  //         }else{
-  //           isExemptedReticulated =  false;
-  //           debugPrint("isExemptRetiEditfalse");
-  //         }
-  //
-  //         if (getTransacc.contains(sVTypeEdit)) {
-  //           selectedTransacc = sVTypeEdit;
-  //         } else {
-  //           selectedTransacc = null; // fallback or handle invalid values
-  //         }
-  //         if(productNameEdit != "14.2 KG" || isExemptRetiEdit == "1"){
-  //           cylinderQtyAddController.text = cylQtyEdit;
-  //         }else{
-  //           if (getTransqty.contains(cylQtyEdit)) {
-  //             selectedTranqty = cylQtyEdit;
-  //           } else {
-  //             selectedTranqty = null; // fallback or handle invalid values
-  //           }
-  //         }
-  //
-  //         if (getSelectedFTLRegulatorQty.contains(fTLRegulatorEdit)) {
-  //           getSelectedFTLRegulatorQtyString = fTLRegulatorEdit;
-  //         } else {
-  //           getSelectedFTLRegulatorQtyString = null; // fallback or handle invalid values
-  //         }
-  //
-  //         loadDenominationData(psvIdEdit!);
-  //         // _initializeItems(itemsToShow);
-  //         if (itemsToShow.isNotEmpty) {
-  //           _initializeItems(itemsToShow);
-  //         } else {
-  //           // If no initial data, start with an empty list or default values
-  //           _initializeItems([]);
-  //         }
-  //         if(getDenominationLis.isNotEmpty){
-  //           initializeControllers();
-  //         }else{
-  //           debugPrint("empty");
-  //         }
-  //       }
-  //     });
-  //   });
-  // }
+  bool saveFlag = false;
+  List<CahsDenominationMandatoryFlagModel> cashDenoMandatoryList = [];
+  bool cashDenominationMandatory = false;
+  List<FocusNode> _discountFocusNodes = [];
+  List<FocusNode> _dropdownFocusNodes = [];
   @override
   void initState() {
     super.initState();
+    checkAndSaveDayEndData();
+    checkCashDenominationFlagMandatory();
     _addNewItem();
     getNoteTypeAndIDList();
     getStaffDetailsList();
@@ -402,6 +213,8 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
 
         depositCylinderAmountController.text = depositCylEdit;
         refillCylinderAmountController.text = cylRefillRSPEdit;
+        depositAmount = double.tryParse(depositCylEdit);
+        refillAmountCyl = double.tryParse(cylRefillRSPEdit);
         debugPrint("regulatorDepositEdit $regulatorDepositEdit");
         if(regulatorDepositEdit.isEmpty || regulatorDepositEdit == null || regulatorDepositEdit == "null"){
           regulatorDepositAmountController.text = "0";
@@ -424,7 +237,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
         if (getTransMode.contains(paymentModeEdit)) {
           selectedTransMode = paymentModeEdit;
         } else if(paymentModeEdit == "Bank") {
-          selectedTransMode = 'Online';// fallback or handle invalid values
+          selectedTransMode = 'Merchant QR';// fallback or handle invalid values
         }else{
           selectedTransMode = null;
         }
@@ -502,16 +315,23 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
 
         if (getTransacc.contains(sVTypeEdit)) {
           selectedTransacc = sVTypeEdit;
+        } else if(sVTypeEdit == "NameChange"){
+          selectedTransacc = "Name Change";
+          nameChangeAmtChargesController.text = amtChargesEdit;
         } else {
           selectedTransacc = null; // fallback or handle invalid values
         }
+        debugPrint("selectedTranqty $cylQtyEdit");
         if(productNameEdit != "14.2 KG" || isExemptRetiEdit == "1"){
           cylinderQtyAddController.text = cylQtyEdit;
+          debugPrint("cylinderQtyAddController.text $cylQtyEdit");
         }else{
           if (getTransqty.contains(cylQtyEdit)) {
             selectedTranqty = cylQtyEdit;
+            debugPrint("selectedTranqty $cylQtyEdit");
           } else {
-            selectedTranqty = null; // fallback or handle invalid values
+            selectedTranqty = null;
+            debugPrint("selectedTranqty1 $cylQtyEdit");// fallback or handle invalid values
           }
         }
           debugPrint("fTLRegulatorEdit $fTLRegulatorEdit");
@@ -539,6 +359,16 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
   }
 
   final String formattedDate = DateFormat('dd-MM-yyyy').format(DateTime.now());
+  @override
+  void dispose() {
+    for (var node in _discountFocusNodes) {
+      node.dispose();
+    }
+    for (var node in _dropdownFocusNodes) {
+      node.dispose();
+    }
+    super.dispose();
+  }
 
   // void _addNewItem() {
   //   setState(() {
@@ -553,9 +383,12 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
   //   });
   // }
   void _addNewItem() {
+    _discountFocusNodes.add(FocusNode());
+    _dropdownFocusNodes.add(FocusNode());
     // Check if there are existing items
     if (items.isNotEmpty) {
       // Get the last added item
+
       var lastItem = items.last;
 
       // Extract and validate each controller's value
@@ -625,7 +458,8 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     setState(() {
       items.clear(); // Clear any existing data
       _selectedItems.clear(); // Clear previous selections if any
-
+      _discountFocusNodes.add(FocusNode());
+      _dropdownFocusNodes.add(FocusNode());
       for (var i = 0; i < itemsToShow.length; i++) {
         var item = itemsToShow[i];
 
@@ -642,7 +476,8 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
         // Directly assign the selected item name for this index in _selectedItems map
         _selectedItems[items.length - 1] = item.itemName ??
             ''; // Ensure this is added correctly for each index
-
+        _discountFocusNodes.add(FocusNode());
+        _dropdownFocusNodes.add(FocusNode());
       }
 
       // Debugging step to check the number of items
@@ -878,12 +713,19 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                     refillCylinderAmountController.text = refillamount.toString();
                                     calculateBasicAmountSum();
                                     calculateGrandTotalAmount();
-
-                                  }else{
+                                  }else if(selectedTransacc == "Name Change"){
+                                    regulatorDepositAmountController.text = '';
+                                    depositCylinderAmountController.text = '';
+                                    double refillamount = 0;
+                                    refillCylinderAmountController.text = refillamount.toString();
+                                    calculateBasicAmountSum();
+                                    calculateGrandTotalAmount();
+                                  } else{
                                     if(selectedTransacc == "DBC"){
                                       depositCylinderAmountController.text = depositAmount.toString();
                                       regulatorDepositAmountController.text = '';
                                       selectedTranqty = "1";
+                                      cylinderQty = 1;
                                       double refillamount = refillAmountCyl! * 1;
                                       refillCylinderAmountController.text = refillamount.toString();
                                       calculateBasicAmountSum();
@@ -940,7 +782,15 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                     onChanged: (bool? value) {
                                       setState(() {
                                         isExemptedReticulated = value!;
-                                        regulatorDepositAmountController.text = "0";
+                                        // regulatorDepositAmountController.text = "0";
+                                        if (isExemptedReticulated) {
+                                          // Save the current value before overwriting
+                                          previousRegulatorDepositAmount = regulatorDepositAmountController.text;
+                                          regulatorDepositAmountController.text = "0";
+                                        } else {
+                                          // Restore the saved value if available
+                                          regulatorDepositAmountController.text = previousRegulatorDepositAmount ?? "0";
+                                        }
                                       });
                                     },
                                   ),
@@ -1295,7 +1145,25 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                             RegExp(r'^\d*\.?\d*$')),
                         LengthLimitingTextInputFormatter(7),
                       ],
-                      onChanged: (value) {},
+                      onChanged: (value) {
+                        // Trim any leading/trailing spaces and check if the value is not empty
+                        value = value.trim();
+
+                        // Check if the value is not empty and is a valid number
+                        if (value.isNotEmpty) {
+                          try {
+                            // Try parsing the value into a double
+                            calculateBasicAmountSum();
+                            calculateGrandTotalAmount();
+                          } catch (e) {
+                            // Handle the error gracefully if the value is not a valid number
+                            showFlushBar(context, "Invalid amount format. Please enter a valid number.");
+                          }
+                        } else {
+                          // If the value is empty, set it to 0.00 or handle as needed
+                        }
+                      },
+
                     ),
                   ),
                 ],
@@ -1318,7 +1186,14 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                         inputFormatters: <TextInputFormatter>[
                           LengthLimitingTextInputFormatter(6),
                           // Allow only digits
+                          FilteringTextInputFormatter.deny(
+                            RegExp(r'[^\u0000-\u007F]'), // Block emojis and non-ASCII characters
+                          ),
+                          FilteringTextInputFormatter.deny(
+                            RegExp(r'\s'), // Block all whitespace including space, tab, etc.
+                          ),
                         ],
+
                         decoration: InputDecoration(
                           labelText: 'Enter Consumer No./DC No.',
                           errorText: _isConsumerEmpty
@@ -1424,246 +1299,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                     SizedBox(width: 8),
                   ],
                 ),
-                // ListView.builder(
-                //   // ListView.builder(
-                //   shrinkWrap: true,
-                //   physics: NeverScrollableScrollPhysics(),
-                //   itemCount: items.length,
-                //   itemBuilder: (context, index) {
-                //     return Padding(
-                //       padding: const EdgeInsets.only(bottom: 16.0),
-                //       child: Column(
-                //         children: [
-                //           Row(
-                //             children: [
-                //               // Expanded(
-                //               //   child:
-                //               //
-                //               //       ///working
-                //               //       DropdownButtonFormField<String>(
-                //               //     decoration: InputDecoration(
-                //               //       label: Row(
-                //               //         mainAxisSize: MainAxisSize.min,
-                //               //         children: const [
-                //               //           Text('Select Item',
-                //               //               style: TextStyle(fontSize: 12)),
-                //               //           SizedBox(width: 4),
-                //               //           Icon(Icons.star,
-                //               //               color: Colors.red, size: 10),
-                //               //         ],
-                //               //       ),
-                //               //       // border: const OutlineInputBorder(),
-                //               //       // contentPadding: const EdgeInsets.symmetric(
-                //               //       //     vertical: 8.0, horizontal: 12.0),
-                //               //     ),
-                //               //     items: _items
-                //               //         .where((item) =>
-                //               //             !_selectedItems.values
-                //               //                 .contains(item.itemName) ||
-                //               //             _selectedItems[index] == item.itemName)
-                //               //         .toSet() // Removing duplicates if any
-                //               //         .map((GetArbItemMasterListModel item) {
-                //               //       return DropdownMenuItem<String>(
-                //               //         value: item.itemName,
-                //               //         child: Text(item.itemName ?? 'Unknown'),
-                //               //       );
-                //               //     }).toList(),
-                //               //     onChanged: (selectedItem) {
-                //               //       setState(() {
-                //               //         _selectedItems[index] = selectedItem ?? '';
-                //               //       });
-                //               //
-                //               //     },
-                //               //     value: _selectedItems[index]?.isEmpty ?? true
-                //               //         ? null // If the value is null or empty, set to null
-                //               //         : _selectedItems[index],
-                //               //
-                //               //   ),
-                //               //
-                //               // ),
-                //               Expanded(
-                //                 child: DropdownButtonFormField<GetArbItemMasterListModel>(
-                //                   decoration: InputDecoration(
-                //                     label: Row(
-                //                       mainAxisSize: MainAxisSize.min,
-                //                       children: const [
-                //                         Text('Select Item', style: TextStyle(fontSize: 12)),
-                //                         SizedBox(width: 4),
-                //                         Icon(Icons.star, color: Colors.red, size: 10),
-                //                       ],
-                //                     ),
-                //                     // border: const OutlineInputBorder(),
-                //                     // contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                //                   ),
-                //                   items: _items
-                //                       .where((item) =>
-                //                   !_selectedItems.values.contains(item.itemName) ||
-                //                       _selectedItems[index] == item.itemName)
-                //                       .toSet() // Removing duplicates if any
-                //                       .map((GetArbItemMasterListModel item) {
-                //                     return DropdownMenuItem<GetArbItemMasterListModel>(
-                //                       value: item, // Entire GetArbItemMasterListModel object
-                //                       child: Text(item.itemName ?? 'Unknown'),
-                //                     );
-                //                   }).toList(),
-                //                   onChanged: (selectedItem) {
-                //                     if (selectedItem != null) {
-                //                       setState(() {
-                //                         _selectedItems[index] = selectedItem.itemName; // Store the selected item's name
-                //                         // You can also store the full model if needed:
-                //                         // _selectedItems[index] = selectedItem;
-                //
-                //                         // Retrieve rate and calculate amount
-                //                         double rate = selectedItem.rate?.toDouble() ?? 0.0;
-                //                         double amount = rate * 0; // Assuming quantity is available (replace `quantity` with your actual quantity value)
-                //
-                //                         // You can use the rate and amount in your UI or other logic
-                //                         print("Selected item: ${selectedItem.itemName}");
-                //                         print("Rate: $rate");
-                //                         print("Amount: $amount");
-                //                       });
-                //                     }
-                //                   },
-                //                   // value: _selectedItems[index]?.isEmpty ?? true
-                //                   //     ? null // If the value is null or empty, set to null
-                //                   //     : _selectedItems[index],
-                //                 ),
-                //               ),
-                //
-                //               ElevatedButton(
-                //                 onPressed: () {
-                //                   _removeItem(index);
-                //                 },
-                //                 child: Icon(Icons.delete, color: Colors.red),
-                //                 style: ElevatedButton.styleFrom(
-                //                   shape: CircleBorder(),
-                //                   padding: EdgeInsets.all(12),
-                //                 ),
-                //               ),
-                //             ],
-                //           ),
-                //           SizedBox(height: 16),
-                //           // Received Qty, EMR, Invoice Fields
-                //           Row(
-                //             children: [
-                //               Expanded(
-                //                 child: TextField(
-                //                   controller: items[index]['rate'],
-                //                   decoration: InputDecoration(
-                //                     label: Row(
-                //                       mainAxisSize: MainAxisSize.min,
-                //                       children: [
-                //                         Text(
-                //                           'Rate',
-                //                         ),
-                //                       ],
-                //                     ),
-                //                     // border: const OutlineInputBorder(),
-                //                     // contentPadding: const EdgeInsets.symmetric(
-                //                     //     vertical: 8.0, horizontal: 12.0),
-                //                   ),
-                //                   onChanged: (value) {
-                //                     // Update the sum when the value changes
-                //                     //_updateSum(index);
-                //                   },
-                //                 ),
-                //               ),
-                //               SizedBox(width: 16),
-                //               Expanded(
-                //                 child: TextField(
-                //                   controller: items[index]['qty'],
-                //                   keyboardType: TextInputType.number,
-                //                   inputFormatters: <TextInputFormatter>[
-                //                     FilteringTextInputFormatter.digitsOnly,
-                //                     LengthLimitingTextInputFormatter(3),
-                //                     // Allow only digits
-                //                   ],
-                //                   decoration: InputDecoration(
-                //                     label: Row(
-                //                       mainAxisSize: MainAxisSize.min,
-                //                       children: [
-                //                         countTextWidgetTextStar(
-                //                           context,
-                //                           'Qty',
-                //                           showAsterisk:
-                //                               true, // Add a parameter to conditionally show the asterisk
-                //                         ),
-                //                       ],
-                //                     ),
-                //                     // border: const OutlineInputBorder(),
-                //                     // contentPadding: const EdgeInsets.symmetric(
-                //                     //     vertical: 8.0, horizontal: 12.0),
-                //                   ),
-                //                   onChanged: (value) {
-                //                     setState(() {
-                //                       _calculateAmount(index);
-                //                     });
-                //                   },
-                //                 ),
-                //               ),
-                //               SizedBox(width: 16),
-                //               Expanded(
-                //                 child: TextField(
-                //                   controller: items[index]['discount'],
-                //                   keyboardType: TextInputType.number,
-                //                   inputFormatters: <TextInputFormatter>[
-                //                     FilteringTextInputFormatter.digitsOnly,
-                //                     LengthLimitingTextInputFormatter(7),
-                //                     // Allow only digits
-                //                   ],
-                //                   decoration: InputDecoration(
-                //                     label: Row(
-                //                       mainAxisSize: MainAxisSize.min,
-                //                       children: const [
-                //                         Text(
-                //                           'Discount',
-                //                           style: TextStyle(fontSize: 12),
-                //                         ),
-                //                       ],
-                //                     ),
-                //                     // border: const OutlineInputBorder(),
-                //                     // contentPadding: const EdgeInsets.symmetric(
-                //                     //     vertical: 8.0, horizontal: 12.0),
-                //                   ),
-                //                   onChanged: (value) {
-                //                     setState(() {
-                //                       _calculateAmount(index);
-                //                     });
-                //                   },
-                //                 ),
-                //               ),
-                //               SizedBox(width: 16),
-                //               Expanded(
-                //                 child: TextField(
-                //                   controller: items[index]['amt'],
-                //                   decoration: InputDecoration(
-                //                     label: Row(
-                //                       mainAxisSize: MainAxisSize.min,
-                //                       children: const [
-                //                         Text(
-                //                           'Amt.',
-                //                           style: TextStyle(fontSize: 12),
-                //                         ),
-                //                       ],
-                //                     ),
-                //                     // border: const OutlineInputBorder(),
-                //                     // contentPadding: const EdgeInsets.symmetric(
-                //                     //     vertical: 8.0, horizontal: 12.0),
-                //                   ),
-                //                   onChanged: (value) {
-                //                     setState(() {
-                //                       _calculateAmount(index);
-                //                     });
-                //                   },
-                //                 ),
-                //               ),
-                //             ],
-                //           ),
-                //         ],
-                //       ),
-                //     );
-                //   },
-                // ),
                 ListView.builder(
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
@@ -1675,108 +1310,9 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                         children: [
                           Row(
                             children: [
-                              // Instead of using Flexible, use Expanded for better layout control
-                              // Expanded(
-                              //                 child:
-                              //
-                              //                     ///working
-                              //                     DropdownButtonFormField<String>(
-                              //                   decoration: InputDecoration(
-                              //                     label: Row(
-                              //                       mainAxisSize: MainAxisSize.min,
-                              //                       children: const [
-                              //                         Text('Select Item',
-                              //                             style: TextStyle(fontSize: 12)),
-                              //                         SizedBox(width: 4),
-                              //                         Icon(Icons.star,
-                              //                             color: Colors.red, size: 10),
-                              //                       ],
-                              //                     ),
-                              //                   ),
-                              //                   items: _items
-                              //                       .where((item) =>
-                              //                           !_selectedItems.values
-                              //                               .contains(item.itemName) ||
-                              //                           _selectedItems[index] == item.itemName)
-                              //                       .toSet() // Removing duplicates if any
-                              //                       .map((GetArbItemMasterListModel item) {
-                              //                     return DropdownMenuItem<String>(
-                              //                       value: item.itemName,
-                              //                       child: Text(item.itemName ?? 'Unknown'),
-                              //                     );
-                              //                   }).toList(),
-                              //                   onChanged: (selectedItem) {
-                              //                     setState(() {
-                              //                       _selectedItems[index] = selectedItem ?? '';
-                              //
-                              //                     });
-                              //
-                              //                   },
-                              //                   value: _selectedItems[index]?.isEmpty ?? true
-                              //                       ? null // If the value is null or empty, set to null
-                              //                       : _selectedItems[index],
-                              //
-                              //                 ),
-                              //
-                              //               ),
-                              //   Expanded(
-                              //     child: DropdownButtonFormField<
-                              //         GetArbItemMasterListModel>(
-                              //       decoration: InputDecoration(
-                              //         label: Row(
-                              //           mainAxisSize: MainAxisSize.min,
-                              //           children: const [
-                              //             Text('Select Item',
-                              //                 style: TextStyle(fontSize: 12)),
-                              //             SizedBox(width: 4),
-                              //             Icon(Icons.star,
-                              //                 color: Colors.red, size: 10),
-                              //           ],
-                              //         ),
-                              //       ),
-                              //       items: _items
-                              //           .where((item) =>
-                              //               !_selectedItems.values
-                              //                   .contains(item.itemName) ||
-                              //               _selectedItems[index] == item.itemName)
-                              //           .toSet() // Removing duplicates if any
-                              //           .map((GetArbItemMasterListModel item) {
-                              //         return DropdownMenuItem<
-                              //             GetArbItemMasterListModel>(
-                              //           value: item,
-                              //           // Entire GetArbItemMasterListModel object
-                              //           child: Text(item.itemName ?? 'Unknown'),
-                              //         );
-                              //       }).toList(),
-                              //       onChanged: (selectedItem) {
-                              //         if (selectedItem != null) {
-                              //           setState(() {
-                              //             _selectedItems[index] = selectedItem.itemName; // Store item name or full model
-                              //             // Retrieve rate and calculate amount
-                              //             double rate =
-                              //                 selectedItem.rate?.toDouble() ?? 0.0;
-                              //             double amount = rate *
-                              //                 0; // Replace with actual quantity
-                              //             items[index]['rate']?.text =
-                              //                 rate.toString();
-                              //             items[index]['amt']?.text =
-                              //                 rate.toString();
-                              //             print(
-                              //                 "Selected item: ${selectedItem.itemName}");
-                              //             print("Rate: $rate");
-                              //             print("Amount: $amount");
-                              //             items[index]['qty']?.clear();
-                              //             items[index]['discount']?.clear();
-                              //           });
-                              //         }
-                              //       },
-                              //       // value: _selectedItems[index]?.isEmpty ?? true
-                              //       //     ? null // If the value is null or empty, set to null
-                              //       //     : _selectedItems[index],
-                              //     ),
-                              //   ),
                               Expanded(
-                                child: DropdownButtonFormField<String>(
+                                child:
+                                DropdownButtonFormField<String>(
                                   decoration: InputDecoration(
                                     label: Row(
                                       mainAxisSize: MainAxisSize.min,
@@ -1809,18 +1345,65 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                             orElse: () => GetArbItemMasterListModel());
                                         int? currentStock = getArbItemCurrentStock(selectedItem.itemId?.toInt())?.toInt();
                                         _itemStockByIndex[index] = currentStock; // Store current stock per index
-                                        _selectedItemIds[index] = selectedItem.itemId?.toInt(); // Optional if needed
+                                        _selectedItemIds[index] = selectedItem.itemId?.toInt();
+                                        _selectedCategoryName[index] = selectedItem.categoryName;// Optional if needed
                                         debugPrint("usfds ${_itemStockByIndex[index]}");
+                                        debugPrint(" _selectedCategoryName[index] ${_selectedCategoryName[index]}");
                                         double rate = selectedItem.rate?.toDouble() ?? 0.0;
                                         double amount = rate * 0; // Replace 0 with actual quantity if available
                                         items[index]['rate']?.text = rate.toString();
                                         items[index]['amt']?.text = rate.toString();
-                                        items[index]['qty']?.clear();
-                                        items[index]['discount']?.clear();
+
+                                        if(selectedItem.categoryName == "Non ARB Item"){
+                                          items[index]['qty']?.text = "1";
+                                          items[index]['discount']?.clear();
+                                          print("Rate3:");
+                                          _updateSum(index);
+                                          calculateGrandTotalAmount();
+                                          if (index == items.length - 1) {
+                                            Future.delayed(Duration(milliseconds: 200), () {
+                                              _addNewItem();
+                                            });
+                                          }
+                                        }else{
+                                          int? stockLimit = _itemStockByIndex[index];
+                                          if (stockLimit != null && 1 > stockLimit) {
+                                            items[index]['qty']?.clear();
+                                            items[index]['discount']?.clear();// Or retain but show error
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                content: Text('Entered quantity exceeds current stock: $stockLimit'),
+                                                backgroundColor: Colors.red,
+                                              ),
+                                            );
+                                            print("Rate2:");
+                                            _updateSum(index);
+                                            calculateGrandTotalAmount();
+                                            return;
+                                          }else{
+                                            print("Rate1:");
+                                            items[index]['qty']?.text = "1";
+                                            items[index]['discount']?.clear();
+                                            // _addNewItem();
+                                            _updateSum(index);
+                                            calculateGrandTotalAmount();
+                                            if (index == items.length - 1) {
+                                              Future.delayed(Duration(milliseconds: 200), () {
+                                                _addNewItem();
+                                              });
+                                            }
+                                          }
+                                        }
                                         print("Selected item: ${selectedItem.itemName}");
                                         print("Rate: $rate");
                                         print("Amount: $amount");
                                         calculateGrandTotalAmount();
+                                        // Move focus to Discount field after short delay
+                                        Future.delayed(Duration(milliseconds: 100), () {
+                                          if (_discountFocusNodes.length > index) {
+                                            FocusScope.of(context).requestFocus(_discountFocusNodes[index]);
+                                          }
+                                        });
                                       });
                                     }
                                   },
@@ -1879,26 +1462,34 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                       bool isNotNull = value.isNotEmpty;
                                       int enteredQty = int.tryParse(value) ?? 0;
                                       int? stockLimit = _itemStockByIndex[index];
+                                      String? categoryCheck = _selectedCategoryName[index];
                                       debugPrint("stockLimit $stockLimit");
-                                      if (isNotNull) {
-                                        if (stockLimit != null && enteredQty > stockLimit) {
-                                          items[index]['qty']?.clear(); // Or retain but show error
-                                          ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(
-                                              content: Text('Entered quantity exceeds current stock: $stockLimit'),
-                                              backgroundColor: Colors.red,
-                                            ),
-                                          );
+                                      if(categoryCheck != "Non ARB Item"){
+                                        if (isNotNull) {
+                                          if (stockLimit != null && enteredQty > stockLimit) {
+                                            items[index]['qty']?.clear(); // Or retain but show error
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                content: Text('Entered quantity exceeds current stock: $stockLimit'),
+                                                backgroundColor: Colors.red,
+                                              ),
+                                            );
+                                            _updateSum(index);
+                                            calculateGrandTotalAmount();
+                                            return;
+                                          }else{
+                                            _updateSum(index);
+                                            calculateGrandTotalAmount();
+                                          }
+                                        } else {
                                           _updateSum(index);
                                           calculateGrandTotalAmount();
-                                          return;
                                         }
-                                        _updateSum(index);
-                                        calculateGrandTotalAmount();
-                                      } else {
+                                      }else{
                                         _updateSum(index);
                                         calculateGrandTotalAmount();
                                       }
+
                                     });
                                   },
                                 ),
@@ -1907,6 +1498,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                               Expanded(
                                 child: TextField(
                                   controller: items[index]['discount'],
+                                  focusNode: _discountFocusNodes[index],
                                   keyboardType: TextInputType.number,
                                   inputFormatters: <TextInputFormatter>[
                                     FilteringTextInputFormatter.digitsOnly,
@@ -2043,7 +1635,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                   padding: const EdgeInsets.all(0.0),
                   child: Column(
                     children: [
-                      if (selectedTransMode == 'Online')
+                      if (selectedTransMode == 'Merchant QR')
                         Column(
                           children: [
                             Row(
@@ -2136,8 +1728,11 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                     ),
                                     inputFormatters: [
                                       FilteringTextInputFormatter.allow(
-                                        RegExp(r'^\d{0,5}:?$'), // up to 5 digits, optional 1 colon at end
+                                        RegExp(r'^[\d.:]{0,5}$'),
                                       ),
+                                      // FilteringTextInputFormatter.allow(
+                                      //   RegExp(r'^\d{0,5}:?$'), // up to 5 digits, optional 1 colon at end
+                                      // ),
                                     ],
 
                                     onChanged: (value) {
@@ -2169,6 +1764,24 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                           ],
                         ),
                       SizedBox(height: 10,),
+                      if (selectedTransMode == 'Cash')
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Row(
+                          mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              cashDenominationMandatory?"Cash Denomination Is Mandatory":
+                              "Cash denomination",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold,),
+                            ),
+                          ],
+                        ),
+                      ),
                       if (selectedTransMode == 'Cash')
                         Container(
                           height: 30,
@@ -2753,14 +2366,19 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                     ElevatedButton(
                       onPressed: () {
                         // cancelAction();
-                        if(modes == "Edit"){
-                          updateSVAddEditForMob(psvIdEdit!,"EDIT");
-                        }else{
-                          updateSVAddEditForMob(0,"ADD");
+                        if (saveFlag) {
+                        print('saveFlag $saveFlag');
+                        showFlushBar(context, Constants.dayEndCompleted);
+                        } else {
+                          if(modes == "Edit"){
+                            updateSVAddEditForMob(context,psvIdEdit!,"EDIT");
+                          }else{
+                            updateSVAddEditForMob(context,0,"ADD");
+                          }
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
+                        backgroundColor:saveFlag?Colors.grey:Colors.blue,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50),
                         ),
@@ -2772,7 +2390,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                       child: Text(
                         modes == "Edit"?'Update':'Save',
                         style: TextStyle(
-                          color: Colors.black,
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
@@ -2805,7 +2423,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                           children: [
                                             // Edit Icon
                                             IconButton(
-                                              icon: Icon(Icons.edit, color: Colors.blue),  // Icon for edit
+                                              icon: Icon(Icons.edit, color:saveFlag?Colors.blueGrey:Colors.blue),  // Icon for edit
                                               onPressed: () {
                                                 loadDenominationData(svSale.pSVId!.toInt());
                                                 var itemsToShow = svSale.itemDetails?.toList();
@@ -2851,8 +2469,13 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                                 var bankName = svSale.bankName.toString();
                                                 var isExemptReti = svSale.isExemptReti.toString();
                                                 var sVDiscountAmt = svSale.sVDiscountAmt.toString();
+                                                debugPrint("cylQty $cylQty");
                                                   // Navigate to the target screen and pass the data
-                                                debugPrint("sCRegulator $sCRegulator");
+                                                if (saveFlag) {
+                                                  print('saveFlag $saveFlag');
+                                                  showFlushBar(context, Constants.dayEndCompleted);
+                                                } else {
+                                                  debugPrint("sCRegulator $sCRegulator");
                                                   Navigator.pushNamed(
                                                     context,
                                                     SVSaleReportScreen.screenName,
@@ -2903,50 +2526,55 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                                       'modeChange': "Edit"
                                                     },
                                                   );
+                                                }
+
                                               },
                                             ),
                                             // Delete Icon
                                             IconButton(
-                                              icon: Icon(Icons.delete, color: Colors.red),  // Icon for delete
+                                              icon: Icon(Icons.delete, color:saveFlag?Colors.redAccent: Colors.red),  // Icon for delete
                                               onPressed: () async {
-                                                int? psv = svSale.pSVId?.toInt();
-
-                                                bool? confirmDelete = await showDialog<bool>(
-                                                  context: context,
-                                                  builder: (BuildContext context) {
-                                                    return AlertDialog(
-                                                      title: const Text('Are you sure?'),
-                                                      content: const Text('You want to delete?'),
-                                                      actions: <Widget>[
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            Navigator.of(context).pop(false); // User pressed Cancel
-                                                          },
-                                                          child: const Text('Cancel'),
-                                                        ),
-                                                        TextButton(
-                                                          onPressed: () {
-                                                            Navigator.of(context).pop(true); // User pressed Delete
-                                                          },
-                                                          child: const Text('Delete'),
-                                                        ),
-                                                      ],
-                                                    );
-                                                  },
-                                                );
-
-                                                // If user confirmed deletion
-                                                if (confirmDelete == true) {
-                                                  // Check if receiptId is not null
-                                                  // int? pId = payList.receiptId;
-                                                  if (psv != null) {
-                                                    updateSVAddEditForMob(psv!,"DELETE");
-                                                    print('Delete button pressed$psv');
-                                                  } else {
-                                                    print("Receipt ID is null.");
-                                                  }
+                                                if (saveFlag) {
+                                                  print('saveFlag $saveFlag');
+                                                  showFlushBar(context, Constants.dayEndCompleted);
                                                 } else {
-                                                  print('Delete action was canceled');
+                                                  int? psv = svSale.pSVId?.toInt();
+                                                  bool? confirmDelete = await showDialog<bool>(
+                                                    context: context,
+                                                    builder: (BuildContext context) {
+                                                      return AlertDialog(
+                                                        title: const Text('Are you sure?'),
+                                                        content: const Text('You want to delete?'),
+                                                        actions: <Widget>[
+                                                          TextButton(
+                                                            onPressed: () {
+                                                              Navigator.of(context).pop(false); // User pressed Cancel
+                                                            },
+                                                            child: const Text('Cancel'),
+                                                          ),
+                                                          TextButton(
+                                                            onPressed: () {
+                                                              Navigator.of(context).pop(true); // User pressed Delete
+                                                            },
+                                                            child: const Text('Delete'),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                  // If user confirmed deletion
+                                                  if (confirmDelete == true) {
+                                                    // Check if receiptId is not null
+                                                    // int? pId = payList.receiptId;
+                                                    if (psv != null) {
+                                                      updateSVAddEditForMob(context,psv!,"DELETE");
+                                                      print('Delete button pressed$psv');
+                                                    } else {
+                                                      print("Receipt ID is null.");
+                                                    }
+                                                  } else {
+                                                    print('Delete action was canceled');
+                                                  }
                                                 }
                                               },
                                             ),
@@ -2969,7 +2597,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                         child: Row(
                                           children: [
                                             Text("SV Pending : ",style: Styling.itemGreyTextSmall,),
-                                            Text(svSale.sVType.toString(),style: Styling.itemBlackTestSmall,),
+                                            Text(svSale.isUndocument == true ?"Yes":"No",style: Styling.itemBlackTestSmall,),
                                           ],
                                         ),
                                       )
@@ -3025,7 +2653,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                         child: Row(
                                           children: [
                                             Text("Mode : ",style: Styling.itemGreyTextSmall,),
-                                            Text(svSale.paymentMode.toString(),style: Styling.itemBlackTestSmall,),
+                                            Text(svSale.paymentMode == "Bank"?"Merchant QR":svSale.paymentMode.toString(),style: Styling.itemBlackTestSmall,),
                                           ],
                                         ),
                                       )
@@ -3590,8 +3218,17 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     double regulator = double.tryParse(regulatorDepositAmountController.text) ?? 0;
     double stampDuty = double.tryParse(stampDutyController.text) ?? 0;
     double discountAmt = double.tryParse(regulatorDiscountAmountController.text) ?? 0;
-    double newAmt = deposit + refill + regulator + stampDuty;
-    double total = deposit + refill + regulator + stampDuty - discountAmt;
+    double nameChangeAmt = double.tryParse(nameChangeAmtChargesController.text) ?? 0;
+    double newAmt=0;
+    double total=0;
+    if(selectedTransacc == "Name Change"){
+      newAmt = nameChangeAmt;
+      total = nameChangeAmt;
+    }else{
+       newAmt = deposit + refill + regulator + stampDuty;
+       total = deposit + refill + regulator + stampDuty - discountAmt;
+    }
+
       debugPrint("total $total");
       debugPrint("newAmt $newAmt");
     regulatorBasicAmountController.text = total.toStringAsFixed(2);
@@ -3788,7 +3425,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     setState(() {});
   }
 
-  Future<void> updateSVAddEditForMob(int psvID, String actionMode) async {
+  Future<void> updateSVAddEditForMob(BuildContext context,int psvID, String actionMode) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? distributorId = prefs.getString('DistributorId');
     String? bearerToken = prefs.getString('token');
@@ -3833,9 +3470,11 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
       if(refillCylinderAmountController.text.isNotEmpty){
         cylRefillRSP = double.parse(refillCylinderAmountController.text);
       }
+      if(regulatorDepositAmountController.text.isNotEmpty){
+        if(regulatorDepositAmountController.text.isNotEmpty || regulatorDepositAmountController.text != null || regulatorDepositAmountController.text != "null"){
+          regDeposit = double.parse(regulatorDepositAmountController.text);
+        }
 
-      if(regulatorDepositAmountController.text.isNotEmpty || regulatorDepositAmountController.text != null || regulatorDepositAmountController.text != "null"){
-        regDeposit = double.parse(regulatorDepositAmountController.text);
       }
 
       if(stampDutyController.text.isNotEmpty){
@@ -3893,7 +3532,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
         showFlushBar(context, "Select SV Type.");
         return;
       }
-      if(selectedTranssvItemName == "14.2 KG" && !isExemptedReticulated){
+      if((selectedTranssvItemName == "14.2 KG" && !isExemptedReticulated) && selectedTransacc != "Name Change"){
         if(selectedTranqty == null){
           showFlushBar(context, "Select Cylinder Quantity.");
           return;
@@ -3911,13 +3550,15 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
           return;
         }
       }
-
-      if(depositCylinderAmountController.text.isEmpty){
-        showFlushBar(context, "Enter Cylinder Deposit Amount.");
-        return;
+      if(selectedTransacc != "Name Change"){
+        if(depositCylinderAmountController.text.isEmpty){
+          showFlushBar(context, "Enter Cylinder Deposit Amount.");
+          return;
+        }
       }
 
-      if(selectedTransacc != "DBC"){
+
+      if(selectedTransacc != "DBC" && selectedTransacc != "Name Change"){
         if(regulatorDepositAmountController.text.isEmpty){
           showFlushBar(context, "Enter Regulator Deposit Amount.");
           return;
@@ -3930,6 +3571,8 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
           return;
         }
       }
+
+
 
       if(conNoController.text.isEmpty){
         showFlushBar(context,"Enter Consumer Number.");
@@ -3947,9 +3590,9 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
       }
 
 
-      if(selectedTransMode == "Online"){
+      if(selectedTransMode == "Merchant QR"){
         if(selectedBankName == null || selectedBankId == null){
-          showFlushBar(context, "Select Bank.");
+          showFlushBar(context, "Select Merchant QR.");
           return;
         }
         if(TranCodeController.text.isEmpty){
@@ -3966,12 +3609,25 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
           }
         }
       }
+      if(selectedTransMode == 'Cash'){
+        if(cashDenominationMandatory){
+          if(finalAmountCashDeno != null || finalAmountCashDeno > 0){
+            if(finalAmountCashDeno != receiveAmt){
+              showFlushBar(context, "The Entered Cash Denomination Total Should Be Equal To Received Cash Amount.");
+              return;
+            }
+          }else{
+            showFlushBar(context, Constants.cashDenominationIsMandatory);
+            return;
+          }
+        }
+      }
 
       if(receiveAmt != totalAmt){
         showFlushBar(context, "The Entered Receipt Payment Amount Should Be Equal To Total Amount.");
         return;
       }
-      if(selectedTransMode == "Online"){
+      if(selectedTransMode == "Merchant QR"){
         payMode = "Bank";
       }else if(selectedTransMode == "Cash"){
         payMode = "Cash";
@@ -3979,12 +3635,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
         payMode = "";
       }
     }
-
-
-
-
-
-
       //   int cylQty;
     // if(selectedTranssvItemName != "14.2 KG" || isExemptedReticulated){
     //   cylQty = int.parse(cylinderQtyAddController.text);
@@ -4004,28 +3654,162 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
       };
     }).toList();
 
-    List<Map<String, dynamic>> itemDetails = items.map((item) {
-      String? selectedItemName = _selectedItems[items.indexOf(item)];
+    // List<Map<String, dynamic>> itemDetails = items.map((item) {
+    //   String? selectedItemName = _selectedItems[items.indexOf(item)];
+    //
+    //   GetArbItemMasterListModel? selectedItem = _items.firstWhere(
+    //         (model) => model.itemName == selectedItemName,
+    //     orElse: () => GetArbItemMasterListModel(itemId: 0, itemName: ''),
+    //   );
+    //   return {
+    //     'ItemId': selectedItem.itemId ?? '',
+    //     'Rate': item['rate']?.text ?? '',
+    //     'ItemQty': item['qty']?.text ?? '',
+    //     'DiscountAmt': item['discount']?.text ?? '',
+    //     'ARBAmount': item['amt']?.text ?? '',
+    //   };
+    // }).toList();
 
-      GetArbItemMasterListModel? selectedItem = _items.firstWhere(
+    // List<Map<String, dynamic>> itemDetails = items.where((item) {
+    //   int index = items.indexOf(item);
+    //   String? selectedItemName = _selectedItems[index];
+    //
+    //   GetArbItemMasterListModel selectedItem = _items.firstWhere(
+    //         (model) => model.itemName == selectedItemName,
+    //     orElse: () => GetArbItemMasterListModel(itemId: 0, itemName: ''),
+    //   );
+    //
+    //   int? currentStock = getArbItemCurrentStock(selectedItem.itemId?.toInt())?.toInt();
+    //   _itemStockByIndex[index] = currentStock;
+    //
+    //   int itemId = selectedItem.itemId?.toInt() ?? 0;
+    //   int qty = int.tryParse(item['qty']?.text ?? '0') ?? 0;
+    //   debugPrint("selectedItem.categoryName ${selectedItem.categoryName}");
+    //   debugPrint("qty ${qty}");
+    //   debugPrint("currentStock ${currentStock}");
+    //
+    //   if (selectedItem.categoryName != "Non ARB Item") {
+    //     if (qty <= 0) {
+    //       // Show a message and stop the process
+    //       showFlushBar(context, "Quantity must be greater than 0 for item ${selectedItem.itemName}");
+    //       throw Exception("Quantity must be greater than 0 for item ${selectedItem.itemName}");
+    //     }
+    //     if (qty > currentStock!) {
+    //       // Show a message and return early to stop further processing
+    //       showFlushBar(context,"Quantity exceeds available stock for item ${selectedItem.itemName}");
+    //       throw Exception("Quantity exceeds available stock for item ${selectedItem.itemName}"); // <-- Stop process here
+    //
+    //     }
+    //   }
+    //   // Filter condition: only include if both > 0
+    //   return itemId > 0;
+    // }).map((item) {
+    //   int index = items.indexOf(item);
+    //   String? selectedItemName = _selectedItems[index];
+    //
+    //   GetArbItemMasterListModel selectedItem = _items.firstWhere(
+    //         (model) => model.itemName == selectedItemName,
+    //     orElse: () => GetArbItemMasterListModel(itemId: 0, itemName: ''),
+    //   );
+    //
+    //   return {
+    //     'ItemId': selectedItem.itemId ?? '',
+    //     'Rate': item['rate']?.text ?? '',
+    //     'ItemQty': item['qty']?.text ?? '',
+    //     'DiscountAmt': item['discount']?.text ?? '',
+    //     'ARBAmount': item['amt']?.text ?? '',
+    //   };
+    // }).toList();
+
+    List<Map<String, dynamic>> itemDetails = [];
+
+    for (var item in items) {
+      int index = items.indexOf(item);
+      String? selectedItemName = _selectedItems[index];
+
+      // Skip empty rows (no item selected or quantity is 0)
+      if (selectedItemName == null || selectedItemName.isEmpty || item['qty']?.text == '0') {
+        continue; // Skip this iteration and go to the next row
+      }
+
+      // Find selected item details from the master list
+      GetArbItemMasterListModel selectedItem = _items.firstWhere(
             (model) => model.itemName == selectedItemName,
         orElse: () => GetArbItemMasterListModel(itemId: 0, itemName: ''),
       );
-      return {
-        'ItemId': selectedItem.itemId ?? '',
-        'Rate': item['rate']?.text ?? '',
-        'ItemQty': item['qty']?.text ?? '',
-        'DiscountAmt': item['discount']?.text ?? '',
-        'ARBAmount': item['amt']?.text ?? '',
-      };
-    }).toList();
 
-    if(selectedTranssvItemName == "14.2 KG"){
-      if(itemDetails.isEmpty){
-        showFlushBar(context, "Add ARB Item.");
-        return;
+      int? currentStock = getArbItemCurrentStock(selectedItem.itemId?.toInt())?.toInt();
+      _itemStockByIndex[index] = currentStock;
+
+      int itemId = selectedItem.itemId?.toInt() ?? 0;
+      int qty = int.tryParse(item['qty']?.text ?? '0') ?? 0;
+
+      // Debugging prints
+      debugPrint("selectedItem.categoryName: ${selectedItem.categoryName}");
+      debugPrint("qty: $qty");
+      debugPrint("currentStock: $currentStock");
+
+      // Check if the selected item is not a "Non ARB Item"
+      if (selectedItem.categoryName != "Non ARB Item") {
+        // Condition 1: Quantity must be greater than 0
+        if (qty <= 0) {
+          showFlushBar(context, "Quantity must be greater than 0 for item ${selectedItem.itemName}");
+          return; // Exit the function immediately if the quantity is invalid
+        }
+
+        // Condition 2: Quantity must not exceed available stock
+        if (qty > currentStock!) {
+          showFlushBar(context, "Quantity exceeds available stock for item ${selectedItem.itemName}");
+          return; // Exit the function immediately if the quantity exceeds stock
+        }
+      }else{
+        if (qty <= 0) {
+          showFlushBar(context, "Quantity must be greater than 0 for item ${selectedItem.itemName}");
+          return; // Exit the function immediately if the quantity is invalid
+        }
+      }
+
+      // Only add valid items to the list
+      if (itemId > 0 && qty > 0) {
+        itemDetails.add({
+          'ItemId': selectedItem.itemId ?? '',
+          'Rate': item['rate']?.text ?? '',
+          'ItemQty': item['qty']?.text ?? '',
+          'DiscountAmt': item['discount']?.text ?? '',
+          'ARBAmount': item['amt']?.text ?? '',
+        });
       }
     }
+
+    if(selectedTranssvItemName == "14.2 KG"){
+      if(selectedTransacc == "RC" || selectedTransacc == "NC"){
+        if(itemDetails.isEmpty){
+          showFlushBar(context, "Add ARB Item.");
+          return;
+        }
+      }else{
+        if(itemDetails.isEmpty){
+          itemDetails.add({
+            'ItemId': 0 ?? '',
+            'Rate': '' ?? '',
+            'ItemQty': '' ?? '',
+            'DiscountAmt': '' ?? '',
+            'ARBAmount': '' ?? '',
+          });
+        }
+      }
+    }else{
+      if(itemDetails.isEmpty){
+        itemDetails.add({
+          'ItemId': 0 ?? '',
+          'Rate': '' ?? '',
+          'ItemQty': '' ?? '',
+          'DiscountAmt': '' ?? '',
+          'ARBAmount': '' ?? '',
+        });
+      }
+    }
+
     int? bankId;
     int? accMappingIds;
     if(selectedBankName != null) {
@@ -4054,7 +3838,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
       "ProductId": selectedProductID ?? '',
       "ProductName":selectedTranssvItemName ?? '' ,
       "IsUndocument":isSVPending,
-      "SvType":selectedTransacc ?? '',
+      "SvType":(selectedTransacc == "Name Change"?"NameChange":selectedTransacc) ?? '',
       "CylQty": cylinderQty ?? '',
       "ScRegulator":scRegulators,
       "DepositCyl": cylDeposit,
@@ -4108,6 +3892,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     requestBody.forEach((key, value) {
       print('$key: $value');
     });
+    print("Response UpdateSaleAddEditForMob: ${response.body}");
     // Handling response
     if (response.statusCode == 200) {
       if(response == -1 || response.body == -1 || response == "-1" || response.body == "-1"){
@@ -4119,18 +3904,29 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
       }else{
         // Successful response
         print("Response UpdateSaleAddEditForMob: ${response.body}");
-          if(actionMode != "DELETE"){
+          if(actionMode == "ADD"){
+            print("save");
             EasyLoading.showToast(Constants.expenseSendMgr,
                 duration: const Duration(milliseconds: 3000));
-          }else{
+          }else if(actionMode == "EDIT"){
+            print("edit");
+            EasyLoading.showToast(Constants.dataUpdated,
+                duration: const Duration(milliseconds: 3000));
+          } else{
+            print("Delete");
             EasyLoading.showToast(Constants.dataDeleted,
                 duration: const Duration(milliseconds: 3000));
           }
         Navigator.pushNamed(
           context,
-          BottomNavBarExample.screenName,
-          arguments: 3, // This opens the third tab
+          SVSaleReportScreen.screenName,
+          //arguments: 3, // This opens the third tab
         );
+        // Navigator.pushNamed(
+        //   context,
+        //   BottomNavBarExample.screenName,
+        //   arguments: 3, // This opens the third tab
+        // );
         setState(() {
           fetchItemSvAddEditList();
         });
@@ -4152,9 +3948,14 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     double regulator = double.tryParse(regulatorDepositAmountController.text) ?? 0;
     double stampDuty = double.tryParse(stampDutyController.text) ?? 0;
     double discountAmt = double.tryParse(regulatorDiscountAmountController.text) ?? 0;
-
-    double fixedTotal = deposit + refill + regulator + stampDuty - discountAmt;
-    print("Grand Total: $deposit $refill $regulator $stampDuty $discountAmt");
+    double nameChangeAmt = double.tryParse(nameChangeAmtChargesController.text) ?? 0;
+    double fixedTotal=0;
+    if(selectedTransacc == "Name Change"){
+       fixedTotal = nameChangeAmt;
+    }else{
+       fixedTotal = deposit + refill + regulator + stampDuty - discountAmt;
+      print("Grand Total: $deposit $refill $regulator $stampDuty $discountAmt");
+    }
     // 2. Sum up item amounts from the ListView
     double dynamicItemTotal = 0.0;
     double dynamicItemTotalD = 0.0;
@@ -4287,5 +4088,110 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     );
   }
 
+  Future<void> checkAndSaveDayEndData() async {
+    EasyLoading.instance
+      ..maskType = EasyLoadingMaskType.black // This creates a modal blocking interaction
+      ..loadingStyle = EasyLoadingStyle.light
+      ..dismissOnTap = false // Disable dismissing the loader by tapping
+      ..userInteractions = false;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? distributorId = prefs.getString('DistributorId');
+    String? bearerToken = prefs.getString('token');
+    int? distributorIds = int.parse(distributorId!);
+    try {
+      final response = await http.get(
+        Uri.parse('${AppUrl.CheckDayEndConfirmation}/$distributorIds'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $bearerToken",
+          // Pass bearer token in headers
+        },
+      );
+      debugPrint("Response bodyCheckDayEndConfirmation: ${response.body}");
+      debugPrint("requesr bodyCheckDayEndConfirmation: ${response.request}");
+      if (response.statusCode == 200) {
+        List<dynamic> apiResponse = json.decode(response.body);
+        if (apiResponse.isEmpty) {
+          saveFlag = false;
+          print("The list is empty, no data to save.");
+        } else {
+          saveFlag = true;
+          var dayEndData = apiResponse[0];
+          int DSRSaved = dayEndData['DSRSaved'] ?? 0;
+          int CDCMSStkSaved = dayEndData['CDCMSStkSaved'] ?? 0;
+          int OpClSaved = dayEndData['OpClSaved'] ?? 0;
+          // if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
+          //   saveFlag = true;
+          //   print("Data is valid, proceeding to save.");
+          // } else {
+          //   print("Data is incomplete. Cannot proceed to save.");
+          // }
+        }
+      } else {
+        print("Error: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Exception: $e");
+    }
+  }
+
+  Future<void> checkCashDenominationFlagMandatory() async {
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+
+    if (!Constants.isNetworkAvailable) {
+      showFlushBar(context, Constants.connectionMessage);
+      isLoading = false;
+    } else {
+      try {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? distributorId = prefs.getString('DistributorId');
+        String? bearerToken = prefs.getString('token');
+
+        if (bearerToken == null) {
+          isLoading = false;
+          throw Exception('Bearer token is missing');
+        }
+        final response = await http.get(
+          Uri.parse('${AppUrl.GetPageActionPermissionDtls}/$distributorId/All'),
+          headers: {
+            'Authorization': 'Bearer $bearerToken', // Add Bearer token here
+          },
+        );
+        debugPrint("Response body GetPageActionPermissionDtls: ${response.body}");
+        debugPrint("Request body GetPageActionPermissionDtls: ${response.request}");
+
+        if (response.statusCode == 200) {
+          // Parse the JSON response
+          final List<dynamic> data = json.decode(response.body);
+          setState(() {
+            cashDenoMandatoryList = data.map((jsonItem) =>
+                CahsDenominationMandatoryFlagModel.fromJson(jsonItem)).toList();
+            isLoading = false;
+            for (var item in cashDenoMandatoryList) {
+              if (item.distributorId.toString() == distributorId && item.permissionFor == "Cash Denomination" && item.isActive == 1) {
+                print("Flag truet:");
+                cashDenominationMandatory = true;
+                break; // Exit loop after finding the match
+              }else{
+                cashDenominationMandatory = false;
+              }
+            }
+          });
+        } else {
+          isLoading = false;
+          throw Exception('Failed to load sales data');
+        }
+      } catch (error) {
+        isLoading = false;
+        debugPrint("Error: $error");
+        // Return an empty list in case of an error
+      }
+    }
+  }
 }
+
+
+
+
 
