@@ -145,9 +145,33 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
   bool cashDenominationMandatory = false;
   List<FocusNode> _discountFocusNodes = [];
   List<FocusNode> _dropdownFocusNodes = [];
+  late FocusNode _conNoFocusNode;
+  bool _isInitComplete = false; // This avoids API call during initState prefill
   @override
   void initState() {
     super.initState();
+    _conNoFocusNode = FocusNode();
+    _conNoFocusNode.addListener(() {
+      if (!_conNoFocusNode.hasFocus && _isInitComplete) {
+        final value = conNoController.text.trim();
+
+        if (value.isNotEmpty) {
+          if (selectedMaster == null) {
+            conNoController.clear();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Please select product before entering Consumer No./DC No.')),
+            );
+          } else if (selectedTransacc == null) {
+            conNoController.clear();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Please select SV type before entering Consumer No./DC No.')),
+            );
+          } else {
+            CheckSVConsumerNoStatus();
+          }
+        }
+      }
+    });
     checkAndSaveDayEndData();
     checkCashDenominationFlagMandatory();
     _addNewItem();
@@ -257,17 +281,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
           }
         });
 
-        // fetchBank().whenComplete((){
-        //   debugPrint("empty:$accountNoEdit");
-        //   if(accountNoEdit != "null" && accountNoEdit.isNotEmpty && accountNoEdit != null){
-        //     setState(() {
-        //       _selectBankModel = bankModel.firstWhere(
-        //             (item) => item.accountNo == accountNoEdit,
-        //         orElse: () => GetBankMappingDetailsListModel(accountNo:'', ),
-        //       );
-        //     });
-        //   }
-        // });
         await fetchBank(); // wait for data first
         if (accountNoEdit.isNotEmpty && accountNoEdit != "null") {
           final match = bankModel.firstWhere(
@@ -355,6 +368,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
           debugPrint("empty");
         }
       }
+      _isInitComplete = true;
     });
   }
 
@@ -367,6 +381,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     for (var node in _dropdownFocusNodes) {
       node.dispose();
     }
+    _conNoFocusNode.dispose();
     super.dispose();
   }
 
@@ -700,6 +715,14 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                             ? null // disables dropdown when itemSubType is "ND"
                             : (value) {
                                 setState(() {
+                                  if (selectedTransacc != value && conNoController.text.isNotEmpty) {
+                                    conNoController.clear();
+                                    FocusScope.of(context).unfocus(); // Optional
+                                    // EasyLoading.showToast(
+                                    //   "Consumer/DC No. cleared due to SV Type change.",
+                                    //   duration: Duration(seconds: 2),
+                                    // );
+                                  }
                                   selectedTransacc = value;
                                   debugPrint(
                                       "selectedTransacc: $selectedTransacc");
@@ -1182,6 +1205,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                       flex: 1,
                       child: TextField(
                         controller: conNoController,
+                        focusNode: _conNoFocusNode,
                         maxLengthEnforcement: MaxLengthEnforcement.enforced,
                         inputFormatters: <TextInputFormatter>[
                           LengthLimitingTextInputFormatter(6),
@@ -1193,17 +1217,16 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                             RegExp(r'\s'), // Block all whitespace including space, tab, etc.
                           ),
                         ],
-
                         decoration: InputDecoration(
                           labelText: 'Enter Consumer No./DC No.',
                           errorText: _isConsumerEmpty
                               ? 'Consumer No./DC No. Is Required'
-                              : null, // Show error if required
+                              : null,
                         ),
                         onChanged: (value) {
                           setState(() {
                             _isConsumerEmpty = value.isEmpty;
-                            //Please Enter A Valid Consumer Contact No.
+
                           });
                         },
                       ),
@@ -2917,20 +2940,14 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
       throw Exception('Bearer token is missing');
     }
 
-    Map<String, dynamic> requestBody = {
-      "DistributorId": distributorId,
-      "IsActive": isActive,
-      "ItemType": itemType,
-    };
-
     final response = await http.get(
-      Uri.parse('${AppUrl.GetItemMasterList}/$distributorId/0/C'),
+      Uri.parse('${AppUrl.GetItemMasterList}/$distributorId/1/C'),
       headers: {
         'Authorization': 'Bearer $bearerToken', // Add Bearer token here
       },
     );
     debugPrint("GetItemMasterList : " +
-        '${AppUrl.GetItemMasterList}/$distributorId/0/C');
+        '${AppUrl.GetItemMasterList}/$distributorId/1/C');
     debugPrint("GetItemMasterList : " + '${response.body}');
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
@@ -3470,12 +3487,17 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
       if(refillCylinderAmountController.text.isNotEmpty){
         cylRefillRSP = double.parse(refillCylinderAmountController.text);
       }
-      if(regulatorDepositAmountController.text.isNotEmpty){
-        if(regulatorDepositAmountController.text.isNotEmpty || regulatorDepositAmountController.text != null || regulatorDepositAmountController.text != "null"){
-          regDeposit = double.parse(regulatorDepositAmountController.text);
-        }
+      if(selectedTransacc != "DBC" && selectedTransacc != "Name Change"){
+        if(regulatorDepositAmountController.text.isNotEmpty){
+          if(regulatorDepositAmountController.text.isNotEmpty || regulatorDepositAmountController.text != null || regulatorDepositAmountController.text != "null"){
+            regDeposit = double.parse(regulatorDepositAmountController.text);
+          }
 
+        }
+      }else{
+        regDeposit = 0;
       }
+
 
       if(stampDutyController.text.isNotEmpty){
         stampD = double.parse(stampDutyController.text);
@@ -4189,6 +4211,145 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
       }
     }
   }
+
+  Future<void> CheckSVConsumerNoStatus() async {
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? distributorId = prefs.getString('DistributorId');
+    String? bearerToken = prefs.getString('token');
+    String? staffId = prefs.getString('StaffId');
+    String? userId = prefs.getString("UserId");
+    int? addedBys = int.parse(staffId!);
+    int? distributorIds = int.parse(distributorId!);
+    final DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+
+    String? conDSNo;
+
+    if(selectedTranssvItemName == null){
+      showFlushBar(context, "Select Product.");
+      return;
+    }
+
+    if(selectedTransacc == null){
+      showFlushBar(context, "Select SV Type.");
+      return;
+    }
+
+    if(conNoController.text.isNotEmpty){
+      conDSNo = conNoController.text;
+    }
+
+    final Map<String, dynamic> requestBody =
+    {
+      "DistributorId": distributorId,
+      "ConsumerNo": conDSNo ?? '',
+      "ItemId": selectedProductID ?? '',
+      "SVType": selectedTransacc ?? '',
+    };
+    print("CheckSVConsumerNoStatus: ${requestBody}");
+    requestBody.forEach((key, value) {
+      print('$key: $value');
+    });
+    // try {
+    final response = await http.post(
+      Uri.parse('${AppUrl.CheckSVConsumerNoStatus}'),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $bearerToken",
+      },
+      body: json.encode(requestBody),
+    );
+    print(
+        "requestBody CheckSVConsumerNoStatus: ${response.statusCode} - ${response.request}${requestBody}");
+
+    print("Response Status Code: ${response.statusCode}");
+
+    if (response.statusCode == 200) {
+      if (response.body == '0') {
+
+        print("Success ${response.body}");
+
+        // EasyLoading.showToast("Save Con. No Successfully", duration: const Duration(milliseconds: 3000));
+      } else if (response.body == '-1') {
+        print("API Response: -1 (Consumer No exists with same SV type and delivered)");
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return   AlertDialog(
+              title: Row(
+                children: [
+                  Icon(Icons.error, color: Colors.red), // Add the icon here
+                  SizedBox(width: 8), // Space between icon and text
+                  Text('Consumer/DC No Not Allowed'),
+                ],
+              ),
+              content: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      "Entered consumer dc no is already exists with same SV type and delivered also, please check and re-enter",
+                    ),
+                  ),
+                ],
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    conNoController.clear();
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      } else if (response.body == '-2') {
+        print("API Response: -2 (Consumer No exists with same SV type)");
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return
+              AlertDialog(
+                title: Row(
+                  children: [
+                    Icon(Icons.error, color: Colors.red), // Add the icon here
+                    SizedBox(width: 8), // Space between icon and text
+                    Text('Consumer DC No Not Allowed'),
+                  ],
+                ),
+                content: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        "Entered consumer dc no is already exists with same SV type, please check and re-enter",
+                      ),
+                    ),
+                  ],
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      conNoController.clear();
+                    },
+                    child: Text('OK'),
+                  ),
+                ],
+              );
+          },
+        );
+      } else {
+        EasyLoading.showToast("Something went wrong. Please try again.", duration: const Duration(milliseconds: 3000));
+        print("Error: Response returned 0");
+      }
+    } else {
+      print("Error PaymentDetailAddEdit: ${response.statusCode} - ${response.body}");
+      EasyLoading.showToast("Request failed. Please try again.", duration: const Duration(milliseconds: 3000));
+    }
+  }
+
 }
 
 
