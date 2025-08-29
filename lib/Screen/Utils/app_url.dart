@@ -163,6 +163,8 @@ class AppUrl {
  ///Undocumented SV
  static const String GetUndocSVStockMovementList = '$baseUrl/DailyStockCash/GetUndocSVStockMovementList';
  static const String VerifyUnDocSVDetails = '$baseUrl/DailyStockCash/VerifyUnDocSVDetails';
+
+ static const String CheckSVConsumerNoStatus = '$baseUrl/DailyStockCash/CheckSVConsumerNoStatus';
 }
 
 
