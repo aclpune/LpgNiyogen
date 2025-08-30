@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 
+import '../../../IOSVersionUpdateService.dart';
 import '../../../Utils/UpdateService.dart';
 
 class MyLogin extends StatefulWidget {
@@ -45,6 +46,7 @@ class _MyLoginState extends State<MyLogin> {
       UpdateService.checkForUpdate(context);
       debugPrint("Firebase initialize Dash${Platform}");
     }else{
+      IosVersionUpdateCheck().checkForUpdate(context);
       debugPrint("Firebase not initialize");
     }
     _loadStoredUserData();
