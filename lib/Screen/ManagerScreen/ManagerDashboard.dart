@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../ConstantScreen/widgets.dart';
+import '../IOSVersionUpdateService.dart';
 import '../UndocumentedSVDash/DashboardUndocumentedDetails.dart';
 import '../User/Login/provider/LoginProvider.dart';
 import '../User/splashscreen/page/splash_screen.dart';
@@ -107,6 +107,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
       UpdateService.checkForUpdate(context);
       debugPrint("Firebase initialize Dash${Platform}");
     } else {
+      IosVersionUpdateCheck().checkForUpdate(context);
       debugPrint("Firebase not initialize");
     }
     debugPrint("ManagerDashboardScreen: initState called");
@@ -943,10 +944,14 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                             children: [
                                               InkWell(
                                                 onTap: () {
-                                                  Navigator.pushNamed(
-                                                      context,
-                                                      UnsettledSaleDetailList
-                                                          .screenName);
+                                                  Navigator
+                                                      .pushNamed(
+                                                    context,
+                                                    TodaysCashSummaryOnAccountList.screenName,
+                                                    arguments: {
+                                                      "onAccount": onAccountAsOfDate
+                                                    },
+                                                  );
                                                 },
                                                 child: Row(
                                                   children: [
@@ -3219,29 +3224,29 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
     );
   }
 
-  // Helper function to ensure data is valid
-  List<BarChartGroupData> _buildBarGroups() {
-    return List.generate(months.length, (index) {
-      return BarChartGroupData(
-        x: index,
-        barRods: [
-          BarChartRodData(
-            toY: income[index] / 1000,
-            color: Colors.blue,
-            width: 8,
-            borderRadius: BorderRadius.circular(0),
-          ),
-          BarChartRodData(
-            toY: expenses[index] / 1000,
-            color: Colors.orange,
-            width: 8,
-            borderRadius: BorderRadius.circular(0),
-          ),
-        ],
-        barsSpace: 4,
-      );
-    });
-  }
+  // // Helper function to ensure data is valid
+  // List<BarChartGroupData> _buildBarGroups() {
+  //   return List.generate(months.length, (index) {
+  //     return BarChartGroupData(
+  //       x: index,
+  //       barRods: [
+  //         BarChartRodData(
+  //           toY: income[index] / 1000,
+  //           color: Colors.blue,
+  //           width: 8,
+  //           borderRadius: BorderRadius.circular(0),
+  //         ),
+  //         BarChartRodData(
+  //           toY: expenses[index] / 1000,
+  //           color: Colors.orange,
+  //           width: 8,
+  //           borderRadius: BorderRadius.circular(0),
+  //         ),
+  //       ],
+  //       barsSpace: 4,
+  //     );
+  //   });
+  // }
 
   void showBottomSheet(BuildContext context) {
     showModalBottomSheet(

@@ -301,18 +301,27 @@ class _DashboardUndocumentedDetails extends State<DashboardUndocumentedDetails>{
                     SizedBox(height: 2),
                     Row(
                       children: [
-                        Expanded(flex: 1, child: countTextWidgetText(context, "DC.No/Challan No.", nullToDash(sale.consuDCNo))),
-                        Expanded(
-                          flex: 1,
-                          child: countTextWidgetText(context, "Doc. Status", nullToDash(sale.isUndocument == true ? "Pending" : (sale.isUndocument == false ? "Received" : ""))),
-                        )
+                        Expanded( child: countTextWidgetTextOnAccount(context, "DC.No/Challan No.", nullToDash(sale.consuDCNo))),
                       ],
                     ),
                     SizedBox(height: 2),
                     Row(
                       children: [
-                        Expanded(flex: 1, child: countTextWidgetText(context, "SV Type", nullToDash(sale.sVType))),
-                        Expanded(flex: 1, child: countTextWidgetText(context, "Total Amount", nullToDash(formatCurrency((sale.totalAmount ?? 0.0).toDouble())))),
+                        Expanded(
+                          child: countTextWidgetTextOnAccount(context, "Doc. Status", nullToDash(sale.isUndocument == true ? "Pending" : (sale.isUndocument == false ? "Received" : ""))),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 2),
+                    Row(
+                      children: [
+                        Expanded(flex: 1, child: countTextWidgetTextOnAccount(context, "SV Type", nullToDash(sale.sVType))),
+                      ],
+                    ),
+                    SizedBox(height: 2),
+                    Row(
+                      children: [
+                        Expanded(flex: 1, child: countTextWidgetTextOnAccount(context, "Total Amount", nullToDash(formatCurrency((sale.totalAmount ?? 0.0).toDouble())))),
                       ],
                     ),
                     SizedBox(height: 2),
@@ -389,55 +398,58 @@ class _DashboardUndocumentedDetails extends State<DashboardUndocumentedDetails>{
             ),
           ),
           SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              ElevatedButton(
-                onPressed: () {
-                  cancelAction();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                ),
-                child: Text(
-                  'Cancel',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-              SizedBox(width: 10),
-              // Adds space between buttons
-              ElevatedButton(
-                onPressed: () {
-                  verifyUnDocSVDetailsMob();
+          Padding(
+            padding: const EdgeInsets.only(right: 15.0,bottom: 5),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    cancelAction();
                   },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(50),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   ),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 20,
-                    vertical: 10, // Adjust padding to make button smaller
-                  ),
-                ),
-                child: Text(
-                  "Submit",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+                  child: Text(
+                    'Cancel',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                 ),
-              ),
-            ],
+                SizedBox(width: 10),
+                // Adds space between buttons
+                ElevatedButton(
+                  onPressed: () {
+                    verifyUnDocSVDetailsMob();
+                    },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 10, // Adjust padding to make button smaller
+                    ),
+                  ),
+                  child: Text(
+                    "Submit",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

@@ -165,6 +165,8 @@ class AppUrl {
  static const String VerifyUnDocSVDetails = '$baseUrl/DailyStockCash/VerifyUnDocSVDetails';
 
  static const String CheckSVConsumerNoStatus = '$baseUrl/DailyStockCash/CheckSVConsumerNoStatus';
+ ///version get
+ static const String GetLatestVersionDetails = '$baseUrl/Masters/GetLatestVersionDetails';
 }
 
 

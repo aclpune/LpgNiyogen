@@ -13,6 +13,7 @@ import '../../Database/GodownKeeperDB/UpdateRefillSaleDB.dart';
 import '../ConstantScreen/widgets.dart';
 import '../DashboardModel/PhysicalStockImbalanceDataModel.dart';
 import '../DashboardModel/TodaysOpeningStockDataModel.dart';
+import '../IOSVersionUpdateService.dart';
 import '../User/Login/provider/LoginProvider.dart';
 import '../User/splashscreen/page/splash_screen.dart';
 import '../Utils/CustomeAlertDialog.dart';
@@ -59,6 +60,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       UpdateService.checkForUpdate(context);
       debugPrint("Firebase initialize Dash${Platform}");
     }else{
+      IosVersionUpdateCheck().checkForUpdate(context);
       debugPrint("Firebase not initialize");
     }
     updateRefillSale = UpdateRefillSale();
@@ -1271,4 +1273,5 @@ class _DashboardScreenState extends State<DashboardScreen> {
       },
     );
   }
+
 }

@@ -227,100 +227,6 @@ class _DashboardPostPaidVerifPendDetails extends State<DashboardPostPaidVerifPen
                 ],
               ),
           ),
-          // This is the only scrollable part
-          // Expanded(
-          //   child: postpaidverifipending.isNotEmpty
-          //       ?
-          //   ListView.builder(
-          //     physics: const BouncingScrollPhysics(),
-          //     shrinkWrap: true,
-          //     itemCount: postpaidverifipending.length,
-          //     itemBuilder: (context, index) {
-          //       final sale = postpaidverifipending[index];
-          //       debugPrint("Rendering Expense Item: ${postpaidverifipending[index]}");
-          //       return Column(
-          //         children: [
-          //           Row(
-          //             children: [
-          //               Expanded(flex:1,child: countTextWidgetText(context,"Trans Time", nullToDash(sale.transTime))),
-          //               Expanded(flex:1,child: countTextWidgetText(context,"Amount", nullToDash(formatCurrency((sale.amount ?? 0.0).toDouble())))),
-          //             ],
-          //           ),
-          //           SizedBox(height: 2),
-          //           Row(
-          //             children: [
-          //               Expanded(flex:1,child: countTextWidgetText(context,"Trans For", nullToDash(sale.transFor))),
-          //               Expanded(flex:1,child: countTextWidgetText(context,"Trans Date", nullToDash(sale.transDate))),
-          //             ],
-          //           ),
-          //           SizedBox(height: 2),
-          //           Row(
-          //             children: [
-          //               Expanded(flex:1,child: countTextWidgetText(context,"Trans Code", nullToDash(sale.transCode))),
-          //             ],
-          //           ),
-          //           SizedBox(height: 2),
-          //           Row(
-          //             children: [
-          //               Expanded(flex:1,child: countTextWidgetText(context,"Staff Name", nullToDash(sale.staffName))),
-          //             ],
-          //           ),
-          //           SizedBox(height: 2),
-          //           Row(
-          //             children: [
-          //               Expanded(flex: 1, child: countTextWidgetRemark(context,"Remark", sale.remark ?? '')),
-          //             ],
-          //           ),
-          //           Divider(),
-          //         ],
-          //       );
-          //     },
-          //   )
-          //       : Center(
-          //     child: Text('No Records Found'),
-          //   ),
-          // ),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.end,
-          //   children: [
-          //     ElevatedButton(
-          //       onPressed: () {
-          //         setState(() {
-          //           // Loop through the list and reset values for each sale
-          //           for (var sale in postpaidverifipending) {
-          //             sale.selectedDate = null;  // Clear selected date
-          //             sale.bankName = null;      // Clear selected bank name
-          //             sale.accountNo = null;     // Clear selected account number
-          //             sale.isChecked = false;    // Uncheck the checkbox
-          //           }
-          //         });
-          //       },
-          //       style: ElevatedButton.styleFrom(
-          //         shape: RoundedRectangleBorder(
-          //           borderRadius: BorderRadius.circular(20), // rounded corners
-          //         ),
-          //       ),
-          //       child: Text("Cancel"),
-          //     ),
-          //     SizedBox(width: 10), // spacing between buttons
-          //
-          //     ElevatedButton(
-          //       onPressed: postpaidverifipending.any((sale) => sale.isChecked == true) // Button enabled when any checkbox is checked
-          //           ? () {
-          //         // Action when button is pressed
-          //       }
-          //           : null,
-          //       style: ElevatedButton.styleFrom(
-          //         shape: RoundedRectangleBorder(
-          //           borderRadius: BorderRadius.circular(20),
-          //         ), backgroundColor: postpaidverifipending.any((sale) => sale.isChecked == true)
-          //             ? Colors.blue
-          //             : Colors.grey, // Button color based on any checkbox checked
-          //       ),
-          //       child: Text("Submit"),
-          //     ),
-          //   ],
-          // ),
           Expanded(
             child: isLoading
                 ? const Center(child: CircularProgressIndicator())
@@ -343,9 +249,15 @@ class _DashboardPostPaidVerifPendDetails extends State<DashboardPostPaidVerifPen
                     Row(
                       children: [
                         Expanded(flex: 1, child: countTextWidgetText(context, "Trans For", nullToDash(sale.transFor))),
+                      ],
+                    ),
+                    const SizedBox(height: 2),
+                    Row(
+                      children: [
                         Expanded(flex: 1, child: countTextWidgetText(context, "Trans Date", nullToDash(sale.transDate))),
                       ],
                     ),
+
                     const SizedBox(height: 2),
                     Row(
                       children: [

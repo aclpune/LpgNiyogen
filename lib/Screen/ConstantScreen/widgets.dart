@@ -92,6 +92,19 @@ Widget countTextWidgetText(
   );
 }
 
+Widget countTextWidgetTextOnAccount(
+    BuildContext context, String count, String title) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 5),
+    child: Text(
+      "$count: $title",
+      style: Styling.textFormText,
+      softWrap: true,
+    ),
+  );
+}
+
+
 Widget countTextWidgetTextWithoutHeading(
     BuildContext context, String title) {
   return Container(

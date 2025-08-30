@@ -346,115 +346,7 @@ class _TodaysCashSummaryOnAccountListState extends State<TodaysCashSummaryOnAcco
                 ),
               ],
             ),
-
-      // Expanded(
-      //   child: SingleChildScrollView(
-      //     child: Column(
-      //       children: [
-      //        // Ledger Report List with Checkboxes
-      //         Card(
-      //           child: isLoading
-            //                     ? Center(child: CircularProgressIndicator())
-            //          : (selectedStaff == null
-      //               ? lederReportModel.isEmpty
-      //               : lederReportModel.where((report) => report.staffId == selectedStaff?.staffId).isEmpty)
-      //               ? Center(child: Text('No Records Found'))
-      //               : ListView.builder(
-      //             shrinkWrap: true,
-      //             physics: NeverScrollableScrollPhysics(),
-      //             itemCount: (selectedStaff == null)
-      //                 ? lederReportModel.length
-      //                 : lederReportModel.where((report) => report.staffId == selectedStaff?.staffId).length,
-      //             itemBuilder: (context, index) {
-      //               var filteredReports = selectedStaff == null
-      //                   ? lederReportModel
-      //                   : lederReportModel.where((report) => report.staffId == selectedStaff?.staffId).toList();
-      //
-      //               GetStaffLedgerReportModelList? payList = filteredReports[index];
-      //
-      //               bool isStaffSelected = selectedStaff?.staffId == payList.staffId;
-      //
-      //               // Ensure `isCheckedList` length matches the filtered list
-      //               if (isCheckedList.length <= index) {
-      //                 isCheckedList.add(false);
-      //               }
-      //               return Column(
-      //                 children: [
-      //                   Row(
-      //                     mainAxisAlignment: MainAxisAlignment.end,
-      //                     children: [
-      //                       Expanded(child: Text(payList.description ?? '', style: TextStyle(color: Colors.blue))),
-      //                       Expanded(child: Text(payList.staffName ?? '', style: TextStyle(color: Colors.blue))),
-      //                     ],
-      //                   ),
-      //                   SizedBox(height: 2),
-      //                   Row(
-      //                     children: [
-      //                       Expanded(flex: 1, child: countTextWidgetText(
-      //                           context,
-      //                           "Date",
-      //                           payList.transDate != null
-      //                               ? DateFormat('dd-MM-yyyy').format(DateTime.parse(payList.transDate!))
-      //                               : ''
-      //                       )),
-      //                       Expanded(
-      //                         flex: 1,
-      //                         child:
-      //                         CheckboxListTile(
-      //                           value: isCheckedList[index],
-      //                           onChanged: (bool? value) {
-      //                             if (selectedReferredID == null) {
-      //                               EasyLoading.showToast(
-      //                                 Constants.OnAccErr,
-      //                                 duration: const Duration(milliseconds: 3000),
-      //                               );
-      //                               return;
-      //                             }
-      //                             setState(() {
-      //                               isCheckedList[index] = value ?? false;
-      //                               isPaymentButtonEnabled = isCheckedList.contains(true);
-      //                             });
-      //                           },
-      //                           controlAffinity: ListTileControlAffinity.leading,
-      //                           fillColor: MaterialStateProperty.resolveWith<Color>((states) {
-      //                             return states.contains(MaterialState.selected)
-      //                                 ? Colors.pink
-      //                                 : Colors.white;
-      //                           }),
-      //                         ),
-      //                       ),
-      //                     ],
-      //                   ),
-      //                   SizedBox(height: 2),
-      //                   Row(
-      //                     children: [
-      //                       //Expanded(flex: 1, child: countTextWidgetText(context, "Debit", payList.debitAmt!.toStringAsFixed(2))),
-      //                       Expanded(flex: 1, child: countTextWidgetText(context, "Debit", formatCurrency(payList.debitAmt?.toDouble() ?? 0.0),)),
-      //                     ],
-      //                   ),
-      //                   SizedBox(height: 2),
-      //                   Row(
-      //                     children: [
-      //                       Expanded(flex: 1, child: countTextWidgetText(context, "Credit", formatCurrency(payList.creditAmt?.toDouble() ?? 0.0),)),
-      //                     ],
-      //                   ),
-      //                   SizedBox(height: 2),
-      //                   Row(
-      //                     children: [
-      //                       Expanded(flex: 1, child: countTextWidgetText(context, "Balance", formatCurrency(payList.balance?.toDouble() ?? 0.0),)),
-      //                     ],
-      //                   ),
-      //                   Divider(color: Colors.white70, thickness: 3),
-      //                 ],
-      //               );
-      //             },
-      //           ),
-      //         ),
-      //       ],
-      //     ),
-      //   ),
-      // ),
-      Expanded(
+            Expanded(
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -499,7 +391,7 @@ class _TodaysCashSummaryOnAccountListState extends State<TodaysCashSummaryOnAcco
                         SizedBox(height: 2),
                         Row(
                           children: [
-                            Expanded(flex: 1, child: countTextWidgetText(
+                            Expanded(flex: 1, child: countTextWidgetTextOnAccount(
                                 context,
                                 "Date",
                                 payList.transDate != null
@@ -536,19 +428,19 @@ class _TodaysCashSummaryOnAccountListState extends State<TodaysCashSummaryOnAcco
                         SizedBox(height: 2),
                         Row(
                           children: [
-                            Expanded(flex: 1, child: countTextWidgetText(context, "Debit", formatCurrency(payList.debitAmt?.toDouble() ?? 0.0),)),
+                            Expanded(flex: 1, child: countTextWidgetTextOnAccount(context, "Debit", formatCurrency(payList.debitAmt?.toDouble() ?? 0.0),)),
                           ],
                         ),
                         SizedBox(height: 2),
                         Row(
                           children: [
-                            Expanded(flex: 1, child: countTextWidgetText(context, "Credit", formatCurrency(payList.creditAmt?.toDouble() ?? 0.0),)),
+                            Expanded(flex: 1, child: countTextWidgetTextOnAccount(context, "Credit", formatCurrency(payList.creditAmt?.toDouble() ?? 0.0),)),
                           ],
                         ),
                         SizedBox(height: 2),
                         Row(
                           children: [
-                            Expanded(flex: 1, child: countTextWidgetText(context, "Balance", formatCurrency(payList.balance?.toDouble() ?? 0.0),)),
+                            Expanded(flex: 1, child: countTextWidgetTextOnAccount(context, "Balance", formatCurrency(payList.balance?.toDouble() ?? 0.0),)),
                           ],
                         ),
                         Divider(color: Colors.white70, thickness: 3),
