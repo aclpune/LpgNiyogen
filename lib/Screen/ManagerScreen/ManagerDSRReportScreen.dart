@@ -1611,7 +1611,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                     ListView.builder(
                       shrinkWrap: true,
                       physics: BouncingScrollPhysics(),
-                      itemCount: dataExpenseList.length,
+                      itemCount: dataExpenseList.length ?? 0,
                       // Assuming this is the length of your data
                       itemBuilder: (context, index) {
                         var item = dataExpenseList[index];
@@ -1863,20 +1863,21 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                   Expanded(flex: 3, child: Text("CDCMS", style: TextStyle(fontSize: 12), textAlign: TextAlign.left)),
                                   Expanded(
                                     flex: 2,
-                                    child: TextField(
-                                      controller: filledCDControllers[index],
-                                      decoration: buildInputWithSmallUnderline(context),
-                                      style: TextStyle(fontSize: 12),
-                                      textAlign: TextAlign.center,
-                                      keyboardType: TextInputType.number,
-                                      onChanged: (value) {
-                                        double newValue = double.tryParse(value) ?? 0.0;
-                                        setState(() {
-                                          filledDiffList[index] = (data.currentStkFilled?.toDouble() ?? 0.0) - newValue;
-                                          totalDiffList[index] = filledDiffList[index] + emptyDiffList[index] + defectiveDiffList[index];
-                                        });
-                                      },
-                                    ),
+                                    child:
+                                      TextField(
+                                        controller: filledCDControllers[index],
+                                        decoration: buildInputWithSmallUnderline(context),
+                                        style: TextStyle(fontSize: 12),
+                                        textAlign: TextAlign.center,
+                                        keyboardType: TextInputType.number,
+                                        onChanged: (value) {
+                                          double newValue = double.tryParse(value) ?? 0.0;
+                                          setState(() {
+                                            filledDiffList[index] = (data.currentStkFilled?.toDouble() ?? 0.0) - newValue;
+                                            totalDiffList[index] = filledDiffList[index] + emptyDiffList[index] + defectiveDiffList[index];
+                                          });
+                                        },
+                                      ),
                                   ),
                                   SizedBox(width: 7),
                                   Expanded(
@@ -2039,7 +2040,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                     ListView.builder(
                       shrinkWrap: true,
                       physics: BouncingScrollPhysics(),
-                      itemCount: dataCashInHandList.length,
+                      itemCount: dataCashInHandList.length ?? 0,
                       itemBuilder: (context, index) {
                         var data = dataCashInHandList[index];
                         return Padding(
@@ -2804,56 +2805,66 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
         if (jsonResponse != null && jsonResponse['IncDtls'] != null) {
           // Access the 'IncDtls' list from the response map and filter based on 'TransCate'
           var filteredData =
-              List.from(jsonResponse['IncDtls']) // Access the list 'IncDtls'
+              List.from(jsonResponse['IncDtls'] ?? []) // Access the list 'IncDtls'
                   .where((item) =>
                       item['TransCate'] == 'DailySale') // Filter the list
                   .map((item) => IncDtls.fromJson(item)) // Map to IncDtls model
                   .toList();
 
           var filteredDataArbSale =
-              List.from(jsonResponse['IncDtls']) // Access the list 'IncDtls'
+              List.from(jsonResponse['IncDtls'] ?? []) // Access the list 'IncDtls'
                   .where((item) =>
                       item['TransCate'] == 'ARBSale') // Filter the list
                   .map((item) => IncDtls.fromJson(item)) // Map to IncDtls model
                   .toList();
 
           var filteredDataSVSale =
-              List.from(jsonResponse['IncDtls']) // Access the list 'IncDtls'
+              List.from(jsonResponse['IncDtls'] ?? []) // Access the list 'IncDtls'
                   .where((item) => item['TransCate'] == 'SV') // Filter the list
                   .map((item) => IncDtls.fromJson(item)) // Map to IncDtls model
                   .toList();
 
           var filteredDataReceiptSale =
-              List.from(jsonResponse['IncDtls']) // Access the list 'IncDtls'
+              List.from(jsonResponse['IncDtls'] ?? []) // Access the list 'IncDtls'
                   .where((item) =>
                       item['TransCate'] == 'Receipt') // Filter the list
                   .map((item) => IncDtls.fromJson(item)) // Map to IncDtls model
                   .toList();
 
           var filteredDataRegReplacementSale =
-          List.from(jsonResponse['IncDtls']) // Access the list 'IncDtls'
+          List.from(jsonResponse['IncDtls'] ?? []) // Access the list 'IncDtls'
               .where((item) =>
           item['TransCate'] == 'Regulator Replacement') // Filter the list
               .map((item) => IncDtls.fromJson(item)) // Map to IncDtls model
               .toList();
 
+          // var filteredDataExpenseList =
+          //     List.from(jsonResponse['expDtls']) // Access the list 'IncDtls'
+          //         .map((item) => ExpDtls.fromJson(item)) // Map to IncDtls model
+          //         .toList();
+          //
+          // var filteredDataCashInHandList =
+          // List.from(jsonResponse['handoverDtls']) // Access the list 'IncDtls'
+          //     .map((item) => HandoverDtls.fromJson(item)) // Map to IncDtls model
+          //     .toList();
+
           var filteredDataExpenseList =
-              List.from(jsonResponse['expDtls']) // Access the list 'IncDtls'
-                  .map((item) => ExpDtls.fromJson(item)) // Map to IncDtls model
-                  .toList();
+          List.from(jsonResponse['expDtls'] ?? [])
+              .map((item) => ExpDtls.fromJson(item))
+              .toList();
 
           var filteredDataCashInHandList =
-          List.from(jsonResponse['handoverDtls']) // Access the list 'IncDtls'
-              .map((item) => HandoverDtls.fromJson(item)) // Map to IncDtls model
+          List.from(jsonResponse['handoverDtls'] ?? [])
+              .map((item) => HandoverDtls.fromJson(item))
               .toList();
 
           var filteredDataCashDenominationList =
-          List.from(jsonResponse['CashDenomDtls']) // Access the list 'IncDtls'
+          List.from(jsonResponse['CashDenomDtls'] ?? []) // Access the list 'IncDtls'
               .map((item) => CashDenomDtls.fromJson(item)) // Map to IncDtls model
               .toList();
 
           var filteredDataCashFlowSummaryList =
-          List.from(jsonResponse['cashflowDtls']) // Access the list 'IncDtls'
+          List.from(jsonResponse['cashflowDtls'] ?? []) // Access the list 'IncDtls'
               .map((item) => CashflowDtls.fromJson(item)) // Map to IncDtls model
               .toList();
 
@@ -2861,11 +2872,11 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
               .map((item) => IncDtls.fromJson(item)) // Map to IncDtls model
               .toList();
 
-          dataExpenseTotalAmountList = List.from(jsonResponse['expDtls']) // Access the list 'IncDtls'
+          dataExpenseTotalAmountList = List.from(jsonResponse['expDtls'] ?? []) // Access the list 'IncDtls'
               .map((item) => ExpDtls.fromJson(item)) // Map to IncDtls model
               .toList();
 
-          dataCashFlowSummaryAmountList = List.from(jsonResponse['cashflowDtls']) // Access the list 'IncDtls'
+          dataCashFlowSummaryAmountList = List.from(jsonResponse['cashflowDtls'] ?? []) // Access the list 'IncDtls'
               .map((item) => CashflowDtls.fromJson(item)) // Map to IncDtls model
               .toList();
 

@@ -592,7 +592,7 @@ class _ArbScreenState extends State<ArbScreen> {
                         keyboardType: TextInputType.number,
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
-                          LengthLimitingTextInputFormatter(3),
+                          LengthLimitingTextInputFormatter(4),
                         ],
                         decoration: InputDecoration(
                           label: Row(
@@ -960,7 +960,7 @@ class _ArbScreenState extends State<ArbScreen> {
                 SizedBox(height: 2),
                 Row(
                   children: [
-                    Expanded(flex:1,child: countTextWidgetText(context,"Balance Amount", formatCurrency(payList.balanceAmount!.toDouble()))),
+                    Expanded(flex:2,child: countTextWidgetText(context,"Balance Amount", formatCurrency(payList.balanceAmount!.toDouble()))),
 
                     Expanded(
                       child: GestureDetector(

@@ -65,6 +65,7 @@ class _CustomeAppBarmanagerDashboardState extends State<CustomeAppBarmanagerDash
                       Text(
                         Constants.AppBarTitle,
                         textAlign: TextAlign.start,
+                        textScaler: TextScaler.noScaling,
                         style: Styling.appBarTitle.copyWith(
                             color: Colors.blue,
                             fontWeight: FontWeight.bold
@@ -77,8 +78,10 @@ class _CustomeAppBarmanagerDashboardState extends State<CustomeAppBarmanagerDash
                         textAlign: TextAlign.start,
                         style: Styling.hintTextVerySmall.copyWith(
                             color: Colors.black,
-                          fontSize: 10
+                          fontSize: 9
                         ),
+                        textScaler: TextScaler
+                            .noScaling,
                       ),
                     ],
                   ),
@@ -93,6 +96,8 @@ class _CustomeAppBarmanagerDashboardState extends State<CustomeAppBarmanagerDash
                         fontSize: 10
                     ),
                     textAlign: TextAlign.right,
+                    textScaler: TextScaler
+                        .noScaling,
                   ),
                   SizedBox(height: 2,),
                   Text(
@@ -103,6 +108,8 @@ class _CustomeAppBarmanagerDashboardState extends State<CustomeAppBarmanagerDash
                       fontWeight: FontWeight.bold
                     ),
                     textAlign: TextAlign.right,
+                    textScaler: TextScaler
+                        .noScaling,
                   ),
                 ],
               )
