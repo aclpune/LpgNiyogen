@@ -11,7 +11,6 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../ConstantScreen/widgets.dart';
-import '../IOSVersionUpdateService.dart';
 import '../UndocumentedSVDash/DashboardUndocumentedDetails.dart';
 import '../User/Login/provider/LoginProvider.dart';
 import '../User/splashscreen/page/splash_screen.dart';
@@ -97,17 +96,31 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
   int? totalCurrentStockFilled = 0;
   int? totalCurrentStockEmpty = 0;
   int? totalCurrentStockDefective = 0;
+  int? selectedItemId;
+  int? selectedItemIdCDCMS;
 
 
+  String formatIndianCurrency(num value) {
+    if (value >= 10000000) {
+      return '${(value / 10000000).floor()}Cr';
+    } else if (value >= 100000) {
+      return '${(value / 100000).floor()}L';
+    } else if (value >= 1000) {
+      return '${(value / 1000).floor()}k';
+    } else {
+      return value.floor().toString();
+    }
+  }
 
   @override
   void initState() {
     super.initState();
+
     if (Platform.isAndroid) {
       UpdateService.checkForUpdate(context);
       debugPrint("Firebase initialize Dash${Platform}");
     } else {
-      IosVersionUpdateCheck().checkForUpdate(context);
+      //1IosVersionUpdateCheck().checkForUpdate(context);
       debugPrint("Firebase not initialize");
     }
     debugPrint("ManagerDashboardScreen: initState called");
@@ -141,6 +154,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
         ? DateFormat('dd-MM-yyyy')
         .format(DateTime.parse(totalPendingSettSince!))
         : 'No Date';
+    final totalPendAmount = totalPendingSettAmt?.toDouble() ?? 0.0;
     return Scaffold(
       key: _scaffoldKey,
       body: RefreshIndicator(
@@ -162,610 +176,517 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                             borderRadius: BorderRadius.only(
                                 bottomRight: Radius.circular(20.0),
                                 bottomLeft: Radius.circular(20.0))),
-                        child: Padding(
+                        child:
+                        Padding(
                           padding: const EdgeInsets.only(
-                              left: 5.0, right: 5, bottom: 20),
+                              left: 5.0, right: 5, bottom: 20,top:10),
                           child: Column(
                             children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    flex: 7,
-                                    child: Card(
-                                        color: Color(0xFFEFF2FB),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                            BorderRadius.circular(10)),
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 15.0,
-                                              right: 15,
-                                              top: 30,
-                                              bottom: 30),
-                                          child: Column(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  "Unsettled Count",
-                                                  style: Styling.itemTitleDash,
-                                                  textAlign: TextAlign.left,
-                                                  textScaler:
-                                                  TextScaler.noScaling,
-                                                ),
-                                                Text(
-                                                  "(DM Wise)",
-                                                  style: Styling.itemBlackTest,
-                                                  textAlign: TextAlign.start,
-                                                  textScaler:
-                                                  TextScaler.noScaling,
-                                                ),
-                                                InkWell(
-                                                  onTap: () {
-                                                    Navigator.pushNamed(
-                                                        context,
-                                                        UnsettledSaleDetailList
-                                                            .screenName);
-                                                  },
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                    children: [
-                                                      Text(
-                                                        (deliveryMenCount ?? 0)
-                                                            .toString(),
-                                                        style: Styling
-                                                            .bodyTitleBigBoldDash,
-                                                        textScaler: TextScaler
-                                                            .noScaling,
-                                                      ),
-                                                      Icon(
-                                                        Icons
-                                                            .keyboard_arrow_down_sharp,
-                                                        size: 24,
-                                                        // Bigger icon for a more clickable feel
-                                                        color: Colors.black54,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                SizedBox(height: 20),
-                                                Text(
-                                                  "Unsettled Amount",
-                                                  style: Styling.itemTitleDash,
-                                                  textAlign: TextAlign.start,
-                                                  textScaler:
-                                                  TextScaler.noScaling,
-                                                ),
-                                                // Text("",
-                                                //     style: Styling.itemBlackTest,
-                                                //     textAlign: TextAlign.start,
-                                                //   textScaler: TextScaler.noScaling,),
-                                                InkWell(
-                                                  onTap: () {
-                                                    Navigator.pushNamed(
-                                                        context,
-                                                        UnsettledSaleDetailList
-                                                            .screenName);
-                                                  },
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                    children: [
-                                                      Text(
-                                                        formatCurrency(
-                                                            totalAmount ?? 0),
-                                                        style: Styling
-                                                            .bodyTitleBigBoldDash,
-                                                        textScaler: TextScaler
-                                                            .noScaling,
-                                                      ),
-                                                      Icon(
-                                                        Icons
-                                                            .keyboard_arrow_down_sharp,
-                                                        size: 24,
-                                                        // Bigger icon for a more clickable feel
-                                                        color: Colors.black54,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ]),
-                                        )),
-                                  ),
-                                  Expanded(
-                                    flex: 5,
-                                    child: Column(
-                                      children: [
-                                        Card(
-                                            color: Color(0xFFfbe9e9),
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                BorderRadius.circular(10)),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.center,
+                                  children: [
+                                    // Adjust flex based on screen width
+                                      Expanded(
+                                        flex: MediaQuery.of(context).size.width > 600 ? 7 : 12, // More space on large screens
+                                        child: Container(
+                                          height: 260,
+                                          child: Card(
+                                            color: Color(0xFFEFF2FB),
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                             child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 15.0,
-                                                  right: 15,
-                                                  top: 10,
-                                                  bottom: 10),
+                                              padding: MediaQuery.of(context).size.width > 600
+                                                  ? const EdgeInsets.only(left: 15, right: 15, top: 5, bottom: 30)
+                                                  : const EdgeInsets.only(left: 10, right: 10, top: 5, bottom: 15), // Adjust padding
                                               child: Column(
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                                children: [
+                                                  // Main heading
+                                                  Text(
+                                                    "Prepaid Status",
+                                                    style: Styling.itemTitleDash,
+                                                    textScaler: TextScaler.noScaling,
+                                                  ),
+                                                  const SizedBox(height: 15),
+                                                  // Punching row
+                                                  Text(
+                                                    "Today's Punched",
+                                                    style: Styling.itemBlackTestTwoo,
+                                                    textScaler: TextScaler.noScaling,
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        (todaysPunchingInNiyojanC ?? 0).toString(),
+                                                        style: Styling.bodyTitleBigBoldDashtwo,
+                                                        textScaler: TextScaler.noScaling,
+                                                      ),
+                                                      InkWell(
+                                                        onTap: () {
+                                                          showBottomSheet(context);
+                                                        },
+                                                        child: Icon(
+                                                          Icons.keyboard_arrow_down_sharp,
+                                                          size: 24,
+                                                          color: Colors.black54,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 15),
+                                                  // Settled row
+                                                  Text(
+                                                    "Outstanding\nSettlement",
+                                                    style: Styling.itemBlackTestTwoo,
+                                                    textScaler: TextScaler.noScaling,
+                                                  ),
+                                                  SizedBox(height: 8),
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: Text(
+                                                          formatCurrency(totalPendAmount),
+                                                          style: Styling.bodyTitleBigBoldDashtwo,
+                                                          textScaler: TextScaler.noScaling,
+                                                        ),
+                                                      ),
+                                                      InkWell(
+                                                        onTap: () {
+                                                          showBottomSheetPrepaidSettlementStatus(context);
+                                                        },
+                                                        child: Icon(
+                                                          Icons.keyboard_arrow_down_sharp,
+                                                          size: 24,
+                                                          color: Colors.black54,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    // Adjust the flex for the second column for smaller screens
+                                    Expanded(
+                                      flex: MediaQuery.of(context).size.width > 600 ? 5 : 8, // More space on small screens
+                                      child: Column(
+                                        children: [
+                                          // SV Card
+                                          Container(
+                                            height: 130,
+                                            child: Card(
+                                              color: Color(0xFFfbe9e9),
+                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(left: 15.0, right: 15, top: 10, bottom: 10),
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
                                                     InkWell(
                                                       onTap: () {
-                                                        showCardWithImbalanceStock(
-                                                            context);
                                                       },
                                                       child: Row(
-                                                        mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
+                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                         children: [
                                                           Text(
-                                                            todaysImbQtyShow
-                                                                .toString(),
-                                                            style: Styling
-                                                                .bodyTitleBigBoldDash,
-                                                            textScaler:
-                                                            TextScaler
-                                                                .noScaling,
+                                                            totalIncome != null ? formatIndianCurrency(totalIncome!) : '0',
+                                                            style: Styling.bodyTitleBigBoldDashGrey,
+                                                            textScaler: TextScaler.noScaling,
                                                           ),
                                                           Icon(
-                                                            Icons
-                                                                .keyboard_arrow_right_sharp,
+                                                            Icons.keyboard_arrow_right_sharp,
                                                             size: 24,
-                                                            // Bigger icon for a more clickable feel
-                                                            color:
-                                                            Colors.black54,
+                                                            color: Colors.black54,
                                                           ),
                                                         ],
                                                       ),
                                                     ),
+                                                    Text(
+                                                      "Today's Income",
+                                                      style: Styling.countNumberReds,
+                                                      textAlign: TextAlign.left,
+                                                      textScaler: TextScaler.noScaling,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          // TV Card
+                                          Container(
+                                            height: 130,
+                                            child: Card(
+                                              color: Color(0xFFfcf2f1),
+                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(left: 15.0, right: 15, top: 10, bottom: 10),
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    InkWell(
+                                                      onTap: () {
+                                                      },
+                                                      child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        children: [
+                                                          Text(
+                                                            totalExpense != null ? formatIndianCurrency(totalExpense!) : '0',
+                                                            style: Styling.bodyTitleBigBoldDashGrey,
+                                                            textScaler: TextScaler.noScaling,
+                                                          ),
+                                                          Icon(
+                                                            Icons.keyboard_arrow_right_sharp,
+                                                            size: 24,
+                                                            color: Colors.black54,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      "Today's Expenses",
+                                                      style: Styling.countNumberReds,
+                                                      textAlign: TextAlign.left,
+                                                      textScaler: TextScaler.noScaling,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              SizedBox(height: 10),
+                                  Column(children: [
+                                    Row(children: [
+                                      Icon(
+                                        Icons.bolt_outlined,
+                                        size: 26,
+                                        // Bigger icon for a more clickable feel
+                                        color: Colors.black54,
+                                      ),
+                                      Text(
+                                        "Imbalance Stock",
+                                        style: Styling.bodyTitleBigBoldDashGrey,
+                                        textScaler: TextScaler.noScaling,
+                                      )
+                                    ]),
+                                    SizedBox(height: 10),
+                                    Row(
+                                      children: [
+                                        // First Container
+                                        Flexible(
+                                          flex: 1,  // Distribute the space equally, you can adjust this if needed
+                                          child: Container(
+                                            height: 100,
+                                            child: Card(
+                                              color: Color(0xFFEFF2FB),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(10),
+                                              ),
+                                              child: Padding(
+                                                padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8.0),
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    InkWell(
+                                                      onTap: () {
+                                                        showCardWithImbalanceStock(context);
+                                                      },
+                                                      child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        children: [
+                                                          Text(
+                                                            todaysImbQtyShow.toString(),
+                                                            style: Styling.bodyTitleBigBold.copyWith(fontSize: 18),
+                                                            textScaler: TextScaler.noScaling,
+                                                            overflow: TextOverflow.ellipsis,
+                                                          ),
+                                                          Icon(
+                                                            Icons.keyboard_arrow_right_sharp,
+                                                            size: 26,
+                                                            color: Colors.black54,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 4),
                                                     Text(
                                                       "Today's Imbalance",
-                                                      style:
-                                                      Styling.itemTitleDash,
+                                                      style: Styling.itemTitleDash.copyWith(fontSize: 18),
                                                       textAlign: TextAlign.left,
-                                                      textScaler:
-                                                      TextScaler.noScaling,
+                                                      textScaler: TextScaler.noScaling,
+                                                      overflow: TextOverflow.ellipsis,
                                                     ),
-                                                  ]),
-                                            )),
-                                        Card(
-                                            color: Color(0xFFfcf2f1),
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                BorderRadius.circular(10)),
-                                            child: Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 15.0,
-                                                  right: 15,
-                                                  top: 10,
-                                                  bottom: 10),
-                                              child: Column(
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+
+                                        // Second Container
+                                        Flexible(
+                                          flex: 1,  // Distribute the space equally, you can adjust this if needed
+                                          child: Container(
+                                            height: 100,
+                                            child: Card(
+                                              color: Color(0xFFEFF2FB),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(10),
+                                              ),
+                                              child: Padding(
+                                                padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8.0),
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
                                                     InkWell(
                                                       onTap: () {
-                                                        showCardWithImbalanceStock(
-                                                            context);
+                                                        showCardWithImbalanceStock(context);
                                                       },
                                                       child: Row(
-                                                        mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
+                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                         children: [
                                                           Text(
-                                                            asOfDateImbQtyShow
-                                                                .toString(),
-                                                            style: Styling
-                                                                .bodyTitleBigBoldDash,
-                                                            textScaler:
-                                                            TextScaler
-                                                                .noScaling,
+                                                            asOfDateImbQtyShow.toString(),
+                                                            style: Styling.bodyTitleBigBold.copyWith(fontSize: 18),
+                                                            textScaler: TextScaler.noScaling,
+                                                            overflow: TextOverflow.ellipsis,
                                                           ),
                                                           Icon(
-                                                            Icons
-                                                                .keyboard_arrow_right_sharp,
-                                                            size: 24,
-                                                            // Bigger icon for a more clickable feel
-                                                            color:
-                                                            Colors.black54,
+                                                            Icons.keyboard_arrow_right_sharp,
+                                                            size: 26,
+                                                            color: Colors.black54,
                                                           ),
                                                         ],
                                                       ),
                                                     ),
+                                                    SizedBox(height: 4),
                                                     Text(
                                                       "Total Imbalance",
-                                                      style:
-                                                      Styling.itemTitleDash,
+                                                      style: Styling.itemTitleDash.copyWith(fontSize: 18),
                                                       textAlign: TextAlign.left,
-                                                      textScaler:
-                                                      TextScaler.noScaling,
+                                                      textScaler: TextScaler.noScaling,
+                                                      overflow: TextOverflow.ellipsis,
                                                     ),
-                                                  ]),
-                                            )),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
                                       ],
+                                    ),
+                            ],
+                          ),
+
+                              SizedBox(height: 10),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.bolt_outlined,
+                                          size: 26,
+                                          // Bigger icon for a more clickable feel
+                                          color: Colors.black54,
+                                        ),
+                                        Text(
+                                          "Stock Difference",
+                                          style: Styling.bodyTitleBigBoldDashGrey,
+                                          textScaler: TextScaler.noScaling,
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(width:10),
+                                    DropdownButton<num>(
+                                      value: selectedItemIdCDCMS,
+                                      items: getManagerDashboarDetail.map((item) {
+                                        return DropdownMenuItem<num>(
+                                          value: item.itemId,
+                                        //  child: Text(item.itemName ?? 'Unknown'),
+                                          child: Text(item.itemName ?? 'Unknown',  style: Styling.dropdownVerySmallText),
+                                        );
+                                      }).toList(),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          selectedItemIdCDCMS = value!.toInt();
+                                          final selectedItem = getManagerDashboarDetail.firstWhere(
+                                                (item) => item.itemId == selectedItemIdCDCMS,
+                                            orElse: () => GetManagerDashboarDetailModel(),
+                                          );
+                                          cdcmsFilledDiffShow = selectedItem.filledDiff!.toInt();
+                                          cdcmsEmptyDiffShow = selectedItem.emptyDiff!.toInt();
+                                          cdcmsDefectiveDiffShow = selectedItem.defectiveDiff!.toInt();
+                                        });
+                                      },
+                                    ),
+                                ]),
+                              SizedBox(height: 10),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Color(0xFFfcf2f1),
+                                        borderRadius: BorderRadius.circular(12),
+                                        boxShadow: [
+                                          BoxShadow(
+                                              color: Colors.grey.shade200,
+                                              blurRadius: 4)
+                                        ],
+                                      ),
+                                      padding: EdgeInsets.all(10),
+                                      child: Padding(
+                                        padding: EdgeInsets.all(4.0),
+                                        child:
+                                        Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              cdcmsFilledDiffShow
+                                                  .toString(),
+                                              // Replace this with your dynamic data
+                                              style: Styling
+                                                  .bodyTitleBigBoldDashGrey
+                                                  .copyWith(fontSize: 18,
+                                                color: Colors.blue,
+                                                fontWeight: FontWeight.bold,
+                                                decorationColor:
+                                                Colors.blue,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                              textScaler:
+                                              TextScaler.noScaling,
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              'Filled',
+                                              style: Styling.bodyTitleBig,
+                                              textScaler:
+                                              TextScaler.noScaling,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 10),
+                                  Expanded(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Color(0xFFfcf2f1),
+                                        borderRadius: BorderRadius.circular(12),
+                                        boxShadow: [
+                                          BoxShadow(
+                                              color: Colors.grey.shade200,
+                                              blurRadius: 4)
+                                        ],
+                                      ),
+                                      padding: EdgeInsets.all(10),
+                                      child: Padding(
+                                        padding: EdgeInsets.all(4.0),
+                                        child:
+                                        Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              cdcmsEmptyDiffShow.toString(),
+                                              // Replace this with your dynamic data
+                                              style: Styling
+                                                  .bodyTitleBigBoldDashGrey
+                                                  .copyWith(
+                                                fontSize: 18,
+                                                color: Colors.blue,
+                                                fontWeight: FontWeight.bold,
+                                                decorationColor:
+                                                Colors.blue,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                              textScaler:
+                                              TextScaler.noScaling,
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              'Empty',
+                                              style: Styling.bodyTitleBig,
+                                              textScaler:
+                                              TextScaler.noScaling,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: 10),
+                                  Expanded(
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Color(0xFFfcf2f1),
+                                        borderRadius: BorderRadius.circular(12),
+                                        boxShadow: [
+                                          BoxShadow(
+                                              color: Colors.grey.shade200,
+                                              blurRadius: 4)
+                                        ],
+                                      ),
+                                      padding: EdgeInsets.all(10),
+                                      child: Padding(
+                                        padding: EdgeInsets.all(4.0),
+                                        child:
+                                        Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              cdcmsDefectiveDiffShow
+                                                  .toString(),
+                                              // Replace this with your dynamic data
+                                              style: Styling
+                                                  .bodyTitleBigBoldDashGrey
+                                                  .copyWith(
+                                                fontSize: 18,
+                                                color: Colors.blue,
+                                                decorationColor:
+                                                Colors.blue,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                              textAlign: TextAlign.center,
+                                              textScaler:
+                                              TextScaler.noScaling,
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              'Defective',
+                                              style: Styling.bodyTitleBig,
+                                              textScaler:
+                                              TextScaler.noScaling,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 30),
-                              Row(children: [
-                                Icon(
-                                  Icons.bolt_outlined,
-                                  size: 26,
-                                  // Bigger icon for a more clickable feel
-                                  color: Colors.black54,
-                                ),
-                                Text(
-                                  "Quick Create",
-                                  style: Styling.bodyTitleBigBoldDashGrey,
-                                  textScaler: TextScaler.noScaling,
-                                )
-                              ]),
-                              SizedBox(height: 20),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 15.0, right: 15),
-                                child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      InkWell(
-                                        onTap: () {
-                                          Navigator.pushNamed(context,
-                                              SVSaleReportScreen.screenName);
-                                        },
-                                        child: Column(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                const EdgeInsets.all(10.0),
-                                                child: Icon(
-                                                  Icons.discount_outlined,
-                                                  size: 26,
-                                                  // Bigger icon for a more clickable feel
-                                                  color: Colors.black54,
-                                                ),
-                                              ),
-                                              Text(
-                                                "SV Sale",
-                                                style: Styling
-                                                    .bodyTitleBigBoldDashQuick,
-                                                textAlign: TextAlign.center,
-                                                textScaler:
-                                                TextScaler.noScaling,
-                                              ),
-                                            ]),
-                                      ),
-                                      SizedBox(width: 20),
-                                      InkWell(
-                                        onTap: () {
-                                          Navigator.pushNamed(context,
-                                              TVSalesScreen.screenName);
-                                        },
-                                        child: Column(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                const EdgeInsets.all(10.0),
-                                                child: Icon(
-                                                  Icons.receipt_long_outlined,
-                                                  size: 26,
-                                                  // Bigger icon for a more clickable feel
-                                                  color: Colors.black54,
-                                                ),
-                                              ),
-                                              Text(
-                                                "TV Receipt",
-                                                style: Styling
-                                                    .bodyTitleBigBoldDashQuick,
-                                                textAlign: TextAlign.center,
-                                                textScaler:
-                                                TextScaler.noScaling,
-                                              ),
-                                            ]),
-                                      ),
-                                      SizedBox(width: 20),
-                                      InkWell(
-                                        onTap: () {
-                                          Navigator.pushNamed(context,
-                                              PaymentReceiptScreen.screenName);
-                                        },
-                                        child: Column(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                const EdgeInsets.all(10.0),
-                                                child: Icon(
-                                                  Icons.payment,
-                                                  size: 26,
-                                                  // Bigger icon for a more clickable feel
-                                                  color: Colors.black54,
-                                                ),
-                                              ),
-                                              Text(
-                                                "Payment",
-                                                style: Styling
-                                                    .bodyTitleBigBoldDashQuick,
-                                                textAlign: TextAlign.center,
-                                                textScaler:
-                                                TextScaler.noScaling,
-                                              ),
-                                            ]),
-                                      ),
-                                      SizedBox(width: 20),
-                                      InkWell(
-                                        onTap: () {
-                                          Navigator.pushNamed(context,
-                                              CashHandoverScreen.screenName);
-                                        },
-                                        child: Column(
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                const EdgeInsets.all(10.0),
-                                                child: Icon(
-                                                  Icons.payments,
-                                                  size: 26,
-                                                  // Bigger icon for a more clickable feel
-                                                  color: Colors.black54,
-                                                ),
-                                              ),
-                                              Text(
-                                                "Cash",
-                                                style: Styling
-                                                    .bodyTitleBigBoldDashQuick,
-                                                textAlign: TextAlign.center,
-                                                textScaler:
-                                                TextScaler.noScaling,
-                                              ),
-                                            ]),
-                                      ),
-                                    ]),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      Card(
-                        margin: EdgeInsets.zero,
-                        color: Color(0xFFEFFFFfff),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(20.0),
-                                topLeft: Radius.circular(20.0))),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 5.0, right: 5, bottom: 20, top: 15),
-                          child: Column(children: [
-                            Row(children: [
-                              Icon(
-                                Icons.bolt_outlined,
-                                size: 26,
-                                // Bigger icon for a more clickable feel
-                                color: Colors.black54,
-                              ),
-                              Text(
-                                "CDCMS Stock Difference",
-                                style: Styling.bodyTitleBigBoldDashGrey,
-                                textScaler: TextScaler.noScaling,
-                              )
-                            ]),
-                            SizedBox(height: 15),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: Color(0xFFfcf2f1),
-                                      borderRadius: BorderRadius.circular(12),
-                                      boxShadow: [
-                                        BoxShadow(
-                                            color: Colors.grey.shade200,
-                                            blurRadius: 4)
-                                      ],
-                                    ),
-                                    padding: EdgeInsets.all(10),
-                                    child: Padding(
-                                      padding: EdgeInsets.all(4.0),
-                                      child: Column(
-                                        children: [
-                                          InkWell(
-                                            onTap: () {
-                                              showCardWithCDCMSStockDifference(
-                                                  context);
-                                            },
-                                            child: Column(
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  cdcmsFilledDiffShow
-                                                      .toString(),
-                                                  // Replace this with your dynamic data
-                                                  style: Styling
-                                                      .bodyTitleBigBoldDashGrey
-                                                      .copyWith(
-                                                    color: Colors.blue,
-                                                    // Make the text blue like a link
-                                                    decoration: TextDecoration
-                                                        .underline,
-                                                    fontWeight: FontWeight.bold,
-                                                    decorationColor:
-                                                    Colors.blue,
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                  textScaler:
-                                                  TextScaler.noScaling,
-                                                ),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  'Filled',
-                                                  style: Styling.bodyTitleBig,
-                                                  textScaler:
-                                                  TextScaler.noScaling,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(width: 10),
-                                Expanded(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: Color(0xFFfcf2f1),
-                                      borderRadius: BorderRadius.circular(12),
-                                      boxShadow: [
-                                        BoxShadow(
-                                            color: Colors.grey.shade200,
-                                            blurRadius: 4)
-                                      ],
-                                    ),
-                                    padding: EdgeInsets.all(10),
-                                    child: Padding(
-                                      padding: EdgeInsets.all(4.0),
-                                      child: Column(
-                                        children: [
-                                          InkWell(
-                                            onTap: () {
-                                              showCardWithCDCMSStockDifference(
-                                                  context);
-                                            },
-                                            child: Column(
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  cdcmsEmptyDiffShow.toString(),
-                                                  // Replace this with your dynamic data
-                                                  style: Styling
-                                                      .bodyTitleBigBoldDashGrey
-                                                      .copyWith(
-                                                    color: Colors.blue,
-                                                    // Make the text blue like a link
-                                                    decoration: TextDecoration
-                                                        .underline,
-                                                    fontWeight: FontWeight.bold,
-                                                    decorationColor:
-                                                    Colors.blue,
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                  textScaler:
-                                                  TextScaler.noScaling,
-                                                ),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  'Empty',
-                                                  style: Styling.bodyTitleBig,
-                                                  textScaler:
-                                                  TextScaler.noScaling,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(width: 10),
-                                Expanded(
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: Color(0xFFfcf2f1),
-                                      borderRadius: BorderRadius.circular(12),
-                                      boxShadow: [
-                                        BoxShadow(
-                                            color: Colors.grey.shade200,
-                                            blurRadius: 4)
-                                      ],
-                                    ),
-                                    padding: EdgeInsets.all(10),
-                                    child: Padding(
-                                      padding: EdgeInsets.all(4.0),
-                                      child: Column(
-                                        children: [
-                                          InkWell(
-                                            onTap: () {
-                                              showCardWithCDCMSStockDifference(
-                                                  context);
-                                            },
-                                            child: Column(
-                                              crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  cdcmsDefectiveDiffShow
-                                                      .toString(),
-                                                  // Replace this with your dynamic data
-                                                  style: Styling
-                                                      .bodyTitleBigBoldDashGrey
-                                                      .copyWith(
-                                                    color: Colors.blue,
-                                                    // Make the text blue like a link
-                                                    decoration: TextDecoration
-                                                        .underline,
-                                                    // Underline the text
-                                                    decorationColor:
-                                                    Colors.blue,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                  textScaler:
-                                                  TextScaler.noScaling,
-                                                ),
-                                                const SizedBox(height: 4),
-                                                Text(
-                                                  'Defective',
-                                                  style: Styling.bodyTitleBig,
-                                                  textScaler:
-                                                  TextScaler.noScaling,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 30),
+                            SizedBox(height: 20),
                             Row(children: [
                               Icon(
                                 Icons.cameraswitch_sharp,
@@ -775,157 +696,13 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                               ),
                               SizedBox(width: 10),
                               Text(
-                                "Today's Cash Summary",
+                                "On Account",
                                 style: Styling.bodyTitleBigBoldDashGrey,
                                 textScaler: TextScaler.noScaling,
                               )
                             ]),
-                            // SizedBox(height: 30),
-                            // SizedBox(
-                            //   height: 200,
-                            //   child: Container(
-                            //     child: AspectRatio(
-                            //       aspectRatio: 1.5,
-                            //       child: BarChart(
-                            //         BarChartData(
-                            //           barGroups: _buildBarGroups(),
-                            //           titlesData: FlTitlesData(
-                            //             leftTitles: AxisTitles(
-                            //               sideTitles: SideTitles(
-                            //                   showTitles: true,
-                            //                   reservedSize: 40),
-                            //             ),
-                            //             bottomTitles: AxisTitles(
-                            //               sideTitles: SideTitles(
-                            //                 showTitles: true,
-                            //                 getTitlesWidget: (value, meta) {
-                            //                   final index = value.toInt();
-                            //                   if (index >= 0 &&
-                            //                       index < months.length) {
-                            //                     return Text(months[index]);
-                            //                   } else {
-                            //                     return Text('');
-                            //                   }
-                            //                 },
-                            //               ),
-                            //             ),
-                            //             topTitles: AxisTitles(
-                            //                 sideTitles:
-                            //                 SideTitles(showTitles: false)),
-                            //             rightTitles: AxisTitles(
-                            //                 sideTitles:
-                            //                 SideTitles(showTitles: false)),
-                            //           ),
-                            //           borderData: FlBorderData(show: false),
-                            //           gridData: FlGridData(show: false),
-                            //           barTouchData: BarTouchData(enabled: true),
-                            //         ),
-                            //       ),
-                            //     ),
-                            //   ),
-                            // ),
-                            // SizedBox(height: 20),
                             Container(
-                              height: 140,
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    flex: 5,
-                                    child: Card(
-                                      color: Colors.white,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(14.0),
-                                        child: Column(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                "Today's Income",
-                                                style: Styling
-                                                    .bodyTitleWithBlueHightDash,
-                                                textAlign: TextAlign.left,
-                                                textScaler:
-                                                TextScaler.noScaling,
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons
-                                                        .currency_rupee_outlined,
-                                                    size: 17,
-                                                    // Bigger icon for a more clickable feel
-                                                    color: Colors.black54,
-                                                  ),
-                                                  Text(
-                                                    totalIncome != null
-                                                        ? formatCurrency(
-                                                        totalIncome!)
-                                                        : '0',
-                                                    style: Styling
-                                                        .bodyTitleBigBoldDashGrey,
-                                                    textScaler:
-                                                    TextScaler.noScaling,
-                                                  )
-                                                ],
-                                              ),
-                                            ]),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 5,
-                                    child: Card(
-                                      color: Colors.white,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(14.0),
-                                        child: Column(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                "Today's Expenses",
-                                                style: Styling
-                                                    .bodyTitleWithBlueHightDashOrange,
-                                                textScaler:
-                                                TextScaler.noScaling,
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons
-                                                        .currency_rupee_outlined,
-                                                    size: 17,
-                                                    // Bigger icon for a more clickable feel
-                                                    color: Colors.black54,
-                                                  ),
-                                                  Text(
-                                                    totalExpense != null
-                                                        ? formatCurrency(
-                                                        totalExpense!)
-                                                        : '0',
-                                                    style: Styling
-                                                        .bodyTitleBigBoldDashGrey,
-                                                    textScaler:
-                                                    TextScaler.noScaling,
-                                                  ),
-                                                ],
-                                              ),
-                                            ]),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 5),
-                            Container(
-                              height: 140,
+                              height: 145,
                               child: Row(
                                 mainAxisAlignment:
                                 MainAxisAlignment.spaceBetween,
@@ -989,7 +766,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                         onAccountToday!)
                                                         : '0',
                                                     style: Styling
-                                                        .bodyTitleBigBoldDashGrey,
+                                                        .bodyTitleBigBoldDashGreyOne,
                                                     textScaler:
                                                     TextScaler.noScaling,
                                                   ),
@@ -1059,7 +836,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                         onAccountAsOfDate!)
                                                         : '0',
                                                     style: Styling
-                                                        .bodyTitleBigBoldDashGrey,
+                                                        .bodyTitleBigBoldDashGreyOne,
                                                     textScaler:
                                                     TextScaler.noScaling,
                                                   ),
@@ -1072,126 +849,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                 ],
                               ),
                             ),
-                            SizedBox(height: 30),
-                            Row(children: [
-                              Icon(
-                                Icons.ac_unit,
-                                size: 20,
-                                // Bigger icon for a more clickable feel
-                                color: Colors.black54,
-                              ),
-                              SizedBox(width: 10),
-                              Text(
-                                "Punching & Settlement Status",
-                                style: Styling.bodyTitleBigBoldDashGrey,
-                                textScaler: TextScaler.noScaling,
-                              )
-                            ]),
-                            SizedBox(height: 10),
-                            Row(
-                              children: [
-                                Expanded(
-                                  // First Card
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      showBottomSheet(context);
-                                    },
-                                    child: Card(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                      elevation: 4,
-                                      color: Color(0xFFfbe9e9),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              padding: EdgeInsets.all(6),
-                                              decoration: BoxDecoration(
-                                                color: Colors.blue
-                                                    .withOpacity(0.1),
-                                                shape: BoxShape.circle,
-                                              ),
-                                              child: Icon(Icons.punch_clock,
-                                                  color: Colors.blue, size: 20),
-                                            ),
-                                            SizedBox(width: 8),
-                                            Expanded(
-                                              child: Text(
-                                                "Prepaid Punching Status",
-                                                style: TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black87,
-                                                ),
-                                                textScaler:
-                                                TextScaler.noScaling,
-                                              ),
-                                            ),
-                                            Icon(Icons.arrow_forward_ios,
-                                                color: Colors.black38,
-                                                size: 16),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(width: 8), // spacing between the cards
-                                Expanded(
-                                  // Second Card
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      showBottomSheetPrepaidSettlementStatus(
-                                          context);
-                                      // showHalfHeightSheetLeftToRight(context);
-                                    },
-                                    child: Card(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(16),
-                                      ),
-                                      elevation: 4,
-                                      color: Color(0xFFfcf2f1),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              padding: EdgeInsets.all(6),
-                                              decoration: BoxDecoration(
-                                                color: Colors.blue
-                                                    .withOpacity(0.1),
-                                                shape: BoxShape.circle,
-                                              ),
-                                              child: Icon(Icons.punch_clock,
-                                                  color: Colors.blue, size: 20),
-                                            ),
-                                            SizedBox(width: 8),
-                                            Expanded(
-                                              child: Text(
-                                                "Prepaid Settlement Status",
-                                                style: TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black87,
-                                                ),
-                                                textScaler:
-                                                TextScaler.noScaling,
-                                              ),
-                                            ),
-                                            Icon(Icons.arrow_forward_ios,
-                                                color: Colors.black38,
-                                                size: 16),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 10),
+                        
                           ]),
                         ),
                       ),
@@ -1208,122 +866,6 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                               left: 5.0, right: 5, bottom: 20, top: 15),
                           child: Column(
                             children: [
-                              Row(children: [
-                                Icon(
-                                  Icons.bolt_outlined,
-                                  size: 26,
-                                  // Bigger icon for a more clickable feel
-                                  color: Colors.black54,
-                                ),
-                                Text(
-                                  "Postpaid Verification Status",
-                                  style: Styling.bodyTitleBigBoldDashGrey,
-                                  textScaler: TextScaler.noScaling,
-                                )
-                              ]),
-                              SizedBox(height: 10),
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border(
-                                      left: BorderSide(
-                                          color: Colors.blue, width: 10)),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Colors.grey.shade200,
-                                        blurRadius: 4)
-                                  ],
-                                ),
-                                padding: EdgeInsets.all(12),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Row(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 24,
-                                        backgroundColor: Color(0xFFEFF2FB),
-                                        child: const Icon(Icons.pending_actions,
-                                            color: Colors.black, size: 24),
-                                      ),
-                                      const SizedBox(width: 16),
-                                      Column(
-                                        crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                        children: [
-                                          GestureDetector(
-                                            onTap: (postPaidVerifPend ?? 0) > 0
-                                                ? () {
-                                              Navigator.pushNamed(
-                                                  context,
-                                                  DashboardPostPaidVerifPendDetails
-                                                      .screenName,
-                                                  arguments: {
-                                                    "flag": "All",
-                                                  });
-                                            }
-                                                : null,
-                                            behavior: HitTestBehavior.opaque,
-                                            child: Row(
-                                              children: [
-                                                Text(
-                                                  postPaidVerifPend.toString(),
-                                                  // Replace this with your dynamic data
-                                                  style: Styling
-                                                      .bodyTitleBigBoldDashGrey
-                                                      .copyWith(
-                                                    color: Colors.blue,
-                                                    // Make the text blue like a link
-                                                    decoration: TextDecoration
-                                                        .underline,
-                                                    // Underline the text
-                                                    decorationColor:
-                                                    Colors.blue,
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                  textScaler:
-                                                  TextScaler.noScaling,
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                  const EdgeInsets.only(
-                                                      left: 5.0, right: 5),
-                                                  child:
-                                                  verticalDividerSmallestRed(),
-                                                ),
-                                                Text(
-                                                  '${postPaidVerifPendAmt?.toStringAsFixed(2)}',
-                                                  // Use 'N/A' if cDCMDPendSince is null
-                                                  style: Styling
-                                                      .bodyTitleBigBoldDashGrey
-                                                      .copyWith(
-                                                    color: Colors.blue,
-                                                    // Make the text blue like a link
-                                                    decoration: TextDecoration
-                                                        .underline, // Make the text blue like a link
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                  textScaler:
-                                                  TextScaler.noScaling,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          const Text(
-                                            'Postpaid Verification Pending',
-                                            style: TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.black54),
-                                            textScaler: TextScaler.noScaling,
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 30),
                               Row(children: [
                                 Icon(
                                   Icons.bolt_outlined,
@@ -1452,7 +994,9 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 30),
+                              SizedBox(height: 10),
+
+                         
                               Row(children: [
                                 Icon(
                                   Icons.bolt_outlined,
@@ -1527,11 +1071,299 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                   ),
                                 ),
                               ),
+                              SizedBox(height: 10),
+                              Row(children: [
+                                Icon(
+                                  Icons.bolt_outlined,
+                                  size: 26,
+                                  // Bigger icon for a more clickable feel
+                                  color: Colors.black54,
+                                ),
+                                Text(
+                                  "Postpaid Verification Status",
+                                  style: Styling.bodyTitleBigBoldDashGrey,
+                                  textScaler: TextScaler.noScaling,
+                                )
+                              ]),
+                              SizedBox(height: 10),
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border(
+                                      left: BorderSide(
+                                          color: Colors.blue, width: 10)),
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: Colors.grey.shade200,
+                                        blurRadius: 4)
+                                  ],
+                                ),
+                                padding: EdgeInsets.all(12),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Row(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 24,
+                                        backgroundColor: Color(0xFFEFF2FB),
+                                        child: const Icon(Icons.pending_actions,
+                                            color: Colors.black, size: 24),
+                                      ),
+                                      const SizedBox(width: 16),
+                                      Column(
+                                        crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                        children: [
+                                          GestureDetector(
+                                            onTap: (postPaidVerifPend ?? 0) > 0
+                                                ? () {
+                                              Navigator.pushNamed(
+                                                  context,
+                                                  DashboardPostPaidVerifPendDetails
+                                                      .screenName,
+                                                  arguments: {
+                                                    "flag": "All",
+                                                  });
+                                            }
+                                                : null,
+                                            behavior: HitTestBehavior.opaque,
+                                            child: Row(
+                                              children: [
+                                                Text(
+                                                 postPaidVerifPend.toString(),
+
+                                                  // Replace this with your dynamic data
+                                                  style: Styling
+                                                      .bodyTitleBigBoldDashGrey
+                                                      .copyWith(
+                                                    color: Colors.blue,
+                                                    // Make the text blue like a link
+                                                    decoration: TextDecoration
+                                                        .underline,
+                                                    // Underline the text
+                                                    decorationColor:
+                                                    Colors.blue,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                  textScaler:
+                                                  TextScaler.noScaling,
+                                                ),
+                                                SizedBox(width:5),
+                                                Padding(
+                                                  padding:
+                                                  const EdgeInsets.only(
+                                                      left: 5.0, right: 5),
+                                                  child:
+                                                  verticalDividerSmallestRed(),
+                                                ),
+                                                SizedBox(width:5),
+                                                Text(
+                                                  formatCurrency(postPaidVerifPendAmt?.toDouble() ?? 0.0),
+
+                                                  style: Styling
+                                                      .bodyTitleBigBoldDashGrey
+                                                      .copyWith(
+                                                    color: Colors.blue,
+                                                    decoration: TextDecoration
+                                                        .underline,
+                                                    decorationColor:
+                                                    Colors.blue,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                  textScaler:
+                                                  TextScaler.noScaling,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          const Text(
+                                            'Postpaid Verification Pending',
+                                            style: TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.black54),
+                                            textScaler: TextScaler.noScaling,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                               SizedBox(height: 10),
+                              //SizedBox(height: 20),
+                              Row(children: [
+                                Icon(
+                                  Icons.bolt_outlined,
+                                  size: 26,
+                                  // Bigger icon for a more clickable feel
+                                  color: Colors.black54,
+                                ),
+                                Text(
+                                  "Unsettled Sale",
+                                  style: Styling.bodyTitleBigBoldDashGrey,
+                                  textScaler: TextScaler.noScaling,
+                                )
+                              ]),
+                              SizedBox(height: 10),
+                              Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Expanded(
+                                    flex: 5,
+                                    child: Container(
+                                      height:110,
+                                      width:110,
+                                      child: Card(
+                                        color: Colors.white,
+                                        child: Padding(
+                                          // padding: const EdgeInsets.all(14.0),
+                                          padding: const EdgeInsets.only(left: 14, right: 14, top: 5, bottom: 14), // Adjusted top padding
+                                          child: Column(
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                              children: [
+                                                InkWell(
+                                                  // onTap: () {
+                                                  //   Navigator.pushNamed(
+                                                  //       context,
+                                                  //       UnsettledSaleDetailList
+                                                  //           .screenName);
+                                                  // },
+                                                  onTap: deliveryMenCount != null && deliveryMenCount! > 0
+                                                      ? () {
+                                                    Navigator.pushNamed(
+                                                        context, UnsettledSaleDetailList.screenName);
+                                                  }
+                                                      : null,
+                                                  child: Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child:
+                                                        Row(
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Container(
+                                                              child: Transform.translate(
+                                                                offset: Offset(0, -5),  // Moves the text upwards (adjust the -5 to your preference)
+                                                                child: Text(
+                                                                  "Count",
+                                                                  style: Styling.bodyTitleBigBoldDashQuick,
+                                                                  textAlign: TextAlign.start,
+                                                                  textScaler: TextScaler.noScaling,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            SizedBox(width: 8), // small spacing between the texts
+                                                            Expanded(
+                                                              child: Text(
+                                                                "(DM Wise)",
+                                                                style: Styling.buttonTextBlack,
+                                                                textAlign: TextAlign.start,
+                                                                textScaler: TextScaler.noScaling,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      Icon(
+                                                        Icons
+                                                            .keyboard_arrow_down_sharp,
+                                                        size: 24,
+                                                        color: Colors.black54,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Text(
+                                                  (deliveryMenCount ?? 0)
+                                                      .toString(),
+                                                  style: Styling
+                                                      .bodyTitleBigBoldDashtwo,
+                                                  textScaler: TextScaler
+                                                      .noScaling,
+                                                ),
+                                              ]),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 5,
+                                    child:
+                                    Container(
+                                      height:110,
+                                      width: 110,
+                                      child: Card(
+                                        color: Colors.white,
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(left: 14, right: 14, top: 0, bottom: 14), // Adjusted top padding
+                                          child: Column(
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                              children: [
+                                                InkWell(
+                                                  // onTap: () {
+                                                  //   Navigator.pushNamed(
+                                                  //       context,
+                                                  //       UnsettledSaleDetailList
+                                                  //           .screenName);
+                                                  // },
+                                                  onTap: deliveryMenCount != null && deliveryMenCount! > 0
+                                                      ? () {
+                                                    Navigator.pushNamed(
+                                                        context, UnsettledSaleDetailList.screenName);
+                                                    }
+                                                      : null,
+                                                  child: Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child:
+                                                        Text(
+                                                          "Amount",
+                                                          style: Styling.itemTitleDash,
+                                                          textAlign: TextAlign.start,
+                                                          textScaler:
+                                                          TextScaler.noScaling,
+                                                        ),
+                                                      ),
+                                                      Icon(
+                                                        Icons
+                                                            .keyboard_arrow_down_sharp,
+                                                        size: 24,
+                                                        // Bigger icon for a more clickable feel
+                                                        color: Colors.black54,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Text(
+                                                  formatCurrency(
+                                                      totalAmount ?? 0),
+                                                  style: Styling
+                                                      .bodyTitleBigBoldDashtwo,
+                                                  textScaler: TextScaler
+                                                      .noScaling,
+                                                ),
+                                              ]),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
                         ),
                       ),
                       SizedBox(height: 20),
+
                       Card(
                           margin: EdgeInsets.zero,
                           color: Color(0xFFEFFFFfff),
@@ -1543,20 +1375,51 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                             padding: const EdgeInsets.only(
                                 left: 10.0, right: 10, bottom: 20, top: 15),
                             child: Column(children: [
-                              Row(children: [
-                                Icon(
-                                  Icons.bolt_outlined,
-                                  size: 26,
-                                  // Bigger icon for a more clickable feel
-                                  color: Colors.black54,
-                                ),
-                                Text(
-                                  "Opening Stock Status",
-                                  style: Styling.bodyTitleBigBoldDashGrey,
-                                  textScaler: TextScaler.noScaling,
-                                )
-                              ]),
-                              SizedBox(height: 15),
+                              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.bolt_outlined,
+                                          size: 26,
+                                          // Bigger icon for a more clickable feel
+                                          color: Colors.black54,
+                                        ),
+                                        Text(
+                                          "Opening Stock Status",
+                                          style: Styling.bodyTitleBigBoldDashGrey,
+                                          textScaler: TextScaler.noScaling,
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(width:10),
+                                    DropdownButton<num>(
+                                      value: selectedItemId,
+                                      items: getCurrentStockDetailManager.map((item) {
+                                        return DropdownMenuItem<num>(
+                                          value: item.itemId,
+                                          child: Text(item.itemName ?? 'Unknown',  style: Styling.dropdownVerySmallText),
+                                        );
+                                      }).toList(),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          selectedItemId = value!.toInt();
+                                          final selectedItem = getCurrentStockDetailManager.firstWhere(
+                                                (item) => item.itemId == selectedItemId,
+                                            orElse: () => GetCurrentStockDetailManagerModel(),
+                                          );
+
+                                          totalOpeningStockFilled = selectedItem.filledOpeningStk!.toInt();
+                                          totalOpeningStockEmpty = selectedItem.emptyOpeningStk!.toInt();
+                                          totalOpeningStockDefective = selectedItem.deffOpeningStk!.toInt();
+                                          totalCurrentStockFilled = selectedItem.filledCurrentStk!.toInt();
+                                          totalCurrentStockEmpty = selectedItem.emptyCurrentStk!.toInt();
+                                          totalCurrentStockDefective = selectedItem.deffCurrentStk!.toInt();
+                                        });
+                                      },
+                                    )
+                                  ]),
+                              SizedBox(height: 10),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -1578,45 +1441,33 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                       padding: EdgeInsets.all(12),
                                       child: Padding(
                                         padding: const EdgeInsets.all(4.0),
-                                        child: Column(
+                                        child:
+                                        Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                           children: [
-                                            InkWell(
-                                              onTap: () {
-                                                showCardWithOpeningStock(
-                                                    context);
-                                              },
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    totalOpeningStockFilled
-                                                        .toString(),
-                                                    // Replace this with your dynamic data
-                                                    style: Styling
-                                                        .bodyTitleBigBoldDashGrey
-                                                        .copyWith(
-                                                      color: Colors.blue,
-                                                      // Make the text blue like a link
-                                                      decoration: TextDecoration
-                                                          .underline,
-                                                      // Underline the text
-                                                      decorationColor:
-                                                      Colors.blue,
-                                                    ),
-                                                    textAlign: TextAlign.center,
-                                                    textScaler:
-                                                    TextScaler.noScaling,
-                                                  ),
-                                                  const SizedBox(height: 4),
-                                                  Text(
-                                                    'Filled',
-                                                    style: Styling.bodyTitle,
-                                                    textScaler:
-                                                    TextScaler.noScaling,
-                                                  ),
-                                                ],
+                                            Text(
+                                              totalOpeningStockFilled
+                                                  .toString(),
+                                              // Replace this with your dynamic data
+                                              style: Styling
+                                                  .bodyTitleBigBoldDashGrey
+                                                  .copyWith(fontSize: 18,
+                                                color: Colors.blue,
+                                                // Underline the text
+                                                decorationColor:
+                                                Colors.blue,
                                               ),
+                                              textAlign: TextAlign.center,
+                                              textScaler:
+                                              TextScaler.noScaling,
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              'Filled',
+                                              style: Styling.bodyTitle,
+                                              textScaler:
+                                              TextScaler.noScaling,
                                             ),
                                           ],
                                         ),
@@ -1641,49 +1492,36 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                       ),
                                       padding: EdgeInsets.all(12),
                                       child: Padding(
-                                        padding: const EdgeInsets.all(4.0),
-                                        child: Column(
-                                          children: [
-                                            InkWell(
-                                              onTap: () {
-                                                showCardWithOpeningStock(
-                                                    context);
-                                              },
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    totalOpeningStockEmpty
-                                                        .toString(),
-                                                    // Replace this with your dynamic data
-                                                    style: Styling
-                                                        .bodyTitleBigBoldDashGrey
-                                                        .copyWith(
-                                                      color: Colors.blue,
-                                                      // Make the text blue like a link
-                                                      decoration: TextDecoration
-                                                          .underline,
-                                                      // Underline the text
-                                                      decorationColor:
-                                                      Colors.blue,
-                                                    ),
-                                                    textAlign: TextAlign.center,
-                                                    textScaler:
-                                                    TextScaler.noScaling,
-                                                  ),
-                                                  const SizedBox(height: 4),
-                                                  Text(
-                                                    'Empty',
-                                                    style: Styling.bodyTitle,
-                                                    textScaler:
-                                                    TextScaler.noScaling,
-                                                  ),
-                                                ],
+                                          padding: const EdgeInsets.all(4.0),
+                                          child:
+                                          Column(
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                totalOpeningStockEmpty
+                                                    .toString(),
+                                                // Replace this with your dynamic data
+                                                style: Styling
+                                                    .bodyTitleBigBoldDashGrey
+                                                    .copyWith(fontSize: 18,
+                                                  color: Colors.blue,
+                                                  decorationColor:
+                                                  Colors.blue,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                                textScaler:
+                                                TextScaler.noScaling,
                                               ),
-                                            ),
-                                          ],
-                                        ),
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                'Empty',
+                                                style: Styling.bodyTitle,
+                                                textScaler:
+                                                TextScaler.noScaling,
+                                              ),
+                                            ],
+                                          )
                                       ),
                                     ),
                                   ),
@@ -1706,45 +1544,32 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                       padding: EdgeInsets.all(12),
                                       child: Padding(
                                         padding: const EdgeInsets.all(4.0),
-                                        child: Column(
+                                        child:
+                                        Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                           children: [
-                                            InkWell(
-                                              onTap: () {
-                                                showCardWithOpeningStock(
-                                                    context);
-                                              },
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    totalOpeningStockDefective
-                                                        .toString(),
-                                                    // Replace this with your dynamic data
-                                                    style: Styling
-                                                        .bodyTitleBigBoldDashGrey
-                                                        .copyWith(
-                                                      color: Colors.blue,
-                                                      // Make the text blue like a link
-                                                      decoration: TextDecoration
-                                                          .underline,
-                                                      // Underline the text
-                                                      decorationColor:
-                                                      Colors.blue,
-                                                    ),
-                                                    textAlign: TextAlign.center,
-                                                    textScaler:
-                                                    TextScaler.noScaling,
-                                                  ),
-                                                  const SizedBox(height: 4),
-                                                  Text(
-                                                    'Defective',
-                                                    style: Styling.bodyTitle,
-                                                    textScaler:
-                                                    TextScaler.noScaling,
-                                                  ),
-                                                ],
+                                            Text(
+                                              totalOpeningStockDefective
+                                                  .toString(),
+                                              // Replace this with your dynamic data
+                                              style: Styling
+                                                  .bodyTitleBigBoldDashGrey
+                                                  .copyWith(fontSize: 18,
+                                                color: Colors.blue,
+                                                decorationColor:
+                                                Colors.blue,
                                               ),
+                                              textAlign: TextAlign.center,
+                                              textScaler:
+                                              TextScaler.noScaling,
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              'Defective',
+                                              style: Styling.bodyTitle,
+                                              textScaler:
+                                              TextScaler.noScaling,
                                             ),
                                           ],
                                         ),
@@ -1753,7 +1578,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 30),
+                              SizedBox(height: 10),
                               Row(children: [
                                 Icon(
                                   Icons.bolt_outlined,
@@ -1788,49 +1613,36 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                       ),
                                       padding: EdgeInsets.all(12),
                                       child: Padding(
-                                        padding: const EdgeInsets.all(4.0),
-                                        child: Column(
-                                          children: [
-                                            InkWell(
-                                              onTap: () {
-                                                showCardWithCurrentStock(
-                                                    context);
-                                              },
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    totalCurrentStockFilled
-                                                        .toString(),
-                                                    // Replace this with your dynamic data
-                                                    style: Styling
-                                                        .bodyTitleBigBoldDashGrey
-                                                        .copyWith(
-                                                      color: Colors.blue,
-                                                      // Make the text blue like a link
-                                                      decoration: TextDecoration
-                                                          .underline,
-                                                      // Underline the text
-                                                      decorationColor:
-                                                      Colors.blue,
-                                                    ),
-                                                    textAlign: TextAlign.center,
-                                                    textScaler:
-                                                    TextScaler.noScaling,
-                                                  ),
-                                                  const SizedBox(height: 4),
-                                                  Text(
-                                                    'Filled',
-                                                    style: Styling.bodyTitle,
-                                                    textScaler:
-                                                    TextScaler.noScaling,
-                                                  ),
-                                                ],
+                                          padding: const EdgeInsets.all(4.0),
+                                          child:
+                                          Column(
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                totalCurrentStockFilled
+                                                    .toString(),
+                                                // Replace this with your dynamic data
+                                                style: Styling
+                                                    .bodyTitleBigBoldDashGrey
+                                                    .copyWith(fontSize: 18,
+                                                  color: Colors.blue,
+                                                  decorationColor:
+                                                  Colors.blue,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                                textScaler:
+                                                TextScaler.noScaling,
                                               ),
-                                            ),
-                                          ],
-                                        ),
+                                              const SizedBox(height: 4),
+                                              Text(
+                                                'Filled',
+                                                style: Styling.bodyTitle,
+                                                textScaler:
+                                                TextScaler.noScaling,
+                                              ),
+                                            ],
+                                          )
                                       ),
                                     ),
                                   ),
@@ -1853,45 +1665,32 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                       padding: EdgeInsets.all(12),
                                       child: Padding(
                                         padding: const EdgeInsets.all(4.0),
-                                        child: Column(
+                                        child:
+                                        Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                           children: [
-                                            InkWell(
-                                              onTap: () {
-                                                showCardWithCurrentStock(
-                                                    context);
-                                              },
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    totalCurrentStockEmpty
-                                                        .toString(),
-                                                    // Replace this with your dynamic data
-                                                    style: Styling
-                                                        .bodyTitleBigBoldDashGrey
-                                                        .copyWith(
-                                                      color: Colors.blue,
-                                                      // Make the text blue like a link
-                                                      decoration: TextDecoration
-                                                          .underline,
-                                                      // Underline the text
-                                                      decorationColor:
-                                                      Colors.blue,
-                                                    ),
-                                                    textAlign: TextAlign.center,
-                                                    textScaler:
-                                                    TextScaler.noScaling,
-                                                  ),
-                                                  const SizedBox(height: 4),
-                                                  Text(
-                                                    'Empty',
-                                                    style: Styling.bodyTitle,
-                                                    textScaler:
-                                                    TextScaler.noScaling,
-                                                  ),
-                                                ],
+                                            Text(
+                                              totalCurrentStockEmpty
+                                                  .toString(),
+                                              // Replace this with your dynamic data
+                                              style: Styling
+                                                  .bodyTitleBigBoldDashGrey
+                                                  .copyWith(fontSize: 18,
+                                                color: Colors.blue,
+                                                decorationColor:
+                                                Colors.blue,
                                               ),
+                                              textAlign: TextAlign.center,
+                                              textScaler:
+                                              TextScaler.noScaling,
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              'Empty',
+                                              style: Styling.bodyTitle,
+                                              textScaler:
+                                              TextScaler.noScaling,
                                             ),
                                           ],
                                         ),
@@ -1917,45 +1716,32 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                       padding: EdgeInsets.all(12),
                                       child: Padding(
                                         padding: const EdgeInsets.all(4.0),
-                                        child: Column(
+                                        child:
+                                        Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                           children: [
-                                            InkWell(
-                                              onTap: () {
-                                                showCardWithCurrentStock(
-                                                    context);
-                                              },
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    totalCurrentStockDefective
-                                                        .toString(),
-                                                    // Replace this with your dynamic data
-                                                    style: Styling
-                                                        .bodyTitleBigBoldDashGrey
-                                                        .copyWith(
-                                                      color: Colors.blue,
-                                                      // Make the text blue like a link
-                                                      decoration: TextDecoration
-                                                          .underline,
-                                                      // Underline the text
-                                                      decorationColor:
-                                                      Colors.blue,
-                                                    ),
-                                                    textAlign: TextAlign.center,
-                                                    textScaler:
-                                                    TextScaler.noScaling,
-                                                  ),
-                                                  const SizedBox(height: 4),
-                                                  Text(
-                                                    'Defective',
-                                                    style: Styling.bodyTitle,
-                                                    textScaler:
-                                                    TextScaler.noScaling,
-                                                  ),
-                                                ],
+                                            Text(
+                                              totalCurrentStockDefective
+                                                  .toString(),
+                                              // Replace this with your dynamic data
+                                              style: Styling
+                                                  .bodyTitleBigBoldDashGrey
+                                                  .copyWith(fontSize: 18,
+                                                color: Colors.blue,
+                                                decorationColor:
+                                                Colors.blue,
                                               ),
+                                              textAlign: TextAlign.center,
+                                              textScaler:
+                                              TextScaler.noScaling,
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Text(
+                                              'Defective',
+                                              style: Styling.bodyTitle,
+                                              textScaler:
+                                              TextScaler.noScaling,
                                             ),
                                           ],
                                         ),
@@ -1964,756 +1750,269 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 30),
-                              Row(children: [
-                                Icon(
-                                  Icons.bolt_outlined,
-                                  size: 26,
-                                  // Bigger icon for a more clickable feel
-                                  color: Colors.black54,
-                                ),
-                                Text(
-                                  "Inward Stock",
-                                  style: Styling.bodyTitleBigBoldDashGrey,
-                                  textScaler: TextScaler.noScaling,
-                                )
-                              ]),
                               SizedBox(height: 10),
                               Row(
-                                  children : [
-                                    Expanded(
-                                      child: InkWell(
-                                        onTap : () {
-                                          getCurrentStockDetailManager.any((item) =>
-                                          item.totalInvoiceCnt! > 0 ||
-                                              item.filledEMRCnt! > 0)?
-                                          showCardInwardStockFilled(context):
-                                          showFlushBar(context, Constants.nodataFound);
-                                        },
-                                        child: Card(
-                                          color : Color(0xFFEFF2FB),
-                                          child:Padding(
-                                            padding: const EdgeInsets.only(top:15.0,bottom:15),
-                                            child: Text("Filled",style: Styling.itemTitleDash,
-                                              textAlign: TextAlign.center,),
+                                children: [
+                                  Expanded(
+                                    // First Card
+                                    child:
+                                    GestureDetector(
+                                      onTap: () {
+                                        showCardInwardStock(context);
+                                      },
+                                      child: Card(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(6),
+                                        ),
+                                        elevation: 4,
+                                        color: Color(0xFFfbe9e9),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                padding: EdgeInsets.all(6),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.blue
+                                                      .withOpacity(0.1),
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: Icon(Icons.data_exploration_outlined,
+                                                    color: Colors.blue, size: 20),
+                                              ),
+                                              SizedBox(width: 8),
+                                              Expanded(
+                                                child: Text(
+                                                  "Inward \n Stock",
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black87,
+                                                  ),
+                                                  textScaler:
+                                                  TextScaler.noScaling,
+                                                ),
+                                              ),
+                                              Icon(Icons.arrow_forward_ios,
+                                                  color: Colors.black38,
+                                                  size: 16),
+                                            ],
                                           ),
                                         ),
                                       ),
                                     ),
-                                    Expanded(
-                                      child: InkWell(
-                                        onTap : (){
-                                          getCurrentStockDetailManager
-                                              .any((item) => item.emptyTVCnt! > 0)?
-                                          showCardInwardStockEmpty(context):
-                                          showFlushBar(context, Constants.nodataFound);
-                                        },
-                                        child: Card(
-                                          color : Color(0xFFEFF2FB),
-                                          child:Padding(
-                                            padding: const EdgeInsets.only(top:15.0,bottom:15),
-                                            child: Text("Empty",style: Styling.itemTitleDash,
-                                              textAlign: TextAlign.center,),
+                                  ),
+                                  SizedBox(width: 8), // spacing between the cards
+                                  Expanded(
+                                    // Second Card
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        showCardOutwardStock(
+                                            context);
+                                        // showHalfHeightSheetLeftToRight(context);
+                                      },
+                                      child: Card(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(6),
+                                        ),
+                                        elevation: 4,
+                                        color: Color(0xFFfcf2f1),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                padding: EdgeInsets.all(6),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.blue
+                                                      .withOpacity(0.1),
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: Icon(Icons.data_exploration_outlined,
+                                                    color: Colors.blue, size: 20),
+                                              ),
+                                              SizedBox(width: 8),
+                                              Expanded(
+                                                child: Text(
+                                                  "Outward \n Stock",
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black87,
+                                                  ),
+                                                  overflow: TextOverflow.ellipsis,
+                                                  textScaler:
+                                                  TextScaler.noScaling,
+                                                ),
+                                              ),
+                                              Icon(
+                                                  Icons.arrow_forward_ios,
+                                                  color: Colors.black38,
+                                                  size: 16
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ),
                                     ),
-                                    Expanded(
-                                      child: InkWell(
-                                        onTap : () {
-                                          getCurrentStockDetailManager
-                                              .any((item) => item.defectivCnt! > 0)?
-                                          showCardInwardStockDefective(context):
-                                          showFlushBar(context, Constants.nodataFound);
-                                        },
-                                        child: Card(
-                                          color : Color(0xFFEFF2FB),
-                                          child:Padding(
-                                            padding: const EdgeInsets.only(top:15.0,bottom:15),
-                                            child: Text("Defective",style: Styling.itemTitleDash,
-                                              textAlign: TextAlign.center,),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ]
+                                  ),
+                                ],
                               ),
-                              SizedBox(height: 30),
-                              Row(children: [
-                                Icon(
-                                  Icons.bolt_outlined,
-                                  size: 26,
-                                  // Bigger icon for a more clickable feel
-                                  color: Colors.black54,
-                                ),
-                                Text(
-                                  "Outward Stock",
-                                  style: Styling.bodyTitleBigBoldDashGrey,
-                                  textScaler: TextScaler.noScaling,
-                                )
-                              ]),
-                              SizedBox(height: 10),
-                              Row(
-                                  children : [
-                                    Expanded(
-                                      child: InkWell(
-                                        onTap : () {
-                                          getCurrentStockDetailManager.any((item) =>
-                                          item.emptyCRDCnt! > 0 ||
-                                              item.emptyDefectivCnt! > 0)?
-                                          showCardOutwardStockEmpty(context):
-                                          showFlushBar(context, Constants.nodataFound);
-                                        },
-                                        child: Card(
-                                          color : Color(0xFFEFF2FB),
-                                          child:Padding(
-                                            padding: const EdgeInsets.only(top:15.0,bottom:15),
-                                            child: Text("Empty",style: Styling.itemTitleDash,
-                                              textAlign: TextAlign.center,),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: InkWell(
-                                        onTap : (){
-                                          getCurrentStockDetailManager.any((item) =>
-                                          item.sVQty! > 0 ||
-                                              item.refillSaleCnt! > 0)?
-                                          showCardOutwardStockRefillSale(context):
-                                          showFlushBar(context, Constants.nodataFound);
-                                        },
-                                        child: Card(
-                                          color : Color(0xFFEFF2FB),
-                                          child:Padding(
-                                            padding: const EdgeInsets.only(top:15.0,bottom:15),
-                                            child: Text("Refill Sale",style: Styling.itemTitleDash,
-                                              textAlign: TextAlign.center,),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: InkWell(
-                                        onTap : () {
-                                          getCurrentStockDetailManager
-                                              .any((item) => item.imbalanceCnt! > 0)?
-                                          showCardOutwardStockImbalance(context):
-                                          showFlushBar(context, Constants.nodataFound);
-                                        },
-                                        child: Card(
-                                          color : Color(0xFFEFF2FB),
-                                          child:Padding(
-                                            padding: const EdgeInsets.only(top:15.0,bottom:15),
-                                            child: Text("Imbalance",style: Styling.itemTitleDash,
-                                              textAlign: TextAlign.center,),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ]
-                              ),
-                              getCurrentStockDetailManager.any((item) =>
-                              item.emptyCRDCnt! > 0 ||
-                                  item.emptyDefectivCnt! > 0)
-                                  ? Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(4),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Colors.grey.shade200,
-                                        blurRadius: 4)
-                                  ],
-                                ),
-                                padding: EdgeInsets.all(4),
-                                child: Column(
-                                  children: [
-                                    Row(children: [
-                                      Text(
-                                        "Empty",
-                                        style: Styling
-                                            .bodyTitleWithBlueHightDash,
-                                        textScaler: TextScaler.noScaling,
-                                      )
-                                    ]),
-                                    Column(
-                                      children: [
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                            BorderRadius.only(
-                                              topLeft:
-                                              Radius.circular(12),
-                                              topRight:
-                                              Radius.circular(12),
-                                            ),
-                                            color: Color(0xFFfbe9e9),
-                                          ),
-                                          child: Padding(
-                                            padding:
-                                            const EdgeInsets.all(8.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment
-                                                  .center,
-                                              children: [
-                                                Expanded(
-                                                  flex: 1,
-                                                  child: Text(
-                                                    '',
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      color: Colors.black,
-                                                      fontSize: 14,
-                                                    ),
-                                                    textAlign:
-                                                    TextAlign.center,
-                                                    textScaler: TextScaler
-                                                        .noScaling,
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 1,
-                                                  child: Text(
-                                                    'CRD',
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      color: Colors.black,
-                                                      fontSize: 14,
-                                                    ),
-                                                    textAlign:
-                                                    TextAlign.center,
-                                                    textScaler: TextScaler
-                                                        .noScaling,
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 1,
-                                                  child: Text(
-                                                    'Defective',
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      color: Colors.black,
-                                                      fontSize: 14,
-                                                    ),
-                                                    textAlign:
-                                                    TextAlign.center,
-                                                    textScaler: TextScaler
-                                                        .noScaling,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        getCurrentStockDetailManager
-                                            .isNotEmpty
-                                            ? ListView.builder(
-                                          shrinkWrap: true,
-                                          physics:
-                                          NeverScrollableScrollPhysics(),
-                                          // itemCount: getCurrentStockDetailManager.length,
-                                          itemCount:
-                                          getCurrentStockDetailManager
-                                              .where((item) =>
-                                          item.emptyCRDCnt! >
-                                              0 ||
-                                              item.emptyDefectivCnt! >
-                                                  0) // Filter items with defectivCnt > 0
-                                              .length,
-                                          itemBuilder:
-                                              (context, index) {
-                                            // final items =
-                                            //     getCurrentStockDetailManager[
-                                            //         index];
-
-                                            final items =
-                                            getCurrentStockDetailManager
-                                                .where((item) =>
-                                            item.emptyCRDCnt! >
-                                                0 ||
-                                                item.emptyDefectivCnt! >
-                                                    0)
-                                                .toList()[index];
-
-                                            Color backgroundColor =
-                                            (index % 2 == 0)
-                                                ? Colors.grey[
-                                            300]! // Color for even index (first, third, fifth...)
-                                                : Colors
-                                                .white70!;
-                                            return Container(
-                                              color:
-                                              backgroundColor,
-                                              child: Padding(
-                                                padding:
-                                                const EdgeInsets
-                                                    .all(8.0),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment
-                                                      .start,
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .center,
-                                                      children: [
-                                                        Expanded(
-                                                          flex: 1,
-                                                          child:
-                                                          Text(
-                                                            items
-                                                                .itemName
-                                                                .toString(),
-                                                            style: Styling
-                                                                .textFormText,
-                                                            textAlign:
-                                                            TextAlign.center,
-                                                            textScaler:
-                                                            TextScaler.noScaling,
-                                                          ),
-                                                        ),
-                                                        Expanded(
-                                                          flex: 1,
-                                                          child:
-                                                          Text(
-                                                            items
-                                                                .emptyCRDCnt
-                                                                .toString(),
-                                                            style: Styling
-                                                                .textFormText,
-                                                            textAlign:
-                                                            TextAlign.center,
-                                                            textScaler:
-                                                            TextScaler.noScaling,
-                                                          ),
-                                                        ),
-                                                        Expanded(
-                                                          flex: 1,
-                                                          child:
-                                                          Text(
-                                                            items
-                                                                .emptyDefectivCnt
-                                                                .toString(),
-                                                            style: Styling
-                                                                .textFormText,
-                                                            textAlign:
-                                                            TextAlign.center,
-                                                            textScaler:
-                                                            TextScaler.noScaling,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        )
-                                            : Container(
-                                          child: Text(
-                                              "No Data Available"),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 10),
-                                  ],
-                                ),
-                              )
-                                  : Container(),
-                              getCurrentStockDetailManager.any((item) =>
-                              item.sVQty! > 0 ||
-                                  item.refillSaleCnt! > 0)
-                                  ? Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(4),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Colors.grey.shade200,
-                                        blurRadius: 4)
-                                  ],
-                                ),
-                                padding: EdgeInsets.all(4),
-                                child: Column(
-                                  children: [
-                                    Row(children: [
-                                      Text(
-                                        "Refill Sale",
-                                        style: Styling
-                                            .bodyTitleWithBlueHightDash,
-                                        textScaler: TextScaler.noScaling,
-                                      )
-                                    ]),
-                                    Column(
-                                      children: [
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                            BorderRadius.only(
-                                              topLeft:
-                                              Radius.circular(12),
-                                              topRight:
-                                              Radius.circular(12),
-                                            ),
-                                            color: Color(0xFFfbe9e9),
-                                          ),
-                                          child: Padding(
-                                            padding:
-                                            const EdgeInsets.all(8.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment
-                                                  .center,
-                                              children: [
-                                                Expanded(
-                                                  flex: 1,
-                                                  child: Text(
-                                                    '',
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      color: Colors.black,
-                                                      fontSize: 14,
-                                                    ),
-                                                    textAlign:
-                                                    TextAlign.center,
-                                                    textScaler: TextScaler
-                                                        .noScaling,
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 1,
-                                                  child: Text(
-                                                    'SV',
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      color: Colors.black,
-                                                      fontSize: 14,
-                                                    ),
-                                                    textAlign:
-                                                    TextAlign.center,
-                                                    textScaler: TextScaler
-                                                        .noScaling,
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 1,
-                                                  child: Text(
-                                                    'Refill Sale',
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      color: Colors.black,
-                                                      fontSize: 14,
-                                                    ),
-                                                    textAlign:
-                                                    TextAlign.center,
-                                                    textScaler: TextScaler
-                                                        .noScaling,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        getCurrentStockDetailManager
-                                            .isNotEmpty
-                                            ? ListView.builder(
-                                          shrinkWrap: true,
-                                          physics:
-                                          NeverScrollableScrollPhysics(),
-                                          // itemCount: getCurrentStockDetailManager.length,
-                                          itemCount:
-                                          getCurrentStockDetailManager
-                                              .where((item) =>
-                                          item.sVQty! >
-                                              0 ||
-                                              item.refillSaleCnt! >
-                                                  0)
-                                              .length,
-                                          itemBuilder:
-                                              (context, index) {
-                                            final items =
-                                            getCurrentStockDetailManager
-                                                .where((item) =>
-                                            item.sVQty! >
-                                                0 ||
-                                                item.refillSaleCnt! >
-                                                    0)
-                                                .toList()[index];
-                                            // final items =
-                                            //     getCurrentStockDetailManager[
-                                            //         index];
-                                            Color backgroundColor =
-                                            (index % 2 == 0)
-                                                ? Colors.grey[
-                                            300]! // Color for even index (first, third, fifth...)
-                                                : Colors
-                                                .white70!;
-                                            return Container(
-                                              color:
-                                              backgroundColor,
-                                              child: Padding(
-                                                padding:
-                                                const EdgeInsets
-                                                    .all(8.0),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment
-                                                      .start,
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .center,
-                                                      children: [
-                                                        Expanded(
-                                                          flex: 1,
-                                                          child:
-                                                          Text(
-                                                            items
-                                                                .itemName
-                                                                .toString(),
-                                                            style: Styling
-                                                                .textFormText,
-                                                            textAlign:
-                                                            TextAlign.center,
-                                                            textScaler:
-                                                            TextScaler.noScaling,
-                                                          ),
-                                                        ),
-                                                        Expanded(
-                                                          flex: 1,
-                                                          child:
-                                                          Text(
-                                                            items
-                                                                .sVQty
-                                                                .toString(),
-                                                            style: Styling
-                                                                .textFormText,
-                                                            textAlign:
-                                                            TextAlign.center,
-                                                            textScaler:
-                                                            TextScaler.noScaling,
-                                                          ),
-                                                        ),
-                                                        Expanded(
-                                                          flex: 1,
-                                                          child:
-                                                          Text(
-                                                            items
-                                                                .refillSaleCnt
-                                                                .toString(),
-                                                            style: Styling
-                                                                .textFormText,
-                                                            textAlign:
-                                                            TextAlign.center,
-                                                            textScaler:
-                                                            TextScaler.noScaling,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        )
-                                            : Container(
-                                          child: Text(
-                                              "No Data Available"),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 10),
-                                  ],
-                                ),
-                              )
-                                  : Container(),
-                              getCurrentStockDetailManager
-                                  .any((item) => item.imbalanceCnt! > 0)
-                                  ? Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(4),
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Colors.grey.shade200,
-                                        blurRadius: 4)
-                                  ],
-                                ),
-                                padding: EdgeInsets.all(4),
-                                child: Column(
-                                  children: [
-                                    Row(children: [
-                                      Text(
-                                        "Imbalance",
-                                        style: Styling
-                                            .bodyTitleWithBlueHightDash,
-                                        textScaler: TextScaler.noScaling,
-                                      )
-                                    ]),
-                                    Column(
-                                      children: [
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                            BorderRadius.only(
-                                              topLeft:
-                                              Radius.circular(12),
-                                              topRight:
-                                              Radius.circular(12),
-                                            ),
-                                            color: Color(0xFFfbe9e9),
-                                          ),
-                                          child: Padding(
-                                            padding:
-                                            const EdgeInsets.all(8.0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment
-                                                  .center,
-                                              children: [
-                                                Expanded(
-                                                  flex: 1,
-                                                  child: Text(
-                                                    '',
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      color: Colors.black,
-                                                      fontSize: 14,
-                                                    ),
-                                                    textAlign:
-                                                    TextAlign.center,
-                                                    textScaler: TextScaler
-                                                        .noScaling,
-                                                  ),
-                                                ),
-                                                Expanded(
-                                                  flex: 1,
-                                                  child: Text(
-                                                    'Imbalance',
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      color: Colors.black,
-                                                      fontSize: 14,
-                                                    ),
-                                                    textAlign:
-                                                    TextAlign.center,
-                                                    textScaler: TextScaler
-                                                        .noScaling,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        getCurrentStockDetailManager
-                                            .isNotEmpty
-                                            ? ListView.builder(
-                                          shrinkWrap: true,
-                                          physics:
-                                          NeverScrollableScrollPhysics(),
-                                          // itemCount: getCurrentStockDetailManager.length,
-                                          itemCount:
-                                          getCurrentStockDetailManager
-                                              .where((item) =>
-                                          item.imbalanceCnt! >
-                                              0) // Filter items with defectivCnt > 0
-                                              .length,
-                                          itemBuilder:
-                                              (context, index) {
-                                            final items =
-                                            getCurrentStockDetailManager
-                                                .where((item) =>
-                                            item.imbalanceCnt! >
-                                                0)
-                                                .toList()[index];
-                                            // final items =
-                                            //     getCurrentStockDetailManager[
-                                            //         index];
-                                            Color backgroundColor =
-                                            (index % 2 == 0)
-                                                ? Colors.grey[
-                                            300]! // Color for even index (first, third, fifth...)
-                                                : Colors
-                                                .white70!;
-                                            return Container(
-                                              color:
-                                              backgroundColor,
-                                              child: Padding(
-                                                padding:
-                                                const EdgeInsets
-                                                    .all(8.0),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                  CrossAxisAlignment
-                                                      .start,
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .center,
-                                                      children: [
-                                                        Expanded(
-                                                          flex: 1,
-                                                          child:
-                                                          Text(
-                                                            items
-                                                                .itemName
-                                                                .toString(),
-                                                            style: Styling
-                                                                .textFormText,
-                                                            textAlign:
-                                                            TextAlign.center,
-                                                            textScaler:
-                                                            TextScaler.noScaling,
-                                                          ),
-                                                        ),
-                                                        Expanded(
-                                                          flex: 1,
-                                                          child:
-                                                          Text(
-                                                            items
-                                                                .imbalanceCnt
-                                                                .toString(),
-                                                            style: Styling
-                                                                .textFormText,
-                                                            textAlign:
-                                                            TextAlign.center,
-                                                            textScaler:
-                                                            TextScaler.noScaling,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        )
-                                            : Container(
-                                          child: Text(
-                                              "No Data Available"),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              )
-                                  : Container(),
+                              // Row(children: [
+                              //   Icon(
+                              //     Icons.bolt_outlined,
+                              //     size: 26,
+                              //     // Bigger icon for a more clickable feel
+                              //     color: Colors.black54,
+                              //   ),
+                              //   Text(
+                              //     "Inward Stock",
+                              //     style: Styling.bodyTitleBigBoldDashGrey,
+                              //     textScaler: TextScaler.noScaling,
+                              //   )
+                              // ]),
+                              // SizedBox(height: 10),
+                              // Row(
+                              //     children : [
+                              //       Expanded(
+                              //         child: InkWell(
+                              //           onTap : () {
+                              //             getCurrentStockDetailManager.any((item) =>
+                              //             item.totalInvoiceCnt! > 0 ||
+                              //                 item.filledEMRCnt! > 0)?
+                              //             showCardInwardStockFilled(context):
+                              //             showFlushBar(context, Constants.nodataFound);
+                              //           },
+                              //           child: Card(
+                              //             color : Color(0xFFEFF2FB),
+                              //             child:Padding(
+                              //               padding: const EdgeInsets.only(top:15.0,bottom:15),
+                              //               child: Text("Filled",
+                              //                 style: Styling.itemTitleDash,
+                              //                 textAlign: TextAlign.center,
+                              //                 textScaler: TextScaler.noScaling,),
+                              //             ),
+                              //           ),
+                              //         ),
+                              //       ),
+                              //       Expanded(
+                              //         child: InkWell(
+                              //           onTap : (){
+                              //             getCurrentStockDetailManager
+                              //                 .any((item) => item.emptyTVCnt! > 0)?
+                              //             showCardInwardStockEmpty(context):
+                              //             showFlushBar(context, Constants.nodataFound);
+                              //           },
+                              //           child: Card(
+                              //             color : Color(0xFFEFF2FB),
+                              //             child:Padding(
+                              //               padding: const EdgeInsets.only(top:15.0,bottom:15),
+                              //               child: Text("Empty",style: Styling.itemTitleDash,
+                              //                 textAlign: TextAlign.center,
+                              //                 textScaler: TextScaler.noScaling,),
+                              //             ),
+                              //           ),
+                              //         ),
+                              //       ),
+                              //       Expanded(
+                              //         child: InkWell(
+                              //           onTap : () {
+                              //             getCurrentStockDetailManager
+                              //                 .any((item) => item.defectivCnt! > 0)?
+                              //             showCardInwardStockDefective(context):
+                              //             showFlushBar(context, Constants.nodataFound);
+                              //           },
+                              //           child: Card(
+                              //             color : Color(0xFFEFF2FB),
+                              //             child:Padding(
+                              //               padding: const EdgeInsets.only(top:15.0,bottom:15),
+                              //               child: Text("Defective",style: Styling.itemTitleDash,
+                              //                 textAlign: TextAlign.center,
+                              //                 textScaler: TextScaler.noScaling,),
+                              //             ),
+                              //           ),
+                              //         ),
+                              //       ),
+                              //     ]
+                              // ),
+                              // SizedBox(height: 30),
+                              // Row(children: [
+                              //   Icon(
+                              //     Icons.bolt_outlined,
+                              //     size: 26,
+                              //     // Bigger icon for a more clickable feel
+                              //     color: Colors.black54,
+                              //   ),
+                              //   Text(
+                              //     "Outward Stock",
+                              //     style: Styling.bodyTitleBigBoldDashGrey,
+                              //     textScaler: TextScaler.noScaling,
+                              //   )
+                              // ]),
+                              // SizedBox(height: 10),
+                              // Row(
+                              //     children : [
+                              //       Expanded(
+                              //         child: InkWell(
+                              //           onTap : () {
+                              //             getCurrentStockDetailManager.any((item) =>
+                              //             item.emptyCRDCnt! > 0 ||
+                              //                 item.emptyDefectivCnt! > 0)?
+                              //             showCardOutwardStockEmpty(context):
+                              //             showFlushBar(context, Constants.nodataFound);
+                              //           },
+                              //           child: Card(
+                              //             color : Color(0xFFEFF2FB),
+                              //             child:Padding(
+                              //               padding: const EdgeInsets.only(top:15.0,bottom:15),
+                              //               child: Text("Empty",style: Styling.itemTitleDash,
+                              //                 textAlign: TextAlign.center,
+                              //                 textScaler: TextScaler.noScaling,),
+                              //             ),
+                              //           ),
+                              //         ),
+                              //       ),
+                              //       Expanded(
+                              //         child: InkWell(
+                              //           onTap : (){
+                              //             getCurrentStockDetailManager.any((item) =>
+                              //             item.sVQty! > 0 ||
+                              //                 item.refillSaleCnt! > 0)?
+                              //             showCardOutwardStockRefillSale(context):
+                              //             showFlushBar(context, Constants.nodataFound);
+                              //           },
+                              //           child: Card(
+                              //             color : Color(0xFFEFF2FB),
+                              //             child:Padding(
+                              //               padding: const EdgeInsets.only(top:15.0,bottom:15),
+                              //               child: Text("Refill Sale",style: Styling.itemTitleDash,
+                              //                 textAlign: TextAlign.center,
+                              //                 textScaler: TextScaler.noScaling,),
+                              //             ),
+                              //           ),
+                              //         ),
+                              //       ),
+                              //       Expanded(
+                              //         child: InkWell(
+                              //           onTap : () {
+                              //             getCurrentStockDetailManager
+                              //                 .any((item) => item.imbalanceCnt! > 0)?
+                              //             showCardOutwardStockImbalance(context):
+                              //             showFlushBar(context, Constants.nodataFound);
+                              //           },
+                              //           child: Card(
+                              //             color : Color(0xFFEFF2FB),
+                              //             child:Padding(
+                              //               padding: const EdgeInsets.only(top:15.0,bottom:15),
+                              //               child: Text("Imbalance",style: Styling.itemTitleDash,
+                              //                 textAlign: TextAlign.center,
+                              //                 textScaler: TextScaler.noScaling,),
+                              //             ),
+                              //           ),
+                              //         ),
+                              //       ),
+                              //     ]
+                              // ),
                             ]),
                           )),
                     ],
@@ -2743,7 +2042,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                       Navigator.of(context)
                           .pop(); // Close the dialog without action
                     },
-                    child: Text("No"),
+                    child: Text("No",textScaler: TextScaler.noScaling,),
                   ),
                   TextButton(
                     onPressed: () {
@@ -2752,7 +2051,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                         _onRefresh();
                       });
                     },
-                    child: Text("Yes"),
+                    child: Text("Yes",textScaler: TextScaler.noScaling,),
                   ),
                 ],
               );
@@ -2816,9 +2115,9 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
             double onAccountAsOfDates = 0;
             int asOfDateImbQtys = 0;
             int todayImbCount = 0;
-            int cdcmsFilledDiff = 0;
-            int cdcmsEmptyDiff = 0;
-            int cdcmsDefectiveDiff = 0;
+            // int cdcmsFilledDiff = 0;
+            // int cdcmsEmptyDiff = 0;
+            // int cdcmsDefectiveDiff = 0;
 
             // Loop through each receipt and each item inside itemImbDtls to sum ImbQty
             for (var receipt in getManagerDashboarDetail) {
@@ -2836,19 +2135,19 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                   receipt.staffOnAccAsOf ?? 0; // Corrected summing of imbQty
               asOfDateImbQtys += (receipt.asOfDateImbQty ?? 0).toInt();
               todayImbCount += (receipt.todayImbQty ?? 0).toInt();
-              cdcmsFilledDiff += (receipt.filledDiff ?? 0).toInt();
-              cdcmsEmptyDiff += (receipt.emptyDiff ?? 0).toInt();
-              cdcmsDefectiveDiff += (receipt.defectiveDiff ?? 0).toInt();
+              // cdcmsFilledDiff += (receipt.filledDiff ?? 0).toInt();
+              // cdcmsEmptyDiff += (receipt.emptyDiff ?? 0).toInt();
+              // cdcmsDefectiveDiff += (receipt.defectiveDiff ?? 0).toInt();
             }
             asOfDateImbQtyShow = asOfDateImbQtys;
             todaysImbQtyShow = todayImbCount;
-            cdcmsFilledDiffShow = cdcmsFilledDiff;
-            cdcmsEmptyDiffShow = cdcmsEmptyDiff;
-            cdcmsDefectiveDiffShow = cdcmsDefectiveDiff;
-            total = cdcmsFilledDiff + cdcmsEmptyDiff + cdcmsDefectiveDiff;
-            filledPercent = cdcmsFilledDiff / total! * 100;
-            emptyPercent = cdcmsEmptyDiff / total! * 100;
-            defectivePercent = cdcmsDefectiveDiff / total! * 100;
+            // cdcmsFilledDiffShow = cdcmsFilledDiff;
+            // cdcmsEmptyDiffShow = cdcmsEmptyDiff;
+            // cdcmsDefectiveDiffShow = cdcmsDefectiveDiff;
+            // total = cdcmsFilledDiff + cdcmsEmptyDiff + cdcmsDefectiveDiff;
+            // filledPercent = cdcmsFilledDiff / total! * 100;
+            // emptyPercent = cdcmsEmptyDiff / total! * 100;
+            // defectivePercent = cdcmsDefectiveDiff / total! * 100;
 
             // deliveryMenCount = dMCounts.toInt();
             // totalAmount = totalAmounts.toDouble();
@@ -2858,6 +2157,22 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
             // onAccountAsOfDate = onAccountAsOfDates.toDouble();
 
             // Print the totalAmount of the first item (if exists)
+
+            String _normalize(String? value) {
+              return value?.toLowerCase().replaceAll(RegExp(r'\s+'), '').trim() ?? '';
+            }
+            final defaultItem = getManagerDashboarDetail.firstWhere(
+                  (item) => _normalize(item.itemName) == '14.2kg',
+              orElse: () => GetManagerDashboarDetailModel(),
+            );
+
+            if (defaultItem.itemId != null) {
+              selectedItemIdCDCMS = defaultItem.itemId!.toInt();
+              // Set opening stock values
+              cdcmsFilledDiffShow = defaultItem.filledDiff?.toInt() ?? 0;
+              cdcmsEmptyDiffShow = defaultItem.emptyDiff?.toInt() ?? 0;
+              cdcmsDefectiveDiffShow = defaultItem.defectiveDiff!.toInt();
+            }
             if (getManagerDashboarDetail.isNotEmpty) {
               print(
                   'Total Amount of the first item: ${getManagerDashboarDetail[0].totalAmount}');
@@ -2994,28 +2309,48 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
             int totalCurrentStockEmptyShow = 0;
             int totalCurrentStockDefectiveShow = 0;
 
-            // Loop through each receipt and each item inside itemImbDtls to sum ImbQty
-            for (var receipt in getCurrentStockDetailManager) {
-              totalOpeningStockFilledShow += (receipt.filledOpeningStk ?? 0)
-                  .toInt(); // Corrected summing of imbQty
-              totalOpeningStockEmptyShow += (receipt.emptyOpeningStk ?? 0)
-                  .toInt(); // Corrected summing of imbQty
-              totalOpeningStockDefectiveShow +=
-                  (receipt.deffOpeningStk ?? 0).toInt();
-              totalCurrentStockFilledShow +=
-                  (receipt.filledCurrentStk ?? 0).toInt();
-              totalCurrentStockEmptyShow +=
-                  (receipt.emptyCurrentStk ?? 0).toInt();
-              totalCurrentStockDefectiveShow +=
-                  (receipt.deffCurrentStk ?? 0).toInt();
-            }
-            totalOpeningStockFilled = totalOpeningStockFilledShow;
-            totalOpeningStockEmpty = totalOpeningStockEmptyShow;
-            totalOpeningStockDefective = totalOpeningStockDefectiveShow;
-            totalCurrentStockFilled = totalCurrentStockFilledShow;
-            totalCurrentStockEmpty = totalCurrentStockEmptyShow;
-            totalCurrentStockDefective = totalCurrentStockDefectiveShow;
+            // // Loop through each receipt and each item inside itemImbDtls to sum ImbQty
+            // for (var receipt in getCurrentStockDetailManager) {
+            //   totalOpeningStockFilledShow += (receipt.filledOpeningStk ?? 0)
+            //       .toInt(); // Corrected summing of imbQty
+            //   totalOpeningStockEmptyShow += (receipt.emptyOpeningStk ?? 0)
+            //       .toInt(); // Corrected summing of imbQty
+            //   totalOpeningStockDefectiveShow +=
+            //       (receipt.deffOpeningStk ?? 0).toInt();
+            //   totalCurrentStockFilledShow +=
+            //       (receipt.filledCurrentStk ?? 0).toInt();
+            //   totalCurrentStockEmptyShow +=
+            //       (receipt.emptyCurrentStk ?? 0).toInt();
+            //   totalCurrentStockDefectiveShow +=
+            //       (receipt.deffCurrentStk ?? 0).toInt();
+            // }
+            // totalOpeningStockFilled = totalOpeningStockFilledShow;
+            // totalOpeningStockEmpty = totalOpeningStockEmptyShow;
+            // totalOpeningStockDefective = totalOpeningStockDefectiveShow;
+            // totalCurrentStockFilled = totalCurrentStockFilledShow;
+            // totalCurrentStockEmpty = totalCurrentStockEmptyShow;
+            // totalCurrentStockDefective = totalCurrentStockDefectiveShow;
 
+            // Assuming getCurrentStockDetailManager is already populated
+            String _normalize(String? value) {
+              return value?.toLowerCase().replaceAll(RegExp(r'\s+'), '').trim() ?? '';
+            }
+            final defaultItem = getCurrentStockDetailManager.firstWhere(
+                  (item) => _normalize(item.itemName) == '14.2kg',
+              orElse: () => GetCurrentStockDetailManagerModel(),
+            );
+
+            if (defaultItem.itemId != null) {
+              selectedItemId = defaultItem.itemId!.toInt();
+
+              // Set opening stock values
+              totalOpeningStockFilled = defaultItem.filledOpeningStk?.toInt() ?? 0;
+              totalOpeningStockEmpty = defaultItem.emptyOpeningStk?.toInt() ?? 0;
+              totalOpeningStockDefective = defaultItem.deffOpeningStk?.toInt() ?? 0;
+              totalCurrentStockFilled = defaultItem.filledCurrentStk!.toInt();
+              totalCurrentStockEmpty = defaultItem.emptyCurrentStk!.toInt();
+              totalCurrentStockDefective = defaultItem.deffCurrentStk!.toInt();
+            }
             EasyLoading.dismiss();
           });
         } else {
@@ -3122,16 +2457,19 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
             title: Text(
               title,
               style: Styling.bodyTitle,
+              textScaler: TextScaler.noScaling,
             ),
             content: Text(
               message,
               style: Styling.bodyTitle,
+              textScaler: TextScaler.noScaling,
             ),
             actions: <Widget>[
               TextButton(
                 child: Text(
                   btnLabel,
                   style: Styling.blueClrText,
+                  textScaler: TextScaler.noScaling,
                 ),
                 onPressed: () {},
               ),
@@ -3266,8 +2604,9 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     "Prepaid Punching Status",
-                    style: Styling.bodyTitleWithBlueHightDashOrange,
+                    style: Styling.bodyTitleWithBlueHightDashboard,
                     textAlign: TextAlign.start,
+                    textScaler: TextScaler.noScaling,
                   ),
                 ),
                 Row(
@@ -3303,7 +2642,8 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                             ):null;
                             debugPrint("Rejected Entries tapperyryd");
                           },
-                        )),
+                        ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 4),
@@ -3315,7 +2655,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                           "Since ($formattedDatecdcms) Pending in cDCMS",
                           const Color(0xFFEFF2FB),
                           onTap: () {
-                            debugPrint("Rejected Entries yryry");
+                            debugPrint("Rejected Entries cDCMS");
                             pendingInCdcmsC! > 0?
                             Navigator.pushNamed(
                               context,
@@ -3385,6 +2725,9 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
   }
 
   void showBottomSheetPrepaidSettlementStatus(BuildContext context) {
+    final totalPendAmount = totalPendingSettAmt?.toDouble() ?? 0.0;
+    final totalDoneBtDelPend = paymtDoneBtDelPendAmt?.toDouble() ?? 0.0;
+    final totaldelDoneBtPaymtPend = delDoneBtPaymtPendAmt?.toDouble() ?? 0.0;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -3402,8 +2745,9 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
                     "Prepaid Settlement Status (Data ref. cDCMS)",
-                    style: Styling.bodyTitleWithBlueHightDashOrange,
+                    style: Styling.bodyTitleWithBlueHightDashboard,
                     textAlign: TextAlign.start,
+                    textScaler: TextScaler.noScaling,
                   ),
                 ),
                 Row(
@@ -3444,12 +2788,14 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                         // Replace this with your dynamic data
                                         style: Styling.countNumber.copyWith(
                                           color: Colors.blue,
+                                          fontSize: 18,
                                           // Make the text blue like a link
                                           decoration: TextDecoration.underline,
                                           // Underline the text
                                           decorationColor: Colors.blue,
                                         ),
                                         textAlign: TextAlign.center,
+                                        textScaler: TextScaler.noScaling,
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.only(
@@ -3457,14 +2803,17 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                         child: verticalDividerSmallestRed(),
                                       ),
                                       Text(
-                                        paymtDoneBtDelPendAmt!
-                                            .toStringAsFixed(2),
+                                        // paymtDoneBtDelPendAmt!
+                                        //     .toStringAsFixed(2),
+                                        formatCurrency(totalDoneBtDelPend),
                                         // Replace this with your dynamic data
                                         style: Styling.countNumber.copyWith(
                                           color: Colors
                                               .black, // Make the text blue like a link
+                                          fontSize: 18,
                                         ),
                                         textAlign: TextAlign.center,
+                                        textScaler: TextScaler.noScaling,
                                       ),
                                     ],
                                   ),
@@ -3477,6 +2826,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                     fontSize: 14,
                                     fontWeight: FontWeight.w400,
                                     color: Colors.black54,
+
                                   ),
                                 ),
                               ],
@@ -3521,6 +2871,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                         // Use 'N/A' if cDCMDPendSince is null
                                         style: Styling.countNumber.copyWith(
                                           color: Colors.blue,
+                                          fontSize: 18,
                                           // Make the text blue like a link
                                           decoration: TextDecoration.underline,
                                           // Underline the text
@@ -3528,6 +2879,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                           Colors.blue, // Underline color
                                         ),
                                         textAlign: TextAlign.center,
+                                        textScaler: TextScaler.noScaling,
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.only(
@@ -3535,13 +2887,18 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                         child: verticalDividerSmallestRed(),
                                       ),
                                       Text(
-                                        '${delDoneBtPaymtPendAmt?.toStringAsFixed(2)}',
+                                         //'${delDoneBtPaymtPendAmt?.toStringAsFixed(2)}',
+                                          formatCurrency(totaldelDoneBtPaymtPend),
+
                                         // Use 'N/A' if cDCMDPendSince is null
                                         style: Styling.countNumber.copyWith(
+                                          fontSize: 18,
                                           color: Colors
                                               .black, // Make the text blue like a link
                                         ),
+
                                         textAlign: TextAlign.center,
+                                        textScaler: TextScaler.noScaling,
                                       ),
                                     ],
                                   ),
@@ -3555,7 +2912,9 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                     fontSize: 14,
                                     fontWeight: FontWeight.w400,
                                     color: Colors.black54,
+
                                   ),
+                                  textScaler: TextScaler.noScaling,
                                 ),
                               ],
                             ),
@@ -3605,6 +2964,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                         // Use 'N/A' if cDCMDPendSince is null
                                         style: Styling.countNumber.copyWith(
                                           color: Colors.blue,
+                                          fontSize: 18,
                                           // Make the text blue like a link
                                           decoration: TextDecoration.underline,
                                           // Underline the text
@@ -3612,6 +2972,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                           Colors.blue, // Underline color
                                         ),
                                         textAlign: TextAlign.center,
+                                        textScaler: TextScaler.noScaling,
                                       ),
                                       Padding(
                                         padding: const EdgeInsets.only(
@@ -3619,13 +2980,16 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                         child: verticalDividerSmallestRed(),
                                       ),
                                       Text(
-                                        '${totalPendingSettAmt?.toStringAsFixed(2)}',
+                                        //'${totalPendingSettAmt?.toStringAsFixed(2)}',
+                                        formatCurrency(totalPendAmount),
                                         // Use 'N/A' if cDCMDPendSince is null
                                         style: Styling.countNumber.copyWith(
                                           color: Colors
                                               .black, // Make the text blue like a link
+                                          fontSize: 18,
                                         ),
                                         textAlign: TextAlign.center,
+                                        textScaler: TextScaler.noScaling,
                                       ),
                                     ],
                                   ),
@@ -3638,7 +3002,9 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                     fontSize: 14,
                                     fontWeight: FontWeight.w400,
                                     color: Colors.black54,
+
                                   ),
+                                  textScaler: TextScaler.noScaling,
                                 ),
                               ],
                             ),
@@ -3678,7 +3044,9 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                     color: Colors.blue,
                     decoration: TextDecoration.underline,
                     decorationColor: Colors.blue,
+
                   ),
+                  textScaler: TextScaler.noScaling,
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -3688,7 +3056,9 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
                     color: Colors.black54,
+
                   ),
+                  textScaler: TextScaler.noScaling,
                 ),
               ],
             ),
@@ -3742,6 +3112,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                               fontWeight: FontWeight.bold,
                               color: Colors.blueGrey,
                             ),
+                            textScaler: TextScaler.noScaling,
                           ),
                         ],
                       ),
@@ -3844,6 +3215,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                             SizedBox(width: 10),
                             Text(
                               'No Data Available',
+                              textScaler: TextScaler.noScaling,
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w500,
@@ -3884,6 +3256,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
           color: Colors.black87,
         ),
         textAlign: TextAlign.center,
+        textScaler: TextScaler.noScaling,
       ),
     );
   }
@@ -3898,6 +3271,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
           color: Colors.black,
         ),
         textAlign: TextAlign.center,
+        textScaler: TextScaler.noScaling,
       ),
     );
   }
@@ -3947,6 +3321,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                               fontWeight: FontWeight.bold,
                               color: Colors.blueGrey,
                             ),
+                            textScaler: TextScaler.noScaling,
                           ),
                         ],
                       ),
@@ -4054,6 +3429,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                 .blue, // Set underline color to blue
                                           ),
                                           textAlign: TextAlign.center,
+                                          textScaler: TextScaler.noScaling,
                                         ),
                                       ),
                                     ),
@@ -4088,6 +3464,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                 .blue, // Set underline color to blue
                                           ),
                                           textAlign: TextAlign.center,
+                                          textScaler: TextScaler.noScaling,
                                         ),
                                       ),
                                     ),
@@ -4118,6 +3495,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                 fontWeight: FontWeight.w500,
                                 color: Colors.blueGrey,
                               ),
+                              textScaler: TextScaler.noScaling,
                             ),
                           ],
                         ),
@@ -4189,6 +3567,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                               fontWeight: FontWeight.bold,
                               color: Colors.blueGrey,
                             ),
+                            textScaler: TextScaler.noScaling,
                           ),
                         ],
                       ),
@@ -4295,6 +3674,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                 fontWeight: FontWeight.w500,
                                 color: Colors.blueGrey,
                               ),
+                              textScaler: TextScaler.noScaling,
                             ),
                           ],
                         ),
@@ -4366,6 +3746,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                               fontWeight: FontWeight.bold,
                               color: Colors.blueGrey,
                             ),
+                            textScaler: TextScaler.noScaling,
                           ),
                         ],
                       ),
@@ -4472,6 +3853,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                 fontWeight: FontWeight.w500,
                                 color: Colors.blueGrey,
                               ),
+                              textScaler: TextScaler.noScaling,
                             ),
                           ],
                         ),
@@ -4542,6 +3924,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                               fontWeight: FontWeight.bold,
                               color: Colors.blueGrey,
                             ),
+                            textScaler: TextScaler.noScaling,
                           ),
                         ],
                       ),
@@ -4806,6 +4189,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                               fontWeight: FontWeight.bold,
                               color: Colors.blueGrey,
                             ),
+                            textScaler: TextScaler.noScaling,
                           ),
                         ],
                       ),
@@ -5041,6 +4425,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                               fontWeight: FontWeight.bold,
                               color: Colors.blueGrey,
                             ),
+                            textScaler: TextScaler.noScaling,
                           ),
                         ],
                       ),
@@ -5301,6 +4686,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                               fontWeight: FontWeight.bold,
                               color: Colors.blueGrey,
                             ),
+                            textScaler: TextScaler.noScaling,
                           ),
                         ],
                       ),
@@ -5572,6 +4958,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                               fontWeight: FontWeight.bold,
                               color: Colors.blueGrey,
                             ),
+                            textScaler: TextScaler.noScaling,
                           ),
                         ],
                       ),
@@ -5797,6 +5184,1325 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
     );
   }
 
+  void showCardInwardStock(BuildContext context) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: '',
+      transitionDuration: const Duration(milliseconds: 400),
+      pageBuilder: (context, animation1, animation2) {
+        return Align(
+          alignment: Alignment.bottomCenter,
+          child: GestureDetector(
+            onHorizontalDragEnd: (details) {
+              if (details.primaryVelocity != null &&
+                  details.primaryVelocity!.abs() > 300) {
+                Navigator.pop(context); // Close if swipe velocity is high
+              }
+            },
+            child: Container(
+              height:
+              MediaQuery.of(context).size.height * 0.7, // Half-height sheet
+              width: double.infinity,
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Title with larger font and a subtle shadow
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.arrow_back, color: Colors.black),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                            SizedBox(width: 10), // Space between icon and text
+                            Text(
+                              'Inward Stock',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blueGrey,
+                              ),
+                              textScaler: TextScaler.noScaling,
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      getCurrentStockDetailManager.any((item) =>
+                      item.totalInvoiceCnt! > 0 ||
+                          item.filledEMRCnt! > 0)
+                          ? Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.grey.shade200,
+                                blurRadius: 4)
+                          ],
+                        ),
+                        padding: EdgeInsets.all(4),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Filled',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blueGrey,
+                              ),
+                              textScaler: TextScaler.noScaling,
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Color(0xFFfbe9e9),
+                              ),
+                              child: Padding(
+                                padding:
+                                const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment
+                                      .center,
+                                  children: [
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        '',
+                                        style: TextStyle(
+                                          fontWeight:
+                                          FontWeight.bold,
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                        ),
+                                        textAlign:
+                                        TextAlign.center,
+                                        textScaler: TextScaler
+                                            .noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        'Invoice',
+                                        style: TextStyle(
+                                          fontWeight:
+                                          FontWeight.bold,
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                        ),
+                                        textAlign:
+                                        TextAlign.center,
+                                        textScaler: TextScaler
+                                            .noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        'EMR',
+                                        style: TextStyle(
+                                          fontWeight:
+                                          FontWeight.bold,
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                        ),
+                                        textAlign:
+                                        TextAlign.center,
+                                        textScaler: TextScaler
+                                            .noScaling,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            getCurrentStockDetailManager
+                                .isNotEmpty
+                                ? ListView.builder(
+                              shrinkWrap: true,
+                              physics:
+                              NeverScrollableScrollPhysics(),
+                              // itemCount: getCurrentStockDetailManager.length,
+                              itemCount:
+                              getCurrentStockDetailManager
+                                  .where((item) =>
+                              item.totalInvoiceCnt! >
+                                  0 ||
+                                  item.filledEMRCnt! >
+                                      0) // Filter items with defectivCnt > 0
+                                  .length,
+                              itemBuilder:
+                                  (context, index) {
+                                // final items =
+                                // getCurrentStockDetailManager[
+                                // index];
+
+                                final items =
+                                getCurrentStockDetailManager
+                                    .where((item) =>
+                                item.totalInvoiceCnt! >
+                                    0 ||
+                                    item.filledEMRCnt! >
+                                        0)
+                                    .toList()[index];
+
+                                Color backgroundColor =
+                                (index % 2 == 0)
+                                    ? Color(
+                                    0xFFfcf2f1) // Color for even index (first, third, fifth...)
+                                    : Colors
+                                    .white70!;
+                                return Container(
+                                  color:
+                                  backgroundColor,
+                                  child: Padding(
+                                    padding:
+                                    const EdgeInsets
+                                        .all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment
+                                          .start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment
+                                              .center,
+                                          children: [
+                                            Expanded(
+                                              flex: 1,
+                                              child:
+                                              Text(
+                                                items
+                                                    .itemName
+                                                    .toString(),
+                                                style: Styling
+                                                    .textFormText,
+                                                textAlign:
+                                                TextAlign.center,
+                                                textScaler:
+                                                TextScaler.noScaling,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 1,
+                                              child:
+                                              Text(
+                                                items
+                                                    .totalInvoiceCnt
+                                                    .toString(),
+                                                style: Styling
+                                                    .textFormText,
+                                                textAlign:
+                                                TextAlign.center,
+                                                textScaler:
+                                                TextScaler.noScaling,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 1,
+                                              child:
+                                              Text(
+                                                items
+                                                    .filledEMRCnt
+                                                    .toString(),
+                                                style: Styling
+                                                    .textFormText,
+                                                textAlign:
+                                                TextAlign.center,
+                                                textScaler:
+                                                TextScaler.noScaling,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            )
+                                : Container(
+                              child: Text(
+                                  "No Data Available"),
+                            ),
+                          ],
+                        ),
+                      )
+                          : Container(),
+
+                      getCurrentStockDetailManager
+                          .any((item) => item.emptyTVCnt! > 0)
+                          ? Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.grey.shade200,
+                                blurRadius: 4)
+                          ],
+                        ),
+                        padding: EdgeInsets.all(4),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Empty',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blueGrey,
+                              ),
+                              textScaler: TextScaler.noScaling,
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                BorderRadius.only(
+                                  topLeft:
+                                  Radius.circular(12),
+                                  topRight:
+                                  Radius.circular(12),
+                                ),
+                                color: Color(0xFFfbe9e9),
+                              ),
+                              child: Padding(
+                                padding:
+                                const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment
+                                      .center,
+                                  children: [
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        '',
+                                        style: TextStyle(
+                                          fontWeight:
+                                          FontWeight.bold,
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                        ),
+                                        textAlign:
+                                        TextAlign.center,
+                                        textScaler: TextScaler
+                                            .noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        'TV',
+                                        style: TextStyle(
+                                          fontWeight:
+                                          FontWeight.bold,
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                        ),
+                                        textAlign:
+                                        TextAlign.center,
+                                        textScaler: TextScaler
+                                            .noScaling,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            getCurrentStockDetailManager
+                                .isNotEmpty
+                                ? ListView.builder(
+                              shrinkWrap: true,
+                              physics:
+                              NeverScrollableScrollPhysics(),
+                              // itemCount: getCurrentStockDetailManager.length,
+                              itemCount:
+                              getCurrentStockDetailManager
+                                  .where((item) =>
+                              item.emptyTVCnt! >
+                                  0) // Filter items with defectivCnt > 0
+                                  .length,
+                              itemBuilder:
+                                  (context, index) {
+                                // final items =
+                                // getCurrentStockDetailManager[
+                                // index];
+
+                                final items =
+                                getCurrentStockDetailManager
+                                    .where((item) =>
+                                item.emptyTVCnt! >
+                                    0)
+                                    .toList()[index];
+
+                                Color backgroundColor =
+                                (index % 2 == 1)
+                                    ? Color(
+                                    0xFFfcf2f1) // Color for even index (first, third, fifth...)
+                                    : Colors
+                                    .white70!;
+                                return Container(
+                                  color:
+                                  backgroundColor,
+                                  child: Padding(
+                                    padding:
+                                    const EdgeInsets
+                                        .all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment
+                                          .start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment
+                                              .center,
+                                          children: [
+                                            Expanded(
+                                              flex: 1,
+                                              child:
+                                              Text(
+                                                items
+                                                    .itemName
+                                                    .toString(),
+                                                style: Styling
+                                                    .textFormText,
+                                                textAlign:
+                                                TextAlign.center,
+                                                textScaler:
+                                                TextScaler.noScaling,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 1,
+                                              child:
+                                              Text(
+                                                items
+                                                    .emptyTVCnt
+                                                    .toString(),
+                                                style: Styling
+                                                    .textFormText,
+                                                textAlign:
+                                                TextAlign.center,
+                                                textScaler:
+                                                TextScaler.noScaling,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            )
+                                : Container(
+                              child: Text(
+                                  "No Data Available"),
+                            ),
+                          ],
+                        ),
+                      )
+                          : Container(),
+
+                      getCurrentStockDetailManager
+                          .any((item) => item.defectivCnt! > 0)
+                          ? Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.grey.shade200,
+                                blurRadius: 4)
+                          ],
+                        ),
+                        padding: EdgeInsets.all(4),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Defective',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blueGrey,
+                              ),
+                              textScaler: TextScaler.noScaling,
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Color(0xFFfbe9e9),
+                              ),
+                              child: Padding(
+                                padding:
+                                const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment
+                                      .center,
+                                  children: [
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        '',
+                                        style: TextStyle(
+                                          fontWeight:
+                                          FontWeight.bold,
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                        ),
+                                        textAlign:
+                                        TextAlign.center,
+                                        textScaler: TextScaler
+                                            .noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        'Defective',
+                                        style: TextStyle(
+                                          fontWeight:
+                                          FontWeight.bold,
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                        ),
+                                        textAlign:
+                                        TextAlign.center,
+                                        textScaler: TextScaler
+                                            .noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        'Since',
+                                        style: TextStyle(
+                                          fontWeight:
+                                          FontWeight.bold,
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                        ),
+                                        textAlign:
+                                        TextAlign.center,
+                                        textScaler: TextScaler
+                                            .noScaling,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            getCurrentStockDetailManager
+                                .isNotEmpty
+                                ? ListView.builder(
+                              shrinkWrap: true,
+                              physics:
+                              NeverScrollableScrollPhysics(),
+                              // itemCount: getCurrentStockDetailManager.length,
+                              itemCount:
+                              getCurrentStockDetailManager
+                                  .where((item) =>
+                              item.defectivCnt! >
+                                  0) // Filter items with defectivCnt > 0
+                                  .length,
+                              itemBuilder:
+                                  (context, index) {
+                                // final items =
+                                // getCurrentStockDetailManager[
+                                // index];
+
+                                final items =
+                                getCurrentStockDetailManager
+                                    .where((item) =>
+                                item.defectivCnt! >
+                                    0)
+                                    .toList()[index];
+
+                                Color backgroundColor =
+                                (index % 2 == 1)
+                                    ? Color(
+                                    0xFFfcf2f1) // Color for even index (first, third, fifth...)
+                                    : Colors
+                                    .white70!;
+                                return Container(
+                                  color:
+                                  backgroundColor,
+                                  child: Padding(
+                                    padding:
+                                    const EdgeInsets
+                                        .all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment
+                                          .start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment
+                                              .center,
+                                          children: [
+                                            Expanded(
+                                              flex: 1,
+                                              child:
+                                              Text(
+                                                items
+                                                    .itemName
+                                                    .toString(),
+                                                style: Styling
+                                                    .textFormText,
+                                                textAlign:
+                                                TextAlign.center,
+                                                textScaler:
+                                                TextScaler.noScaling,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 1,
+                                              child:
+                                              Text(
+                                                items
+                                                    .defectivCnt
+                                                    .toString(),
+                                                style: Styling
+                                                    .textFormText,
+                                                textAlign:
+                                                TextAlign.center,
+                                                textScaler:
+                                                TextScaler.noScaling,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 1,
+                                              child:
+                                              Text(
+                                                DateFormat('dd-MM-yyyy').format(DateTime.parse(items.defectivFromDate.toString() ??
+                                                    '')),
+                                                style: Styling
+                                                    .textFormText,
+                                                textAlign:
+                                                TextAlign.center,
+                                                textScaler:
+                                                TextScaler.noScaling,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            )
+                                : Container(
+                              child: Text(
+                                  "No Data Available"),
+                            ),
+
+
+                          ],
+                        ),
+                      )
+                          : Container(),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+      transitionBuilder: (context, animation1, animation2, child) {
+        final offsetAnimation = Tween<Offset>(
+          begin: const Offset(-1, 0), // From left side
+          end: Offset.zero, // To original position
+        ).animate(CurvedAnimation(parent: animation1, curve: Curves.easeInOut));
+
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
+    );
+  }
+
+  void showCardOutwardStock(BuildContext context) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: '',
+      transitionDuration: const Duration(milliseconds: 400),
+      pageBuilder: (context, animation1, animation2) {
+        return Align(
+          alignment: Alignment.bottomCenter,
+          child: GestureDetector(
+            onHorizontalDragEnd: (details) {
+              if (details.primaryVelocity != null &&
+                  details.primaryVelocity!.abs() > 300) {
+                Navigator.pop(context); // Close if swipe velocity is high
+              }
+            },
+            child: Container(
+              height:
+              MediaQuery.of(context).size.height * 0.7, // Half-height sheet
+              width: double.infinity,
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Title with larger font and a subtle shadow
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.arrow_back, color: Colors.black),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                            SizedBox(width: 10), // Space between icon and text
+                            Text(
+                              'Outward Stock',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blueGrey,
+                              ),
+                              textScaler: TextScaler.noScaling,
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      getCurrentStockDetailManager.any((item) =>
+                      item.emptyCRDCnt! > 0 ||
+                          item.emptyDefectivCnt! > 0)
+                          ?
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.grey.shade200,
+                                blurRadius: 4)
+                          ],
+                        ),
+                        padding: EdgeInsets.all(4),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Empty',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blueGrey,
+                              ),
+                              textScaler: TextScaler.noScaling,
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                BorderRadius.only(
+                                  topLeft:
+                                  Radius.circular(12),
+                                  topRight:
+                                  Radius.circular(12),
+                                ),
+                                color: Color(0xFFfbe9e9),
+                              ),
+                              child:
+                              Padding(
+                                padding:
+                                const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment
+                                      .center,
+                                  children: [
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        '',
+                                        style: TextStyle(
+                                          fontWeight:
+                                          FontWeight.bold,
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                        ),
+                                        textAlign:
+                                        TextAlign.center,
+                                        textScaler: TextScaler
+                                            .noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        'CRD',
+                                        style: TextStyle(
+                                          fontWeight:
+                                          FontWeight.bold,
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                        ),
+                                        textAlign:
+                                        TextAlign.center,
+                                        textScaler: TextScaler
+                                            .noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        'Defective',
+                                        style: TextStyle(
+                                          fontWeight:
+                                          FontWeight.bold,
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                        ),
+                                        textAlign:
+                                        TextAlign.center,
+                                        textScaler: TextScaler
+                                            .noScaling,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            getCurrentStockDetailManager
+                                .isNotEmpty
+                                ? ListView.builder(
+                              shrinkWrap: true,
+                              physics:
+                              NeverScrollableScrollPhysics(),
+                              // itemCount: getCurrentStockDetailManager.length,
+                              itemCount:
+                              getCurrentStockDetailManager
+                                  .where((item) =>
+                              item.emptyCRDCnt! >
+                                  0 ||
+                                  item.emptyDefectivCnt! >
+                                      0) // Filter items with defectivCnt > 0
+                                  .length,
+                              itemBuilder:
+                                  (context, index) {
+                                // final items =
+                                //     getCurrentStockDetailManager[
+                                //         index];
+
+                                final items =
+                                getCurrentStockDetailManager
+                                    .where((item) =>
+                                item.emptyCRDCnt! >
+                                    0 ||
+                                    item.emptyDefectivCnt! >
+                                        0)
+                                    .toList()[index];
+
+                                Color backgroundColor =
+                                (index % 2 == 0)
+                                    ? Colors.grey[
+                                300]! // Color for even index (first, third, fifth...)
+                                    : Colors
+                                    .white70!;
+                                return Container(
+                                  color:
+                                  backgroundColor,
+                                  child: Padding(
+                                    padding:
+                                    const EdgeInsets
+                                        .all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment
+                                          .start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment
+                                              .center,
+                                          children: [
+                                            Expanded(
+                                              flex: 1,
+                                              child:
+                                              Text(
+                                                items
+                                                    .itemName
+                                                    .toString(),
+                                                style: Styling
+                                                    .textFormText,
+                                                textAlign:
+                                                TextAlign.center,
+                                                textScaler:
+                                                TextScaler.noScaling,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 1,
+                                              child:
+                                              Text(
+                                                items
+                                                    .emptyCRDCnt
+                                                    .toString(),
+                                                style: Styling
+                                                    .textFormText,
+                                                textAlign:
+                                                TextAlign.center,
+                                                textScaler:
+                                                TextScaler.noScaling,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 1,
+                                              child:
+                                              Text(
+                                                items
+                                                    .emptyDefectivCnt
+                                                    .toString(),
+                                                style: Styling
+                                                    .textFormText,
+                                                textAlign:
+                                                TextAlign.center,
+                                                textScaler:
+                                                TextScaler.noScaling,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            )
+                                : Container(
+                              child: Text(
+                                  "No Data Available"),
+                            ),
+                          ],
+                        ),
+                      )
+                          : Container(),
+                      // Title with larger font and a subtle shadow
+
+                      getCurrentStockDetailManager.any((item) =>
+                      item.sVQty! > 0 ||
+                          item.refillSaleCnt! > 0)
+                          ? Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.grey.shade200,
+                                blurRadius: 4)
+                          ],
+                        ),
+                        padding: EdgeInsets.all(4),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Refill Sale',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blueGrey,
+                              ),
+                              textScaler: TextScaler.noScaling,
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                BorderRadius.only(
+                                  topLeft:
+                                  Radius.circular(12),
+                                  topRight:
+                                  Radius.circular(12),
+                                ),
+                                color: Color(0xFFfbe9e9),
+                              ),
+                              child: Padding(
+                                padding:
+                                const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment
+                                      .center,
+                                  children: [
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        '',
+                                        style: TextStyle(
+                                          fontWeight:
+                                          FontWeight.bold,
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                        ),
+                                        textAlign:
+                                        TextAlign.center,
+                                        textScaler: TextScaler
+                                            .noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        'SV',
+                                        style: TextStyle(
+                                          fontWeight:
+                                          FontWeight.bold,
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                        ),
+                                        textAlign:
+                                        TextAlign.center,
+                                        textScaler: TextScaler
+                                            .noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        'Refill Sale',
+                                        style: TextStyle(
+                                          fontWeight:
+                                          FontWeight.bold,
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                        ),
+                                        textAlign:
+                                        TextAlign.center,
+                                        textScaler: TextScaler
+                                            .noScaling,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            getCurrentStockDetailManager
+                                .isNotEmpty
+                                ? ListView.builder(
+                              shrinkWrap: true,
+                              physics:
+                              NeverScrollableScrollPhysics(),
+                              // itemCount: getCurrentStockDetailManager.length,
+                              itemCount:
+                              getCurrentStockDetailManager
+                                  .where((item) =>
+                              item.sVQty! >
+                                  0 ||
+                                  item.refillSaleCnt! >
+                                      0)
+                                  .length,
+                              itemBuilder:
+                                  (context, index) {
+                                final items =
+                                getCurrentStockDetailManager
+                                    .where((item) =>
+                                item.sVQty! >
+                                    0 ||
+                                    item.refillSaleCnt! >
+                                        0)
+                                    .toList()[index];
+                                // final items =
+                                //     getCurrentStockDetailManager[
+                                //         index];
+                                Color backgroundColor =
+                                (index % 2 == 0)
+                                    ? Colors.grey[
+                                300]! // Color for even index (first, third, fifth...)
+                                    : Colors
+                                    .white70!;
+                                return Container(
+                                  color:
+                                  backgroundColor,
+                                  child: Padding(
+                                    padding:
+                                    const EdgeInsets
+                                        .all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment
+                                          .start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment
+                                              .center,
+                                          children: [
+                                            Expanded(
+                                              flex: 1,
+                                              child:
+                                              Text(
+                                                items
+                                                    .itemName
+                                                    .toString(),
+                                                style: Styling
+                                                    .textFormText,
+                                                textAlign:
+                                                TextAlign.center,
+                                                textScaler:
+                                                TextScaler.noScaling,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 1,
+                                              child:
+                                              Text(
+                                                items
+                                                    .sVQty
+                                                    .toString(),
+                                                style: Styling
+                                                    .textFormText,
+                                                textAlign:
+                                                TextAlign.center,
+                                                textScaler:
+                                                TextScaler.noScaling,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 1,
+                                              child:
+                                              Text(
+                                                items
+                                                    .refillSaleCnt
+                                                    .toString(),
+                                                style: Styling
+                                                    .textFormText,
+                                                textAlign:
+                                                TextAlign.center,
+                                                textScaler:
+                                                TextScaler.noScaling,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            )
+                                : Container(
+                              child: Text(
+                                  "No Data Available"),
+                            ),
+                          ],
+                        ),
+                      )
+                          : Container(),
+
+                      getCurrentStockDetailManager
+                          .any((item) => item.imbalanceCnt! > 0)
+                          ? Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(4),
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.grey.shade200,
+                                blurRadius: 4)
+                          ],
+                        ),
+                        padding: EdgeInsets.all(4),
+                        child: Column(
+                          children: [
+                            Text(
+                              'Imbalance',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blueGrey,
+                              ),
+                              textScaler: TextScaler.noScaling,
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                BorderRadius.only(
+                                  topLeft:
+                                  Radius.circular(12),
+                                  topRight:
+                                  Radius.circular(12),
+                                ),
+                                color: Color(0xFFfbe9e9),
+                              ),
+                              child: Padding(
+                                padding:
+                                const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment
+                                      .center,
+                                  children: [
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        '',
+                                        style: TextStyle(
+                                          fontWeight:
+                                          FontWeight.bold,
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                        ),
+                                        textAlign:
+                                        TextAlign.center,
+                                        textScaler: TextScaler
+                                            .noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        'Imbalance',
+                                        style: TextStyle(
+                                          fontWeight:
+                                          FontWeight.bold,
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                        ),
+                                        textAlign:
+                                        TextAlign.center,
+                                        textScaler: TextScaler
+                                            .noScaling,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            getCurrentStockDetailManager
+                                .isNotEmpty
+                                ? ListView.builder(
+                              shrinkWrap: true,
+                              physics:
+                              NeverScrollableScrollPhysics(),
+                              // itemCount: getCurrentStockDetailManager.length,
+                              itemCount:
+                              getCurrentStockDetailManager
+                                  .where((item) =>
+                              item.imbalanceCnt! >
+                                  0) // Filter items with defectivCnt > 0
+                                  .length,
+                              itemBuilder:
+                                  (context, index) {
+                                final items =
+                                getCurrentStockDetailManager
+                                    .where((item) =>
+                                item.imbalanceCnt! >
+                                    0)
+                                    .toList()[index];
+                                // final items =
+                                //     getCurrentStockDetailManager[
+                                //         index];
+                                Color backgroundColor =
+                                (index % 2 == 0)
+                                    ? Colors.grey[
+                                300]! // Color for even index (first, third, fifth...)
+                                    : Colors
+                                    .white70!;
+                                return Container(
+                                  color:
+                                  backgroundColor,
+                                  child: Padding(
+                                    padding:
+                                    const EdgeInsets
+                                        .all(8.0),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment
+                                          .start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment
+                                              .center,
+                                          children: [
+                                            Expanded(
+                                              flex: 1,
+                                              child:
+                                              Text(
+                                                items
+                                                    .itemName
+                                                    .toString(),
+                                                style: Styling
+                                                    .textFormText,
+                                                textAlign:
+                                                TextAlign.center,
+                                                textScaler:
+                                                TextScaler.noScaling,
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 1,
+                                              child:
+                                              Text(
+                                                items
+                                                    .imbalanceCnt
+                                                    .toString(),
+                                                style: Styling
+                                                    .textFormText,
+                                                textAlign:
+                                                TextAlign.center,
+                                                textScaler:
+                                                TextScaler.noScaling,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            )
+                                : Container(
+                              child: Text(
+                                  "No Data Available"),
+                            ),
+                          ],
+                        ),
+                      )
+                          : Container(),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+      transitionBuilder: (context, animation1, animation2, child) {
+        final offsetAnimation = Tween<Offset>(
+          begin: const Offset(-1, 0), // From left side
+          end: Offset.zero, // To original position
+        ).animate(CurvedAnimation(parent: animation1, curve: Curves.easeInOut));
+
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
+    );
+  }
+
   void showCardOutwardStockImbalance(BuildContext context) {
     showGeneralDialog(
       context: context,
@@ -5840,6 +6546,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                               fontWeight: FontWeight.bold,
                               color: Colors.blueGrey,
                             ),
+                            textScaler: TextScaler.noScaling,
                           ),
                         ],
                       ),
@@ -6028,3 +6735,5 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
     );
   }
 }
+
+

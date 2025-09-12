@@ -92,17 +92,6 @@ class _TodaysCashSummaryOnAccountListState extends State<TodaysCashSummaryOnAcco
           selectedReferredName = staffNameEdit;
           getStaffLedgerReportList(selectedReferredID!);
 
-          // Ensure the staffId comparison works correctly
-         // final staffIdInt = int.tryParse(staffId); // Convert to int for comparison
-
-          // Count the number of reports matching the selected staffId
-          // if (lederReportModel != null ) {
-          //   cashsummary = lederReportModel.where(
-          //         (report) => report.staffId == staffId, // Compare as integers
-          //   ).length;
-          // } else {
-          //   cashsummary = 0;
-          // }
         });
         _updateTotalBalance();
         //debugPrint("staff count: $cashsummary");
@@ -186,11 +175,11 @@ class _TodaysCashSummaryOnAccountListState extends State<TodaysCashSummaryOnAcco
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text('Staff Ledger',
-                                style: TextStyle(fontSize: 16, color: Colors.white),
+                                style: TextStyle(fontSize: 14, color: Colors.white),
                               ),
                               Text(
                                 'Count: $cashsummary',
-                                style: TextStyle(fontSize: 16, color: Colors.white),
+                                style: TextStyle(fontSize: 12, color: Colors.white),
                               ),
                             ],
                           ),
@@ -295,10 +284,11 @@ class _TodaysCashSummaryOnAccountListState extends State<TodaysCashSummaryOnAcco
                     ),
                     Column(
                       children: [
-                        Text('Total Balance'),
+                        Text('Total Balance',
+                          style: TextStyle(fontSize: 12),),
                         Text(
                           '0.00',
-                          style: Styling.itemBlackTestVerySmallBold,
+                          style: Styling.itemBlackTestVerySmallBoldOne,
                         ),
                       ],
                     ),
@@ -313,10 +303,11 @@ class _TodaysCashSummaryOnAccountListState extends State<TodaysCashSummaryOnAcco
                     ),
                     Column(
                       children: [
-                        Text('Advance'),
+                        Text('Advance',
+                          style: TextStyle(fontSize: 12),),
                         Text(
                           '0.00',
-                          style: Styling.itemBlackTestVerySmallBold,
+                          style: Styling.itemBlackTestVerySmallBoldOne,
                         ),
                       ],
                     ),
@@ -335,10 +326,11 @@ class _TodaysCashSummaryOnAccountListState extends State<TodaysCashSummaryOnAcco
                     ),
                     Column(
                       children: [
-                        Text('On Account'),
+                        Text('On Account',
+                            style: TextStyle(fontSize: 12),),
                         Text(
                           '${formatCurrency(totalBalance)}',
-                          style: Styling.itemBlackTestVerySmallBold,
+                          style: Styling.itemBlackTestVerySmallBoldOne,
                         )
                       ],
                     ),

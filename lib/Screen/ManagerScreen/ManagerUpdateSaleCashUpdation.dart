@@ -5120,7 +5120,7 @@ class _ManagerUpdateSaleCashUpdationState
         }
       }else{
         // Check based on previous logic what this entry was
-        bool wasValid = removed.niyojanDel != 1 &&
+        bool wasValid = removed.niyojanDel != 0 &&
             removed.remark != "Already Punched In Niyojan" &&
             removed.remark != "Not Found";
 

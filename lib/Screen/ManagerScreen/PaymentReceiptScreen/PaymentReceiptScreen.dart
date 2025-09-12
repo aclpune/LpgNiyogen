@@ -117,6 +117,7 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
   List<CahsDenominationMandatoryFlagModel> cashDenoMandatoryList = [];
   bool cashDenominationMandatory = false;
   List<GetBalanceByStaffIdModel> balancemodel = [];
+
   double balanceAmount = 0.0;
   @override
   void initState() {

@@ -98,6 +98,7 @@ BranchAdminAH	cnf@1234*/
   static String acceptSale = "Accepted Successfully..";
   static String selectPaymentMode = "Please select payment mode.";
   static String selectConsumerMode = "Please select consumer.";
+  static String selectConsumerTypeMode = "Please select consumer type.";
   static String creditQty = "The quantity cannot exceed the cylinder quantity.";
   static String cashAmount = "Please enter a valid cash amount.";
   static String discountExceedCashCollection = "Discount amount should not be greater than discount limit.";
@@ -111,7 +112,6 @@ BranchAdminAH	cnf@1234*/
   ///
   static String reqfield = "Please enter all required fields";
   static String expenseSendMgr1 = "Data deleted successfully.";
-  static String selectConsumerTypeMode = "Please select consumer type.";
   static String amountEqual = 'The Entered Payment Amount cannot exceed the total amount';
 
   static String TransMode = "Please select payment mode";

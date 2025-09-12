@@ -31,8 +31,7 @@ class DeliveryBoyWiseListItem extends StatefulWidget {
 class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
   bool isListViewVisible = false; // Tracks if ListView is visible
   bool _isExpanded = false;
-  List<GetLastUploadedFrileDifferenceModel> getLastUploadedFile =
-      []; // List for filtered results
+  List<GetLastUploadedFrileDifferenceModel> getLastUploadedFile = []; // List for filtered results
   bool saveFlag = false;
 
   @override

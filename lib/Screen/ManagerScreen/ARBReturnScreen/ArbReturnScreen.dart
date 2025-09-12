@@ -858,7 +858,7 @@ class _ArbReturnScreen extends State<ArbReturnScreen> {
                         SizedBox(height: 2),
                         Row(
                           children: [
-                            Expanded(flex:1,child: countTextWidgetText(context,"Credit Amt", formatCurrency(payList.cNAmt!.toDouble()))),
+                            Expanded(flex:2,child: countTextWidgetText(context,"Credit Amt", formatCurrency(payList.cNAmt!.toDouble()))),
                     Expanded(
                     child: GestureDetector(
                       onTap: () {

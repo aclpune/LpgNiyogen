@@ -125,7 +125,7 @@ class _DashboardUndocumentedDetails extends State<DashboardUndocumentedDetails>{
                     children: [
                       Text(
                         'Undocumented SV',
-                        style: TextStyle(fontSize: 16, color: Colors.white),
+                        style: TextStyle(fontSize: 14, color: Colors.white),
                       ),
                       SizedBox(height: 4),
                       Row(
@@ -308,20 +308,20 @@ class _DashboardUndocumentedDetails extends State<DashboardUndocumentedDetails>{
                     Row(
                       children: [
                         Expanded(
-                          child: countTextWidgetTextOnAccount(context, "Doc. Status", nullToDash(sale.isUndocument == true ? "Pending" : (sale.isUndocument == false ? "Received" : ""))),
+                          child: countTextWidgetText(context, "Doc. Status", nullToDash(sale.isUndocument == true ? "Pending" : (sale.isUndocument == false ? "Received" : ""))),
                         ),
                       ],
                     ),
                     SizedBox(height: 2),
                     Row(
                       children: [
-                        Expanded(flex: 1, child: countTextWidgetTextOnAccount(context, "SV Type", nullToDash(sale.sVType))),
+                        Expanded(flex: 1, child: countTextWidgetText(context, "SV Type", nullToDash(sale.sVType))),
                       ],
                     ),
                     SizedBox(height: 2),
                     Row(
                       children: [
-                        Expanded(flex: 1, child: countTextWidgetTextOnAccount(context, "Total Amount", nullToDash(formatCurrency((sale.totalAmount ?? 0.0).toDouble())))),
+                        Expanded(flex: 1, child: countTextWidgetText(context, "Total Amount", nullToDash(formatCurrency((sale.totalAmount ?? 0.0).toDouble())))),
                       ],
                     ),
                     SizedBox(height: 2),

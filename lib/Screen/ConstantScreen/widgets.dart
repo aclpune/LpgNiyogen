@@ -98,7 +98,7 @@ Widget countTextWidgetTextOnAccount(
     padding: const EdgeInsets.symmetric(horizontal: 5),
     child: Text(
       "$count: $title",
-      style: Styling.textFormText,
+      style: Styling.itemGreyText,
       softWrap: true,
     ),
   );

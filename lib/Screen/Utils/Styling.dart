@@ -53,7 +53,7 @@ class Styling {
   // );
   static final TextStyle appBarTitle = TextStyle(
     color: Colors.white,
-    fontSize: 2.9 * SizeConfig.textMultiplier!,
+    fontSize: 2.6 * SizeConfig.textMultiplier!,
   );
 
   static final TextStyle appBarDesc = TextStyle(
@@ -363,7 +363,7 @@ class Styling {
 
   static final TextStyle bodyTitleBigBoldDashGrey = TextStyle(
       fontSize:
-      2.7 * SizeConfig.textMultiplier!,
+      2.5 * SizeConfig.textMultiplier!,
       fontWeight: FontWeight.normal,
       fontFamily: 'Inter',// Size = 18-- [18/8.66] = 2.07
       color: Color(0xFF605f70));
@@ -397,6 +397,48 @@ class Styling {
     fontFamily: 'OpenSans',
     fontWeight: FontWeight.bold,
     color: Color(0xff1280b3),);
+
+  static final TextStyle itemBlackTestTwo = TextStyle(
+    fontSize: 2.2 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
+    fontFamily: 'OpenSans',
+    color: Colors.black,);
+
+  static final TextStyle dropdownVerySmallText = TextStyle(
+      fontSize:
+      1.4 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
+      fontFamily: 'OpenSans',
+      color: Colors.black);
+
+  static final TextStyle bodyTitleBigBoldDashtwo = TextStyle(
+      fontSize:
+      2.0 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
+      fontWeight: FontWeight.bold,
+      color: Colors.black);
+
+  static final TextStyle bodyTitleWithBlueHightDashboard = TextStyle(
+      fontSize:
+      2.0 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
+      fontFamily: 'OpenSans',
+      color: Colors.black);
+
+  static final TextStyle bodyTitleBigBoldDashGreyOne = TextStyle(
+      fontSize:
+      2.0 * SizeConfig.textMultiplier!,
+      fontWeight: FontWeight.normal,
+      fontFamily: 'Inter',// Size = 18-- [18/8.66] = 2.07
+      color: Color(0xFF605f70));
+
+  static final TextStyle itemBlackTestTwoo = TextStyle(
+    fontSize: 2.0 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
+    fontFamily: 'OpenSans',
+    color: Colors.black,);
+
+  static final TextStyle itemBlackTestVerySmallBoldOne = TextStyle(
+    fontSize: 1.4 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
+    fontFamily: 'OpenSans',
+    fontWeight: FontWeight.bold,
+    color: Color(0xff1280b3),);
+
   /* static final TextStyle selectedTabLight = TextStyle(
     color: Colors.black,
     fontWeight: FontWeight.bold,

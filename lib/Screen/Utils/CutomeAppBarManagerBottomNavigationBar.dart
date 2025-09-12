@@ -61,12 +61,14 @@ class _AppBarCustomState extends State<AppBarCustom> {
                         Constants.AppBarTitle,
                         textAlign: TextAlign.start,
                         style: Styling.appBarTitle,
+                        textScaler: TextScaler.noScaling,
                       ),
                       Text(
                         distributorName == "null"?'':
                         distributorName ?? '',
                         textAlign: TextAlign.start,
                         style: Styling.hintTextVerySmall,
+                        textScaler: TextScaler.noScaling,
                       ),
                     ],
                   ),
@@ -78,12 +80,14 @@ class _AppBarCustomState extends State<AppBarCustom> {
                         userName ?? ' ',
                         style: Styling.hintTextSmall,
                         textAlign: TextAlign.right,
+                        textScaler: TextScaler.noScaling,
                       ),
                   SizedBox(height: 2,),
                   Text(
                     role ?? '',
                     style: Styling.hintTextSmall,
                     textAlign: TextAlign.right,
+                    textScaler: TextScaler.noScaling,
                   ),
                 ],
               )
