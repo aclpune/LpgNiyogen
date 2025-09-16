@@ -104,7 +104,7 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
                         SizedBox(
                             width: 65,
                             child:
-                                Text('TV:', style: Styling.itemGreyTextSmall)),
+                            Text('TV:', style: Styling.itemGreyTextSmall)),
                         Text('${sale.tVQty ?? 0}',
                             style: Styling.itemBlackTestSmall),
                       ],
@@ -357,7 +357,7 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
                   onTap: () {
                     setState(() {
                       _isExpanded =
-                          !_isExpanded; // Toggle the expand/collapse state
+                      !_isExpanded; // Toggle the expand/collapse state
                     });
                   },
                   child: Row(
@@ -369,13 +369,13 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
                       IconButton(
                         icon: _isExpanded
                             ? Icon(Icons.arrow_drop_up,
-                                color: Color(0xff1280b3))
+                            color: Color(0xff1280b3))
                             : Icon(Icons.arrow_drop_down,
-                                color: Color(0xff1280b3)),
+                            color: Color(0xff1280b3)),
                         onPressed: () {
                           setState(() {
                             _isExpanded =
-                                !_isExpanded; // Toggle the expand/collapse state
+                            !_isExpanded; // Toggle the expand/collapse state
                           });
                         },
                       ),
@@ -480,6 +480,7 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
                                 "cashTotalExpectedAmount": sale.denoCashExptd,
                                 "cashTotalReceiveAmount": sale.denoCashRcvd,
                                 "cashBalanceAmount": sale.cashBalance,
+                                "itemSubtype":sale.itemSubType,
                               });
                         } else if ((sale.cashQty != 0 ||
                             sale.prepaidQty != 0 ||
@@ -519,6 +520,7 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
                                 "cashTotalExpectedAmount": sale.denoCashExptd,
                                 "cashTotalReceiveAmount": sale.denoCashRcvd,
                                 "cashBalanceAmount": sale.cashBalance,
+                                "itemSubtype":sale.itemSubType,
                               });
                         } else if ((sale.actualSaleQty == 0 ||
                             sale.dailySaleStatus != 13)) {
@@ -557,14 +559,14 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
                                     const SizedBox(height: 20),
                                     Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
+                                      MainAxisAlignment.spaceEvenly,
                                       children: [
                                         ElevatedButton(
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor: Colors.blue,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(50),
+                                              BorderRadius.circular(50),
                                             ),
                                           ),
                                           onPressed: () {
@@ -590,7 +592,7 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
                                             backgroundColor: Colors.redAccent,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
-                                                  BorderRadius.circular(50),
+                                              BorderRadius.circular(50),
                                             ),
                                           ),
                                           onPressed: () {
@@ -619,25 +621,25 @@ class _ManagerUpdateSaleListItemState extends State<ManagerUpdateSaleListItem> {
                         padding: const EdgeInsets.only(top: 8.0),
                         child: Text(
                             (sale.cashQty == 0 &&
-                                    sale.prepaidQty == 0 &&
-                                    sale.postQty == 0 &&
-                                    sale.creditQty == 0 &&
-                                    sale.cashAmt == 0 &&
-                                    sale.postAmt == 0 &&
-                                    sale.actualSaleQty != 0)
+                                sale.prepaidQty == 0 &&
+                                sale.postQty == 0 &&
+                                sale.creditQty == 0 &&
+                                sale.cashAmt == 0 &&
+                                sale.postAmt == 0 &&
+                                sale.actualSaleQty != 0)
                                 ? "Update"
                                 : (sale.cashQty != 0 ||
-                                        sale.prepaidQty != 0 ||
-                                        sale.postQty != 0 ||
-                                        sale.creditQty != 0 ||
-                                        sale.cashAmt != 0 ||
-                                        sale.postAmt != 0 &&
-                                            sale.actualSaleQty != 0)
-                                    ? "Edit"
-                                    : (sale.actualSaleQty == 0 ||
-                                            sale.dailySaleStatus != 13)
-                                        ? "No Cash"
-                                        : "",
+                                sale.prepaidQty != 0 ||
+                                sale.postQty != 0 ||
+                                sale.creditQty != 0 ||
+                                sale.cashAmt != 0 ||
+                                sale.postAmt != 0 &&
+                                    sale.actualSaleQty != 0)
+                                ? "Edit"
+                                : (sale.actualSaleQty == 0 ||
+                                sale.dailySaleStatus != 13)
+                                ? "No Cash"
+                                : "",
                             style: Styling.blueClrTextWithUnderline),
                       ),
                     ),

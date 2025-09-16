@@ -33,6 +33,7 @@ import 'Screen/ManagerScreen/DSRItemClickUI/ManagerCashInHandScreenDetails.dart'
 import 'Screen/ManagerScreen/DSRItemClickUI/ManagerDSRReportScreenDetails.dart';
 import 'Screen/ManagerScreen/DSRItemClickUI/ManagerExpenseTabScreenDetails.dart';
 import 'Screen/ManagerScreen/DSRItemClickUI/ManagerIncomeUnsettledScreenDetails.dart';
+import 'Screen/ManagerScreen/DashboardItemClickUI/CreditSaleCountDetailListUI.dart';
 import 'Screen/ManagerScreen/DashboardItemClickUI/DashboardPostPaidVerifPendDetails.dart';
 import 'Screen/ManagerScreen/DashboardItemClickUI/DashboardPrepaidDetails.dart';
 import 'Screen/ManagerScreen/DashboardItemClickUI/DashboardSVDetails.dart';
@@ -219,6 +220,7 @@ class MyApp extends StatelessWidget {
             AddPaymentPopupScreen.screenName: (context) => AddPaymentPopupScreen(),
             OnAccountPopupScreen.screenName: (context) => OnAccountPopupScreen(),
             DashboardUndocumentedDetails.screenName: (context) => DashboardUndocumentedDetails(),
+            CreditSaleCountDetailListUI.screenName: (context) => CreditSaleCountDetailListUI(),
 
             //ManagerCashInHandScreenDetails.screenName: (context) => ManagerCashInHandScreenDetails(),
 

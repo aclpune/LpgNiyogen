@@ -1,76 +1,78 @@
-/// SaleGKId : 171
+/// SaleGKId : 4957
 /// DistributorId : 8118
-/// StaffId : 22
+/// StaffId : 42
 /// DSCollMgrId : 0
-/// StaffNo : "SN/022"
-/// StaffName : "Rahul"
+/// StaffNo : "SN/027"
+/// StaffName : "5kg Swarup"
 /// ItemId : 1
 /// ItemName : "14.2 KG"
-/// SaleGKItemId : 151
-/// GDFilledSale : 43
-/// ActualSaleQty : 43
-/// SVQty : 0
+/// SaleGKItemId : 5257
+/// GDFilledSale : 20
+/// ActualSaleQty : 18
+/// SVQty : 2
 /// TVQty : 0
-/// Amount : 34636
+/// Amount : 15399.00
 /// CashQty : 0
-/// CashAmt : 0
+/// CashAmt : 0.00
 /// PrepaidQty : 0
-/// PrepaidAmt : 0
+/// PrepaidAmt : 0.00
 /// PostQty : 0
-/// PostAmt : 0
+/// PostAmt : 0.00
 /// CreditQty : 0
-/// CreditAmt : 0
-/// EmptyRetQty : 43
+/// CreditAmt : 0.00
+/// EmptyRetQty : 16
 /// DeffQty : 0
-/// LessEmptyQty : 0
+/// LessEmptyQty : 2
 /// DailySaleStatus : 2
-/// DenoCashExptd : 0
-/// DenoCashRcvd : 0
-/// CashBalance : 0
+/// DenoCashExptd : 0.0
+/// DenoCashRcvd : 0.0
+/// CashBalance : 0.0
 /// UserName : ""
 /// StatusStr : "Accepted"
 /// AddedBy : 0
 /// IsActive : 0
 /// AddedOn : "0001-01-01T00:00:00"
-/// DelDate : "2025-04-07T00:00:00"
+/// DelDate : "2025-09-10T00:00:00"
+/// ItemSubType : "DOM"
 
 class DilySaleSummaryDeliveryBoyWiseListModel {
   DilySaleSummaryDeliveryBoyWiseListModel({
-      num? saleGKId, 
-      num? distributorId, 
-      num? staffId, 
-      num? dSCollMgrId, 
-      String? staffNo, 
-      String? staffName, 
-      num? itemId, 
-      String? itemName, 
-      num? saleGKItemId, 
-      num? gDFilledSale, 
-      num? actualSaleQty, 
-      num? sVQty, 
-      num? tVQty, 
-      num? amount, 
-      num? cashQty, 
-      num? cashAmt, 
-      num? prepaidQty,
-      num? prepaidAmt,
-      num? postQty, 
-      num? postAmt, 
-      num? creditQty, 
-      num? creditAmt, 
-      num? emptyRetQty, 
-      num? deffQty, 
-      num? lessEmptyQty, 
-      num? dailySaleStatus, 
-      num? denoCashExptd, 
-      num? denoCashRcvd, 
-      num? cashBalance, 
-      String? userName, 
-      String? statusStr, 
-      num? addedBy, 
-      num? isActive, 
-      String? addedOn, 
-      String? delDate,}){
+    num? saleGKId,
+    num? distributorId,
+    num? staffId,
+    num? dSCollMgrId,
+    String? staffNo,
+    String? staffName,
+    num? itemId,
+    String? itemName,
+    num? saleGKItemId,
+    num? gDFilledSale,
+    num? actualSaleQty,
+    num? sVQty,
+    num? tVQty,
+    num? amount,
+    num? cashQty,
+    num? cashAmt,
+    num? prepaidQty,
+    num? prepaidAmt,
+    num? postQty,
+    num? postAmt,
+    num? creditQty,
+    num? creditAmt,
+    num? emptyRetQty,
+    num? deffQty,
+    num? lessEmptyQty,
+    num? dailySaleStatus,
+    num? denoCashExptd,
+    num? denoCashRcvd,
+    num? cashBalance,
+    String? userName,
+    String? statusStr,
+    num? addedBy,
+    num? isActive,
+    String? addedOn,
+    String? delDate,
+    String? itemSubType,}){
     _saleGKId = saleGKId;
     _distributorId = distributorId;
     _staffId = staffId;
@@ -106,7 +108,8 @@ class DilySaleSummaryDeliveryBoyWiseListModel {
     _isActive = isActive;
     _addedOn = addedOn;
     _delDate = delDate;
-}
+    _itemSubType = itemSubType;
+  }
 
   DilySaleSummaryDeliveryBoyWiseListModel.fromJson(dynamic json) {
     _saleGKId = json['SaleGKId'];
@@ -144,6 +147,7 @@ class DilySaleSummaryDeliveryBoyWiseListModel {
     _isActive = json['IsActive'];
     _addedOn = json['AddedOn'];
     _delDate = json['DelDate'];
+    _itemSubType = json['ItemSubType'];
   }
   num? _saleGKId;
   num? _distributorId;
@@ -180,77 +184,80 @@ class DilySaleSummaryDeliveryBoyWiseListModel {
   num? _isActive;
   String? _addedOn;
   String? _delDate;
-DilySaleSummaryDeliveryBoyWiseListModel copyWith({  num? saleGKId,
-  num? distributorId,
-  num? staffId,
-  num? dSCollMgrId,
-  String? staffNo,
-  String? staffName,
-  num? itemId,
-  String? itemName,
-  num? saleGKItemId,
-  num? gDFilledSale,
-  num? actualSaleQty,
-  num? sVQty,
-  num? tVQty,
-  num? amount,
-  num? cashQty,
-  num? cashAmt,
-  num? prepaidQty,
-  num? prepaidAmt,
-  num? postQty,
-  num? postAmt,
-  num? creditQty,
-  num? creditAmt,
-  num? emptyRetQty,
-  num? deffQty,
-  num? lessEmptyQty,
-  num? dailySaleStatus,
-  num? denoCashExptd,
-  num? denoCashRcvd,
-  num? cashBalance,
-  String? userName,
-  String? statusStr,
-  num? addedBy,
-  num? isActive,
-  String? addedOn,
-  String? delDate,
-}) => DilySaleSummaryDeliveryBoyWiseListModel(  saleGKId: saleGKId ?? _saleGKId,
-  distributorId: distributorId ?? _distributorId,
-  staffId: staffId ?? _staffId,
-  dSCollMgrId: dSCollMgrId ?? _dSCollMgrId,
-  staffNo: staffNo ?? _staffNo,
-  staffName: staffName ?? _staffName,
-  itemId: itemId ?? _itemId,
-  itemName: itemName ?? _itemName,
-  saleGKItemId: saleGKItemId ?? _saleGKItemId,
-  gDFilledSale: gDFilledSale ?? _gDFilledSale,
-  actualSaleQty: actualSaleQty ?? _actualSaleQty,
-  sVQty: sVQty ?? _sVQty,
-  tVQty: tVQty ?? _tVQty,
-  amount: amount ?? _amount,
-  cashQty: cashQty ?? _cashQty,
-  cashAmt: cashAmt ?? _cashAmt,
-  prepaidQty: prepaidQty ?? _prepaidQty,
-  prepaidAmt: prepaidAmt ?? _prepaidAmt,
-  postQty: postQty ?? _postQty,
-  postAmt: postAmt ?? _postAmt,
-  creditQty: creditQty ?? _creditQty,
-  creditAmt: creditAmt ?? _creditAmt,
-  emptyRetQty: emptyRetQty ?? _emptyRetQty,
-  deffQty: deffQty ?? _deffQty,
-  lessEmptyQty: lessEmptyQty ?? _lessEmptyQty,
-  dailySaleStatus: dailySaleStatus ?? _dailySaleStatus,
-  denoCashExptd: denoCashExptd ?? _denoCashExptd,
-  denoCashRcvd: denoCashRcvd ?? _denoCashRcvd,
-  cashBalance: cashBalance ?? _cashBalance,
-  userName: userName ?? _userName,
-  statusStr: statusStr ?? _statusStr,
-  addedBy: addedBy ?? _addedBy,
-  isActive: isActive ?? _isActive,
-  addedOn: addedOn ?? _addedOn,
-  delDate: delDate ?? _delDate,
-);
+  String? _itemSubType;
+  DilySaleSummaryDeliveryBoyWiseListModel copyWith({  num? saleGKId,
+    num? distributorId,
+    num? staffId,
+    num? dSCollMgrId,
+    String? staffNo,
+    String? staffName,
+    num? itemId,
+    String? itemName,
+    num? saleGKItemId,
+    num? gDFilledSale,
+    num? actualSaleQty,
+    num? sVQty,
+    num? tVQty,
+    num? amount,
+    num? cashQty,
+    num? cashAmt,
+    num? prepaidQty,
+    num? prepaidAmt,
+    num? postQty,
+    num? postAmt,
+    num? creditQty,
+    num? creditAmt,
+    num? emptyRetQty,
+    num? deffQty,
+    num? lessEmptyQty,
+    num? dailySaleStatus,
+    num? denoCashExptd,
+    num? denoCashRcvd,
+    num? cashBalance,
+    String? userName,
+    String? statusStr,
+    num? addedBy,
+    num? isActive,
+    String? addedOn,
+    String? delDate,
+    String? itemSubType,
+  }) => DilySaleSummaryDeliveryBoyWiseListModel(  saleGKId: saleGKId ?? _saleGKId,
+    distributorId: distributorId ?? _distributorId,
+    staffId: staffId ?? _staffId,
+    dSCollMgrId: dSCollMgrId ?? _dSCollMgrId,
+    staffNo: staffNo ?? _staffNo,
+    staffName: staffName ?? _staffName,
+    itemId: itemId ?? _itemId,
+    itemName: itemName ?? _itemName,
+    saleGKItemId: saleGKItemId ?? _saleGKItemId,
+    gDFilledSale: gDFilledSale ?? _gDFilledSale,
+    actualSaleQty: actualSaleQty ?? _actualSaleQty,
+    sVQty: sVQty ?? _sVQty,
+    tVQty: tVQty ?? _tVQty,
+    amount: amount ?? _amount,
+    cashQty: cashQty ?? _cashQty,
+    cashAmt: cashAmt ?? _cashAmt,
+    prepaidQty: prepaidQty ?? _prepaidQty,
+    prepaidAmt: prepaidAmt ?? _prepaidAmt,
+    postQty: postQty ?? _postQty,
+    postAmt: postAmt ?? _postAmt,
+    creditQty: creditQty ?? _creditQty,
+    creditAmt: creditAmt ?? _creditAmt,
+    emptyRetQty: emptyRetQty ?? _emptyRetQty,
+    deffQty: deffQty ?? _deffQty,
+    lessEmptyQty: lessEmptyQty ?? _lessEmptyQty,
+    dailySaleStatus: dailySaleStatus ?? _dailySaleStatus,
+    denoCashExptd: denoCashExptd ?? _denoCashExptd,
+    denoCashRcvd: denoCashRcvd ?? _denoCashRcvd,
+    cashBalance: cashBalance ?? _cashBalance,
+    userName: userName ?? _userName,
+    statusStr: statusStr ?? _statusStr,
+    addedBy: addedBy ?? _addedBy,
+    isActive: isActive ?? _isActive,
+    addedOn: addedOn ?? _addedOn,
+    delDate: delDate ?? _delDate,
+    itemSubType: itemSubType ?? _itemSubType,
+  );
   num? get saleGKId => _saleGKId;
   num? get distributorId => _distributorId;
   num? get staffId => _staffId;
@@ -286,6 +293,7 @@ DilySaleSummaryDeliveryBoyWiseListModel copyWith({  num? saleGKId,
   num? get isActive => _isActive;
   String? get addedOn => _addedOn;
   String? get delDate => _delDate;
+  String? get itemSubType => _itemSubType;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -324,6 +332,7 @@ DilySaleSummaryDeliveryBoyWiseListModel copyWith({  num? saleGKId,
     map['IsActive'] = _isActive;
     map['AddedOn'] = _addedOn;
     map['DelDate'] = _delDate;
+    map['ItemSubType'] = _itemSubType;
     return map;
   }
 

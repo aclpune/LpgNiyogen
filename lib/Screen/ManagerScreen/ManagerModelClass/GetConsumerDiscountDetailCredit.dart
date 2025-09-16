@@ -1,22 +1,25 @@
-/// CustomerId : 8
-/// CustomerName : "Madhavi tambe"
+/// PkId : 87
+/// CustomerId : 57
+/// CustomerName : "Eternia"
 /// DistributorId : 8118
-/// ItemId : 3
-/// ItemName : "5 KG"
-/// RSP_Price : 546.00
-/// Discount : 82.00
-/// EffectiveDate : "2025-03-05T00:00:00"
+/// ItemId : 1
+/// ItemName : "14.2 KG"
+/// RSP_Price : 855.50
+/// Discount : 10.00
+/// EffectiveDate : "2025-09-15T05:51:32.237"
 
 class GetConsumerDiscountDetailCredit {
   GetConsumerDiscountDetailCredit({
-      num? customerId, 
-      String? customerName, 
-      num? distributorId, 
-      num? itemId, 
-      String? itemName, 
-      num? rSPPrice, 
-      num? discount, 
-      String? effectiveDate,}){
+    num? pkId,
+    num? customerId,
+    String? customerName,
+    num? distributorId,
+    num? itemId,
+    String? itemName,
+    num? rSPPrice,
+    num? discount,
+    String? effectiveDate,}){
+    _pkId = pkId;
     _customerId = customerId;
     _customerName = customerName;
     _distributorId = distributorId;
@@ -25,9 +28,10 @@ class GetConsumerDiscountDetailCredit {
     _rSPPrice = rSPPrice;
     _discount = discount;
     _effectiveDate = effectiveDate;
-}
+  }
 
   GetConsumerDiscountDetailCredit.fromJson(dynamic json) {
+    _pkId = json['PkId'];
     _customerId = json['CustomerId'];
     _customerName = json['CustomerName'];
     _distributorId = json['DistributorId'];
@@ -37,6 +41,7 @@ class GetConsumerDiscountDetailCredit {
     _discount = json['Discount'];
     _effectiveDate = json['EffectiveDate'];
   }
+  num? _pkId;
   num? _customerId;
   String? _customerName;
   num? _distributorId;
@@ -45,23 +50,26 @@ class GetConsumerDiscountDetailCredit {
   num? _rSPPrice;
   num? _discount;
   String? _effectiveDate;
-GetConsumerDiscountDetailCredit copyWith({  num? customerId,
-  String? customerName,
-  num? distributorId,
-  num? itemId,
-  String? itemName,
-  num? rSPPrice,
-  num? discount,
-  String? effectiveDate,
-}) => GetConsumerDiscountDetailCredit(  customerId: customerId ?? _customerId,
-  customerName: customerName ?? _customerName,
-  distributorId: distributorId ?? _distributorId,
-  itemId: itemId ?? _itemId,
-  itemName: itemName ?? _itemName,
-  rSPPrice: rSPPrice ?? _rSPPrice,
-  discount: discount ?? _discount,
-  effectiveDate: effectiveDate ?? _effectiveDate,
-);
+  GetConsumerDiscountDetailCredit copyWith({  num? pkId,
+    num? customerId,
+    String? customerName,
+    num? distributorId,
+    num? itemId,
+    String? itemName,
+    num? rSPPrice,
+    num? discount,
+    String? effectiveDate,
+  }) => GetConsumerDiscountDetailCredit(  pkId: pkId ?? _pkId,
+    customerId: customerId ?? _customerId,
+    customerName: customerName ?? _customerName,
+    distributorId: distributorId ?? _distributorId,
+    itemId: itemId ?? _itemId,
+    itemName: itemName ?? _itemName,
+    rSPPrice: rSPPrice ?? _rSPPrice,
+    discount: discount ?? _discount,
+    effectiveDate: effectiveDate ?? _effectiveDate,
+  );
+  num? get pkId => _pkId;
   num? get customerId => _customerId;
   String? get customerName => _customerName;
   num? get distributorId => _distributorId;
@@ -73,6 +81,7 @@ GetConsumerDiscountDetailCredit copyWith({  num? customerId,
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
+    map['PkId'] = _pkId;
     map['CustomerId'] = _customerId;
     map['CustomerName'] = _customerName;
     map['DistributorId'] = _distributorId;

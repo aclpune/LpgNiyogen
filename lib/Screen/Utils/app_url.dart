@@ -167,6 +167,11 @@ class AppUrl {
  static const String CheckSVConsumerNoStatus = '$baseUrl/DailyStockCash/CheckSVConsumerNoStatus';
  ///version get
  static const String GetLatestVersionDetails = '$baseUrl/Masters/GetLatestVersionDetails';
+ static const String GetCreditSaleLedgerDtls = '$baseUrl/DailyStockCash/GetCreditSaleLedgerDtls';
+  static const String GetDSRDMwiseSummaryList = '$baseUrl/Reports/GetDSRDMwiseSummaryList';
+  static const String GetDsrSVTVList = '$baseUrl/Reports/GetDsrSVTVList';
+  static const String GetCustDiscountDtlsByCustType = '$baseUrl/Masters/GetCustDiscountDtlsByCustType';
+  static const String GetCustomerListByCustType = '$baseUrl/Masters/GetCustomerListByCustType';
 }
 
 

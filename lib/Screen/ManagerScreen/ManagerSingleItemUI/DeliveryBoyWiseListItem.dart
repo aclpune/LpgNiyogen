@@ -63,7 +63,7 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                   children: [
                     Text(sale.staffName ?? '',
                         style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                             color: Color(0xff1280b3),
                             fontFamily: 'OpenSans')),
@@ -73,13 +73,13 @@ class _DeliveryBoyWiseListItemState extends State<DeliveryBoyWiseListItem> {
                   children: [
                     Text('Status :',
                         style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 12,
                             fontFamily: 'OpenSans',
                             color: Color(0xff1280b3))),
                     SizedBox(width: 5),
                     Text('${sale.statusStr ?? 0}',
                         style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 12,
                             fontFamily: 'OpenSans',
                             color: Colors.black)),
                   ],

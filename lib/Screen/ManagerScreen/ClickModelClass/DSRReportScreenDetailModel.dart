@@ -1,32 +1,36 @@
 /// DistributorId : 8118
 /// Date : null
 /// ItemId : 1
-/// ItemName : "14.2 KG"
-/// SaleAmt : 652455.00
-/// CashAmt : 370530.00
-/// BankAmt : 122436.00
-/// CreditAmt : 118102.50
+/// ItemName : "14.2 KG SV Sale"
+/// SaleAmt : 855.50
+/// CashAmt : 855.50
+/// BankAmt : 0.0
+/// CreditAmt : 0.00
 /// Category : null
 /// TransCate : "DailySale"
 /// QtyName : 0
-/// CoustemerName : ""
+/// CoustemerName : null
 /// Flag : null
+/// MerchantQR : 0.00
+/// PrepaidAmt : 0.00
 
 class DsrReportScreenDetailModel {
   DsrReportScreenDetailModel({
-      num? distributorId, 
-      dynamic date, 
-      num? itemId, 
-      String? itemName, 
-      num? saleAmt, 
-      num? cashAmt, 
-      num? bankAmt, 
-      num? creditAmt, 
-      dynamic category, 
-      String? transCate, 
-      num? qtyName, 
-      String? coustemerName, 
-      dynamic flag,}){
+    num? distributorId,
+    dynamic date,
+    num? itemId,
+    String? itemName,
+    num? saleAmt,
+    num? cashAmt,
+    num? bankAmt,
+    num? creditAmt,
+    dynamic category,
+    String? transCate,
+    num? qtyName,
+    dynamic coustemerName,
+    dynamic flag,
+    num? merchantQR,
+    num? prepaidAmt,}){
     _distributorId = distributorId;
     _date = date;
     _itemId = itemId;
@@ -40,7 +44,9 @@ class DsrReportScreenDetailModel {
     _qtyName = qtyName;
     _coustemerName = coustemerName;
     _flag = flag;
-}
+    _merchantQR = merchantQR;
+    _prepaidAmt = prepaidAmt;
+  }
 
   DsrReportScreenDetailModel.fromJson(dynamic json) {
     _distributorId = json['DistributorId'];
@@ -56,6 +62,8 @@ class DsrReportScreenDetailModel {
     _qtyName = json['QtyName'];
     _coustemerName = json['CoustemerName'];
     _flag = json['Flag'];
+    _merchantQR = json['MerchantQR'];
+    _prepaidAmt = json['PrepaidAmt'];
   }
   num? _distributorId;
   dynamic _date;
@@ -68,35 +76,41 @@ class DsrReportScreenDetailModel {
   dynamic _category;
   String? _transCate;
   num? _qtyName;
-  String? _coustemerName;
+  dynamic _coustemerName;
   dynamic _flag;
-DsrReportScreenDetailModel copyWith({  num? distributorId,
-  dynamic date,
-  num? itemId,
-  String? itemName,
-  num? saleAmt,
-  num? cashAmt,
-  num? bankAmt,
-  num? creditAmt,
-  dynamic category,
-  String? transCate,
-  num? qtyName,
-  String? coustemerName,
-  dynamic flag,
-}) => DsrReportScreenDetailModel(  distributorId: distributorId ?? _distributorId,
-  date: date ?? _date,
-  itemId: itemId ?? _itemId,
-  itemName: itemName ?? _itemName,
-  saleAmt: saleAmt ?? _saleAmt,
-  cashAmt: cashAmt ?? _cashAmt,
-  bankAmt: bankAmt ?? _bankAmt,
-  creditAmt: creditAmt ?? _creditAmt,
-  category: category ?? _category,
-  transCate: transCate ?? _transCate,
-  qtyName: qtyName ?? _qtyName,
-  coustemerName: coustemerName ?? _coustemerName,
-  flag: flag ?? _flag,
-);
+  num? _merchantQR;
+  num? _prepaidAmt;
+  DsrReportScreenDetailModel copyWith({  num? distributorId,
+    dynamic date,
+    num? itemId,
+    String? itemName,
+    num? saleAmt,
+    num? cashAmt,
+    num? bankAmt,
+    num? creditAmt,
+    dynamic category,
+    String? transCate,
+    num? qtyName,
+    dynamic coustemerName,
+    dynamic flag,
+    num? merchantQR,
+    num? prepaidAmt,
+  }) => DsrReportScreenDetailModel(  distributorId: distributorId ?? _distributorId,
+    date: date ?? _date,
+    itemId: itemId ?? _itemId,
+    itemName: itemName ?? _itemName,
+    saleAmt: saleAmt ?? _saleAmt,
+    cashAmt: cashAmt ?? _cashAmt,
+    bankAmt: bankAmt ?? _bankAmt,
+    creditAmt: creditAmt ?? _creditAmt,
+    category: category ?? _category,
+    transCate: transCate ?? _transCate,
+    qtyName: qtyName ?? _qtyName,
+    coustemerName: coustemerName ?? _coustemerName,
+    flag: flag ?? _flag,
+    merchantQR: merchantQR ?? _merchantQR,
+    prepaidAmt: prepaidAmt ?? _prepaidAmt,
+  );
   num? get distributorId => _distributorId;
   dynamic get date => _date;
   num? get itemId => _itemId;
@@ -108,8 +122,10 @@ DsrReportScreenDetailModel copyWith({  num? distributorId,
   dynamic get category => _category;
   String? get transCate => _transCate;
   num? get qtyName => _qtyName;
-  String? get coustemerName => _coustemerName;
+  dynamic get coustemerName => _coustemerName;
   dynamic get flag => _flag;
+  num? get merchantQR => _merchantQR;
+  num? get prepaidAmt => _prepaidAmt;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -126,6 +142,8 @@ DsrReportScreenDetailModel copyWith({  num? distributorId,
     map['QtyName'] = _qtyName;
     map['CoustemerName'] = _coustemerName;
     map['Flag'] = _flag;
+    map['MerchantQR'] = _merchantQR;
+    map['PrepaidAmt'] = _prepaidAmt;
     return map;
   }
 

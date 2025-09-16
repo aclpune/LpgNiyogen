@@ -123,6 +123,7 @@ BranchAdminAH	cnf@1234*/
   static String transCode = "Transaction Code is required";
   static String expenseSendMgrEdit = "Data Updated successfully.";
   static String expenseSendMgrDelete = "Data deleted successfully.";
+  static String failToDelete = "Failed to delete record.";
   //TextSizes
   static double size20 = 20;
   static double size18 = 18;

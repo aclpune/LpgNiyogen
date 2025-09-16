@@ -171,11 +171,11 @@ class _DashboardPostPaidVerifPendDetails extends State<DashboardPostPaidVerifPen
                         crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text('Postpaid Verification',
-                              style: TextStyle(fontSize: 16, color: Colors.white),
+                              style: TextStyle(fontSize: 14, color: Colors.white),
                             ),
                             Text(
                               'Count: $postCount',
-                              style: TextStyle(fontSize: 16, color: Colors.white),
+                              style: TextStyle(fontSize: 12, color: Colors.white),
                             ),
                           ],
                         ),

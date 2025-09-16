@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:lpgsalesandinventory/Screen/ManagerScreen/ClickModelClass/DSRReportExpenseModel.dart';
-
 import '../ClickModelClass/DSRReportScreenDetailModel.dart';
+
+
 
 class ManagerDSRReportScreenItemUI extends StatefulWidget{
   DsrReportScreenDetailModel dsrlistModel;
@@ -71,14 +71,26 @@ class _ManagerDSRReportScreenItemUI extends State<ManagerDSRReportScreenItemUI> 
 
            Expanded(
              flex: mode == 'Credit' ? 3: 2,
-             child: Text(
-               mode == 'Bank'
-                   ? (formatCurrency(sale.bankAmt!.toDouble()))  // Show bankAmt for Bank mode if >= 0
-                   : mode == 'Credit'
-                   ? (formatCurrency(sale.creditAmt!.toDouble()))  // Show creditAmt if >= 0 for Credit mode
-                   : (formatCurrency(sale.cashAmt!.toDouble())),  // Show cashAmt if >= 0 for Cash mode
-               style: TextStyle(fontSize: 16),
-             ),
+             child:
+             // Text(
+             //   mode == 'MERCHANT'
+             //       ? (formatCurrency(sale.merchantQR!.toDouble()))  // Show bankAmt for Bank mode if >= 0
+             //       : mode == 'Credit'
+             //       ? (formatCurrency(sale.creditAmt!.toDouble()))  // Show creditAmt if >= 0 for Credit mode
+             //       : (formatCurrency(sale.cashAmt!.toDouble())),  // Show cashAmt if >= 0 for Cash mode
+             //   style: TextStyle(fontSize: 16),
+             // ),
+               Text(
+                 mode == 'MERCHANT'
+                     ? formatCurrency((sale.merchantQR ?? 0).toDouble())
+                     : mode == 'Credit'
+                     ? formatCurrency((sale.creditAmt ?? 0).toDouble())
+                     : mode == 'PREPAID'
+                     ? formatCurrency((sale.prepaidAmt ?? 0).toDouble())
+                     : formatCurrency((sale.cashAmt ?? 0).toDouble()),
+                 style: TextStyle(fontSize: 16),
+               )
+
            ),
            Divider(),
          ],
@@ -90,6 +102,7 @@ class _ManagerDSRReportScreenItemUI extends State<ManagerDSRReportScreenItemUI> 
 
      );
   }
+
   String formatCurrency(double amount) {
     if (amount == 0) {
       return '0.00'; // Return "0.00" if the amount is zero

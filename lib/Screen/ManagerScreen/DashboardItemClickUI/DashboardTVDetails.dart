@@ -154,11 +154,11 @@ class _DashboardTVDetails extends State<DashboardTVDetails>{
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('TV Stock Movement',
-                            style: TextStyle(fontSize: 16, color: Colors.white),
+                            style: TextStyle(fontSize: 14, color: Colors.white),
                           ),
                           Text(
                             'Count: $tvCount',
-                            style: TextStyle(fontSize: 16, color: Colors.white),
+                            style: TextStyle(fontSize: 12, color: Colors.white),
                           ),
                         ],
                       ),

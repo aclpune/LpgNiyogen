@@ -363,20 +363,20 @@ class Styling {
 
   static final TextStyle bodyTitleBigBoldDashGrey = TextStyle(
       fontSize:
-      2.5 * SizeConfig.textMultiplier!,
+      2.4 * SizeConfig.textMultiplier!,
       fontWeight: FontWeight.normal,
       fontFamily: 'Inter',// Size = 18-- [18/8.66] = 2.07
       color: Color(0xFF605f70));
 
   static final TextStyle bodyTitleWithBlueHightDash = TextStyle(
       fontSize:
-      2.5 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
+      2.4 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
       fontFamily: 'OpenSans',
       color: Colors.blue);
 
   static final TextStyle bodyTitleWithBlueHightDashOrange = TextStyle(
       fontSize:
-      2.5 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
+      2.4 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
       fontFamily: 'OpenSans',
       color: Colors.orange);
 
@@ -405,7 +405,7 @@ class Styling {
 
   static final TextStyle dropdownVerySmallText = TextStyle(
       fontSize:
-      1.4 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
+      1.5 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
       fontFamily: 'OpenSans',
       color: Colors.black);
 
