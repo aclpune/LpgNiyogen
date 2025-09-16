@@ -76,7 +76,7 @@ class Styling {
 
   static final TextStyle bodyTitleBigBold = TextStyle(
       fontSize:
-      2.15 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
+      2.10 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
       fontWeight: FontWeight.bold,
       color: Colors.black);
 
@@ -323,7 +323,7 @@ class Styling {
     color: Colors.black,);
 
   static final TextStyle itemBlackTestSmallReportBold = TextStyle(
-    fontSize: 1.8 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
+    fontSize: 1.6 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
     fontFamily: 'OpenSans',
     fontWeight: FontWeight.bold,
     color: Colors.black,);

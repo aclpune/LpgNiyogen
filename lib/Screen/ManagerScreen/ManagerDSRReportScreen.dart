@@ -1002,6 +1002,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                 style:
                                 Styling.itemBlackTestSmallReportBold,
                                 textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
                                 textScaler:
                                 TextScaler.noScaling,
                               ),
@@ -1013,6 +1014,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                 style:
                                 Styling.itemBlackTestSmallReportBold,
                                 textAlign: TextAlign.center,
+                                overflow: TextOverflow.ellipsis,
                                 textScaler:
                                 TextScaler.noScaling,
                               ),
