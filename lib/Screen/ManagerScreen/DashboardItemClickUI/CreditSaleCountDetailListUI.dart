@@ -157,6 +157,7 @@ class _CreditSaleCountDetailListUI extends State<CreditSaleCountDetailListUI>{
                     Text("Select Customer:",style: Styling.blueClrText,textScaler: TextScaler.noScaling,),
                     Expanded(
                       child: DropdownButtonFormField<GetCustomerListModel>(
+                        isExpanded: true,
                         decoration: buildInputBorderUpdateStatus("ALL", context),
                         value: _selectedItemModel,
                         items: [
@@ -263,9 +264,6 @@ class _CreditSaleCountDetailListUI extends State<CreditSaleCountDetailListUI>{
                             Row(children: [
                               Expanded(
                                   child: Container(
-                                      padding:
-                                      const EdgeInsets.symmetric(
-                                          horizontal: 5),
                                       child: Row(children: [
                                         Text(
                                             "Total Outstanding Bal.",
@@ -276,15 +274,13 @@ class _CreditSaleCountDetailListUI extends State<CreditSaleCountDetailListUI>{
                                             TextScaler.noScaling,
                                             overflow:
                                             TextOverflow.ellipsis),
-                                        SizedBox(
-                                            width: 100,
-                                            child: Text("         : ${nullToDash(sale.totalOutstanding! % 1 == 0
+                                         Text(": ${nullToDash(sale.totalOutstanding! % 1 == 0
                                                 ? sale.totalOutstanding?.toStringAsFixed(0)
                                                 : sale.totalOutstanding.toString())}",
                                                 style: Styling
                                                     .itemBlackTest,
                                                 textScaler: TextScaler
-                                                    .noScaling)),
+                                                    .noScaling)
                                       ])))
                             ]),
                             const SizedBox(height: 2),
@@ -353,57 +349,6 @@ class _CreditSaleCountDetailListUI extends State<CreditSaleCountDetailListUI>{
       );
     }
 
-  // Future<void> getCreditSaleLedgerDtls(int consumorId) async {
-  //   setState(() {
-  //     isLoading = true;  // Show loading indicator
-  //   });
-  //
-  //   try {
-  //     Constants.isNetworkAvailable = await InternetConnectionChecker().hasConnection;
-  //
-  //     if (!Constants.isNetworkAvailable) {
-  //       showFlushBar(context, Constants.connectionMessage);
-  //       setState(() {
-  //         isLoading = false;  // Hide loading indicator
-  //       });
-  //       return;
-  //     }
-  //
-  //     SharedPreferences prefs = await SharedPreferences.getInstance();
-  //     String? distributorId = prefs.getString('DistributorId');
-  //     String? bearerToken = prefs.getString('token');  // Assuming the token is stored here
-  //
-  //     if (bearerToken == null) {
-  //       throw Exception('Bearer Token is missing. Please log in again.');
-  //     }
-  //
-  //     final response = await http.get(
-  //       Uri.parse('${AppUrl.GetCreditSaleLedgerDtls}/$distributorId/$consumorId'),
-  //       headers: {
-  //         'Authorization': 'Bearer $bearerToken', // Add Bearer token here
-  //       },
-  //     );
-  //
-  //     debugPrint("GetCreditSaleLedgerDtls: ${AppUrl.GetCreditSaleLedgerDtls}/$distributorId/0");
-  //     debugPrint("Response Body: ${response.body}");
-  //
-  //     if (response.statusCode == 200) {
-  //       List<dynamic> data = json.decode(response.body);
-  //       setState(() {
-  //         _items = data.map((json) => GetCreditSaleLedgerDtlsListModel.fromJson(json)).toList();
-  //         isLoading = false;  // Hide loading indicator after data is fetched
-  //       });
-  //     } else {
-  //       throw Exception('Unable to load data at this time. Please try again later.');
-  //     }
-  //   } catch (e) {
-  //     debugPrint("Error: $e");
-  //     setState(() {
-  //       isLoading = false;  // Hide loading indicator if there's an error
-  //     });
-  //     showFlushBar(context, 'An error occurred. Please try again.');
-  //   }
-  // }
   Future<void> getCreditSaleLedgerDtls(int consumorId) async {
     setState(() {
       isLoading = true; // Show loading indicator

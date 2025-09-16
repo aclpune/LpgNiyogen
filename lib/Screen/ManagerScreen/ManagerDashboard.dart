@@ -2822,9 +2822,9 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    "Prepaid Settlement Status (Data ref. cDCMS)",
+                    "Prepaid Settlement Status \n(Data ref. cDCMS)",
                     style: Styling.bodyTitleWithBlueHightDashboard,
-                    textAlign: TextAlign.start,
+                    textAlign: TextAlign.center,
                     textScaler: TextScaler.noScaling,
                   ),
                 ),
@@ -3146,184 +3146,6 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
     );
   }
 
-  void showCardWithCDCMSStockDifference(BuildContext context) {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: '',
-      transitionDuration: const Duration(milliseconds: 400),
-      pageBuilder: (context, animation1, animation2) {
-        return Align(
-          alignment: Alignment.bottomCenter,
-          child: GestureDetector(
-            onHorizontalDragEnd: (details) {
-              if (details.primaryVelocity != null &&
-                  details.primaryVelocity!.abs() > 300) {
-                Navigator.pop(context); // Close if swipe velocity is high
-              }
-            },
-            child: Container(
-              height:
-              MediaQuery.of(context).size.height * 0.7, // Half-height sheet
-              width: double.infinity,
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Title with larger font and a subtle shadow
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.arrow_back, color: Colors.black),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                          SizedBox(width: 10), // Space between icon and text
-                          Text(
-                            'Item Wise CDCMS Stock Difference',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blueGrey,
-                            ),
-                            textScaler: TextScaler.noScaling,
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Display dynamic data or No Data Available message
-                    getManagerDashboarDetail.isNotEmpty
-                        ? Column(
-                      children: [
-                        // Table Header with modern styling
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            gradient: LinearGradient(
-                              colors: [
-                                Color(0xFFfbe9e9)!,
-                                Color(0xFFfbe9e9)!
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                          ),
-                          padding: EdgeInsets.all(10),
-                          child: Row(
-                            mainAxisAlignment:
-                            MainAxisAlignment.spaceAround,
-                            children: [
-                              buildTableHeader('Item Name'),
-                              buildTableHeader('Filled'),
-                              buildTableHeader('Empty'),
-                              buildTableHeader('Defective'),
-                            ],
-                          ),
-                        ),
-
-                        // List of Items with dynamic rows
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: getManagerDashboarDetail
-                              .where((item) =>
-                          item.filledDiff! > 0 ||
-                              item.emptyDiff! > 0 ||
-                              item.defectiveDiff! > 0)
-                              .length,
-                          itemBuilder: (context, index) {
-                            final items = getManagerDashboarDetail
-                                .where((item) =>
-                            item.filledDiff! > 0 ||
-                                item.emptyDiff! > 0 ||
-                                item.defectiveDiff! > 0)
-                                .toList()[index];
-
-                            // Alternate row color logic
-                            Color backgroundColor = index % 2 == 0
-                                ? Color(0xFFEFF2FB)!
-                                : Colors.white;
-
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 5.0),
-                              child: MouseRegion(
-                                onEnter: (_) {},
-                                onExit: (_) {},
-                                child: Container(
-                                  color: backgroundColor,
-                                  padding: EdgeInsets.all(12),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                    children: [
-                                      buildTableCell(
-                                          items.itemName ?? 'Unknown'),
-                                      buildTableCell(
-                                          items.filledDiff.toString()),
-                                      buildTableCell(
-                                          items.emptyDiff.toString()),
-                                      buildTableCell(
-                                          items.defectiveDiff.toString()),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    )
-                        : Center(
-                      child: Container(
-                        padding: EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.blueGrey[50],
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.warning, color: Colors.orange),
-                            SizedBox(width: 10),
-                            Text(
-                              'No Data Available',
-                              textScaler: TextScaler.noScaling,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.blueGrey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-      transitionBuilder: (context, animation1, animation2, child) {
-        final offsetAnimation = Tween<Offset>(
-          begin: const Offset(-1, 0), // From left side
-          end: Offset.zero, // To original position
-        ).animate(CurvedAnimation(parent: animation1, curve: Curves.easeInOut));
-
-        return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-        );
-      },
-    );
-  }
 
   Widget buildTableCell(String content) {
     return Expanded(
@@ -3376,7 +3198,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
               width: double.infinity,
               color: Colors.white,
               child: Padding(
-                padding: const EdgeInsets.all(12.0),
+                padding: const EdgeInsets.all(8.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -3386,25 +3208,20 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Icon(
-                            Icons.warning_amber_outlined, // Icon for warning
-                            size: 20,
-                            color: Colors.blueGrey,
-                          ),
-                          SizedBox(width: 8),
+
                           Text(
                             'Imbalance Stock',
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: 19,
                               fontWeight: FontWeight.bold,
-                              color: Colors.blueGrey,
+                              color: Colors.black,
                             ),
                             textScaler: TextScaler.noScaling,
                           ),
                         ],
                       ),
                     ),
-
+                  SizedBox(height: 5,),
                     // Display dynamic data or No Data Available message
                     getManagerDashboarDetail.isNotEmpty
                         ? Column(
@@ -3412,17 +3229,9 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                         // Table Header with gradient and modern styling
                         Container(
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            gradient: LinearGradient(
-                              colors: [
-                                Colors.blue[200]!,
-                                Colors.blue[50]!
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
+                            color: Color(0xFFEFF2FB),
                           ),
-                          padding: EdgeInsets.all(10),
+                          padding: EdgeInsets.only(top:10,bottom: 10),
                           child: Row(
                             mainAxisAlignment:
                             MainAxisAlignment.spaceAround,
@@ -3437,6 +3246,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                         // Use ListView to make the content scrollable
                         ListView.builder(
                           shrinkWrap: true,
+                          padding: EdgeInsets.zero,
                           physics: NeverScrollableScrollPhysics(),
                           itemCount: getManagerDashboarDetail
                               .where((item) =>
@@ -3452,7 +3262,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                 .toList()[index];
 
                             // Alternate row color logic
-                            Color backgroundColor = index % 2 == 0
+                            Color backgroundColor = index % 2 == 1
                                 ? Color(0xFFEFF2FB)
                                 : Colors.white;
 
@@ -3470,13 +3280,9 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                     Expanded(
                                       child: Text(
                                         item.itemName ?? '',
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.black87),
-                                        textAlign: TextAlign.center,
-                                      ),
+                                        style:Styling.textFormText ,
                                     ),
-
+                                    ),
                                     // Today Imbalance Quantity - styled with blue color and underline
                                     Expanded(
                                       child: GestureDetector(
@@ -3496,16 +3302,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                         },
                                         child: Text(
                                           item.todayImbQty.toString(),
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.blue,
-                                            // Blue text color
-                                            decoration:
-                                            TextDecoration.underline,
-                                            // Underline the text
-                                            decorationColor: Colors
-                                                .blue, // Set underline color to blue
-                                          ),
+                                          style: Styling.textFormTextWithUnderline,
                                           textAlign: TextAlign.center,
                                           textScaler: TextScaler.noScaling,
                                         ),
@@ -3531,16 +3328,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                         },
                                         child: Text(
                                           item.asOfDateImbQty.toString(),
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.blue,
-                                            // Blue text color
-                                            decoration:
-                                            TextDecoration.underline,
-                                            // Underline the text
-                                            decorationColor: Colors
-                                                .blue, // Set underline color to blue
-                                          ),
+                                          style: Styling.textFormTextWithUnderline,
                                           textAlign: TextAlign.center,
                                           textScaler: TextScaler.noScaling,
                                         ),
@@ -3600,1668 +3388,6 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
     );
   }
 
-  void showCardWithOpeningStock(BuildContext context) {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: '',
-      transitionDuration: const Duration(milliseconds: 400),
-      pageBuilder: (context, animation1, animation2) {
-        return Align(
-          alignment: Alignment.bottomCenter,
-          child: GestureDetector(
-            onHorizontalDragEnd: (details) {
-              if (details.primaryVelocity != null &&
-                  details.primaryVelocity!.abs() > 300) {
-                Navigator.pop(context); // Close if swipe velocity is high
-              }
-            },
-            child: Container(
-              height:
-              MediaQuery.of(context).size.height * 0.7, // Half-height sheet
-              width: double.infinity,
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Title with larger font and subtle shadow
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.business_center, // Icon for warning
-                            size: 20,
-                            color: Colors.blueGrey,
-                          ),
-                          SizedBox(width: 8),
-                          Text(
-                            'Opening Stock',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blueGrey,
-                            ),
-                            textScaler: TextScaler.noScaling,
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Display dynamic data or No Data Available message
-                    getCurrentStockDetailManager.isNotEmpty
-                        ? Column(
-                      children: [
-                        // Table Header with gradient and modern styling
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            gradient: LinearGradient(
-                              colors: [
-                                Colors.pink[200]!,
-                                Colors.pink[50]!
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                          ),
-                          padding: EdgeInsets.all(10),
-                          child: Row(
-                            mainAxisAlignment:
-                            MainAxisAlignment.spaceAround,
-                            children: [
-                              buildTableHeader('Item Name'),
-                              buildTableHeader('Filled'),
-                              buildTableHeader('Empty'),
-                              buildTableHeader('Defective'),
-                            ],
-                          ),
-                        ),
-
-                        // Use ListView to make the content scrollable
-                        ListView.builder(
-                          shrinkWrap: true,
-                          // Prevents the ListView from taking infinite space
-                          physics: NeverScrollableScrollPhysics(),
-                          // Disables internal scrolling
-                          itemCount: getCurrentStockDetailManager
-                              .where((item) =>
-                          item.filledOpeningStk! > 0 ||
-                              item.emptyOpeningStk! > 0 ||
-                              item.deffOpeningStk! > 0)
-                              .toList()
-                              .length,
-                          itemBuilder: (context, index) {
-                            var item = getCurrentStockDetailManager
-                                .where((item) =>
-                            item.filledOpeningStk! > 0 ||
-                                item.emptyOpeningStk! > 0 ||
-                                item.deffOpeningStk! > 0)
-                                .toList()[index];
-
-                            // Alternate row color logic
-                            Color backgroundColor = index % 2 == 0
-                                ? Color(0xFFfcf2f1)
-                                : Colors.white;
-
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 5.0),
-                              child: Container(
-                                color: backgroundColor,
-                                padding: EdgeInsets.all(12),
-                                child: Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceAround,
-                                  children: [
-                                    buildTableCell(
-                                        item.itemName ?? 'Unknown'),
-                                    buildTableCell(
-                                        item.filledOpeningStk.toString()),
-                                    buildTableCell(
-                                        item.emptyOpeningStk.toString()),
-                                    buildTableCell(
-                                        item.deffOpeningStk.toString()),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    )
-                        : Center(
-                      child: Container(
-                        padding: EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.blueGrey[50],
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.warning, color: Colors.orange),
-                            SizedBox(width: 10),
-                            Text(
-                              'No Data Available',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.blueGrey,
-                              ),
-                              textScaler: TextScaler.noScaling,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-      transitionBuilder: (context, animation1, animation2, child) {
-        final offsetAnimation = Tween<Offset>(
-          begin: const Offset(0, 1), // Start from the bottom of the screen
-          end: Offset.zero, // Move to the original position
-        ).animate(CurvedAnimation(parent: animation1, curve: Curves.easeInOut));
-
-        return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-        );
-      },
-    );
-  }
-
-  void showCardWithCurrentStock(BuildContext context) {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: '',
-      transitionDuration: const Duration(milliseconds: 400),
-      pageBuilder: (context, animation1, animation2) {
-        return Align(
-          alignment: Alignment.bottomCenter,
-          child: GestureDetector(
-            onHorizontalDragEnd: (details) {
-              if (details.primaryVelocity != null &&
-                  details.primaryVelocity!.abs() > 300) {
-                Navigator.pop(context); // Close if swipe velocity is high
-              }
-            },
-            child: Container(
-              height: MediaQuery.of(context).size.height *
-                  0.7, // 70% of screen height
-              width: double.infinity,
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Title with larger font and subtle shadow
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.store, // Icon for warning
-                            size: 20,
-                            color: Colors.blueGrey,
-                          ),
-                          SizedBox(width: 8),
-                          Text(
-                            'Current Stock',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blueGrey,
-                            ),
-                            textScaler: TextScaler.noScaling,
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    // Display dynamic data or No Data Available message
-                    getCurrentStockDetailManager.isNotEmpty
-                        ? Column(
-                      children: [
-                        // Table Header with gradient and modern styling
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            gradient: LinearGradient(
-                              colors: [
-                                Colors.blue[200]!,
-                                Colors.blue[50]!
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                          ),
-                          padding: EdgeInsets.all(10),
-                          child: Row(
-                            mainAxisAlignment:
-                            MainAxisAlignment.spaceAround,
-                            children: [
-                              buildTableHeader('Item Name'),
-                              buildTableHeader('Filled'),
-                              buildTableHeader('Empty'),
-                              buildTableHeader('Defective'),
-                            ],
-                          ),
-                        ),
-
-                        // Use ListView to make the content scrollable
-                        ListView.builder(
-                          shrinkWrap: true,
-                          // Prevents the ListView from taking infinite space
-                          physics: NeverScrollableScrollPhysics(),
-                          // Disables internal scrolling
-                          itemCount: getCurrentStockDetailManager
-                              .where((item) =>
-                          item.filledCurrentStk! > 0 ||
-                              item.emptyCurrentStk! > 0 ||
-                              item.deffCurrentStk! > 0)
-                              .toList()
-                              .length,
-                          itemBuilder: (context, index) {
-                            var item = getCurrentStockDetailManager
-                                .where((item) =>
-                            item.filledCurrentStk! > 0 ||
-                                item.emptyCurrentStk! > 0 ||
-                                item.deffCurrentStk! > 0)
-                                .toList()[index];
-
-                            // Alternate row color logic
-                            Color backgroundColor = index % 2 == 0
-                                ? Color(0xFFEFF2FB)
-                                : Colors.white;
-
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 5.0),
-                              child: Container(
-                                color: backgroundColor,
-                                padding: EdgeInsets.all(12),
-                                child: Row(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceAround,
-                                  children: [
-                                    buildTableCell(
-                                        item.itemName ?? 'Unknown'),
-                                    buildTableCell(
-                                        item.filledCurrentStk.toString()),
-                                    buildTableCell(
-                                        item.emptyCurrentStk.toString()),
-                                    buildTableCell(
-                                        item.deffCurrentStk.toString()),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    )
-                        : Center(
-                      child: Container(
-                        padding: EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.blueGrey[50],
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.warning, color: Colors.orange),
-                            SizedBox(width: 10),
-                            Text(
-                              'No Data Available',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.blueGrey,
-                              ),
-                              textScaler: TextScaler.noScaling,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-      transitionBuilder: (context, animation1, animation2, child) {
-        final offsetAnimation = Tween<Offset>(
-          begin: const Offset(0, 1), // Start from the bottom of the screen
-          end: Offset.zero, // Move to the original position
-        ).animate(CurvedAnimation(parent: animation1, curve: Curves.easeInOut));
-
-        return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-        );
-      },
-    );
-  }
-
-  void showCardInwardStockFilled(BuildContext context) {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: '',
-      transitionDuration: const Duration(milliseconds: 400),
-      pageBuilder: (context, animation1, animation2) {
-        return Align(
-          alignment: Alignment.bottomCenter,
-          child: GestureDetector(
-            onHorizontalDragEnd: (details) {
-              if (details.primaryVelocity != null &&
-                  details.primaryVelocity!.abs() > 300) {
-                Navigator.pop(context); // Close if swipe velocity is high
-              }
-            },
-            child: Container(
-              height:
-              MediaQuery.of(context).size.height * 0.7, // Half-height sheet
-              width: double.infinity,
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Title with larger font and a subtle shadow
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.arrow_back, color: Colors.black),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                          SizedBox(width: 10), // Space between icon and text
-                          Text(
-                            'Filled Inward Stock',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blueGrey,
-                            ),
-                            textScaler: TextScaler.noScaling,
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    getCurrentStockDetailManager.any((item) =>
-                    item.totalInvoiceCnt! > 0 ||
-                        item.filledEMRCnt! > 0)
-                        ? Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(4),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.grey.shade200,
-                              blurRadius: 4)
-                        ],
-                      ),
-                      padding: EdgeInsets.all(4),
-                      child: Column(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Color(0xFFfbe9e9),
-                            ),
-                            child: Padding(
-                              padding:
-                              const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment
-                                    .center,
-                                children: [
-                                  Expanded(
-                                    flex: 1,
-                                    child: Text(
-                                      '',
-                                      style: TextStyle(
-                                        fontWeight:
-                                        FontWeight.bold,
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                      ),
-                                      textAlign:
-                                      TextAlign.center,
-                                      textScaler: TextScaler
-                                          .noScaling,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: Text(
-                                      'Invoice',
-                                      style: TextStyle(
-                                        fontWeight:
-                                        FontWeight.bold,
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                      ),
-                                      textAlign:
-                                      TextAlign.center,
-                                      textScaler: TextScaler
-                                          .noScaling,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: Text(
-                                      'EMR',
-                                      style: TextStyle(
-                                        fontWeight:
-                                        FontWeight.bold,
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                      ),
-                                      textAlign:
-                                      TextAlign.center,
-                                      textScaler: TextScaler
-                                          .noScaling,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          getCurrentStockDetailManager
-                              .isNotEmpty
-                              ? ListView.builder(
-                            shrinkWrap: true,
-                            physics:
-                            NeverScrollableScrollPhysics(),
-                            // itemCount: getCurrentStockDetailManager.length,
-                            itemCount:
-                            getCurrentStockDetailManager
-                                .where((item) =>
-                            item.totalInvoiceCnt! >
-                                0 ||
-                                item.filledEMRCnt! >
-                                    0) // Filter items with defectivCnt > 0
-                                .length,
-                            itemBuilder:
-                                (context, index) {
-                              // final items =
-                              // getCurrentStockDetailManager[
-                              // index];
-
-                              final items =
-                              getCurrentStockDetailManager
-                                  .where((item) =>
-                              item.totalInvoiceCnt! >
-                                  0 ||
-                                  item.filledEMRCnt! >
-                                      0)
-                                  .toList()[index];
-
-                              Color backgroundColor =
-                              (index % 2 == 0)
-                                  ? Color(
-                                  0xFFfcf2f1) // Color for even index (first, third, fifth...)
-                                  : Colors
-                                  .white70!;
-                              return Container(
-                                color:
-                                backgroundColor,
-                                child: Padding(
-                                  padding:
-                                  const EdgeInsets
-                                      .all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment
-                                        .start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment
-                                            .center,
-                                        children: [
-                                          Expanded(
-                                            flex: 1,
-                                            child:
-                                            Text(
-                                              items
-                                                  .itemName
-                                                  .toString(),
-                                              style: Styling
-                                                  .textFormText,
-                                              textAlign:
-                                              TextAlign.center,
-                                              textScaler:
-                                              TextScaler.noScaling,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 1,
-                                            child:
-                                            Text(
-                                              items
-                                                  .totalInvoiceCnt
-                                                  .toString(),
-                                              style: Styling
-                                                  .textFormText,
-                                              textAlign:
-                                              TextAlign.center,
-                                              textScaler:
-                                              TextScaler.noScaling,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 1,
-                                            child:
-                                            Text(
-                                              items
-                                                  .filledEMRCnt
-                                                  .toString(),
-                                              style: Styling
-                                                  .textFormText,
-                                              textAlign:
-                                              TextAlign.center,
-                                              textScaler:
-                                              TextScaler.noScaling,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          )
-                              : Container(
-                            child: Text(
-                                "No Data Available"),
-                          ),
-                        ],
-                      ),
-                    )
-                        : Container(),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-      transitionBuilder: (context, animation1, animation2, child) {
-        final offsetAnimation = Tween<Offset>(
-          begin: const Offset(-1, 0), // From left side
-          end: Offset.zero, // To original position
-        ).animate(CurvedAnimation(parent: animation1, curve: Curves.easeInOut));
-
-        return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-        );
-      },
-    );
-  }
-
-  void showCardInwardStockEmpty(BuildContext context) {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: '',
-      transitionDuration: const Duration(milliseconds: 400),
-      pageBuilder: (context, animation1, animation2) {
-        return Align(
-          alignment: Alignment.bottomCenter,
-          child: GestureDetector(
-            onHorizontalDragEnd: (details) {
-              if (details.primaryVelocity != null &&
-                  details.primaryVelocity!.abs() > 300) {
-                Navigator.pop(context); // Close if swipe velocity is high
-              }
-            },
-            child: Container(
-              height:
-              MediaQuery.of(context).size.height * 0.7, // Half-height sheet
-              width: double.infinity,
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Title with larger font and a subtle shadow
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.arrow_back, color: Colors.black),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                          SizedBox(width: 10), // Space between icon and text
-                          Text(
-                            'Empty Inward Stock',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blueGrey,
-                            ),
-                            textScaler: TextScaler.noScaling,
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    getCurrentStockDetailManager
-                        .any((item) => item.emptyTVCnt! > 0)
-                        ? Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(4),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.grey.shade200,
-                              blurRadius: 4)
-                        ],
-                      ),
-                      padding: EdgeInsets.all(4),
-                      child: Column(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius:
-                              BorderRadius.only(
-                                topLeft:
-                                Radius.circular(12),
-                                topRight:
-                                Radius.circular(12),
-                              ),
-                              color: Color(0xFFfbe9e9),
-                            ),
-                            child: Padding(
-                              padding:
-                              const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment
-                                    .center,
-                                children: [
-                                  Expanded(
-                                    flex: 1,
-                                    child: Text(
-                                      '',
-                                      style: TextStyle(
-                                        fontWeight:
-                                        FontWeight.bold,
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                      ),
-                                      textAlign:
-                                      TextAlign.center,
-                                      textScaler: TextScaler
-                                          .noScaling,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: Text(
-                                      'TV',
-                                      style: TextStyle(
-                                        fontWeight:
-                                        FontWeight.bold,
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                      ),
-                                      textAlign:
-                                      TextAlign.center,
-                                      textScaler: TextScaler
-                                          .noScaling,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          getCurrentStockDetailManager
-                              .isNotEmpty
-                              ? ListView.builder(
-                            shrinkWrap: true,
-                            physics:
-                            NeverScrollableScrollPhysics(),
-                            // itemCount: getCurrentStockDetailManager.length,
-                            itemCount:
-                            getCurrentStockDetailManager
-                                .where((item) =>
-                            item.emptyTVCnt! >
-                                0) // Filter items with defectivCnt > 0
-                                .length,
-                            itemBuilder:
-                                (context, index) {
-                              // final items =
-                              // getCurrentStockDetailManager[
-                              // index];
-
-                              final items =
-                              getCurrentStockDetailManager
-                                  .where((item) =>
-                              item.emptyTVCnt! >
-                                  0)
-                                  .toList()[index];
-
-                              Color backgroundColor =
-                              (index % 2 == 1)
-                                  ? Color(
-                                  0xFFfcf2f1) // Color for even index (first, third, fifth...)
-                                  : Colors
-                                  .white70!;
-                              return Container(
-                                color:
-                                backgroundColor,
-                                child: Padding(
-                                  padding:
-                                  const EdgeInsets
-                                      .all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment
-                                        .start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment
-                                            .center,
-                                        children: [
-                                          Expanded(
-                                            flex: 1,
-                                            child:
-                                            Text(
-                                              items
-                                                  .itemName
-                                                  .toString(),
-                                              style: Styling
-                                                  .textFormText,
-                                              textAlign:
-                                              TextAlign.center,
-                                              textScaler:
-                                              TextScaler.noScaling,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 1,
-                                            child:
-                                            Text(
-                                              items
-                                                  .emptyTVCnt
-                                                  .toString(),
-                                              style: Styling
-                                                  .textFormText,
-                                              textAlign:
-                                              TextAlign.center,
-                                              textScaler:
-                                              TextScaler.noScaling,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          )
-                              : Container(
-                            child: Text(
-                                "No Data Available"),
-                          ),
-                        ],
-                      ),
-                    )
-                        : Container(),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-      transitionBuilder: (context, animation1, animation2, child) {
-        final offsetAnimation = Tween<Offset>(
-          begin: const Offset(-1, 0), // From left side
-          end: Offset.zero, // To original position
-        ).animate(CurvedAnimation(parent: animation1, curve: Curves.easeInOut));
-
-        return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-        );
-      },
-    );
-  }
-
-  void showCardInwardStockDefective(BuildContext context) {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: '',
-      transitionDuration: const Duration(milliseconds: 400),
-      pageBuilder: (context, animation1, animation2) {
-        return Align(
-          alignment: Alignment.bottomCenter,
-          child: GestureDetector(
-            onHorizontalDragEnd: (details) {
-              if (details.primaryVelocity != null &&
-                  details.primaryVelocity!.abs() > 300) {
-                Navigator.pop(context); // Close if swipe velocity is high
-              }
-            },
-            child: Container(
-              height:
-              MediaQuery.of(context).size.height * 0.7, // Half-height sheet
-              width: double.infinity,
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Title with larger font and a subtle shadow
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.arrow_back, color: Colors.black),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                          SizedBox(width: 10), // Space between icon and text
-                          Text(
-                            'Defective Inward Stock',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blueGrey,
-                            ),
-                            textScaler: TextScaler.noScaling,
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    getCurrentStockDetailManager
-                        .any((item) => item.defectivCnt! > 0)
-                        ? Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(4),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.grey.shade200,
-                              blurRadius: 4)
-                        ],
-                      ),
-                      padding: EdgeInsets.all(4),
-                      child: Column(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Color(0xFFfbe9e9),
-                            ),
-                            child: Padding(
-                              padding:
-                              const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment
-                                    .center,
-                                children: [
-                                  Expanded(
-                                    flex: 1,
-                                    child: Text(
-                                      '',
-                                      style: TextStyle(
-                                        fontWeight:
-                                        FontWeight.bold,
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                      ),
-                                      textAlign:
-                                      TextAlign.center,
-                                      textScaler: TextScaler
-                                          .noScaling,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: Text(
-                                      'Defective',
-                                      style: TextStyle(
-                                        fontWeight:
-                                        FontWeight.bold,
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                      ),
-                                      textAlign:
-                                      TextAlign.center,
-                                      textScaler: TextScaler
-                                          .noScaling,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: Text(
-                                      'Since',
-                                      style: TextStyle(
-                                        fontWeight:
-                                        FontWeight.bold,
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                      ),
-                                      textAlign:
-                                      TextAlign.center,
-                                      textScaler: TextScaler
-                                          .noScaling,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          getCurrentStockDetailManager
-                              .isNotEmpty
-                              ? ListView.builder(
-                            shrinkWrap: true,
-                            physics:
-                            NeverScrollableScrollPhysics(),
-                            // itemCount: getCurrentStockDetailManager.length,
-                            itemCount:
-                            getCurrentStockDetailManager
-                                .where((item) =>
-                            item.defectivCnt! >
-                                0) // Filter items with defectivCnt > 0
-                                .length,
-                            itemBuilder:
-                                (context, index) {
-                              // final items =
-                              // getCurrentStockDetailManager[
-                              // index];
-
-                              final items =
-                              getCurrentStockDetailManager
-                                  .where((item) =>
-                              item.defectivCnt! >
-                                  0)
-                                  .toList()[index];
-
-                              Color backgroundColor =
-                              (index % 2 == 1)
-                                  ? Color(
-                                  0xFFfcf2f1) // Color for even index (first, third, fifth...)
-                                  : Colors
-                                  .white70!;
-                              return Container(
-                                color:
-                                backgroundColor,
-                                child: Padding(
-                                  padding:
-                                  const EdgeInsets
-                                      .all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment
-                                        .start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment
-                                            .center,
-                                        children: [
-                                          Expanded(
-                                            flex: 1,
-                                            child:
-                                            Text(
-                                              items
-                                                  .itemName
-                                                  .toString(),
-                                              style: Styling
-                                                  .textFormText,
-                                              textAlign:
-                                              TextAlign.center,
-                                              textScaler:
-                                              TextScaler.noScaling,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 1,
-                                            child:
-                                            Text(
-                                              items
-                                                  .defectivCnt
-                                                  .toString(),
-                                              style: Styling
-                                                  .textFormText,
-                                              textAlign:
-                                              TextAlign.center,
-                                              textScaler:
-                                              TextScaler.noScaling,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 1,
-                                            child:
-                                            Text(
-                                              DateFormat('dd-MM-yyyy').format(DateTime.parse(items.defectivFromDate.toString() ??
-                                                  '')),
-                                              style: Styling
-                                                  .textFormText,
-                                              textAlign:
-                                              TextAlign.center,
-                                              textScaler:
-                                              TextScaler.noScaling,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          )
-                              : Container(
-                            child: Text(
-                                "No Data Available"),
-                          ),
-
-
-                        ],
-                      ),
-                    )
-                        : Container(),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-      transitionBuilder: (context, animation1, animation2, child) {
-        final offsetAnimation = Tween<Offset>(
-          begin: const Offset(-1, 0), // From left side
-          end: Offset.zero, // To original position
-        ).animate(CurvedAnimation(parent: animation1, curve: Curves.easeInOut));
-
-        return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-        );
-      },
-    );
-  }
-
-  void showCardOutwardStockEmpty(BuildContext context) {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: '',
-      transitionDuration: const Duration(milliseconds: 400),
-      pageBuilder: (context, animation1, animation2) {
-        return Align(
-          alignment: Alignment.bottomCenter,
-          child: GestureDetector(
-            onHorizontalDragEnd: (details) {
-              if (details.primaryVelocity != null &&
-                  details.primaryVelocity!.abs() > 300) {
-                Navigator.pop(context); // Close if swipe velocity is high
-              }
-            },
-            child: Container(
-              height:
-              MediaQuery.of(context).size.height * 0.7, // Half-height sheet
-              width: double.infinity,
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Title with larger font and a subtle shadow
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.arrow_back, color: Colors.black),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                          SizedBox(width: 10), // Space between icon and text
-                          Text(
-                            'Empty Outward Stock',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blueGrey,
-                            ),
-                            textScaler: TextScaler.noScaling,
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    getCurrentStockDetailManager.any((item) =>
-                    item.emptyCRDCnt! > 0 ||
-                        item.emptyDefectivCnt! > 0)
-                        ? Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(4),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.grey.shade200,
-                              blurRadius: 4)
-                        ],
-                      ),
-                      padding: EdgeInsets.all(4),
-                      child: Column(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius:
-                              BorderRadius.only(
-                                topLeft:
-                                Radius.circular(12),
-                                topRight:
-                                Radius.circular(12),
-                              ),
-                              color: Color(0xFFfbe9e9),
-                            ),
-                            child: Padding(
-                              padding:
-                              const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment
-                                    .center,
-                                children: [
-                                  Expanded(
-                                    flex: 1,
-                                    child: Text(
-                                      '',
-                                      style: TextStyle(
-                                        fontWeight:
-                                        FontWeight.bold,
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                      ),
-                                      textAlign:
-                                      TextAlign.center,
-                                      textScaler: TextScaler
-                                          .noScaling,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: Text(
-                                      'CRD',
-                                      style: TextStyle(
-                                        fontWeight:
-                                        FontWeight.bold,
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                      ),
-                                      textAlign:
-                                      TextAlign.center,
-                                      textScaler: TextScaler
-                                          .noScaling,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: Text(
-                                      'Defective',
-                                      style: TextStyle(
-                                        fontWeight:
-                                        FontWeight.bold,
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                      ),
-                                      textAlign:
-                                      TextAlign.center,
-                                      textScaler: TextScaler
-                                          .noScaling,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          getCurrentStockDetailManager
-                              .isNotEmpty
-                              ? ListView.builder(
-                            shrinkWrap: true,
-                            physics:
-                            NeverScrollableScrollPhysics(),
-                            // itemCount: getCurrentStockDetailManager.length,
-                            itemCount:
-                            getCurrentStockDetailManager
-                                .where((item) =>
-                            item.emptyCRDCnt! >
-                                0 ||
-                                item.emptyDefectivCnt! >
-                                    0) // Filter items with defectivCnt > 0
-                                .length,
-                            itemBuilder:
-                                (context, index) {
-                              // final items =
-                              //     getCurrentStockDetailManager[
-                              //         index];
-
-                              final items =
-                              getCurrentStockDetailManager
-                                  .where((item) =>
-                              item.emptyCRDCnt! >
-                                  0 ||
-                                  item.emptyDefectivCnt! >
-                                      0)
-                                  .toList()[index];
-
-                              Color backgroundColor =
-                              (index % 2 == 0)
-                                  ? Colors.grey[
-                              300]! // Color for even index (first, third, fifth...)
-                                  : Colors
-                                  .white70!;
-                              return Container(
-                                color:
-                                backgroundColor,
-                                child: Padding(
-                                  padding:
-                                  const EdgeInsets
-                                      .all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment
-                                        .start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment
-                                            .center,
-                                        children: [
-                                          Expanded(
-                                            flex: 1,
-                                            child:
-                                            Text(
-                                              items
-                                                  .itemName
-                                                  .toString(),
-                                              style: Styling
-                                                  .textFormText,
-                                              textAlign:
-                                              TextAlign.center,
-                                              textScaler:
-                                              TextScaler.noScaling,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 1,
-                                            child:
-                                            Text(
-                                              items
-                                                  .emptyCRDCnt
-                                                  .toString(),
-                                              style: Styling
-                                                  .textFormText,
-                                              textAlign:
-                                              TextAlign.center,
-                                              textScaler:
-                                              TextScaler.noScaling,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 1,
-                                            child:
-                                            Text(
-                                              items
-                                                  .emptyDefectivCnt
-                                                  .toString(),
-                                              style: Styling
-                                                  .textFormText,
-                                              textAlign:
-                                              TextAlign.center,
-                                              textScaler:
-                                              TextScaler.noScaling,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          )
-                              : Container(
-                            child: Text(
-                                "No Data Available"),
-                          ),
-                        ],
-                      ),
-                    )
-                        : Container(),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-      transitionBuilder: (context, animation1, animation2, child) {
-        final offsetAnimation = Tween<Offset>(
-          begin: const Offset(-1, 0), // From left side
-          end: Offset.zero, // To original position
-        ).animate(CurvedAnimation(parent: animation1, curve: Curves.easeInOut));
-
-        return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-        );
-      },
-    );
-  }
-
-  void showCardOutwardStockRefillSale(BuildContext context) {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: '',
-      transitionDuration: const Duration(milliseconds: 400),
-      pageBuilder: (context, animation1, animation2) {
-        return Align(
-          alignment: Alignment.bottomCenter,
-          child: GestureDetector(
-            onHorizontalDragEnd: (details) {
-              if (details.primaryVelocity != null &&
-                  details.primaryVelocity!.abs() > 300) {
-                Navigator.pop(context); // Close if swipe velocity is high
-              }
-            },
-            child: Container(
-              height:
-              MediaQuery.of(context).size.height * 0.7, // Half-height sheet
-              width: double.infinity,
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Title with larger font and a subtle shadow
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.arrow_back, color: Colors.black),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                          SizedBox(width: 10), // Space between icon and text
-                          Text(
-                            'Refill Sale Outward Stock',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blueGrey,
-                            ),
-                            textScaler: TextScaler.noScaling,
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    getCurrentStockDetailManager.any((item) =>
-                    item.sVQty! > 0 ||
-                        item.refillSaleCnt! > 0)
-                        ? Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(4),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.grey.shade200,
-                              blurRadius: 4)
-                        ],
-                      ),
-                      padding: EdgeInsets.all(4),
-                      child: Column(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius:
-                              BorderRadius.only(
-                                topLeft:
-                                Radius.circular(12),
-                                topRight:
-                                Radius.circular(12),
-                              ),
-                              color: Color(0xFFfbe9e9),
-                            ),
-                            child: Padding(
-                              padding:
-                              const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment
-                                    .center,
-                                children: [
-                                  Expanded(
-                                    flex: 1,
-                                    child: Text(
-                                      '',
-                                      style: TextStyle(
-                                        fontWeight:
-                                        FontWeight.bold,
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                      ),
-                                      textAlign:
-                                      TextAlign.center,
-                                      textScaler: TextScaler
-                                          .noScaling,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: Text(
-                                      'SV',
-                                      style: TextStyle(
-                                        fontWeight:
-                                        FontWeight.bold,
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                      ),
-                                      textAlign:
-                                      TextAlign.center,
-                                      textScaler: TextScaler
-                                          .noScaling,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: Text(
-                                      'Refill Sale',
-                                      style: TextStyle(
-                                        fontWeight:
-                                        FontWeight.bold,
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                      ),
-                                      textAlign:
-                                      TextAlign.center,
-                                      textScaler: TextScaler
-                                          .noScaling,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          getCurrentStockDetailManager
-                              .isNotEmpty
-                              ? ListView.builder(
-                            shrinkWrap: true,
-                            physics:
-                            NeverScrollableScrollPhysics(),
-                            // itemCount: getCurrentStockDetailManager.length,
-                            itemCount:
-                            getCurrentStockDetailManager
-                                .where((item) =>
-                            item.sVQty! >
-                                0 ||
-                                item.refillSaleCnt! >
-                                    0)
-                                .length,
-                            itemBuilder:
-                                (context, index) {
-                              final items =
-                              getCurrentStockDetailManager
-                                  .where((item) =>
-                              item.sVQty! >
-                                  0 ||
-                                  item.refillSaleCnt! >
-                                      0)
-                                  .toList()[index];
-                              // final items =
-                              //     getCurrentStockDetailManager[
-                              //         index];
-                              Color backgroundColor =
-                              (index % 2 == 0)
-                                  ? Colors.grey[
-                              300]! // Color for even index (first, third, fifth...)
-                                  : Colors
-                                  .white70!;
-                              return Container(
-                                color:
-                                backgroundColor,
-                                child: Padding(
-                                  padding:
-                                  const EdgeInsets
-                                      .all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment
-                                        .start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment
-                                            .center,
-                                        children: [
-                                          Expanded(
-                                            flex: 1,
-                                            child:
-                                            Text(
-                                              items
-                                                  .itemName
-                                                  .toString(),
-                                              style: Styling
-                                                  .textFormText,
-                                              textAlign:
-                                              TextAlign.center,
-                                              textScaler:
-                                              TextScaler.noScaling,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 1,
-                                            child:
-                                            Text(
-                                              items
-                                                  .sVQty
-                                                  .toString(),
-                                              style: Styling
-                                                  .textFormText,
-                                              textAlign:
-                                              TextAlign.center,
-                                              textScaler:
-                                              TextScaler.noScaling,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 1,
-                                            child:
-                                            Text(
-                                              items
-                                                  .refillSaleCnt
-                                                  .toString(),
-                                              style: Styling
-                                                  .textFormText,
-                                              textAlign:
-                                              TextAlign.center,
-                                              textScaler:
-                                              TextScaler.noScaling,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          )
-                              : Container(
-                            child: Text(
-                                "No Data Available"),
-                          ),
-                        ],
-                      ),
-                    )
-                        : Container(),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-      transitionBuilder: (context, animation1, animation2, child) {
-        final offsetAnimation = Tween<Offset>(
-          begin: const Offset(-1, 0), // From left side
-          end: Offset.zero, // To original position
-        ).animate(CurvedAnimation(parent: animation1, curve: Curves.easeInOut));
-
-        return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-        );
-      },
-    );
-  }
-
   void showCardInwardStock(BuildContext context) {
     showGeneralDialog(
       context: context,
@@ -5303,9 +3429,9 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                             Text(
                               'Inward Stock',
                               style: TextStyle(
-                                fontSize: 16,
+                                fontSize: 19,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.blueGrey,
+                                color: Colors.black,
                               ),
                               textScaler: TextScaler.noScaling,
                             ),
@@ -5332,12 +3458,13 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                             Text(
                               'Filled',
                               style: TextStyle(
-                                fontSize: 16,
+                                fontSize: 17,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.blueGrey,
+                                color: Colors.blue,
                               ),
                               textScaler: TextScaler.noScaling,
                             ),
+                            SizedBox(height: 5,),
                             Container(
                               decoration: BoxDecoration(
                                 color: Color(0xFFfbe9e9),
@@ -5406,6 +3533,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                 .isNotEmpty
                                 ? ListView.builder(
                               shrinkWrap: true,
+                              padding: EdgeInsets.zero,
                               physics:
                               NeverScrollableScrollPhysics(),
                               // itemCount: getCurrentStockDetailManager.length,
@@ -5535,12 +3663,13 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                             Text(
                               'Empty',
                               style: TextStyle(
-                                fontSize: 16,
+                                fontSize: 17,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.blueGrey,
+                                color: Colors.blue,
                               ),
                               textScaler: TextScaler.noScaling,
                             ),
+                            SizedBox(height: 5,),
                             Container(
                               decoration: BoxDecoration(
                                 borderRadius:
@@ -5600,6 +3729,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                 .isNotEmpty
                                 ? ListView.builder(
                               shrinkWrap: true,
+                              padding: EdgeInsets.zero,
                               physics:
                               NeverScrollableScrollPhysics(),
                               // itemCount: getCurrentStockDetailManager.length,
@@ -5710,12 +3840,13 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                             Text(
                               'Defective',
                               style: TextStyle(
-                                fontSize: 16,
+                                fontSize: 17,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.blueGrey,
+                                color: Colors.blue,
                               ),
                               textScaler: TextScaler.noScaling,
                             ),
+                            SizedBox(height: 5,),
                             Container(
                               decoration: BoxDecoration(
                                 color: Color(0xFFfbe9e9),
@@ -5723,7 +3854,8 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                               child: Padding(
                                 padding:
                                 const EdgeInsets.all(8.0),
-                                child: Row(
+                                child:
+                                Row(
                                   mainAxisAlignment:
                                   MainAxisAlignment
                                       .center,
@@ -5760,30 +3892,33 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                             .noScaling,
                                       ),
                                     ),
-                                    Expanded(
-                                      flex: 1,
-                                      child: Text(
-                                        'Since',
-                                        style: TextStyle(
-                                          fontWeight:
-                                          FontWeight.bold,
-                                          color: Colors.black,
-                                          fontSize: 14,
-                                        ),
-                                        textAlign:
-                                        TextAlign.center,
-                                        textScaler: TextScaler
-                                            .noScaling,
-                                      ),
-                                    ),
+                                    // Expanded(
+                                    //   flex: 1,
+                                    //   child: Text(
+                                    //     'Since',
+                                    //     style: TextStyle(
+                                    //       fontWeight:
+                                    //       FontWeight.bold,
+                                    //       color: Colors.black,
+                                    //       fontSize: 14,
+                                    //     ),
+                                    //     textAlign:
+                                    //     TextAlign.center,
+                                    //     textScaler: TextScaler
+                                    //         .noScaling,
+                                    //   ),
+                                    // ),
                                   ],
                                 ),
                               ),
                             ),
+
                             getCurrentStockDetailManager
                                 .isNotEmpty
-                                ? ListView.builder(
+                                ?
+                            ListView.builder(
                               shrinkWrap: true,
+                                  padding: EdgeInsets.zero,
                               physics:
                               NeverScrollableScrollPhysics(),
                               // itemCount: getCurrentStockDetailManager.length,
@@ -5812,14 +3947,17 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                     0xFFfcf2f1) // Color for even index (first, third, fifth...)
                                     : Colors
                                     .white70!;
-                                return Container(
+                                return
+                                  Container(
                                   color:
                                   backgroundColor,
-                                  child: Padding(
+                                  child:
+                                  Padding(
                                     padding:
                                     const EdgeInsets
                                         .all(8.0),
-                                    child: Column(
+                                    child:
+                                    Column(
                                       crossAxisAlignment:
                                       CrossAxisAlignment
                                           .start,
@@ -5859,20 +3997,20 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                 TextScaler.noScaling,
                                               ),
                                             ),
-                                            Expanded(
-                                              flex: 1,
-                                              child:
-                                              Text(
-                                                DateFormat('dd-MM-yyyy').format(DateTime.parse(items.defectivFromDate.toString() ??
-                                                    '')),
-                                                style: Styling
-                                                    .textFormText,
-                                                textAlign:
-                                                TextAlign.center,
-                                                textScaler:
-                                                TextScaler.noScaling,
-                                              ),
-                                            ),
+                                            // Expanded(
+                                            //   flex: 1,
+                                            //   child:
+                                            //   Text(
+                                            //     DateFormat('dd-MM-yyyy').format(DateTime.parse(items.defectivFromDate.toString() ??
+                                            //         '')),
+                                            //     style: Styling
+                                            //         .textFormText,
+                                            //     textAlign:
+                                            //     TextAlign.center,
+                                            //     textScaler:
+                                            //     TextScaler.noScaling,
+                                            //   ),
+                                            // ),
                                           ],
                                         ),
                                       ],
@@ -5954,9 +4092,9 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                             Text(
                               'Outward Stock',
                               style: TextStyle(
-                                fontSize: 16,
+                                fontSize: 19,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.blueGrey,
+                                color: Colors.black,
                               ),
                               textScaler: TextScaler.noScaling,
                             ),
@@ -5984,12 +4122,13 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                             Text(
                               'Empty',
                               style: TextStyle(
-                                fontSize: 16,
+                                fontSize: 17,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.blueGrey,
+                                color: Colors.blue,
                               ),
                               textScaler: TextScaler.noScaling,
                             ),
+                            SizedBox(height: 5,),
                             Container(
                               decoration: BoxDecoration(
                                 borderRadius:
@@ -6066,6 +4205,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                 .isNotEmpty
                                 ? ListView.builder(
                               shrinkWrap: true,
+                              padding: EdgeInsets.zero,
                               physics:
                               NeverScrollableScrollPhysics(),
                               // itemCount: getCurrentStockDetailManager.length,
@@ -6093,9 +4233,9 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                     .toList()[index];
 
                                 Color backgroundColor =
-                                (index % 2 == 0)
-                                    ? Colors.grey[
-                                300]! // Color for even index (first, third, fifth...)
+                                (index % 2 == 1)
+                                    ? Color(
+                                    0xFFfcf2f1) // Color for even index (first, third, fifth...)
                                     : Colors
                                     .white70!;
                                 return Container(
@@ -6197,12 +4337,13 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                             Text(
                               'Refill Sale',
                               style: TextStyle(
-                                fontSize: 16,
+                                fontSize: 17,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.blueGrey,
+                                color: Colors.blue,
                               ),
                               textScaler: TextScaler.noScaling,
                             ),
+                            SizedBox(height: 5,),
                             Container(
                               decoration: BoxDecoration(
                                 borderRadius:
@@ -6278,6 +4419,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                 .isNotEmpty
                                 ? ListView.builder(
                               shrinkWrap: true,
+                              padding: EdgeInsets.zero,
                               physics:
                               NeverScrollableScrollPhysics(),
                               // itemCount: getCurrentStockDetailManager.length,
@@ -6303,9 +4445,9 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                 //     getCurrentStockDetailManager[
                                 //         index];
                                 Color backgroundColor =
-                                (index % 2 == 0)
-                                    ? Colors.grey[
-                                300]! // Color for even index (first, third, fifth...)
+                                (index % 2 == 1)
+                                    ? Color(
+                                    0xFFfcf2f1) // Color for even index (first, third, fifth...)
                                     : Colors
                                     .white70!;
                                 return Container(
@@ -6405,12 +4547,13 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                             Text(
                               'Imbalance',
                               style: TextStyle(
-                                fontSize: 16,
+                                fontSize: 17,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.blueGrey,
+                                color: Colors.blue,
                               ),
                               textScaler: TextScaler.noScaling,
                             ),
+                            SizedBox(height: 5,),
                             Container(
                               decoration: BoxDecoration(
                                 borderRadius:
@@ -6470,6 +4613,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                 .isNotEmpty
                                 ? ListView.builder(
                               shrinkWrap: true,
+                              padding: EdgeInsets.zero,
                               physics:
                               NeverScrollableScrollPhysics(),
                               // itemCount: getCurrentStockDetailManager.length,
@@ -6491,9 +4635,9 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                 //     getCurrentStockDetailManager[
                                 //         index];
                                 Color backgroundColor =
-                                (index % 2 == 0)
-                                    ? Colors.grey[
-                                300]! // Color for even index (first, third, fifth...)
+                                (index % 2 == 1)
+                                    ? Color(
+                                    0xFFfcf2f1) // Color for even index (first, third, fifth...)
                                     : Colors
                                     .white70!;
                                 return Container(
@@ -6581,237 +4725,6 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
     );
   }
 
-  void showCardOutwardStockImbalance(BuildContext context) {
-    showGeneralDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: '',
-      transitionDuration: const Duration(milliseconds: 400),
-      pageBuilder: (context, animation1, animation2) {
-        return Align(
-          alignment: Alignment.bottomCenter,
-          child: GestureDetector(
-            onHorizontalDragEnd: (details) {
-              if (details.primaryVelocity != null &&
-                  details.primaryVelocity!.abs() > 300) {
-                Navigator.pop(context); // Close if swipe velocity is high
-              }
-            },
-            child: Container(
-              height:
-              MediaQuery.of(context).size.height * 0.7, // Half-height sheet
-              width: double.infinity,
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.arrow_back, color: Colors.black),
-                            onPressed: () => Navigator.pop(context),
-                          ),
-                          SizedBox(width: 10), // Space between icon and text
-                          Text(
-                            'Imbalance Outward Stock',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blueGrey,
-                            ),
-                            textScaler: TextScaler.noScaling,
-                          ),
-                        ],
-                      ),
-                    ),
-                    getCurrentStockDetailManager
-                        .any((item) => item.imbalanceCnt! > 0)
-                        ? Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(4),
-                        boxShadow: [
-                          BoxShadow(
-                              color: Colors.grey.shade200,
-                              blurRadius: 4)
-                        ],
-                      ),
-                      padding: EdgeInsets.all(4),
-                      child: Column(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              borderRadius:
-                              BorderRadius.only(
-                                topLeft:
-                                Radius.circular(12),
-                                topRight:
-                                Radius.circular(12),
-                              ),
-                              color: Color(0xFFfbe9e9),
-                            ),
-                            child: Padding(
-                              padding:
-                              const EdgeInsets.all(8.0),
-                              child: Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment
-                                    .center,
-                                children: [
-                                  Expanded(
-                                    flex: 1,
-                                    child: Text(
-                                      '',
-                                      style: TextStyle(
-                                        fontWeight:
-                                        FontWeight.bold,
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                      ),
-                                      textAlign:
-                                      TextAlign.center,
-                                      textScaler: TextScaler
-                                          .noScaling,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    flex: 1,
-                                    child: Text(
-                                      'Imbalance',
-                                      style: TextStyle(
-                                        fontWeight:
-                                        FontWeight.bold,
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                      ),
-                                      textAlign:
-                                      TextAlign.center,
-                                      textScaler: TextScaler
-                                          .noScaling,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          getCurrentStockDetailManager
-                              .isNotEmpty
-                              ? ListView.builder(
-                            shrinkWrap: true,
-                            physics:
-                            NeverScrollableScrollPhysics(),
-                            // itemCount: getCurrentStockDetailManager.length,
-                            itemCount:
-                            getCurrentStockDetailManager
-                                .where((item) =>
-                            item.imbalanceCnt! >
-                                0) // Filter items with defectivCnt > 0
-                                .length,
-                            itemBuilder:
-                                (context, index) {
-                              final items =
-                              getCurrentStockDetailManager
-                                  .where((item) =>
-                              item.imbalanceCnt! >
-                                  0)
-                                  .toList()[index];
-                              // final items =
-                              //     getCurrentStockDetailManager[
-                              //         index];
-                              Color backgroundColor =
-                              (index % 2 == 0)
-                                  ? Colors.grey[
-                              300]! // Color for even index (first, third, fifth...)
-                                  : Colors
-                                  .white70!;
-                              return Container(
-                                color:
-                                backgroundColor,
-                                child: Padding(
-                                  padding:
-                                  const EdgeInsets
-                                      .all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                    CrossAxisAlignment
-                                        .start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                        MainAxisAlignment
-                                            .center,
-                                        children: [
-                                          Expanded(
-                                            flex: 1,
-                                            child:
-                                            Text(
-                                              items
-                                                  .itemName
-                                                  .toString(),
-                                              style: Styling
-                                                  .textFormText,
-                                              textAlign:
-                                              TextAlign.center,
-                                              textScaler:
-                                              TextScaler.noScaling,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 1,
-                                            child:
-                                            Text(
-                                              items
-                                                  .imbalanceCnt
-                                                  .toString(),
-                                              style: Styling
-                                                  .textFormText,
-                                              textAlign:
-                                              TextAlign.center,
-                                              textScaler:
-                                              TextScaler.noScaling,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          )
-                              : Container(
-                            child: Text(
-                                "No Data Available"),
-                          ),
-                        ],
-                      ),
-                    )
-                        : Container(),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-      transitionBuilder: (context, animation1, animation2, child) {
-        final offsetAnimation = Tween<Offset>(
-          begin: const Offset(-1, 0), // From left side
-          end: Offset.zero, // To original position
-        ).animate(CurvedAnimation(parent: animation1, curve: Curves.easeInOut));
-
-        return SlideTransition(
-          position: offsetAnimation,
-          child: child,
-        );
-      },
-    );
-  }
 }
 
 
