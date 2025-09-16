@@ -202,5 +202,23 @@ Widget countTextWidgetTextStarWithBlue(BuildContext context, String label, {bool
     ),
   );
 }
+Widget countTextWidgetTextWithoutHeadingGrey(
+    BuildContext context, String title) {
+  return Container(
+    padding: const EdgeInsets.only(right: 5, left: 5),
+    child: Row(
+      children: <Widget>[
+        Text(
+          title,
+          // style:Styling.itemBlackTest,
+          style:Styling.itemGreyText,
+          textScaler:
+          TextScaler.noScaling,
+        ),
+
+      ],
+    ),
+  );
+}
 
 

@@ -972,10 +972,34 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
           print('response delete ${response}');
           // Check response status
           if (response.statusCode == 200) {
-            print('Data sent successfully');
-            EasyLoading.showToast(Constants.dataDeleted,
-                duration: const Duration(milliseconds: 3000));
-
+            if (response == -1 ||
+                response.body == -1 ||
+                response == "-1" ||
+                response.body == "-1") {
+              EasyLoading.showToast(Constants.failToDelete,
+                  duration: const Duration(milliseconds: 3000));
+              print('Data sent successfully1');
+            } else if (response == 0 ||
+                response.body == 0 ||
+                response == "0" ||
+                response.body == "0") {
+              EasyLoading.showToast(Constants.failToInserRecord,
+                  duration: const Duration(milliseconds: 3000));
+              print('Data sent successfully2');
+            } else {
+              EasyLoading.showToast(Constants.dataDeleted,
+                  duration: const Duration(milliseconds: 3000));
+              print('Data sent successfully3');
+              // setState(() {
+              //   insertDelBoyStockList();
+              //
+              // });
+              Future.delayed(const Duration(milliseconds: 500), () {
+                setState(() {
+                  insertDelBoyStockList();
+                });
+              });
+            }
             // Safely extract ItemIds (ensure they're integers)
             // List<int> itemIds = apiItemList.map<int>((item) {
             //   // Try to safely parse the ItemId string as an integer
@@ -991,14 +1015,7 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
 
             // Update local database and UI
 
-            setState(() {
-               insertDelBoyStockList();
-               // setState(() {
-               //   stockDataFuture = updateRefillSale!.getDataFromDatabase();
-               //   debugPrint("Updated stockDataFuture: $stockDataFuture");
-               // });
 
-            });
           } else {
             print('Failed to send data: ${response.statusCode}');
             showFlushBar(context, Constants.dataDeletedFail);

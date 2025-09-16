@@ -12,6 +12,8 @@ class ReticulatedModel {
   String? action;
   int? addedBy;
   double? discountAmount;
+  int? customerTypeId;
+  String? customerTypeName;
 
   ReticulatedModel({
     this.retId,
@@ -27,6 +29,8 @@ class ReticulatedModel {
     this.action,
     this.addedBy,
     this.discountAmount,
+    this.customerTypeId,
+    this.customerTypeName,
   });
 
   factory ReticulatedModel.fromJson(Map<String, dynamic> json) {
@@ -44,6 +48,8 @@ class ReticulatedModel {
       action: json['Action'],
       addedBy: json['AddedBy'],
       discountAmount: json['DiscountAmt'],
+      customerTypeId: json['CustTypeId'],
+      customerTypeName: json['CustomerType'],
     );
   }
 
@@ -62,6 +68,8 @@ class ReticulatedModel {
       'Action': action,
       'AddedBy': addedBy,
       'DiscountAmt': discountAmount,
+      'CustTypeId': customerTypeId,
+      'CustomerType': customerTypeName,
     };
   }
 }

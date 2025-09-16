@@ -32,6 +32,8 @@ import 'ManagerModelClass/TransactionModel.dart';
 import 'ManagerUpdateSaleScreen.dart';
 import 'package:http/http.dart' as http;
 
+import 'PaymentReceiptScreen/GetCustTypeListModel.dart';
+
 class ManagerUpdateSaleCashUpdation extends StatefulWidget {
   static const screenName = '/managerUpdateSaleCashUpdation';
 
@@ -55,28 +57,28 @@ class _ManagerUpdateSaleCashUpdationState
   final TextEditingController _qtyControllerCredit = TextEditingController();
   final TextEditingController _qtyControllerCash = TextEditingController();
   final TextEditingController _amountControllerPostpaid =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _amountControllerCash = TextEditingController();
   final TextEditingController _amountControllerPrepaid =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _amountControllerCredit = TextEditingController();
 
   final TextEditingController _totalExpectedAmountCash =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _totalReceivedAmountCash =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _totalBalanceAmountCash = TextEditingController();
 
   final TextEditingController _transactionCodeControllerPostpaid =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _timeControllerPostpaid = TextEditingController();
   final TextEditingController _remarkControllerPostpaid =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _remarkControllerCredit = TextEditingController();
   final TextEditingController _vendorCylinderQtyControllerCredit =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _vendorCylinderAmountControllerCredit =
-      TextEditingController();
+  TextEditingController();
 
   final TextEditingController quantity500Controller = TextEditingController();
   final TextEditingController quantity200Controller = TextEditingController();
@@ -91,17 +93,17 @@ class _ManagerUpdateSaleCashUpdationState
 
   ///Return Amount
   final TextEditingController returnQuantity500Controller =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController returnQuantity200Controller =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController returnQuantity100Controller =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController returnQuantity50Controller =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController returnQuantity20Controller =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController returnQuantity10Controller =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController returnQuantity5Controller = TextEditingController();
   final TextEditingController returnQuantity2Controller = TextEditingController();
   final TextEditingController returnQuantity1Controller = TextEditingController();
@@ -114,7 +116,8 @@ class _ManagerUpdateSaleCashUpdationState
   String? selectedVendorNameDisPopUp;
   int? selectedVendorIdDisPopUp;
   int _selectedIndex = 0;
-
+  String? selectedCustomerTypeName;
+  int? selectedCustomerTypeId;
   double result500 = 0.0;
   double result200 = 0.0;
   double result100 = 0.0;
@@ -155,9 +158,9 @@ class _ManagerUpdateSaleCashUpdationState
   int creditQty = 0;
   int cashQty = 0;
   int? cashQtys = 0;
-
+  bool isItemSubtypeND = false;
   var argValue;
-  String? delBoyNameName, itemName, vehicleNumber,receiptNoText,actionMode;
+  String? delBoyNameName, itemName, vehicleNumber,receiptNoText,actionMode,itemSubtypes;
   int? saleQty,
       svQty,
       tvQty,
@@ -182,6 +185,8 @@ class _ManagerUpdateSaleCashUpdationState
   GetConsumerDetailsCredit? selectedCustomerModel;
   GetConsumerDetailsCredit? selectedCustomerModelDisPopup;
 
+  List<GetCustTypeListModel> customerTypeModel = [];
+  GetCustTypeListModel? setCustTypeListModel;
 
   // List<String> paymentModeCredit = ['Prepaid','Credit','Cash'];
   List<PaymentModeModel> paymentModeCredit = [];
@@ -190,7 +195,7 @@ class _ManagerUpdateSaleCashUpdationState
   List<GetConsumerCurrentDiscountDetailForCredtModel> getConsumerCurrentDiscountDetailForCredtModel = [];
   List<GetExpenseDetailListModel> getExpenseDetailListModel = [];
   List<GetNoteTypeAndIdFroDenominationListModel>
-      getNoteTypeAndIdFroDenominationListModel = [];
+  getNoteTypeAndIdFroDenominationListModel = [];
   bool isLoading = true;
 
   List<CheckConsumerNumberIsValidPrepaid> getConsumerForPrepaid = [];
@@ -204,7 +209,7 @@ class _ManagerUpdateSaleCashUpdationState
   String? _selectedExpenseHead;
   int? _selectedExpenseHeadId;
   final TextEditingController _expenseAmountController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _expenseRemarkController = TextEditingController();
   List<GetExpenceHeadAmountListModel> _expensesHeaders = [];
   GetExpenceHeadAmountListModel? _selectedexpensesHeaders;
@@ -261,6 +266,7 @@ class _ManagerUpdateSaleCashUpdationState
         vehicleNumber = argValue["vehicleNumber"];
         receiptNoText = argValue["receiptNoText"];
         actionMode = argValue["actionModeApi"];
+        itemSubtypes = argValue["itemSubtype"];
         saleQty1 = saleQty.toString();
         // expAmount = argValue["expAmount"];
         // dmBal = argValue["dmBal"];
@@ -277,11 +283,18 @@ class _ManagerUpdateSaleCashUpdationState
         debugPrint("actionMode :- $actionMode");
         debugPrint("sakesGKItemID :- $sakesGKItemID");
 
-  paymentModeCredit = [
-  PaymentModeModel(paymentmode: 'Prepaid'),
-  PaymentModeModel(paymentmode: 'Credit'),
-  PaymentModeModel(paymentmode: 'Cash')// Adding the fourth value
-  ];
+        String _normalize(String? value) {
+          return value?.toLowerCase().replaceAll(RegExp(r'\s+'), '').trim() ?? '';
+        }
+
+        isItemSubtypeND = itemSubtypes == 'ND';
+        debugPrint("itemSubtypes :- $itemSubtypes");
+
+        paymentModeCredit = [
+          PaymentModeModel(paymentmode: 'Prepaid'),
+          PaymentModeModel(paymentmode: 'Credit'),
+          PaymentModeModel(paymentmode: 'Cash')// Adding the fourth value
+        ];
         if(actionMode == "EDIT"){
           prepaidQtyApi = argValue["prepaidQtyApi"];
           prepaidAmountApi = argValue["prepaidAmountApi"];
@@ -337,8 +350,19 @@ class _ManagerUpdateSaleCashUpdationState
         }else{
           fetchExpenseDetailList();
         }
-        fetchConsumerDetailsCredit();
-        fetchConsumerDiscountDetailsCredit();
+        if(isItemSubtypeND){
+          fetchConsumerTypeDetailsCredit();
+          fetchConsumerDetailsCredit(2);
+          selectedCustomerTypeId = 2;
+          selectedCustomerTypeName = "ND";
+          fetchConsumerDiscountDetailsCredit(2);
+        }else{
+          fetchConsumerTypeDetailsCredit();
+          fetchConsumerDetailsCredit(0);
+          fetchConsumerDiscountDetailsCredit(0);
+        }
+
+
         fetchConsumerCurrebtDiscountDetailsCredit();
         getNoteTypeAndIDList();
         fetchExpenseHeaderDetails();
@@ -877,7 +901,7 @@ class _ManagerUpdateSaleCashUpdationState
           (result10 ?? 0.0) +
           (result5 ?? 0.0) +
           (result2 ?? 0.0) +
-            (result1 ?? 0.0)+
+          (result1 ?? 0.0)+
           (result050 ?? 0.0);
       // Logic to calculate final amount
       if (total == 0 && returnTotal == 0) {
@@ -1788,7 +1812,7 @@ class _ManagerUpdateSaleCashUpdationState
                                               width: 50,
                                               child: Text('Sale',
                                                   style:
-                                                      Styling.itemGreyTextSmall)),
+                                                  Styling.itemGreyTextSmall)),
                                           Text(": ${saleQty.toString()}",
                                               style: Styling.itemBlackTestSmall),
                                         ],
@@ -1802,7 +1826,7 @@ class _ManagerUpdateSaleCashUpdationState
                                               width: 50,
                                               child: Text('SV',
                                                   style:
-                                                      Styling.itemGreyTextSmall)),
+                                                  Styling.itemGreyTextSmall)),
                                           Text(": ${svQty.toString()}",
                                               style: Styling.itemBlackTestSmall),
                                         ],
@@ -1816,7 +1840,7 @@ class _ManagerUpdateSaleCashUpdationState
                                               width: 50,
                                               child: Text('TV',
                                                   style:
-                                                      Styling.itemGreyTextSmall)),
+                                                  Styling.itemGreyTextSmall)),
                                           Text(": ${tvQty.toString()}",
                                               style: Styling.itemBlackTestSmall),
                                         ],
@@ -1833,7 +1857,7 @@ class _ManagerUpdateSaleCashUpdationState
                                               width: 80,
                                               child: Text('Sale Amt.',
                                                   style:
-                                                      Styling.itemGreyTextSmall)),
+                                                  Styling.itemGreyTextSmall)),
                                           Text(
                                               ": ${formatCurrency((amountTotal ?? 0).toDouble())}",
                                               style: Styling.itemBlackTestSmall),
@@ -1848,7 +1872,7 @@ class _ManagerUpdateSaleCashUpdationState
                                               width: 80,
                                               child: Text('Exp.Amt.',
                                                   style:
-                                                      Styling.itemGreyTextSmall)),
+                                                  Styling.itemGreyTextSmall)),
                                           Text(
                                               ": ${(expenseAmtTotal ?? 0).toStringAsFixed(2)}",
                                               style: Styling.itemBlackTestSmall),
@@ -1863,7 +1887,7 @@ class _ManagerUpdateSaleCashUpdationState
                                               width: 80,
                                               child: Text('DM Amt.',
                                                   style:
-                                                      Styling.itemGreyTextSmall)),
+                                                  Styling.itemGreyTextSmall)),
                                           Text(
                                               ": ${(delMenBalance ?? 0).toStringAsFixed(2)}",
                                               style: Styling.itemBlackTestSmall),
@@ -1911,25 +1935,25 @@ class _ManagerUpdateSaleCashUpdationState
                                   // ),
                                   Column(
                                     children: [
-                                        GestureDetector(
-                                          onTap: (){
-                                            _showExpenseBottomSheet(context, delBoyNameName!, vehicleNumber!);
-                                          },
-                                          child: Text(
+                                      GestureDetector(
+                                        onTap: (){
+                                          _showExpenseBottomSheet(context, delBoyNameName!, vehicleNumber!);
+                                        },
+                                        child: Text(
                                             'Add Exp.',
                                             style: Styling.blueClrTextWithUnderlineBold
-                                          ),
                                         ),
-                                        SizedBox(height: 15),
-                                        GestureDetector(
-                                          onTap: (){
-                                            _showDiscountBottomSheet(context);
-                                          },
-                                          child: Text(
+                                      ),
+                                      SizedBox(height: 15),
+                                      GestureDetector(
+                                        onTap: (){
+                                          _showDiscountBottomSheet(context);
+                                        },
+                                        child: Text(
                                             'Add Disc.',
                                             style: Styling.blueClrTextWithUnderlineBold
-                                          ),
                                         ),
+                                      ),
                                     ],
                                   ),
                                 ],
@@ -1976,17 +2000,17 @@ class _ManagerUpdateSaleCashUpdationState
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
                   onPressed: () {
-                      if(actionMode == "EDIT"){
-                        updateSaleAddEditForMob("EDIT");
-                      }else{
-                        updateSaleAddEditForMob("ADD");
-                      }
+                    if(actionMode == "EDIT"){
+                      updateSaleAddEditForMob("EDIT");
+                    }else{
+                      updateSaleAddEditForMob("ADD");
+                    }
                     // prepareDenominationData(
                     //     getNoteTypeAndIdFroDenominationListModel);
                   },
                   style: ButtonStyle(
                     backgroundColor:
-                        MaterialStateProperty.all<Color>(const Color(0xff1280b3)),
+                    MaterialStateProperty.all<Color>(const Color(0xff1280b3)),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.only(left: 15.0, right: 15),
@@ -2022,29 +2046,29 @@ class _ManagerUpdateSaleCashUpdationState
             style: TextStyle(
                 color: _selectedTabIndex == index ? Colors.blue : Colors.black,
                 fontWeight: FontWeight.bold,
-                fontSize: 16),
+                fontSize: 12),
           ),
           Text(
             index == 3
                 ? cashQtys.toString()
                 : index == 0
-                    ? prepaidQty.toString()
-                    : index == 1
-                        ? postpaidQty.toString()
-                        : index == 2
-                            ? creditQty.toString()
-                            : "0",
+                ? prepaidQty.toString()
+                : index == 1
+                ? postpaidQty.toString()
+                : index == 2
+                ? creditQty.toString()
+                : "0",
             style: TextStyle(
                 color: _selectedTabIndex == index ? Colors.blue : Colors.black,
                 fontWeight: FontWeight.normal,
-                fontSize: 16),
+                fontSize: 12),
           ),
           const SizedBox(height: 4),
           Container(
             height: 2,
             width: 40,
             color:
-                _selectedTabIndex == index ? Colors.blue : Colors.transparent,
+            _selectedTabIndex == index ? Colors.blue : Colors.transparent,
           ),
         ],
       ),
@@ -2141,7 +2165,7 @@ class _ManagerUpdateSaleCashUpdationState
                     // Text("Consumer No.:",  style: Styling.blueClrText,),
                     Expanded(
                         child:
-                            textWidgetBlueColorWithStar("Consumer No.:", "*")),
+                        textWidgetBlueColorWithStar("Consumer No.:", "*")),
                     Flexible(
                       flex: 1,
                       child: Padding(
@@ -2168,18 +2192,18 @@ class _ManagerUpdateSaleCashUpdationState
                     ),
                     ElevatedButton(
                       onPressed: () {
-                            if (_consumerController.text.isNotEmpty) {
-                              int consumerNumber = int.parse(_consumerController.text);
-                                fetchConsumerNumbersPrepaid(consumerNumber);
-                            } else {
-                            }
+                        if (_consumerController.text.isNotEmpty) {
+                          int consumerNumber = int.parse(_consumerController.text);
+                          fetchConsumerNumbersPrepaid(consumerNumber);
+                        } else {
+                        }
                       },
                       style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(
-                        (_consumerController.text.isNotEmpty)
-                            ? Color(0xff1280b3)
-                            : Color(0xff666666),
-                      )
+                            (_consumerController.text.isNotEmpty)
+                                ? Color(0xff1280b3)
+                                : Color(0xff666666),
+                          )
                       ),
                       child: Text(
                         'Add',
@@ -2253,69 +2277,52 @@ class _ManagerUpdateSaleCashUpdationState
                           child: Center(
                               child: Text("Cons.No.",
                                   style:
-                                      TextStyle(fontWeight: FontWeight.bold)))),
+                                  TextStyle(fontWeight: FontWeight.bold)))),
                       verticalDividerVerySmall(),
                       Expanded(
                           flex: 3,
                           child: Center(
                               child: Text("Name",
                                   style:
-                                      TextStyle(fontWeight: FontWeight.bold)))),
+                                  TextStyle(fontWeight: FontWeight.bold)))),
                       verticalDividerVerySmall(),
                       Expanded(
                           flex: 3,
                           child: Center(
                               child: Text("Remark",
                                   style:
-                                      TextStyle(fontWeight: FontWeight.bold)))),
+                                  TextStyle(fontWeight: FontWeight.bold)))),
                       verticalDividerVerySmall(),
                       Expanded(
                           flex: 1,
                           child: Center(
                               child: Text("",
                                   style:
-                                      TextStyle(fontWeight: FontWeight.bold)))),
+                                  TextStyle(fontWeight: FontWeight.bold)))),
                     ],
                   ),
-                    Container(
-                      color: Colors.blue,
-                      height: 1,
-                    ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      // Ensures the list takes only the required height
-                      physics: const NeverScrollableScrollPhysics(),
-                      // Disables inner scrolling
-                      padding: EdgeInsets.zero,
-                      itemCount: _consumerList.length,
-                      itemBuilder: (context, index) {
-                        final transaction = _consumerList[index];
-                        return Row(
-                          children: [
-                            // Column 1: Item Name
-                            Expanded(
-                              flex: 2,
-                              child: Padding(
-                                padding: EdgeInsets.only(left: 5.0),
-                                child: Text(
-                                  transaction.consumerNo.toString(),
-                                  style: actionMode == "EDIT"
-                                      ? (transaction.InCorrectStatus == 1
-                                      ? Styling.itemGreenText
-                                      : Styling.itemRedText)
-                                      : (transaction.niyojanDel == 1
-                                      ? Styling.itemGreenText
-                                      : Styling.itemRedText),
-                                  // style: transaction.niyojanDel != 1 ?Styling.itemGreenText:Styling.itemRedText,
-                                ),
-                              ),
-                            ),
-                            verticalDividerSmall(),
-                            // Column 2: Filled
-                            Expanded(
-                              flex: 3,
+                  Container(
+                    color: Colors.blue,
+                    height: 1,
+                  ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    // Ensures the list takes only the required height
+                    physics: const NeverScrollableScrollPhysics(),
+                    // Disables inner scrolling
+                    padding: EdgeInsets.zero,
+                    itemCount: _consumerList.length,
+                    itemBuilder: (context, index) {
+                      final transaction = _consumerList[index];
+                      return Row(
+                        children: [
+                          // Column 1: Item Name
+                          Expanded(
+                            flex: 2,
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 5.0),
                               child: Text(
-                                transaction.consumerName.toString(),
+                                transaction.consumerNo.toString(),
                                 style: actionMode == "EDIT"
                                     ? (transaction.InCorrectStatus == 1
                                     ? Styling.itemGreenText
@@ -2324,41 +2331,58 @@ class _ManagerUpdateSaleCashUpdationState
                                     ? Styling.itemGreenText
                                     : Styling.itemRedText),
                                 // style: transaction.niyojanDel != 1 ?Styling.itemGreenText:Styling.itemRedText,
-                                textAlign: TextAlign.left,
                               ),
                             ),
-                            verticalDividerSmall(),
-                            // Column 3: SV
-                            Expanded(
-                              flex: 3,
-                              child: Text(
-                                transaction.remark.toString(),
-                                style: actionMode == "EDIT"
-                                    ? (transaction.InCorrectStatus == 1
-                                    ? Styling.itemGreenText
-                                    : Styling.itemRedText)
-                                    : (transaction.niyojanDel == 1
-                                    ? Styling.itemGreenText
-                                    : Styling.itemRedText),
-                                textAlign: TextAlign.left,
-                              ),
+                          ),
+                          verticalDividerSmall(),
+                          // Column 2: Filled
+                          Expanded(
+                            flex: 3,
+                            child: Text(
+                              transaction.consumerName.toString(),
+                              style: actionMode == "EDIT"
+                                  ? (transaction.InCorrectStatus == 1
+                                  ? Styling.itemGreenText
+                                  : Styling.itemRedText)
+                                  : (transaction.niyojanDel == 1
+                                  ? Styling.itemGreenText
+                                  : Styling.itemRedText),
+                              // style: transaction.niyojanDel != 1 ?Styling.itemGreenText:Styling.itemRedText,
+                              textAlign: TextAlign.left,
+                            ),
+                          ),
+                          verticalDividerSmall(),
+                          // Column 3: SV
+                          Expanded(
+                            flex: 3,
+                            child: Text(
+                              transaction.remark.toString(),
+                              style: actionMode == "EDIT"
+                                  ? (transaction.InCorrectStatus == 1
+                                  ? Styling.itemGreenText
+                                  : Styling.itemRedText)
+                                  : (transaction.niyojanDel == 1
+                                  ? Styling.itemGreenText
+                                  : Styling.itemRedText),
+                              textAlign: TextAlign.left,
+                            ),
 
+                          ),
+                          verticalDividerSmall(),
+                          // Column 4: TV
+                          Expanded(
+                            flex: 1,
+                            child:  IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () {
+                                _deleteConsumer(index);
+                              },
                             ),
-                            verticalDividerSmall(),
-                            // Column 4: TV
-                            Expanded(
-                              flex: 1,
-                              child:  IconButton(
-                                icon: const Icon(Icons.delete, color: Colors.red),
-                                onPressed: () {
-                                  _deleteConsumer(index);
-                                },
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                 ],
               ),
             ) // Consumer list
@@ -2590,20 +2614,20 @@ class _ManagerUpdateSaleCashUpdationState
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                          if (_transactionCodeControllerPostpaid
-                              .text.isNotEmpty) {
-                              int? qtyPostpaid =
-                                  int.parse(_qtyControllerPostpaid.text);
-                              // if (qtyPostpaid > _transactionList.length) {
-                                _addTransaction();
-                              // } else {
-                              //   showFlushBar(context,
-                              //       'Transaction Detail Should Not Be Greater Than Cylinder Qty');
-                              //   _transactionCodeControllerPostpaid.clear();
-                              //   _timeControllerPostpaid.clear();
-                              //   _remarkControllerPostpaid.clear();
-                              // }
-                          }
+                        if (_transactionCodeControllerPostpaid
+                            .text.isNotEmpty) {
+                          int? qtyPostpaid =
+                          int.parse(_qtyControllerPostpaid.text);
+                          // if (qtyPostpaid > _transactionList.length) {
+                          _addTransaction();
+                          // } else {
+                          //   showFlushBar(context,
+                          //       'Transaction Detail Should Not Be Greater Than Cylinder Qty');
+                          //   _transactionCodeControllerPostpaid.clear();
+                          //   _timeControllerPostpaid.clear();
+                          //   _remarkControllerPostpaid.clear();
+                          // }
+                        }
                       },
                       style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all<Color>(
@@ -2637,28 +2661,28 @@ class _ManagerUpdateSaleCashUpdationState
                           child: Center(
                               child: Text("Trans. Code",
                                   style:
-                                      TextStyle(fontWeight: FontWeight.bold)))),
+                                  TextStyle(fontWeight: FontWeight.bold)))),
                       verticalDividerVerySmall(),
                       Expanded(
                           flex: 2,
                           child: Center(
                               child: Text("Time",
                                   style:
-                                      TextStyle(fontWeight: FontWeight.bold)))),
+                                  TextStyle(fontWeight: FontWeight.bold)))),
                       verticalDividerVerySmall(),
                       Expanded(
                           flex: 3,
                           child: Center(
                               child: Text("Remark",
                                   style:
-                                      TextStyle(fontWeight: FontWeight.bold)))),
+                                  TextStyle(fontWeight: FontWeight.bold)))),
                       verticalDividerVerySmall(),
                       Expanded(
                           flex:1,
                           child: Center(
                               child: Text("",
                                   style:
-                                      TextStyle(fontWeight: FontWeight.bold)))),
+                                  TextStyle(fontWeight: FontWeight.bold)))),
                     ],
                   ),
                   Container(
@@ -2812,6 +2836,48 @@ class _ManagerUpdateSaleCashUpdationState
             Row(
               children: [
                 Expanded(flex: 1,
+                    child: textWidgetBlueColorWithStar("Customer Type:", "*")),
+                Flexible(
+                  flex: 2,
+                  child:
+
+                  DropdownButtonFormField<GetCustTypeListModel>(
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                    ),
+                    style: Styling.itemBlackTest,
+                    value: setCustTypeListModel,
+                    items: customerTypeModel
+                        .map((GetCustTypeListModel vendor) {
+                      return DropdownMenuItem<GetCustTypeListModel>(
+                        value: vendor,
+                        child: Text(vendor.customerType ?? ''),
+                      );
+                    }).toList(),
+                    onChanged: isItemSubtypeND // Check if item is "19 kg" (case-insensitive)
+                        ? null // Disable dropdown if item is "19 kg"
+                        : (GetCustTypeListModel? selectedVendor) {
+                      if (selectedVendor != null) {
+                        selectedCustomerTypeName = selectedVendor.customerType;
+                        selectedCustomerTypeId = selectedVendor.custTypeId?.toInt();
+                        print("Selected selectedCustomerTypeName: $selectedCustomerTypeName");
+                        print("selectedCustomerTypeId: $selectedCustomerTypeId");
+                        setCustTypeListModel = selectedVendor;
+                        _vendorCylinderQtyControllerCredit.clear();
+                        _vendorCylinderAmountControllerCredit.clear();
+                        fetchConsumerDetailsCredit(selectedCustomerTypeId!);
+                        fetchConsumerDiscountDetailsCredit(selectedCustomerTypeId!);
+                      }
+                    },
+                    disabledHint: isItemSubtypeND ? Text("ND") : null, // Show "ND" when disabled
+                  ),
+
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Expanded(flex: 1,
                     child: textWidgetBlueColorWithStar("Customer Name:", "*")),
                 Flexible(
                   flex: 2,
@@ -2819,7 +2885,7 @@ class _ManagerUpdateSaleCashUpdationState
                   DropdownButtonFormField<GetConsumerDetailsCredit>(
                     decoration: InputDecoration(
                       contentPadding:
-                          EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                      EdgeInsets.symmetric(vertical: 12, horizontal: 10),
                     ),
                     style: Styling.itemBlackTest,
                     value: selectedCustomerModel,
@@ -2830,7 +2896,8 @@ class _ManagerUpdateSaleCashUpdationState
                         child: Text(vendor.customerName ?? ''),
                       );
                     }).toList(),
-                    onChanged: (GetConsumerDetailsCredit? selectedVendor) {
+                    onChanged:(selectedCustomerTypeId == null || selectedCustomerTypeId == "") ? null:
+                        (GetConsumerDetailsCredit? selectedVendor) {
                       if (selectedVendor != null) {
                         selectedVendorName = selectedVendor.customerName;
                         selectedVendorId = selectedVendor.customerId?.toInt();
@@ -2891,7 +2958,7 @@ class _ManagerUpdateSaleCashUpdationState
                     decoration: InputDecoration(
                       hintStyle: TextStyle(color: Colors.grey),
                       contentPadding:
-                          EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                      EdgeInsets.symmetric(vertical: 12, horizontal: 10),
                     ),
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
@@ -2957,7 +3024,7 @@ class _ManagerUpdateSaleCashUpdationState
                     decoration: InputDecoration(
                       hintStyle: TextStyle(color: Colors.grey),
                       contentPadding:
-                          EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                      EdgeInsets.symmetric(vertical: 12, horizontal: 10),
                     ),
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
@@ -3018,7 +3085,7 @@ class _ManagerUpdateSaleCashUpdationState
                     decoration: InputDecoration(
                       hintStyle: TextStyle(color: Colors.grey),
                       contentPadding:
-                          EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                      EdgeInsets.symmetric(vertical: 12, horizontal: 10),
                     ),
                     textAlign: TextAlign.center,
                     style: Styling.itemBlackTest,
@@ -3038,24 +3105,29 @@ class _ManagerUpdateSaleCashUpdationState
                     if (_qtyControllerCredit.text.isNotEmpty) {
                       if (selectedPaymentMode != null) {
                         if (selectedVendorId != null) {
-                          if (_vendorCylinderQtyControllerCredit
-                              .text.isNotEmpty) {
-                            int qtyCredit =
-                                int.parse(_qtyControllerCredit.text);
-                            if (qtyCredit > _reticulatedList.length) {
-                              _addReticulated();
-                            } else {
-                              showFlushBar(context,
-                                 Constants.reticulatedCylinderQuantity);
-                              setState(() {
-                                _vendorCylinderQtyControllerCredit.clear();
-                              });
-                              print("After Reset: $selectedPaymentMode, $selectedVendorName");
+                          if(selectedCustomerTypeId != null){
+                            if (_vendorCylinderQtyControllerCredit
+                                .text.isNotEmpty) {
+                              int qtyCredit =
+                              int.parse(_qtyControllerCredit.text);
+                              if (qtyCredit > _reticulatedList.length) {
+                                _addReticulated();
+                              } else {
+                                showFlushBar(context,
+                                    Constants.reticulatedCylinderQuantity);
+                                setState(() {
+                                  _vendorCylinderQtyControllerCredit.clear();
+                                });
+                                print("After Reset: $selectedPaymentMode, $selectedVendorName");
 
+                              }
+                            }else{
+                              showFlushBar(context,
+                                  Constants.validCountEnter);
                             }
                           }else{
                             showFlushBar(context,
-                                Constants.validCountEnter);
+                                Constants.selectConsumerTypeMode);
                           }
                         }else{
                           showFlushBar(context,
@@ -3102,6 +3174,13 @@ class _ManagerUpdateSaleCashUpdationState
                                   TextStyle(fontWeight: FontWeight.bold)))),
                       verticalDividerVerySmall(),
                       Expanded(
+                          flex: 3,
+                          child: Center(
+                              child: Text("Cons.\nType",
+                                  style:
+                                  TextStyle(fontWeight: FontWeight.bold)))),
+                      verticalDividerVerySmall(),
+                      Expanded(
                           flex: 1,
                           child: Center(
                               child: Text("Qty",
@@ -3119,8 +3198,8 @@ class _ManagerUpdateSaleCashUpdationState
                           flex:2,
                           child: Center(
                               child: Text("Disc Amt.",
-                                  style:
-                                  TextStyle(fontWeight: FontWeight.bold),textAlign: TextAlign.center,))),
+                                style:
+                                TextStyle(fontWeight: FontWeight.bold),textAlign: TextAlign.center,))),
                       verticalDividerVerySmall(),
                       Expanded(
                           flex:2,
@@ -3137,10 +3216,10 @@ class _ManagerUpdateSaleCashUpdationState
                                   TextStyle(fontWeight: FontWeight.bold)))),
                     ],
                   ),
-              Container(
-                color: Colors.blue,
-                height: 1,
-              ),
+                  Container(
+                    color: Colors.blue,
+                    height: 1,
+                  ),
                   ListView.builder(
                     shrinkWrap: true,
                     // Ensures the list takes only the required height
@@ -3158,6 +3237,18 @@ class _ManagerUpdateSaleCashUpdationState
                               padding: EdgeInsets.only(left: 5.0),
                               child: Text(
                                 transaction.customerName.toString(),
+                                style: TextStyle(
+                                    fontSize: 14, color: Colors.black54),
+                              ),
+                            ),
+                          ),
+                          verticalDividerSmall(),
+                          Expanded(
+                            flex: 3,
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 5.0),
+                              child: Text(
+                                transaction.customerTypeName.toString(),
                                 style: TextStyle(
                                     fontSize: 14, color: Colors.black54),
                               ),
@@ -3294,33 +3385,33 @@ class _ManagerUpdateSaleCashUpdationState
                       // FilteringTextInputFormatter.digitsOnly,
                       LengthLimitingTextInputFormatter(10),
                     ],
-                      onChanged: (value) {
-                        setState(() {
-                          isLumsumAmountAdd = false;
-                          _qtyControllerCash.text = "0";
-                          cashQtys = 0;
-                          postpaidQty = 0;
-                          _qtyControllerPostpaid.text = "0";
+                    onChanged: (value) {
+                      setState(() {
+                        isLumsumAmountAdd = false;
+                        _qtyControllerCash.text = "0";
+                        cashQtys = 0;
+                        postpaidQty = 0;
+                        _qtyControllerPostpaid.text = "0";
 
-                          double? amt = double.tryParse(value);
-                          if (amt == null) {
-                            _amountControllerCash.clear(); // Clear or handle invalid input
-                            return;
-                          }
+                        double? amt = double.tryParse(value);
+                        if (amt == null) {
+                          _amountControllerCash.clear(); // Clear or handle invalid input
+                          return;
+                        }
 
-                          if (amt > amountTotal!) {
-                            _amountControllerCash.clear();
-                          } else {
-                            // calculateBalanceAmountForReceiveAmountCashLumsumMode();
-                            // calculateBalanceAmountForReceiveAmountCashLumsum();
-                            calculateBalanceAmountForReceiveAmountCashLumsum();
-                            _calculateCylinderAmountCashtLumsum();
-                            if (isLumsumAmountAdd) {
-                              calculateBalanceAmountForReceiveAmountCash();
-                            }
+                        if (amt > amountTotal!) {
+                          _amountControllerCash.clear();
+                        } else {
+                          // calculateBalanceAmountForReceiveAmountCashLumsumMode();
+                          // calculateBalanceAmountForReceiveAmountCashLumsum();
+                          calculateBalanceAmountForReceiveAmountCashLumsum();
+                          _calculateCylinderAmountCashtLumsum();
+                          if (isLumsumAmountAdd) {
+                            calculateBalanceAmountForReceiveAmountCash();
                           }
-                        });
-                      },
+                        }
+                      });
+                    },
                   ),
                 ),
               ],
@@ -3435,7 +3526,7 @@ class _ManagerUpdateSaleCashUpdationState
                 },
                 controlAffinity: ListTileControlAffinity.leading,
                 fillColor: MaterialStateProperty.resolveWith<Color>(
-                  (Set<MaterialState> states) {
+                      (Set<MaterialState> states) {
                     if (states.contains(MaterialState.selected)) {
                       return Colors.blue; // When checked, background is blue
                     }
@@ -3541,23 +3632,23 @@ class _ManagerUpdateSaleCashUpdationState
                           Expanded(
                             child: Center(
                                 child: Text(
-                              "Note Type",
-                              style: Styling.blueClrText,
-                            )), // Centering the text
+                                  "Note Type",
+                                  style: Styling.blueClrText,
+                                )), // Centering the text
                           ),
                           Expanded(
                             child: Center(
                                 child: Text(
-                              "Qty",
-                              style: Styling.blueClrText,
-                            )), // Centering the text
+                                  "Qty",
+                                  style: Styling.blueClrText,
+                                )), // Centering the text
                           ),
                           Expanded(
                             child: Center(
                                 child: Text(
-                              "Amount",
-                              style: Styling.blueClrText,
-                            )), // Centering the text
+                                  "Amount",
+                                  style: Styling.blueClrText,
+                                )), // Centering the text
                           ),
                         ],
                       ),
@@ -3578,35 +3669,35 @@ class _ManagerUpdateSaleCashUpdationState
                           Expanded(
                             child: Center(
                                 child: Text(
-                              "500",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 16),
-                            )), // Centering the text
+                                  "500",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal, fontSize: 16),
+                                )), // Centering the text
                           ),
                           Text("X"),
                           Expanded(
                             child: Center(
                                 child: TextField(
-                              controller: quantity500Controller,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 16),
-                              textAlign: TextAlign.center,
-                              // Centers the text horizontally
-                              decoration: InputDecoration(
-                                // Optional: Add a border
-                                contentPadding: EdgeInsets
-                                    .zero, // Removes padding inside the TextField
-                              ),
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                              ],
-                              // Makes the input a number field
-                              onChanged: (value) {
-                                calculate500Amount(
-                                    500); // Update the result when quantity changes
-                              },
-                            )), // Centering the text
+                                  controller: quantity500Controller,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal, fontSize: 16),
+                                  textAlign: TextAlign.center,
+                                  // Centers the text horizontally
+                                  decoration: InputDecoration(
+                                    // Optional: Add a border
+                                    contentPadding: EdgeInsets
+                                        .zero, // Removes padding inside the TextField
+                                  ),
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                  ],
+                                  // Makes the input a number field
+                                  onChanged: (value) {
+                                    calculate500Amount(
+                                        500); // Update the result when quantity changes
+                                  },
+                                )), // Centering the text
                           ),
                           Text("="),
                           Expanded(
@@ -3634,29 +3725,29 @@ class _ManagerUpdateSaleCashUpdationState
                           Expanded(
                             child: Center(
                                 child: Text(
-                              "200",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 16),
-                            )), // Centering the text
+                                  "200",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal, fontSize: 16),
+                                )), // Centering the text
                           ),
                           Text("X"),
                           Expanded(
                             child: Center(
                                 child: TextField(
-                              controller: quantity200Controller,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 16),
-                              textAlign: TextAlign.center,
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                              ],
-                              // Makes the input a number field
-                              onChanged: (value) {
-                                calculate200Amount(
-                                    200); // Update the result when quantity changes
-                              },
-                            )), // Centering the text
+                                  controller: quantity200Controller,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal, fontSize: 16),
+                                  textAlign: TextAlign.center,
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                  ],
+                                  // Makes the input a number field
+                                  onChanged: (value) {
+                                    calculate200Amount(
+                                        200); // Update the result when quantity changes
+                                  },
+                                )), // Centering the text
                           ),
                           Text("="),
                           Expanded(
@@ -3684,44 +3775,44 @@ class _ManagerUpdateSaleCashUpdationState
                           Expanded(
                             child: Center(
                                 child: Text(
-                              "100",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 16),
-                            )), // Centering the text
+                                  "100",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal, fontSize: 16),
+                                )), // Centering the text
                           ),
                           Text("X"),
                           Expanded(
                             child: Center(
                                 child: TextField(
-                              controller: quantity100Controller,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 16),
-                              textAlign: TextAlign.center,
-                              // Centers the text horizontally
-                              decoration: InputDecoration(
-                                // Optional: Add a border
-                                contentPadding: EdgeInsets
-                                    .zero, // Removes padding inside the TextField
-                              ),
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                              ],
-                              // Makes the input a number field
-                              onChanged: (value) {
-                                calculate100Amount(
-                                    100); // Update the result when quantity changes
-                              },
-                            )), // Centering the text
+                                  controller: quantity100Controller,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal, fontSize: 16),
+                                  textAlign: TextAlign.center,
+                                  // Centers the text horizontally
+                                  decoration: InputDecoration(
+                                    // Optional: Add a border
+                                    contentPadding: EdgeInsets
+                                        .zero, // Removes padding inside the TextField
+                                  ),
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                  ],
+                                  // Makes the input a number field
+                                  onChanged: (value) {
+                                    calculate100Amount(
+                                        100); // Update the result when quantity changes
+                                  },
+                                )), // Centering the text
                           ),
                           Text("="),
                           Expanded(
                             child: Center(
                                 child: Text(
-                              result100.toStringAsFixed(0),
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 16),
-                            )), // Centering the text
+                                  result100.toStringAsFixed(0),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal, fontSize: 16),
+                                )), // Centering the text
                           ),
                         ],
                       ),
@@ -3741,35 +3832,35 @@ class _ManagerUpdateSaleCashUpdationState
                           Expanded(
                             child: Center(
                                 child: Text(
-                              "50",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 16),
-                            )), // Centering the text
+                                  "50",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal, fontSize: 16),
+                                )), // Centering the text
                           ),
                           Text("X"),
                           Expanded(
                             child: Center(
                                 child: TextField(
-                              controller: quantity50Controller,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 16),
-                              textAlign: TextAlign.center,
-                              // Centers the text horizontally
-                              decoration: InputDecoration(
-                                // Optional: Add a border
-                                contentPadding: EdgeInsets
-                                    .zero, // Removes padding inside the TextField
-                              ),
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                              ],
-                              // Makes the input a number field
-                              onChanged: (value) {
-                                calculate50Amount(
-                                    50); // Update the result when quantity changes
-                              },
-                            )), // Centering the text
+                                  controller: quantity50Controller,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal, fontSize: 16),
+                                  textAlign: TextAlign.center,
+                                  // Centers the text horizontally
+                                  decoration: InputDecoration(
+                                    // Optional: Add a border
+                                    contentPadding: EdgeInsets
+                                        .zero, // Removes padding inside the TextField
+                                  ),
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                  ],
+                                  // Makes the input a number field
+                                  onChanged: (value) {
+                                    calculate50Amount(
+                                        50); // Update the result when quantity changes
+                                  },
+                                )), // Centering the text
                           ),
                           Text("="),
                           Expanded(
@@ -3797,35 +3888,35 @@ class _ManagerUpdateSaleCashUpdationState
                           Expanded(
                             child: Center(
                                 child: Text(
-                              "20",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 16),
-                            )), // Centering the text
+                                  "20",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal, fontSize: 16),
+                                )), // Centering the text
                           ),
                           Text("X"),
                           Expanded(
                             child: Center(
                                 child: TextField(
-                              controller: quantity20Controller,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 16),
-                              textAlign: TextAlign.center,
-                              // Centers the text horizontally
-                              decoration: InputDecoration(
-                                // Optional: Add a border
-                                contentPadding: EdgeInsets
-                                    .zero, // Removes padding inside the TextField
-                              ),
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                              ],
-                              // Makes the input a number field
-                              onChanged: (value) {
-                                calculate20Amount(
-                                    20); // Update the result when quantity changes
-                              },
-                            )), // Centering the text
+                                  controller: quantity20Controller,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal, fontSize: 16),
+                                  textAlign: TextAlign.center,
+                                  // Centers the text horizontally
+                                  decoration: InputDecoration(
+                                    // Optional: Add a border
+                                    contentPadding: EdgeInsets
+                                        .zero, // Removes padding inside the TextField
+                                  ),
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                  ],
+                                  // Makes the input a number field
+                                  onChanged: (value) {
+                                    calculate20Amount(
+                                        20); // Update the result when quantity changes
+                                  },
+                                )), // Centering the text
                           ),
                           Text("="),
                           Expanded(
@@ -3853,35 +3944,35 @@ class _ManagerUpdateSaleCashUpdationState
                           Expanded(
                             child: Center(
                                 child: Text(
-                              "10",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 16),
-                            )), // Centering the text
+                                  "10",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal, fontSize: 16),
+                                )), // Centering the text
                           ),
                           Text("X"),
                           Expanded(
                             child: Center(
                                 child: TextField(
-                              controller: quantity10Controller,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 16),
-                              textAlign: TextAlign.center,
-                              // Centers the text horizontally
-                              decoration: InputDecoration(
-                                // Optional: Add a border
-                                contentPadding: EdgeInsets
-                                    .zero, // Removes padding inside the TextField
-                              ),
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                              ],
-                              // Makes the input a number field
-                              onChanged: (value) {
-                                calculate10Amount(
-                                    10); // Update the result when quantity changes
-                              },
-                            )), // Centering the text
+                                  controller: quantity10Controller,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal, fontSize: 16),
+                                  textAlign: TextAlign.center,
+                                  // Centers the text horizontally
+                                  decoration: InputDecoration(
+                                    // Optional: Add a border
+                                    contentPadding: EdgeInsets
+                                        .zero, // Removes padding inside the TextField
+                                  ),
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                  ],
+                                  // Makes the input a number field
+                                  onChanged: (value) {
+                                    calculate10Amount(
+                                        10); // Update the result when quantity changes
+                                  },
+                                )), // Centering the text
                           ),
                           Text("="),
                           Expanded(
@@ -3909,35 +4000,35 @@ class _ManagerUpdateSaleCashUpdationState
                           Expanded(
                             child: Center(
                                 child: Text(
-                              "5",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 16),
-                            )), // Centering the text
+                                  "5",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal, fontSize: 16),
+                                )), // Centering the text
                           ),
                           Text("X"),
                           Expanded(
                             child: Center(
                                 child: TextField(
-                              controller: quantity5Controller,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 16),
-                              textAlign: TextAlign.center,
-                              // Centers the text horizontally
-                              decoration: InputDecoration(
-                                // Optional: Add a border
-                                contentPadding: EdgeInsets
-                                    .zero, // Removes padding inside the TextField
-                              ),
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                              ],
-                              // Makes the input a number field
-                              onChanged: (value) {
-                                calculate5Amount(
-                                    5); // Update the result when quantity changes
-                              },
-                            )), // Centering the text
+                                  controller: quantity5Controller,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal, fontSize: 16),
+                                  textAlign: TextAlign.center,
+                                  // Centers the text horizontally
+                                  decoration: InputDecoration(
+                                    // Optional: Add a border
+                                    contentPadding: EdgeInsets
+                                        .zero, // Removes padding inside the TextField
+                                  ),
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                  ],
+                                  // Makes the input a number field
+                                  onChanged: (value) {
+                                    calculate5Amount(
+                                        5); // Update the result when quantity changes
+                                  },
+                                )), // Centering the text
                           ),
                           Text("="),
                           Expanded(
@@ -3950,7 +4041,7 @@ class _ManagerUpdateSaleCashUpdationState
                         ],
                       ),
                     ),
-///new
+                    ///new
                     Container(
                       color: Colors.black12,
                       height: 1,
@@ -4160,7 +4251,7 @@ class _ManagerUpdateSaleCashUpdationState
                                 // Centers the text horizontally
                                 style: TextStyle(
                                     fontSize:
-                                        16), // Optional: Adjust text style if needed
+                                    16), // Optional: Adjust text style if needed
                               ),
                             ),
                           )
@@ -4196,7 +4287,7 @@ class _ManagerUpdateSaleCashUpdationState
                                 // Centers the text horizontally
                                 style: TextStyle(
                                     fontSize:
-                                        16), // Optional: Adjust text style if needed
+                                    16), // Optional: Adjust text style if needed
                               ),
                             ),
                           )
@@ -4228,23 +4319,23 @@ class _ManagerUpdateSaleCashUpdationState
                           Expanded(
                             child: Center(
                                 child: Text(
-                              "Note Type",
-                              style: Styling.blueClrText,
-                            )), // Centering the text
+                                  "Note Type",
+                                  style: Styling.blueClrText,
+                                )), // Centering the text
                           ),
                           Expanded(
                             child: Center(
                                 child: Text(
-                              "Qty",
-                              style: Styling.blueClrText,
-                            )), // Centering the text
+                                  "Qty",
+                                  style: Styling.blueClrText,
+                                )), // Centering the text
                           ),
                           Expanded(
                             child: Center(
                                 child: Text(
-                              "Amount",
-                              style: Styling.blueClrText,
-                            )), // Centering the text
+                                  "Amount",
+                                  style: Styling.blueClrText,
+                                )), // Centering the text
                           ),
                         ],
                       ),
@@ -4265,10 +4356,10 @@ class _ManagerUpdateSaleCashUpdationState
                           Expanded(
                             child: Center(
                                 child: Text(
-                              "500",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 16),
-                            )), // Centering the text
+                                  "500",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal, fontSize: 16),
+                                )), // Centering the text
                           ),
                           Text("X"),
                           Expanded(
@@ -4279,10 +4370,10 @@ class _ManagerUpdateSaleCashUpdationState
                                   bool isReturnQuantityDisabled =
                                       quantity500Controller.text.isNotEmpty &&
                                           int.tryParse(
-                                                  quantity500Controller.text) !=
+                                              quantity500Controller.text) !=
                                               null &&
                                           int.parse(
-                                                  quantity500Controller.text) >
+                                              quantity500Controller.text) >
                                               0;
 
                                   return TextField(
@@ -4340,10 +4431,10 @@ class _ManagerUpdateSaleCashUpdationState
                           Expanded(
                             child: Center(
                                 child: Text(
-                              "200",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 16),
-                            )), // Centering the text
+                                  "200",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal, fontSize: 16),
+                                )), // Centering the text
                           ),
                           Text("X"),
                           Expanded(
@@ -4354,10 +4445,10 @@ class _ManagerUpdateSaleCashUpdationState
                                   bool isReturnQuantityDisabled =
                                       quantity200Controller.text.isNotEmpty &&
                                           int.tryParse(
-                                                  quantity200Controller.text) !=
+                                              quantity200Controller.text) !=
                                               null &&
                                           int.parse(
-                                                  quantity200Controller.text) >
+                                              quantity200Controller.text) >
                                               0;
                                   return TextField(
                                     controller: returnQuantity200Controller,
@@ -4406,10 +4497,10 @@ class _ManagerUpdateSaleCashUpdationState
                           Expanded(
                             child: Center(
                                 child: Text(
-                              "100",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 16),
-                            )), // Centering the text
+                                  "100",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal, fontSize: 16),
+                                )), // Centering the text
                           ),
                           Text("X"),
                           Expanded(
@@ -4420,10 +4511,10 @@ class _ManagerUpdateSaleCashUpdationState
                                   bool isReturnQuantityDisabled =
                                       quantity100Controller.text.isNotEmpty &&
                                           int.tryParse(
-                                                  quantity100Controller.text) !=
+                                              quantity100Controller.text) !=
                                               null &&
                                           int.parse(
-                                                  quantity100Controller.text) >
+                                              quantity100Controller.text) >
                                               0;
                                   return TextField(
                                     controller: returnQuantity100Controller,
@@ -4456,10 +4547,10 @@ class _ManagerUpdateSaleCashUpdationState
                           Expanded(
                             child: Center(
                                 child: Text(
-                              returnResult100.toStringAsFixed(0),
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 16),
-                            )), // Centering the text
+                                  returnResult100.toStringAsFixed(0),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal, fontSize: 16),
+                                )), // Centering the text
                           ),
                         ],
                       ),
@@ -4479,10 +4570,10 @@ class _ManagerUpdateSaleCashUpdationState
                           Expanded(
                             child: Center(
                                 child: Text(
-                              "50",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 16),
-                            )), // Centering the text
+                                  "50",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal, fontSize: 16),
+                                )), // Centering the text
                           ),
                           Text("X"),
                           Expanded(
@@ -4493,7 +4584,7 @@ class _ManagerUpdateSaleCashUpdationState
                                   bool isReturnQuantityDisabled =
                                       quantity50Controller.text.isNotEmpty &&
                                           int.tryParse(
-                                                  quantity50Controller.text) !=
+                                              quantity50Controller.text) !=
                                               null &&
                                           int.parse(quantity50Controller.text) >
                                               0;
@@ -4550,10 +4641,10 @@ class _ManagerUpdateSaleCashUpdationState
                           Expanded(
                             child: Center(
                                 child: Text(
-                              "20",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 16),
-                            )), // Centering the text
+                                  "20",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal, fontSize: 16),
+                                )), // Centering the text
                           ),
                           Text("X"),
                           Expanded(
@@ -4564,7 +4655,7 @@ class _ManagerUpdateSaleCashUpdationState
                                   bool isReturnQuantityDisabled =
                                       quantity20Controller.text.isNotEmpty &&
                                           int.tryParse(
-                                                  quantity20Controller.text) !=
+                                              quantity20Controller.text) !=
                                               null &&
                                           int.parse(quantity20Controller.text) >
                                               0;
@@ -4621,10 +4712,10 @@ class _ManagerUpdateSaleCashUpdationState
                           Expanded(
                             child: Center(
                                 child: Text(
-                              "10",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 16),
-                            )), // Centering the text
+                                  "10",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal, fontSize: 16),
+                                )), // Centering the text
                           ),
                           Text("X"),
                           Expanded(
@@ -4635,7 +4726,7 @@ class _ManagerUpdateSaleCashUpdationState
                                   bool isReturnQuantityDisabled =
                                       quantity10Controller.text.isNotEmpty &&
                                           int.tryParse(
-                                                  quantity10Controller.text) !=
+                                              quantity10Controller.text) !=
                                               null &&
                                           int.parse(quantity10Controller.text) >
                                               0;
@@ -4692,10 +4783,10 @@ class _ManagerUpdateSaleCashUpdationState
                           Expanded(
                             child: Center(
                                 child: Text(
-                              "5",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.normal, fontSize: 16),
-                            )), // Centering the text
+                                  "5",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.normal, fontSize: 16),
+                                )), // Centering the text
                           ),
                           Text("X"),
                           Expanded(
@@ -4706,7 +4797,7 @@ class _ManagerUpdateSaleCashUpdationState
                                   bool isReturnQuantityDisabled =
                                       quantity5Controller.text.isNotEmpty &&
                                           int.tryParse(
-                                                  quantity5Controller.text) !=
+                                              quantity5Controller.text) !=
                                               null &&
                                           int.parse(quantity5Controller.text) >
                                               0;
@@ -4749,7 +4840,7 @@ class _ManagerUpdateSaleCashUpdationState
                       ),
                     ),
 
-///new
+                    ///new
                     Container(
                       color: Colors.black12,
                       height: 1,
@@ -5003,7 +5094,7 @@ class _ManagerUpdateSaleCashUpdationState
                                 // Centers the text horizontally
                                 style: TextStyle(
                                     fontSize:
-                                        16), // Optional: Adjust text style if needed
+                                    16), // Optional: Adjust text style if needed
                               ),
                             ),
                           )
@@ -5039,7 +5130,7 @@ class _ManagerUpdateSaleCashUpdationState
                                 // Centers the text horizontally
                                 style: TextStyle(
                                     fontSize:
-                                        16), // Optional: Adjust text style if needed
+                                    16), // Optional: Adjust text style if needed
                               ),
                             ),
                           )
@@ -5070,32 +5161,35 @@ class _ManagerUpdateSaleCashUpdationState
         // Add all fields to the model, not just consumerNo
         _consumerList.add(
           ConsumerModel(
-            consId: _consumerList.length + 1,
-            // You can assign this or get it from the backend
-            distributorId: distributorIds,
-            // Replace with the actual distributorId
-            staffId: delBoyIDs,
-            // Replace with the actual staffId
-            itemId: itemIDs,
-            // Replace with the actual itemId
-            consumerNo: consumerNo,
-            action: "Add",
-            // Specify the action like "Added" or "Updated"
-            addedBy: staffIds,
-            consumerName: consumerName,
-            orderDate: orderDates,
-            cashmemoDate: cashmemoDates,
-            paymentStatus:paymentStatuss,
-            remark:remarks,
-            niyojanDel: niyojandelStatus,
-            cDCMSDel: cDCMSDel,
-            InCorrectStatus: InCorrectStatus,
-            PayDate: payDate,
-            DeliveryDate: deliveryDate,
-            SettDate: settelDate
+              consId: _consumerList.length + 1,
+              // You can assign this or get it from the backend
+              distributorId: distributorIds,
+              // Replace with the actual distributorId
+              staffId: delBoyIDs,
+              // Replace with the actual staffId
+              itemId: itemIDs,
+              // Replace with the actual itemId
+              consumerNo: consumerNo,
+              action: "Add",
+              // Specify the action like "Added" or "Updated"
+              addedBy: staffIds,
+              consumerName: consumerName,
+              orderDate: orderDates,
+              cashmemoDate: cashmemoDates,
+              paymentStatus:paymentStatuss,
+              remark:remarks,
+              niyojanDel: niyojandelStatus,
+              cDCMSDel: cDCMSDel,
+              InCorrectStatus: InCorrectStatus,
+              PayDate: payDate,
+              DeliveryDate: deliveryDate,
+              SettDate: settelDate
           ),
         );
         _consumerController.clear();
+        final List<Map<String, dynamic>> denominationList =
+        _consumerList.map((e) => e.toJson()).toList();
+        debugPrint("_consumerList${denominationList}");
       });
     }
   }
@@ -5124,6 +5218,8 @@ class _ManagerUpdateSaleCashUpdationState
             removed.remark != "Already Punched In Niyojan" &&
             removed.remark != "Not Found";
 
+        debugPrint("remark${removed.remark}");
+        debugPrint("remark${removed.niyojanDel}");
         if (wasValid) {
           validConsumerCount--;
           validCountController.text = validConsumerCount.toString();
@@ -5238,6 +5334,8 @@ class _ManagerUpdateSaleCashUpdationState
               // Example action
               addedBy: staffIds,
               discountAmount :totalDiscountOfReticulatedByQty,
+              customerTypeId: selectedCustomerTypeId,
+              customerTypeName: selectedCustomerTypeName,
               // Example value
             ),
           );
@@ -5257,6 +5355,7 @@ class _ManagerUpdateSaleCashUpdationState
           _remarkControllerCredit.clear();
           selectedCustomerModel = null;
           paymode = null;
+          setCustTypeListModel = null;
 
         });
       }else{
@@ -5347,8 +5446,8 @@ class _ManagerUpdateSaleCashUpdationState
 
       // Calculate the total expected amount (including the previously added cash amounts)
       double amountCashCylinders = (qty * itemRates!) - expenseAmtTotal! + totalAmountFromCashPaymentMode;
-        debugPrint("expecashqtycase $amountCashCylinders");
-        debugPrint("totalAmountFromCashPaymentMode $totalAmountFromCashPaymentMode");
+      debugPrint("expecashqtycase $amountCashCylinders");
+      debugPrint("totalAmountFromCashPaymentMode $totalAmountFromCashPaymentMode");
       // Update the total expected amount field
       if(amountCashCylinders > 0){
         _totalExpectedAmountCash.text = amountCashCylinders.toStringAsFixed(2);
@@ -5383,7 +5482,7 @@ class _ManagerUpdateSaleCashUpdationState
     debugPrint("ggggskakrtryfkVD $expectedAmount");
     _amountControllerCash.text = expectedAmount.toStringAsFixed(2);
   }
-/// cash balance
+  /// cash balance
   void calculateBalanceAmountForReceiveAmountCash() {
     double balanceAmount = 0;
     double expectedAmount = double.tryParse(_totalExpectedAmountCash.text) ?? 0;
@@ -5551,10 +5650,10 @@ class _ManagerUpdateSaleCashUpdationState
     }
   }
 
-  Future<void> fetchConsumerDetailsCredit() async {
+  Future<void> fetchConsumerDetailsCredit(int typeId) async {
     EasyLoading.show();
     Constants.isNetworkAvailable =
-        await InternetConnectionChecker().hasConnection;
+    await InternetConnectionChecker().hasConnection;
 
     if (!Constants.isNetworkAvailable) {
       // Return an empty list if there is no network connection
@@ -5573,14 +5672,14 @@ class _ManagerUpdateSaleCashUpdationState
         }
 
         final response = await http.get(
-          Uri.parse('${AppUrl.GetCustomerList}/$distributorId/1'),
+          Uri.parse('${AppUrl.GetCustomerListByCustType}/$distributorId/1/$typeId'),
           headers: {
             'Authorization': 'Bearer $bearerToken',
           },
         );
 
-        debugPrint("Response body GetCustomerList: ${response.body}");
-        debugPrint("request body GetCustomerList: ${response.request}");
+        debugPrint("Response body GetCustomerListByCustType: ${response.body}");
+        debugPrint("request body GetCustomerListByCustType: ${response.request}");
 
         if (response.statusCode == 200) {
           // Parse the JSON response
@@ -5611,7 +5710,65 @@ class _ManagerUpdateSaleCashUpdationState
       }
     }
   }
+  Future<void> fetchConsumerTypeDetailsCredit() async {
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
 
+    if (!Constants.isNetworkAvailable) {
+      // Return an empty list if there is no network connection
+      showFlushBar(context, Constants.connectionMessage);
+      isLoading = false;
+    } else {
+      try {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        String? distributorId = prefs.getString('DistributorId');
+        String? bearerToken = prefs.getString('token');
+
+        if (bearerToken == null) {
+          isLoading = false;
+          throw Exception('Bearer token is missing');
+        }
+
+        final response = await http.get(
+          Uri.parse('${AppUrl.GetCustTypeList}/1'),
+          headers: {
+            'Authorization': 'Bearer $bearerToken',
+          },
+        );
+
+        debugPrint("Response body GetCustTypeList: ${response.body}");
+        debugPrint("request body GetCustTypeList: ${response.request}");
+
+        if (response.statusCode == 200) {
+          // Parse the JSON response
+          final List<dynamic> data = json.decode(response.body);
+          // return data
+          //     .map((jsonItem) => DailySaleSaummaryListModel.fromJson(jsonItem))
+          //     .toList();
+          setState(() {
+            customerTypeModel = data
+                .map((jsonItem) => GetCustTypeListModel.fromJson(jsonItem))
+                .where((item) => item.customerType != 'ND') // Exclude "ND" customer type
+                .toList();
+
+            customerTypeModel.sort((a, b) {
+              return (a.customerType ?? '').compareTo(b.customerType ?? '');
+            });
+
+            isLoading = false;
+          });
+
+        } else {
+          isLoading = false;
+          throw Exception('Failed to load sales data');
+        }
+      } catch (error) {
+        isLoading = false;
+        debugPrint("Error: $error");
+        // Return an empty list in case of an error
+      }
+    }
+  }
   Future<void> updateSaleAddEditForMob(String actionFlag) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? distributorId = prefs.getString('DistributorId');
@@ -5629,7 +5786,7 @@ class _ManagerUpdateSaleCashUpdationState
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
     final String expneseId = getExpenseIdAsCommaSeparatedString(getExpenseDetailListModel);
     final String consumerNumbers =
-        getConsumerNumbersAsCommaSeparatedString(_consumerList);
+    getConsumerNumbersAsCommaSeparatedString(_consumerList);
     // final List<Map<String, dynamic>> consumerDtls =
     //     _consumerList.map((e) => e.toJson()).toList();
 
@@ -5662,9 +5819,9 @@ class _ManagerUpdateSaleCashUpdationState
     }).toList();
 
     final List<Map<String, dynamic>> postpaidDtls =
-        _transactionList.map((e) => e.toJson()).toList();
+    _transactionList.map((e) => e.toJson()).toList();
     final List<Map<String, dynamic>> reticulatedDtls =
-        _reticulatedList.map((e) => e.toJson()).toList();
+    _reticulatedList.map((e) => e.toJson()).toList();
     final List<Map<String, dynamic>> denominationList =
     _denomModelList.map((e) => e.toJson()).toList();
     debugPrint("denominationList$denominationList");
@@ -5673,13 +5830,13 @@ class _ManagerUpdateSaleCashUpdationState
     int? qtyControllerCredits = 0;
     int? qtyControllerCashs = 0;
     if(_qtyControllerPrepaid.text.isNotEmpty){
-       qtyControllerPrepaids = int.parse(_qtyControllerPrepaid.text);
+      qtyControllerPrepaids = int.parse(_qtyControllerPrepaid.text);
     }
     if(_qtyControllerPostpaid.text.isNotEmpty){
-     qtyControllerPostpaids = int.parse(_qtyControllerPostpaid.text);
+      qtyControllerPostpaids = int.parse(_qtyControllerPostpaid.text);
     }
     if(_qtyControllerCredit.text.isNotEmpty){
-       qtyControllerCredits = int.parse(_qtyControllerCredit.text);
+      qtyControllerCredits = int.parse(_qtyControllerCredit.text);
     }
     if(_qtyControllerCash.text.isNotEmpty){
       qtyControllerCashs = int.parse(_qtyControllerCash.text);
@@ -5699,20 +5856,20 @@ class _ManagerUpdateSaleCashUpdationState
       totalReceivedAmountCash = double.tryParse(_totalReceivedAmountCash.text);
     }
     if(_totalBalanceAmountCash.text.isNotEmpty){
-       totalBalanceAmountCash = double.tryParse(_totalBalanceAmountCash.text);
+      totalBalanceAmountCash = double.tryParse(_totalBalanceAmountCash.text);
     }
     if(_amountControllerPostpaid.text.isNotEmpty){
-       postpaidAmountCash = double.tryParse(_amountControllerPostpaid.text);
-       debugPrint("postpaidAmountCash$postpaidAmountCash");
+      postpaidAmountCash = double.tryParse(_amountControllerPostpaid.text);
+      debugPrint("postpaidAmountCash$postpaidAmountCash");
     }
     if(_amountControllerPrepaid.text.isNotEmpty){
-     prepaidAmountCash = double.tryParse(_amountControllerPrepaid.text);
+      prepaidAmountCash = double.tryParse(_amountControllerPrepaid.text);
     }
     if(_amountControllerCredit.text.isNotEmpty){
       creditAmountCash = double.tryParse(_amountControllerCredit.text);
     }
     if(_amountControllerCash.text.isNotEmpty){
-       cashAmountCash = double.tryParse(_amountControllerCash.text);
+      cashAmountCash = double.tryParse(_amountControllerCash.text);
     }
 
 
@@ -5785,19 +5942,19 @@ class _ManagerUpdateSaleCashUpdationState
       }
 
       if(qtyControllerCashs > 0){
-          if(cashDenominationMandatory) {
-            if (finalsAmount > 0) {
-              if (finalsAmount != totalReceivedAmountCash) {
-                showFlushBar(context, Constants.denominationAmount);
-                // You can also return this message from a function or show a snackbar/dialog
-                return;
-              }
-            } else {
-              showFlushBar(context, Constants.cashDenominationIsMandatory);
+        if(cashDenominationMandatory) {
+          if (finalsAmount > 0) {
+            if (finalsAmount != totalReceivedAmountCash) {
+              showFlushBar(context, Constants.denominationAmount);
+              // You can also return this message from a function or show a snackbar/dialog
               return;
             }
+          } else {
+            showFlushBar(context, Constants.cashDenominationIsMandatory);
+            return;
           }
         }
+      }
 
       if(totalBalanceAmountCash! > 0){
         if(isCheckedBalanceCash == false){
@@ -6026,7 +6183,7 @@ class _ManagerUpdateSaleCashUpdationState
   /// get denomination note id from api and set
   List<DenomModel> prepareDenominationData(
       List<GetNoteTypeAndIdFroDenominationListModel>
-          getNoteTypeAndIdFroDenominationListModel) {
+      getNoteTypeAndIdFroDenominationListModel) {
     _denomModelList.clear(); // Ensure the list is initialized empty
 
     // Mapping controllers to note types
@@ -6060,7 +6217,7 @@ class _ManagerUpdateSaleCashUpdationState
     quantityControllers.forEach((noteType, controller) {
       // Find the matching note ID
       final noteInfo = getNoteTypeAndIdFroDenominationListModel.firstWhere(
-        (model) => model.noteType == noteType,
+            (model) => model.noteType == noteType,
         orElse: () => GetNoteTypeAndIdFroDenominationListModel(
             id: null, noteType: noteType, isActive: null),
       );
@@ -6227,7 +6384,7 @@ class _ManagerUpdateSaleCashUpdationState
   /// get note type and from api
   Future<void> getNoteTypeAndIDList() async {
     Constants.isNetworkAvailable =
-        await InternetConnectionChecker().hasConnection;
+    await InternetConnectionChecker().hasConnection;
 
     if (!Constants.isNetworkAvailable) {
       // Return an empty list if there is no network connection
@@ -6262,7 +6419,7 @@ class _ManagerUpdateSaleCashUpdationState
           setState(() {
             getNoteTypeAndIdFroDenominationListModel = data
                 .map((jsonItem) =>
-                    GetNoteTypeAndIdFroDenominationListModel.fromJson(jsonItem))
+                GetNoteTypeAndIdFroDenominationListModel.fromJson(jsonItem))
                 .toList();
             isLoading = false;
           });
@@ -6289,7 +6446,7 @@ class _ManagerUpdateSaleCashUpdationState
   /// expense add edit
   Future<void> fetchExpenseDetailList() async {
     Constants.isNetworkAvailable =
-        await InternetConnectionChecker().hasConnection;
+    await InternetConnectionChecker().hasConnection;
 
     if (!Constants.isNetworkAvailable) {
       // Return an empty list if there is no network connection
@@ -6333,14 +6490,19 @@ class _ManagerUpdateSaleCashUpdationState
 
           for (var i = 0; i < getExpenseDetailListModel!.length; i++) {
             double? getExpenseDetailList =
-                getExpenseDetailListModel![i].expAmount?.toDouble();
+            getExpenseDetailListModel![i].expAmount?.toDouble();
             expenseDetailList += getExpenseDetailList!;
           }
           debugPrint("Response body expenseDetailList: ${expenseDetailList}");
           expenseAmtTotal = expenseDetailList;
           if(isLumsumAmountAdd) {
             setState(() {
-              double cashamt = double.parse(_amountControllerCash.text);
+              double cashamt = 0.0;
+              if(_amountControllerCash.text.isNotEmpty){
+                cashamt = double.parse(_amountControllerCash.text);
+              }else{
+                cashamt = 0;
+              }
               if(cashamt > 0){
                 _calculateCylinderAmountCasht();
                 if(_totalReceivedAmountCash.text.isNotEmpty) {
@@ -6364,6 +6526,7 @@ class _ManagerUpdateSaleCashUpdationState
       } catch (error) {
         isLoading = false;
         debugPrint("Error: $error");
+        debugPrint("Response body expenseDetailList: ${error}");
         // Return an empty list in case of an error
       }
     }
@@ -6371,7 +6534,7 @@ class _ManagerUpdateSaleCashUpdationState
 
   Future<void> fetchExpenseHeaderDetails() async {
     Constants.isNetworkAvailable =
-        await InternetConnectionChecker().hasConnection;
+    await InternetConnectionChecker().hasConnection;
 
     if (!Constants.isNetworkAvailable) {
       // Return an empty list if there is no network connection
@@ -6407,7 +6570,7 @@ class _ManagerUpdateSaleCashUpdationState
           setState(() {
             _expensesHeaders = data
                 .map((jsonItem) =>
-                    GetExpenceHeadAmountListModel.fromJson(jsonItem))
+                GetExpenceHeadAmountListModel.fromJson(jsonItem))
                 .toList();
             isLoading = false;
           });
@@ -6427,7 +6590,7 @@ class _ManagerUpdateSaleCashUpdationState
       double expAmount, String remark, String mode, int expId) async {
     EasyLoading.show();
     Constants.isNetworkAvailable =
-        await InternetConnectionChecker().hasConnection;
+    await InternetConnectionChecker().hasConnection;
 
     if (!Constants.isNetworkAvailable) {
       // Return an empty list if there is no network connection
@@ -6505,8 +6668,22 @@ class _ManagerUpdateSaleCashUpdationState
           });
 
           if (mode == "ADD") {
-            EasyLoading.showToast(Constants.expenseSendMgr,
-                duration: const Duration(milliseconds: 3000));
+            if (response == -1 ||
+                response.body == -1 ||
+                response == "-1" ||
+                response.body == "-1") {
+              EasyLoading.showToast(Constants.expenseExistMgr,
+                  duration: const Duration(milliseconds: 3000));
+            } else if (response == 0 ||
+                response.body == 0 ||
+                response == "0" ||
+                response.body == "0") {
+              EasyLoading.showToast(Constants.failToInserRecord,
+                  duration: const Duration(milliseconds: 3000));
+            } else {
+              EasyLoading.showToast(Constants.expenseSendMgr,
+                  duration: const Duration(milliseconds: 3000));
+            }
           } else if (mode == "EDIT") {
             EasyLoading.showToast(Constants.dataUpdated,
                 duration: const Duration(milliseconds: 3000));
@@ -6553,7 +6730,7 @@ class _ManagerUpdateSaleCashUpdationState
       builder: (BuildContext context) {
         return Container(
           width:
-              MediaQuery.of(context).size.width, // Set width to device's width
+          MediaQuery.of(context).size.width, // Set width to device's width
           padding: EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: Colors.white,
@@ -6601,13 +6778,13 @@ class _ManagerUpdateSaleCashUpdationState
                       width: MediaQuery.of(context).size.width * 0.6,
                       // Use relative width (60% of screen width)
                       child:
-                          DropdownButtonFormField<
-                              GetExpenceHeadAmountListModel>(
-                            isExpanded: true,
+                      DropdownButtonFormField<
+                          GetExpenceHeadAmountListModel>(
+                        isExpanded: true,
                         value: _expensesHeaders.any((item) =>
-                                item.expHeadId == _selectedExpenseHeadId)
+                        item.expHeadId == _selectedExpenseHeadId)
                             ? _expensesHeaders.firstWhere((item) =>
-                                item.expHeadId == _selectedExpenseHeadId)
+                        item.expHeadId == _selectedExpenseHeadId)
                             : null,
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.symmetric(
@@ -6624,15 +6801,15 @@ class _ManagerUpdateSaleCashUpdationState
                         }).toList(),
                         onChanged:
                             (GetExpenceHeadAmountListModel? selectedExpense) {
-                              setState(() {
-                                if (selectedExpense != null) {
-                                  _selectedExpenseHead = selectedExpense.expHeadName;
-                                  _selectedExpenseHeadId =
-                                      selectedExpense.expHeadId?.toInt();
-                                  print("Selected exp Name: $_selectedExpenseHead");
-                                  print("Selected exp ID: $_selectedExpenseHeadId");
-                                }
-                              });
+                          setState(() {
+                            if (selectedExpense != null) {
+                              _selectedExpenseHead = selectedExpense.expHeadName;
+                              _selectedExpenseHeadId =
+                                  selectedExpense.expHeadId?.toInt();
+                              print("Selected exp Name: $_selectedExpenseHead");
+                              print("Selected exp ID: $_selectedExpenseHeadId");
+                            }
+                          });
 
                         },
                       ),
@@ -6697,7 +6874,7 @@ class _ManagerUpdateSaleCashUpdationState
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
                             (_expenseAmountController.text.isNotEmpty &&
-                                    _selectedExpenseHead != null)
+                                _selectedExpenseHead != null)
                                 ? Color(0xff1280b3)
                                 : Color(0xff666666)),
                       ),
@@ -6705,7 +6882,7 @@ class _ManagerUpdateSaleCashUpdationState
                         if (_expenseAmountController.text.isNotEmpty &&
                             _selectedExpenseHead!.isNotEmpty) {
                           double expenseAmt =
-                              double.parse(_expenseAmountController.text);
+                          double.parse(_expenseAmountController.text);
                           if (isEditMode) {
                             addExpenseAPI(
                                 _selectedExpenseHeadId!,
@@ -6740,7 +6917,7 @@ class _ManagerUpdateSaleCashUpdationState
                     ElevatedButton(
                       style: ButtonStyle(
                         backgroundColor:
-                            MaterialStateProperty.all<Color>(Color(0xff1280b3)),
+                        MaterialStateProperty.all<Color>(Color(0xff1280b3)),
                       ),
                       onPressed: () {
                         Navigator.pop(
@@ -6804,142 +6981,142 @@ class _ManagerUpdateSaleCashUpdationState
                     ),
                     getExpenseDetailListModel.isNotEmpty
                         ? ListView.builder(
-                            shrinkWrap: true,
-                            physics: NeverScrollableScrollPhysics(),
-                            itemCount: getExpenseDetailListModel.length,
-                            itemBuilder: (context, index) {
-                              final items = getExpenseDetailListModel[index];
-                              Color backgroundColor = (index % 2 == 0)
-                                  ? Colors.grey[
-                                      300]! // Color for even index (first, third, fifth...)
-                                  : Colors.white70!;
-                              return Container(
-                                color: backgroundColor,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Expanded(
-                                            flex: 2,
-                                            child: Text(
-                                              items.expHeadName.toString(),
-                                              style: Styling.buttonTextBlack,
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 1,
-                                            child: Text(
-                                              items.expAmount!.toStringAsFixed(2),
-                                              style: Styling.buttonTextBlack,
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 2,
-                                            child: Text(
-                                              items.expStatus.toString(),
-                                              style: Styling.buttonTextBlack,
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 1,
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                Navigator.pop(context);
-                                                _showExpenseBottomSheet(context,
-                                                    deliveryBoyName, VehicleNo,
-                                                    editingItem: items);
-                                                // _selectedExpenseHead = items.expHeadName;
-                                                // _selectedExpenseHeadId = items.expHeadId!.toInt();
-                                                // _expenseAmountController.text = items.expAmount?.toString() ?? '';
-                                                // _expenseRemarkController.text = items.remark ?? '';
-                                              },
-                                              child: Icon(
-                                                Icons.edit,
-                                                size: 18,
-                                                color: Colors.blue,
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 1,
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                if (isEditMode) {
-                                                } else {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return AlertDialog(
-                                                        title: Text(
-                                                            "Confirm Deletion"),
-                                                        content: Text(
-                                                            "Are you sure you want to delete this record?"),
-                                                        actions: [
-                                                          TextButton(
-                                                            onPressed: () {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop(); // Close dialog without action
-                                                            },
-                                                            child: Text("No"),
-                                                          ),
-                                                          TextButton(
-                                                            onPressed:
-                                                                () async {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop(); // Close dialog
-                                                              addExpenseAPI(
-                                                                  items
-                                                                      .expHeadId!
-                                                                      .toInt(),
-                                                                  items
-                                                                      .expHeadName!,
-                                                                  items
-                                                                      .expAmount!
-                                                                      .toDouble(),
-                                                                  items.remark
-                                                                      .toString(),
-                                                                  "DELETE",
-                                                                  items.expId!
-                                                                      .toInt());
-                                                            },
-                                                            child: Text("Yes"),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
-                                                }
-                                              },
-                                              child: Icon(
-                                                Icons.delete,
-                                                size: 18,
-                                                color: Colors.red,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: getExpenseDetailListModel.length,
+                      itemBuilder: (context, index) {
+                        final items = getExpenseDetailListModel[index];
+                        Color backgroundColor = (index % 2 == 0)
+                            ? Colors.grey[
+                        300]! // Color for even index (first, third, fifth...)
+                            : Colors.white70!;
+                        return Container(
+                          color: backgroundColor,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        items.expHeadName.toString(),
+                                        style: Styling.buttonTextBlack,
+                                        textAlign: TextAlign.center,
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        items.expAmount!.toStringAsFixed(2),
+                                        style: Styling.buttonTextBlack,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        items.expStatus.toString(),
+                                        style: Styling.buttonTextBlack,
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                          _showExpenseBottomSheet(context,
+                                              deliveryBoyName, VehicleNo,
+                                              editingItem: items);
+                                          // _selectedExpenseHead = items.expHeadName;
+                                          // _selectedExpenseHeadId = items.expHeadId!.toInt();
+                                          // _expenseAmountController.text = items.expAmount?.toString() ?? '';
+                                          // _expenseRemarkController.text = items.remark ?? '';
+                                        },
+                                        child: Icon(
+                                          Icons.edit,
+                                          size: 18,
+                                          color: Colors.blue,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          if (isEditMode) {
+                                          } else {
+                                            showDialog(
+                                              context: context,
+                                              builder:
+                                                  (BuildContext context) {
+                                                return AlertDialog(
+                                                  title: Text(
+                                                      "Confirm Deletion"),
+                                                  content: Text(
+                                                      "Are you sure you want to delete this record?"),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        Navigator.of(
+                                                            context)
+                                                            .pop(); // Close dialog without action
+                                                      },
+                                                      child: Text("No"),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed:
+                                                          () async {
+                                                        Navigator.of(
+                                                            context)
+                                                            .pop(); // Close dialog
+                                                        addExpenseAPI(
+                                                            items
+                                                                .expHeadId!
+                                                                .toInt(),
+                                                            items
+                                                                .expHeadName!,
+                                                            items
+                                                                .expAmount!
+                                                                .toDouble(),
+                                                            items.remark
+                                                                .toString(),
+                                                            "DELETE",
+                                                            items.expId!
+                                                                .toInt());
+                                                      },
+                                                      child: Text("Yes"),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          }
+                                        },
+                                        child: Icon(
+                                          Icons.delete,
+                                          size: 18,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              );
-                            },
-                          )
-                        : Container(
-                            child: Text("No Data Available"),
+                              ],
+                            ),
                           ),
+                        );
+                      },
+                    )
+                        : Container(
+                      child: Text("No Data Available"),
+                    ),
                   ],
                 ),
               ],
@@ -7055,137 +7232,137 @@ class _ManagerUpdateSaleCashUpdationState
 
             if(!alreadyExists){
               if(consumer.bypassOn == 1){
-                    if(consumer.isvalid == 1){
-                      validConsumerCount++;
-                      validCountController.text = validConsumerCount.toString();
+                if(consumer.isvalid == 1){
+                  validConsumerCount++;
+                  validCountController.text = validConsumerCount.toString();
 
-                      pendingCDCMSCount++;
-                      _qtyControllerPrepaid.text = pendingCDCMSCount.toString();
-                      prepaidQty = pendingCDCMSCount;
+                  pendingCDCMSCount++;
+                  _qtyControllerPrepaid.text = pendingCDCMSCount.toString();
+                  prepaidQty = pendingCDCMSCount;
 
-                      await _addConsumer(
-                        consumer.consumerNo ?? '',
-                        consumer.consumerName ?? '',
-                        consumer.orderDate ,
-                        consumer.cashDate ,
-                        consumer.paymentStatus ?? '',
-                        consumer.consumerRemark ?? '',
-                        1,
-                        consumer.cDCMSDel?.toInt() ?? 0,
-                        1,
-                        consumer.payDate ,
-                        consumer.deliveryDate ,
-                        consumer.settDate ,
-                      );
+                  await _addConsumer(
+                    consumer.consumerNo ?? '',
+                    consumer.consumerName ?? '',
+                    consumer.orderDate ,
+                    consumer.cashDate ,
+                    consumer.paymentStatus ?? '',
+                    consumer.consumerRemark ?? '',
+                    1,
+                    consumer.cDCMSDel?.toInt() ?? 0,
+                    1,
+                    consumer.payDate ,
+                    consumer.deliveryDate ,
+                    consumer.settDate ,
+                  );
 
-                      // _calculateCylinderAmountPrepaid();
-                      // _validateQuantities("Prepaid");
-                      setState(() {
-                        if(isLumsumAmountAdd){
-                          _calculateCylinderAmountPrepaid();
-                          _validateQuantities("Prepaid");
-                          // calculateBalanceAmountForReceiveAmountCash();
-                          _totalReceivedAmountCash.text = '';
-                          _totalBalanceAmountCash.text = '';
-                        }else{
-                          _validateQuantitiesLumsumCase("Prepaid");
-                          _calculateCylinderAmountPrepaid();
-                          calculateBalanceAmountForReceiveAmountCashLumsumMode();
-                          // calculateBalanceAmountForReceiveAmountCashLumsum();
-                          _totalReceivedAmountCash.text = '';
-                          _totalBalanceAmountCash.text = '';
-                        }
-                      });
+                  // _calculateCylinderAmountPrepaid();
+                  // _validateQuantities("Prepaid");
+                  setState(() {
+                    if(isLumsumAmountAdd){
+                      _calculateCylinderAmountPrepaid();
+                      _validateQuantities("Prepaid");
+                      // calculateBalanceAmountForReceiveAmountCash();
+                      _totalReceivedAmountCash.text = '';
+                      _totalBalanceAmountCash.text = '';
                     }else{
-                      showDialog(
-                        context: context,
-                        builder:
-                            (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text(
-                                "Record not found of this consumer number"),
-                            content: const Text(
-                                "Do you want to consider it?"),
-                            actions: [
-                              TextButton(
-                                onPressed: () async {
-                                  Navigator.of(
-                                      context)
-                                      .pop();
-                                  invalidConsumerCount++;
-                                  invalidCountController.text = invalidConsumerCount.toString();
-
-                                  await _addConsumer(
-                                  consumer.consumerNo ?? '',
-                                  consumer.consumerName ?? '',
-                                  consumer.orderDate ,
-                                  consumer.cashDate ,
-                                  consumer.paymentStatus ?? '',
-                                  consumer.consumerRemark ?? '',
-                                  0,
-                                  0,
-                                  3,
-                                  consumer.payDate ,
-                                  consumer.deliveryDate ,
-                                  consumer.settDate ,
-                                  );// Close dialog without action
-                                },
-                                child: Text("No"),
-                              ),
-                              TextButton(
-                                onPressed:
-                                    () async {
-                                  Navigator.of(
-                                      context)
-                                      .pop(); // Close dialog
-                                  validConsumerCount++;
-                                  validCountController.text = validConsumerCount.toString();
-
-                                  pendingCDCMSCount++;
-                                  _qtyControllerPrepaid.text = pendingCDCMSCount.toString();
-                                  prepaidQty = pendingCDCMSCount;
-
-                                  await _addConsumer(
-                                    consumer.consumerNo ?? '',
-                                    consumer.consumerName ?? '',
-                                    consumer.orderDate ,
-                                    consumer.cashDate ,
-                                    consumer.paymentStatus ?? '',
-                                    consumer.consumerRemark ?? '',
-                                    1,
-                                    consumer.cDCMSDel?.toInt() ?? 0,
-                                    1,
-                                    consumer.payDate ,
-                                    consumer.deliveryDate ,
-                                    consumer.settDate ,
-                                  );
-
-                                  // _calculateCylinderAmountPrepaid();
-                                  // _validateQuantities("Prepaid");
-                                  setState(() {
-                                    if(isLumsumAmountAdd){
-                                      _calculateCylinderAmountPrepaid();
-                                      _validateQuantities("Prepaid");
-                                      // calculateBalanceAmountForReceiveAmountCash();
-                                      _totalReceivedAmountCash.text = '';
-                                      _totalBalanceAmountCash.text = '';
-                                    }else{
-                                      _validateQuantitiesLumsumCase("Prepaid");
-                                      _calculateCylinderAmountPrepaid();
-                                      calculateBalanceAmountForReceiveAmountCashLumsumMode();
-                                      // calculateBalanceAmountForReceiveAmountCashLumsum();
-                                      _totalReceivedAmountCash.text = '';
-                                      _totalBalanceAmountCash.text = '';
-                                    }
-                                  });
-                                },
-                                child: Text("Yes"),
-                              ),
-                            ],
-                          );
-                        },
-                      );
+                      _validateQuantitiesLumsumCase("Prepaid");
+                      _calculateCylinderAmountPrepaid();
+                      calculateBalanceAmountForReceiveAmountCashLumsumMode();
+                      // calculateBalanceAmountForReceiveAmountCashLumsum();
+                      _totalReceivedAmountCash.text = '';
+                      _totalBalanceAmountCash.text = '';
                     }
+                  });
+                }else{
+                  showDialog(
+                    context: context,
+                    builder:
+                        (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text(
+                            "Record not found of this consumer number"),
+                        content: const Text(
+                            "Do you want to consider it?"),
+                        actions: [
+                          TextButton(
+                            onPressed: () async {
+                              Navigator.of(
+                                  context)
+                                  .pop();
+                              invalidConsumerCount++;
+                              invalidCountController.text = invalidConsumerCount.toString();
+
+                              await _addConsumer(
+                                consumer.consumerNo ?? '',
+                                consumer.consumerName ?? '',
+                                consumer.orderDate ,
+                                consumer.cashDate ,
+                                consumer.paymentStatus ?? '',
+                                consumer.consumerRemark ?? '',
+                                0,
+                                0,
+                                3,
+                                consumer.payDate ,
+                                consumer.deliveryDate ,
+                                consumer.settDate ,
+                              );// Close dialog without action
+                            },
+                            child: Text("No"),
+                          ),
+                          TextButton(
+                            onPressed:
+                                () async {
+                              Navigator.of(
+                                  context)
+                                  .pop(); // Close dialog
+                              validConsumerCount++;
+                              validCountController.text = validConsumerCount.toString();
+
+                              pendingCDCMSCount++;
+                              _qtyControllerPrepaid.text = pendingCDCMSCount.toString();
+                              prepaidQty = pendingCDCMSCount;
+
+                              await _addConsumer(
+                                consumer.consumerNo ?? '',
+                                consumer.consumerName ?? '',
+                                consumer.orderDate ,
+                                consumer.cashDate ,
+                                consumer.paymentStatus ?? '',
+                                consumer.consumerRemark ?? '',
+                                1,
+                                consumer.cDCMSDel?.toInt() ?? 0,
+                                1,
+                                consumer.payDate ,
+                                consumer.deliveryDate ,
+                                consumer.settDate ,
+                              );
+
+                              // _calculateCylinderAmountPrepaid();
+                              // _validateQuantities("Prepaid");
+                              setState(() {
+                                if(isLumsumAmountAdd){
+                                  _calculateCylinderAmountPrepaid();
+                                  _validateQuantities("Prepaid");
+                                  // calculateBalanceAmountForReceiveAmountCash();
+                                  _totalReceivedAmountCash.text = '';
+                                  _totalBalanceAmountCash.text = '';
+                                }else{
+                                  _validateQuantitiesLumsumCase("Prepaid");
+                                  _calculateCylinderAmountPrepaid();
+                                  calculateBalanceAmountForReceiveAmountCashLumsumMode();
+                                  // calculateBalanceAmountForReceiveAmountCashLumsum();
+                                  _totalReceivedAmountCash.text = '';
+                                  _totalBalanceAmountCash.text = '';
+                                }
+                              });
+                            },
+                            child: Text("Yes"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
               }else{
                 if(consumer.isvalid == 1){
                   validConsumerCount++;
@@ -7263,18 +7440,18 @@ class _ManagerUpdateSaleCashUpdationState
             invalidCountController.text = invalidConsumerCount.toString();
 
             await _addConsumer(
-              consumerNo.toString(),
-              '',
-              null,
-              null,
-              '',
-              'Not Found',
-              0,
-              0,
-              2,
-              null,
-              null,
-              null
+                consumerNo.toString(),
+                '',
+                null,
+                null,
+                '',
+                'Not Found',
+                0,
+                0,
+                2,
+                null,
+                null,
+                null
             );
           }else{
             showFlushBar(context, Constants.expenseExistMgr);
@@ -7292,12 +7469,12 @@ class _ManagerUpdateSaleCashUpdationState
           invalidCountController.text = invalidConsumerCount.toString();
 
           await _addConsumer(
-            consumerNo.toString(),
-            '',
-            null,
-            null,
-            '',
-            'Not Found',
+              consumerNo.toString(),
+              '',
+              null,
+              null,
+              '',
+              'Not Found',
               0,
               0,
               2,
@@ -7319,12 +7496,12 @@ class _ManagerUpdateSaleCashUpdationState
         invalidCountController.text = invalidConsumerCount.toString();
 
         await _addConsumer(
-          consumerNo.toString(),
-          '',
-          null,
-          null,
-          '',
-          'Not Found',
+            consumerNo.toString(),
+            '',
+            null,
+            null,
+            '',
+            'Not Found',
             0,
             0,
             2,
@@ -7339,7 +7516,7 @@ class _ManagerUpdateSaleCashUpdationState
   }
 
   /// credit consumer diacount fetch
-  Future<void> fetchConsumerDiscountDetailsCredit() async {
+  Future<void> fetchConsumerDiscountDetailsCredit(int typeId) async {
     Constants.isNetworkAvailable =
     await InternetConnectionChecker().hasConnection;
 
@@ -7359,7 +7536,7 @@ class _ManagerUpdateSaleCashUpdationState
         }
 
         final response = await http.get(
-          Uri.parse('${AppUrl.GetCustDiscountList}/$distributorId'),
+          Uri.parse('${AppUrl.GetCustDiscountDtlsByCustType}/$distributorId/$typeId'),
           headers: {
             'Authorization': 'Bearer $bearerToken',
           },
@@ -7458,72 +7635,72 @@ class _ManagerUpdateSaleCashUpdationState
     String? token = prefs.getString('token');
 
     // try {
-      final response = await http.post(
-        Uri.parse(AppUrl.GetDailySaleCollByMgrDataByIdForMob),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: jsonEncode({
-          'DistributorId': distributorId,
-          'DSCollMgrId': dSCollMgrId,
-          'SaleGKItemId': saleGKItemId,
-        }),
-      );
+    final response = await http.post(
+      Uri.parse(AppUrl.GetDailySaleCollByMgrDataByIdForMob),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+      body: jsonEncode({
+        'DistributorId': distributorId,
+        'DSCollMgrId': dSCollMgrId,
+        'SaleGKItemId': saleGKItemId,
+      }),
+    );
 
-      debugPrint('API Request: ${response.request}');
-      debugPrint('API Response: ${response.body}');
+    debugPrint('API Request: ${response.request}');
+    debugPrint('API Response: ${response.body}');
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
 
-        final List<DenomModel> fetchedDenomList = (data['CashDenomDtls'] as List?)?.map((item) => DenomModel.fromJson(item)).toList() ?? [];
+      final List<DenomModel> fetchedDenomList = (data['CashDenomDtls'] as List?)?.map((item) => DenomModel.fromJson(item)).toList() ?? [];
 
-        // final List<ConsumerModel> fetchedConsumerList = (data['consumerDtls'] as List)
-        //     .map((item) => ConsumerModel.fromJson(item))
-        //     .toList() ?? [];
-        final List<ConsumerModel> fetchedConsumerList = (data['consumerDtls'] as List?)?.map((item) => ConsumerModel.fromJson(item)).toList() ?? [];
+      // final List<ConsumerModel> fetchedConsumerList = (data['consumerDtls'] as List)
+      //     .map((item) => ConsumerModel.fromJson(item))
+      //     .toList() ?? [];
+      final List<ConsumerModel> fetchedConsumerList = (data['consumerDtls'] as List?)?.map((item) => ConsumerModel.fromJson(item)).toList() ?? [];
 
-        final List<TransactionModel> fetchedTransactionList = (data['PostpaidDtls'] as List?)?.map((item) => TransactionModel.fromJson(item)).toList() ?? [];
+      final List<TransactionModel> fetchedTransactionList = (data['PostpaidDtls'] as List?)?.map((item) => TransactionModel.fromJson(item)).toList() ?? [];
 
-        final List<ReticulatedModel> fetchedReticulatedList = (data['ReticulatedDtls'] as List?)?.map((item) => ReticulatedModel.fromJson(item)).toList() ?? [];
+      final List<ReticulatedModel> fetchedReticulatedList = (data['ReticulatedDtls'] as List?)?.map((item) => ReticulatedModel.fromJson(item)).toList() ?? [];
 
-        setState(() {
-          // _denomModelList.clear();
-          _consumerList.clear();
-          _transactionList.clear();
-          _reticulatedList.clear();
+      setState(() {
+        // _denomModelList.clear();
+        _consumerList.clear();
+        _transactionList.clear();
+        _reticulatedList.clear();
 
-          // _denomModelList.addAll(fetchedDenomList);
-          _consumerList.addAll(fetchedConsumerList);
-          _transactionList.addAll(fetchedTransactionList);
-          _reticulatedList.addAll(fetchedReticulatedList);
-          populateControllers(fetchedDenomList);
-          // debugPrint('_consumerList length: ${_consumerList.length}');
-          debugPrint('_denomModelList length: ${_denomModelList.length}');
-          debugPrint('_transactionList length: ${_transactionList.length}');
-          debugPrint('_reticulatedList length: ${_reticulatedList.length}');
+        // _denomModelList.addAll(fetchedDenomList);
+        _consumerList.addAll(fetchedConsumerList);
+        _transactionList.addAll(fetchedTransactionList);
+        _reticulatedList.addAll(fetchedReticulatedList);
+        populateControllers(fetchedDenomList);
+        // debugPrint('_consumerList length: ${_consumerList.length}');
+        debugPrint('_denomModelList length: ${_denomModelList.length}');
+        debugPrint('_transactionList length: ${_transactionList.length}');
+        debugPrint('_reticulatedList length: ${_reticulatedList.length}');
 
-          int validQtys = 0;
-          int invalidQtys = 0;
+        int validQtys = 0;
+        int invalidQtys = 0;
 
-          for (var i = 0; i < fetchedConsumerList!.length; i++) {
-            if(fetchedConsumerList[i].InCorrectStatus == 1){
-              validQtys ++;
-            }else{
-              invalidQtys++;
-            }
+        for (var i = 0; i < fetchedConsumerList!.length; i++) {
+          if(fetchedConsumerList[i].InCorrectStatus == 1){
+            validQtys ++;
+          }else{
+            invalidQtys++;
           }
-          debugPrint("Response body validQtys: ${validQtys}");
-          debugPrint("Response body invalidQtys: ${invalidQtys}");
-          validCountController.text = validQtys.toString();
-          invalidCountController.text = invalidQtys.toString();
-          validConsumerCount = validQtys;
-          invalidConsumerCount = invalidQtys;
-        });
-      } else {
-        debugPrint('API Error: ${response.statusCode}');
-      }
+        }
+        debugPrint("Response body validQtys: ${validQtys}");
+        debugPrint("Response body invalidQtys: ${invalidQtys}");
+        validCountController.text = validQtys.toString();
+        invalidCountController.text = invalidQtys.toString();
+        validConsumerCount = validQtys;
+        invalidConsumerCount = invalidQtys;
+      });
+    } else {
+      debugPrint('API Error: ${response.statusCode}');
+    }
     // } catch (e) {
     //   print('Error fetching data: $e');
     // }
@@ -7671,484 +7848,485 @@ class _ManagerUpdateSaleCashUpdationState
       // Allows the bottom sheet to adapt its height to the content
       builder: (BuildContext context) {
         return
-         StatefulBuilder(builder: (BuildContext contexts, StateSetter sheetSetState){
-           return Container(
-             width:
-             MediaQuery.of(contexts).size.width, // Set width to device's width
-             padding: EdgeInsets.all(5),
-             decoration: BoxDecoration(
-               color: Colors.white,
-               borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-             ),
-             child: SingleChildScrollView(
-               // Wrap content in a scrollable view
-               child: Column(
-                 mainAxisSize: MainAxisSize.min,
-                 // Ensure column size is based on children
-                 children: [
-                   Text(
-                     "Add Discount",
-                     style: Styling.bodyTitle,
-                   ),
-                   SizedBox(height: 16),
+          StatefulBuilder(builder: (BuildContext contexts, StateSetter sheetSetState){
+            return Container(
+              width:
+              MediaQuery.of(contexts).size.width, // Set width to device's width
+              padding: EdgeInsets.all(5),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+              ),
+              child: SingleChildScrollView(
+                // Wrap content in a scrollable view
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  // Ensure column size is based on children
+                  children: [
+                    Text(
+                      "Add Discount",
+                      style: Styling.bodyTitle,
+                    ),
+                    SizedBox(height: 16),
 
-                   // Expense Head dropdown
-                   Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                     children: [
-                       textWidgetBlueColorWithStar("Customer Name:", "*"),
-                       Container(
-                         width: MediaQuery.of(contexts).size.width * 0.6,
-                         // Use relative width (60% of screen width)
-                         child:
-                         DropdownButtonFormField<GetConsumerDetailsCredit>(
-                           decoration: InputDecoration(
-                             contentPadding:
-                             EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                           ),
-                           style: Styling.itemBlackTest,
-                           value: selectedCustomerModelDisPopup,
-                           items: getConsumerCreditDetailListModel
-                               .map((GetConsumerDetailsCredit vendor) {
-                             return DropdownMenuItem<GetConsumerDetailsCredit>(
-                               value: vendor,
-                               child: Text(vendor.customerName ?? ''),
-                             );
-                           }).toList(),
-                           onChanged: (GetConsumerDetailsCredit? selectedVendor) {
-                             if (selectedVendor != null) {
-                               selectedVendorNameDisPopUp = selectedVendor.customerName;
-                               selectedVendorIdDisPopUp = selectedVendor.customerId?.toInt();
-                               // Handle dropdown selection here
-                               print("Selected Vendor Name dic: $selectedVendorNameDisPopUp");
-                               print("Selected Vendor ID dis: $selectedVendorIdDisPopUp");
-                               selectedCustomerModelDisPopup = selectedVendor;
+                    // Expense Head dropdown
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        textWidgetBlueColorWithStar("Customer Name:", "*"),
+                        Container(
+                          width: MediaQuery.of(contexts).size.width * 0.6,
+                          // Use relative width (60% of screen width)
+                          child:
+                          DropdownButtonFormField<GetConsumerDetailsCredit>(
+                            isExpanded: true,
+                            decoration: InputDecoration(
+                              contentPadding:
+                              EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                            ),
+                            style: Styling.itemBlackTest,
+                            value: selectedCustomerModelDisPopup,
+                            items: getConsumerCreditDetailListModel
+                                .map((GetConsumerDetailsCredit vendor) {
+                              return DropdownMenuItem<GetConsumerDetailsCredit>(
+                                value: vendor,
+                                child: Text(vendor.customerName ?? ''),
+                              );
+                            }).toList(),
+                            onChanged: (GetConsumerDetailsCredit? selectedVendor) {
+                              if (selectedVendor != null) {
+                                selectedVendorNameDisPopUp = selectedVendor.customerName;
+                                selectedVendorIdDisPopUp = selectedVendor.customerId?.toInt();
+                                // Handle dropdown selection here
+                                print("Selected Vendor Name dic: $selectedVendorNameDisPopUp");
+                                print("Selected Vendor ID dis: $selectedVendorIdDisPopUp");
+                                selectedCustomerModelDisPopup = selectedVendor;
 
-                             }
-                           },
-                         ),
-                       ),
-                     ],
-                   ),
-                   SizedBox(height: 10),
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10),
 
-                   // Expense Amount input field
-                   Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                     children: [
-                       textWidgetBlueColorWithStar("Select Item:", "*"),
-                       Container(
-                         width: MediaQuery.of(contexts).size.width * 0.6,
-                         // Use relative width (60% of screen width)
-                         child:
-                         DropdownButtonFormField<CylItemListModel>(
-                             decoration: InputDecoration(
-                               contentPadding:
-                               EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                             ),
-                             value: _selectedItemModel,
-                             // Bind the value to the selected item model
-                             items: _items.map((CylItemListModel item) {
-                               return DropdownMenuItem<CylItemListModel>(
-                                 value: item,
-                                 child: Text(
-                                   item.itemName ?? 'Unknown',
-                                   style: TextStyle(
-                                       fontSize: 14.0, fontWeight: FontWeight.normal),
-                                 ),
-                               );
-                             }).toList(),
-                             onChanged: (CylItemListModel? selectedItem) {
-                               if (selectedItem == null) return;
+                    // Expense Amount input field
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        textWidgetBlueColorWithStar("Select Item:", "*"),
+                        Container(
+                          width: MediaQuery.of(contexts).size.width * 0.6,
+                          // Use relative width (60% of screen width)
+                          child:
+                          DropdownButtonFormField<CylItemListModel>(
+                              decoration: InputDecoration(
+                                contentPadding:
+                                EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                              ),
+                              value: _selectedItemModel,
+                              // Bind the value to the selected item model
+                              items: _items.map((CylItemListModel item) {
+                                return DropdownMenuItem<CylItemListModel>(
+                                  value: item,
+                                  child: Text(
+                                    item.itemName ?? 'Unknown',
+                                    style: TextStyle(
+                                        fontSize: 14.0, fontWeight: FontWeight.normal),
+                                  ),
+                                );
+                              }).toList(),
+                              onChanged: (CylItemListModel? selectedItem) {
+                                if (selectedItem == null) return;
 
-                               // 1️⃣ Synchronously update UI with the selection
-                               setState(() {
-                                 _selectedItem = selectedItem.itemName;
-                                 selectedItemId = selectedItem.itemId!.toInt();
-                                 _selectedItemModel = selectedItem;
-                                 debugPrint("selectedItemId $selectedItemId");
+                                // 1️⃣ Synchronously update UI with the selection
+                                setState(() {
+                                  _selectedItem = selectedItem.itemName;
+                                  selectedItemId = selectedItem.itemId!.toInt();
+                                  _selectedItemModel = selectedItem;
+                                  debugPrint("selectedItemId $selectedItemId");
 
-                               });
+                                });
 
-                               // 2️⃣ Perform async fetch and then update UI again
-                               fetchItemRate(selectedItemId!).then((rate) {
-                                 if (!mounted) return; // ensure widget still exists
+                                // 2️⃣ Perform async fetch and then update UI again
+                                fetchItemRate(selectedItemId!).then((rate) {
+                                  if (!mounted) return; // ensure widget still exists
 
-                                 final discountItem = cashDenoMandatoryList.firstWhere(
-                                       (item) => item.itemId == selectedItemId,
-                                   orElse: () => CahsDenominationMandatoryFlagModel(),
-                                 );
-                                 // final discountLimit = discountItem.discount?.toDouble() ?? 0.0;
+                                  final discountItem = cashDenoMandatoryList.firstWhere(
+                                        (item) => item.itemId == selectedItemId,
+                                    orElse: () => CahsDenominationMandatoryFlagModel(),
+                                  );
+                                  // final discountLimit = discountItem.discount?.toDouble() ?? 0.0;
 
                                   hasPermissionLimit = discountItem.itemId != null
-                                     && discountItem.permissionFor == 'Customer Discount Limit';
+                                      && discountItem.permissionFor == 'Customer Discount Limit';
 
-                                 // double? maxDiscount;
-                                 // if (discountItem.itemId != null &&
-                                 //     discountItem.permissionFor == 'Customer Discount Limit') {
-                                 //   maxDiscount = discountItem.discount?.toDouble() ?? rate;
-                                 // } else {
-                                 //   // No special limit, allow up to RSP
-                                 //   maxDiscount = rate;
-                                 // }
+                                  // double? maxDiscount;
+                                  // if (discountItem.itemId != null &&
+                                  //     discountItem.permissionFor == 'Customer Discount Limit') {
+                                  //   maxDiscount = discountItem.discount?.toDouble() ?? rate;
+                                  // } else {
+                                  //   // No special limit, allow up to RSP
+                                  //   maxDiscount = rate;
+                                  // }
 
-                                 setState(() {
-                                   retailSalePriceDisPopup = rate;
-                                   _retailSalePriceDisPopupController.text = rate.toString();
-                                   if (hasPermissionLimit) {
-                                     maxAllowedDiscountPopUp = discountItem.discount?.toDouble() ?? rate;
-                                   } else {
-                                     // No special limit — users can only discount up to RSP
-                                     maxAllowedDiscountPopUp = rate;
-                                   }
-                                   // maxAllowedDiscountPopUp = maxDiscount;
-                                   _discountAmountDisPopupController.clear();
-                                   debugPrint("maxAllowedDiscountPopUp $maxAllowedDiscountPopUp");
-                                 });
-                               });
-                             }
+                                  setState(() {
+                                    retailSalePriceDisPopup = rate;
+                                    _retailSalePriceDisPopupController.text = rate.toString();
+                                    if (hasPermissionLimit) {
+                                      maxAllowedDiscountPopUp = discountItem.discount?.toDouble() ?? rate;
+                                    } else {
+                                      // No special limit — users can only discount up to RSP
+                                      maxAllowedDiscountPopUp = rate;
+                                    }
+                                    // maxAllowedDiscountPopUp = maxDiscount;
+                                    _discountAmountDisPopupController.clear();
+                                    debugPrint("maxAllowedDiscountPopUp $maxAllowedDiscountPopUp");
+                                  });
+                                });
+                              }
 
-                         ),
-                       ),
-                     ],
-                   ),
-                   SizedBox(height: 10),
-                   // Remark input field
-                   Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                     children: [
-                       textWidgetBlueColorWithoutStar("Retail Sales Price:"),
-                       Container(
-                         width: MediaQuery.of(contexts).size.width * 0.6,
-                         // Use relative width (60% of screen width)
-                         child: TextField(
-                           controller: _retailSalePriceDisPopupController,
-                           decoration: InputDecoration(
-                             labelStyle: TextStyle(color: Colors.blueAccent),
-                           ),
-                           textAlign: TextAlign.center,
-                           style: Styling.itemBlackTest,
-                           enabled: false,
-                         ),
-                       ),
-                     ],
-                   ),
-                   SizedBox(height: 20),
-                   Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                     children: [
-                       textWidgetBlueColorWithStar("Discount Amount:", "*"),
-                       Container(
-                         width: MediaQuery.of(contexts).size.width * 0.6,
-                         // Use relative width (60% of screen width)
-                         child: TextField(
-                           controller: _discountAmountDisPopupController ,
-                           keyboardType: TextInputType.number,
-                           decoration: InputDecoration(
-                             labelStyle: TextStyle(color: Colors.blueAccent),
-                           ),
-                           inputFormatters: [
-                             FilteringTextInputFormatter.digitsOnly,
-                           ],
-                           textAlign: TextAlign.center,
-                           style: Styling.itemBlackTest,
-                           onChanged: (value) {
-                             double? amtDis = double.tryParse(value);
-                             double amt = double.tryParse(value) ?? 0.0;
-                             double limit = maxAllowedDiscountPopUp ?? retailSalePriceDisPopup ?? 0.0;
-                             if (amt > limit) {
-                               _discountAmountDisPopupController.clear();
-                               if (hasPermissionLimit) {
-                                 showFlushBar(contexts, Constants.discountExceedCashCollection);
-                               } else {
-                                 showFlushBar(contexts, Constants.discountExceedCashCollectionRSP);
-                               }
-                             }
-                             // if(amtDis != null){
-                             //   if(hasPermissionLimit){
-                             //     if (amtDis > maxAllowedDiscountPopUp!) {
-                             //       _discountAmountDisPopupController.clear();
-                             //       showFlushBar(contexts, Constants.discountExceedCashCollection);
-                             //     } else {
-                             //       // Continue saving
-                             //       print("Discount accepted");
-                             //     }
-                             //   }else{
-                             //
-                             //   }
-                             //
-                             // }
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    // Remark input field
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        textWidgetBlueColorWithoutStar("Retail Sales Price:"),
+                        Container(
+                          width: MediaQuery.of(contexts).size.width * 0.6,
+                          // Use relative width (60% of screen width)
+                          child: TextField(
+                            controller: _retailSalePriceDisPopupController,
+                            decoration: InputDecoration(
+                              labelStyle: TextStyle(color: Colors.blueAccent),
+                            ),
+                            textAlign: TextAlign.center,
+                            style: Styling.itemBlackTest,
+                            enabled: false,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        textWidgetBlueColorWithStar("Discount Amount:", "*"),
+                        Container(
+                          width: MediaQuery.of(contexts).size.width * 0.6,
+                          // Use relative width (60% of screen width)
+                          child: TextField(
+                            controller: _discountAmountDisPopupController ,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              labelStyle: TextStyle(color: Colors.blueAccent),
+                            ),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
+                            textAlign: TextAlign.center,
+                            style: Styling.itemBlackTest,
+                            onChanged: (value) {
+                              double? amtDis = double.tryParse(value);
+                              double amt = double.tryParse(value) ?? 0.0;
+                              double limit = maxAllowedDiscountPopUp ?? retailSalePriceDisPopup ?? 0.0;
+                              if (amt > limit) {
+                                _discountAmountDisPopupController.clear();
+                                if (hasPermissionLimit) {
+                                  showFlushBar(contexts, Constants.discountExceedCashCollection);
+                                } else {
+                                  showFlushBar(contexts, Constants.discountExceedCashCollectionRSP);
+                                }
+                              }
+                              // if(amtDis != null){
+                              //   if(hasPermissionLimit){
+                              //     if (amtDis > maxAllowedDiscountPopUp!) {
+                              //       _discountAmountDisPopupController.clear();
+                              //       showFlushBar(contexts, Constants.discountExceedCashCollection);
+                              //     } else {
+                              //       // Continue saving
+                              //       print("Discount accepted");
+                              //     }
+                              //   }else{
+                              //
+                              //   }
+                              //
+                              // }
 
-                           },
-                         ),
-                       ),
-                     ],
-                   ),
-                   SizedBox(height: 20),
-                   Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                     children: [
-                       textWidgetBlueColorWithoutStar("Effective Date:"),
-                       Container(
-                         width: MediaQuery.of(contexts).size.width * 0.6,
-                         child: Row(mainAxisAlignment: MainAxisAlignment.start,
-                           children: [
-                             Text(
-                               "${_selectedDate!.toLocal()}".split(' ')[0],
-                             ),
-                             SizedBox(width: 8),
-                             InkWell(
-                               onTap: () async {
-                                 // _pickDate(context);
-                                 final picked = await showDatePicker(
-                                   context: contexts,
-                                   initialDate: _selectedDate ?? DateTime.now(),
-                                   firstDate: DateTime.now(),       // ❌ Disable all past dates
-                                   lastDate: DateTime(2100),
-                                 );
-                                 if (picked != null && picked != _selectedDate) {
-                                   sheetSetState(() {
-                                     _selectedDate = picked;
-                                   });
-                                 }
-                               },
-                               child: Icon(Icons.date_range, color: Colors.blue),
-                             ),
-                           ],
-                         ),
-                       ),
-                     ],
-                   ),
-                   // Save button
-                   SizedBox(height: 20),
-                   Row(
-                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                     children: [
-                       ElevatedButton(
-                         style: ButtonStyle(
-                           backgroundColor: MaterialStateProperty.all<Color>(
-                               (_discountAmountDisPopupController.text.isNotEmpty &&
-                                   selectedVendorNameDisPopUp != null)
-                                   ? Color(0xff1280b3)
-                                   : Color(0xff666666)),
-                         ),
-                         onPressed: () {
-                             if((selectedVendorNameDisPopUp ?? '').isNotEmpty){
-                               if((_selectedItem ?? '').isNotEmpty){
-                                   if(_discountAmountDisPopupController.text.isNotEmpty){
-                                     double discountAmt = double.parse(_discountAmountDisPopupController.text);
-                                     double rspAmt = double.parse(_retailSalePriceDisPopupController.text);
-                                     addDiscountAPI(contexts,"ADD",selectedVendorIdDisPopUp!,discountAmt,_selectedDate!,selectedItemId!,rspAmt);
-                                   }else{
-                                     EasyLoading.showToast("Enter Discount Amount.",
-                                         duration: const Duration(milliseconds: 3000));
-                                   }
-                               }else{
-                                 EasyLoading.showToast("Select Item.",
-                                     duration: const Duration(milliseconds: 3000));
-                               }
-                             }else{
-                               EasyLoading.showToast("Select Customer Name.",
-                                   duration: const Duration(milliseconds: 3000));
-                             }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        textWidgetBlueColorWithoutStar("Effective Date:"),
+                        Container(
+                          width: MediaQuery.of(contexts).size.width * 0.6,
+                          child: Row(mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Text(
+                                "${_selectedDate!.toLocal()}".split(' ')[0],
+                              ),
+                              SizedBox(width: 8),
+                              InkWell(
+                                onTap: () async {
+                                  // _pickDate(context);
+                                  final picked = await showDatePicker(
+                                    context: contexts,
+                                    initialDate: _selectedDate ?? DateTime.now(),
+                                    firstDate: DateTime.now(),       // ❌ Disable all past dates
+                                    lastDate: DateTime(2100),
+                                  );
+                                  if (picked != null && picked != _selectedDate) {
+                                    sheetSetState(() {
+                                      _selectedDate = picked;
+                                    });
+                                  }
+                                },
+                                child: Icon(Icons.date_range, color: Colors.blue),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    // Save button
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                (_discountAmountDisPopupController.text.isNotEmpty &&
+                                    selectedVendorNameDisPopUp != null)
+                                    ? Color(0xff1280b3)
+                                    : Color(0xff666666)),
+                          ),
+                          onPressed: () {
+                            if((selectedVendorNameDisPopUp ?? '').isNotEmpty){
+                              if((_selectedItem ?? '').isNotEmpty){
+                                if(_discountAmountDisPopupController.text.isNotEmpty){
+                                  double discountAmt = double.parse(_discountAmountDisPopupController.text);
+                                  double rspAmt = double.parse(_retailSalePriceDisPopupController.text);
+                                  addDiscountAPI(contexts,"ADD",selectedVendorIdDisPopUp!,discountAmt,_selectedDate!,selectedItemId!,rspAmt,0);
+                                }else{
+                                  EasyLoading.showToast("Enter Discount Amount.",
+                                      duration: const Duration(milliseconds: 3000));
+                                }
+                              }else{
+                                EasyLoading.showToast("Select Item.",
+                                    duration: const Duration(milliseconds: 3000));
+                              }
+                            }else{
+                              EasyLoading.showToast("Select Customer Name.",
+                                  duration: const Duration(milliseconds: 3000));
+                            }
 
-                         },
-                         child: Text(
-                           "Save",
-                           style: TextStyle(color: Colors.white),
-                         ),
-                       ),
-                       ElevatedButton(
-                         style: ButtonStyle(
-                           backgroundColor:
-                           MaterialStateProperty.all<Color>(Color(0xff1280b3)),
-                         ),
-                         onPressed: () {
-                           Navigator.pop(
-                               contexts); // Close bottom sheet after saving
-                         },
-                         child: const Text("Close",
-                             style: TextStyle(color: Colors.white)),
-                       ),
-                     ],
-                   ),
-                   SizedBox(height: 20),
-                   Column(
-                     children: [
-                       Container(
-                         decoration: BoxDecoration(
-                           borderRadius: BorderRadius.only(
-                             topLeft: Radius.circular(4),
-                             topRight: Radius.circular(4),
-                           ),
-                         ),
-                         child: Padding(
-                           padding: const EdgeInsets.only(top: 8.0,bottom: 8),
-                           child: Row(
-                             mainAxisAlignment: MainAxisAlignment.center,
-                             children: [
-                               Expanded(
-                                 flex: 3,
-                                 child: Text(
-                                   'Customer Name',
-                                   style: Styling.blueClrTextSmallBold,
-                                   textAlign: TextAlign.left,
-                                 ),
-                               ),
-                               Expanded(
-                                 flex: 2,
-                                 child: Text(
-                                   'Item Name',
-                                   style: Styling.blueClrTextSmallBold,
-                                   textAlign: TextAlign.left,
-                                 ),
-                               ),
-                               Expanded(
-                                 flex: 2,
-                                 child: Text(
-                                   'RSP Amt.',
-                                   style: Styling.blueClrTextSmallBold,
-                                   textAlign: TextAlign.center,
-                                 ),
-                               ),
-                               Expanded(
-                                 flex: 2,
-                                 child: Text(
-                                   'Discount',
-                                   style: Styling.blueClrTextSmallBold,
-                                   textAlign: TextAlign.center,
-                                 ),
-                               ),
-                               Expanded(
-                                 flex: 1,
-                                 child: Text(
-                                   'Action',
-                                   style: Styling.blueClrTextSmallBold,
-                                   textAlign: TextAlign.center,
-                                 ),
-                               ),
-                             ],
-                           ),
-                         ),
-                       ),
-                       getConsumerCreditDiscountDetailListModel.isNotEmpty
-                           ? ListView.builder(
-                         shrinkWrap: true,
-                         physics: NeverScrollableScrollPhysics(),
-                         itemCount: getConsumerCreditDiscountDetailListModel.length,
-                         itemBuilder: (context, index) {
-                           final items = getConsumerCreditDiscountDetailListModel[index];
-                           Color backgroundColor = (index % 2 == 0)
-                               ? Colors.grey[
-                           300]! // Color for even index (first, third, fifth...)
-                               : Colors.white70!;
-                           return Container(
-                             color: backgroundColor,
-                             child: Padding(
-                               padding: const EdgeInsets.only(top: 8.0,bottom: 8,left: 2),
-                               child: Column(
-                                 crossAxisAlignment:
-                                 CrossAxisAlignment.start,
-                                 children: [
-                                   Row(
-                                     mainAxisAlignment:
-                                     MainAxisAlignment.center,
-                                     children: [
-                                       Expanded(
-                                         flex: 3,
-                                         child: Text(
-                                           items.customerName.toString(),
-                                           style: Styling.buttonTextBlack,
-                                           textAlign: TextAlign.left,
-                                         ),
-                                       ),
-                                       Expanded(
-                                         flex: 2,
-                                         child: Text(
-                                           items.itemName!.toString(),
-                                           style: Styling.buttonTextBlack,
-                                           textAlign: TextAlign.left,
-                                         ),
-                                       ),
-                                       Expanded(
-                                         flex: 2,
-                                         child: Text(
-                                           items.rSPPrice.toString(),
-                                           style: Styling.buttonTextBlack,
-                                           textAlign: TextAlign.center,
-                                         ),
-                                       ),
-                                       Expanded(
-                                         flex: 2,
-                                         child: Text(
-                                           items.discount.toString(),
-                                           style: Styling.buttonTextBlack,
-                                           textAlign: TextAlign.center,
-                                         ),
-                                       ),
-                                       Expanded(
-                                         flex: 1,
-                                         child: GestureDetector(
-                                           onTap: () {
-                                             showDialog(
-                                               context: context,
-                                               builder:
-                                                   (BuildContext context) {
-                                                 return AlertDialog(
-                                                   title: Text(
-                                                       "Confirm Deletion"),
-                                                   content: Text(
-                                                       "Are you sure you want to delete this record?"),
-                                                   actions: [
-                                                     TextButton(
-                                                       onPressed: () {
-                                                         Navigator.of(
-                                                             context)
-                                                             .pop(); // Close dialog without action
-                                                       },
-                                                       child: Text("No"),
-                                                     ),
-                                                     TextButton(
-                                                       onPressed:
-                                                           () async {
-                                                             addDiscountAPI(contexts,"DELETE",items.customerId!.toInt(),0,_selectedDate!,items.itemId!.toInt()!,0);
-                                                             Navigator.of(
-                                                             context)
-                                                             .pop(); // Close dialog
+                          },
+                          child: Text(
+                            "Save",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        ElevatedButton(
+                          style: ButtonStyle(
+                            backgroundColor:
+                            MaterialStateProperty.all<Color>(Color(0xff1280b3)),
+                          ),
+                          onPressed: () {
+                            Navigator.pop(
+                                contexts); // Close bottom sheet after saving
+                          },
+                          child: const Text("Close",
+                              style: TextStyle(color: Colors.white)),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Column(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(4),
+                              topRight: Radius.circular(4),
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.only(top: 8.0,bottom: 8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  flex: 3,
+                                  child: Text(
+                                    'Customer Name',
+                                    style: Styling.blueClrTextSmallBold,
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 2,
+                                  child: Text(
+                                    'Item Name',
+                                    style: Styling.blueClrTextSmallBold,
+                                    textAlign: TextAlign.left,
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 2,
+                                  child: Text(
+                                    'RSP Amt.',
+                                    style: Styling.blueClrTextSmallBold,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 2,
+                                  child: Text(
+                                    'Discount',
+                                    style: Styling.blueClrTextSmallBold,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Text(
+                                    'Action',
+                                    style: Styling.blueClrTextSmallBold,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        getConsumerCreditDiscountDetailListModel.isNotEmpty
+                            ? ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: getConsumerCreditDiscountDetailListModel.length,
+                          itemBuilder: (context, index) {
+                            final items = getConsumerCreditDiscountDetailListModel[index];
+                            Color backgroundColor = (index % 2 == 0)
+                                ? Colors.grey[
+                            300]! // Color for even index (first, third, fifth...)
+                                : Colors.white70!;
+                            return Container(
+                              color: backgroundColor,
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 8.0,bottom: 8,left: 2),
+                                child: Column(
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.center,
+                                      children: [
+                                        Expanded(
+                                          flex: 3,
+                                          child: Text(
+                                            items.customerName.toString(),
+                                            style: Styling.buttonTextBlack,
+                                            textAlign: TextAlign.left,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 2,
+                                          child: Text(
+                                            items.itemName!.toString(),
+                                            style: Styling.buttonTextBlack,
+                                            textAlign: TextAlign.left,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 2,
+                                          child: Text(
+                                            items.rSPPrice.toString(),
+                                            style: Styling.buttonTextBlack,
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 2,
+                                          child: Text(
+                                            items.discount.toString(),
+                                            style: Styling.buttonTextBlack,
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 1,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return AlertDialog(
+                                                    title: Text(
+                                                        "Confirm Deletion"),
+                                                    content: Text(
+                                                        "Are you sure you want to delete this record?"),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.of(
+                                                              context)
+                                                              .pop(); // Close dialog without action
+                                                        },
+                                                        child: Text("No"),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed:
+                                                            () async {
+                                                          addDiscountAPI(contexts,"DELETE",items.customerId!.toInt(),0,_selectedDate!,items.itemId!.toInt(),0,items.pkId!.toInt());
+                                                          Navigator.of(
+                                                              context)
+                                                              .pop(); // Close dialog
 
-                                                       },
-                                                       child: Text("Yes"),
-                                                     ),
-                                                   ],
-                                                 );
-                                               },
-                                             );
-                                           },
-                                           child: Icon(
-                                             Icons.delete,
-                                             size: 18,
-                                             color: Colors.red,
-                                           ),
-                                         ),
-                                       ),
-                                     ],
-                                   ),
-                                 ],
-                               ),
-                             ),
-                           );
-                         },
-                       )
-                           : Container(
-                         child: Text("No Data Available"),
-                       ),
-                     ],
-                   ),
-                 ],
-               ),
-             ),
-           );
-         });
+                                                        },
+                                                        child: Text("Yes"),
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            child: Icon(
+                                              Icons.delete,
+                                              size: 18,
+                                              color: Colors.red,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        )
+                            : Container(
+                          child: Text("No Data Available"),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          });
 
       },
     );
@@ -8246,7 +8424,7 @@ class _ManagerUpdateSaleCashUpdationState
     }
   }
 
-  Future<void> addDiscountAPI(BuildContext contexts,String mode, int customerId,double discountAmt,DateTime effectiveDate,int itemId,double rspAmt) async {
+  Future<void> addDiscountAPI(BuildContext contexts,String mode, int customerId,double discountAmt,DateTime effectiveDate,int itemId,double rspAmt,int pkId) async {
     EasyLoading.show();
     Constants.isNetworkAvailable =
     await InternetConnectionChecker().hasConnection;
@@ -8284,6 +8462,7 @@ class _ManagerUpdateSaleCashUpdationState
           "DistributorId": distributorIds ?? '',
           "EffectiveDate": formatted ?? '',
           "ItemId": itemId ?? '',
+          "PkId": pkId ?? '',
           "RSP_Price": rspAmt ?? '',
         };
 
@@ -8312,9 +8491,15 @@ class _ManagerUpdateSaleCashUpdationState
           _selectedItemModel = null;
           _retailSalePriceDisPopupController.clear();
           _discountAmountDisPopupController.clear();
-
+          debugPrint("selectedCustomerTypeId: $selectedCustomerTypeId");
           // Refresh the list (you might want to pass a setter or callback instead)
-          await fetchConsumerDiscountDetailsCredit();
+          if(selectedCustomerTypeId == null || selectedCustomerTypeId == ''){
+            await fetchConsumerDiscountDetailsCredit(0);
+          }else{
+            await fetchConsumerDiscountDetailsCredit(selectedCustomerTypeId!);
+          }
+
+
           EasyLoading.dismiss();
           Navigator.of(contexts).pop(true);
           _showDiscountBottomSheet(context);
@@ -8346,8 +8531,11 @@ class _ManagerUpdateSaleCashUpdationState
         isLoading = false;
         EasyLoading.dismiss();
         debugPrint("Error: $error");
+        debugPrint("Error: dicount error");
         // Return an empty list in case of an error
       }
     }
   }
 }
+
+

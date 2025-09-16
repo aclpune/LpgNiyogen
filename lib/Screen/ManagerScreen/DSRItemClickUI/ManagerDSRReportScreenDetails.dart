@@ -11,6 +11,7 @@ import '../../GodownKeeper/DeliveryBoyModel/DeliveryMenSaleListModel.dart';
 import '../../Utils/app_url.dart';
 import '../../Utils/constants.dart';
 import '../ClickModelClass/DSRReportExpenseModel.dart';
+
 import '../ClickModelClass/DSRReportScreenDetailModel.dart';
 import 'ManagerDSRReportScreenItemUI.dart'; // Your app URL constants
 
@@ -72,8 +73,8 @@ class _ManagerDSRReportScreenDetailsState extends State<ManagerDSRReportScreenDe
   getTotalBank() {
     double totalBank = 0.0;
     for (var item in getDSRReportScreenDetailmodel) {
-      if (item.bankAmt != null) {
-        totalBank += item.bankAmt!;
+      if (item.merchantQR != null) {
+        totalBank += item.merchantQR!;
       }
     }
     return totalBank;
@@ -90,6 +91,16 @@ class _ManagerDSRReportScreenDetailsState extends State<ManagerDSRReportScreenDe
     return totalCredit;
   }
 
+  getTotalPrepaidOnline() {
+    double totalPrepaidOnline = 0.0;
+    for (var item in getDSRReportScreenDetailmodel) {
+      if (item.prepaidAmt != null) {
+        totalPrepaidOnline += item.prepaidAmt!;
+      }
+    }
+    return totalPrepaidOnline;
+  }
+
   getExpenseCashAmount() {
     double totalCredit = 0.0;
     for (var item in getDSRReportExpensemodel) {
@@ -99,6 +110,7 @@ class _ManagerDSRReportScreenDetailsState extends State<ManagerDSRReportScreenDe
     }
     return totalCredit;
   }
+
   getExpenseBankAmount() {
     double totalCredit = 0.0;
     for (var item in getDSRReportExpensemodel) {
@@ -108,6 +120,7 @@ class _ManagerDSRReportScreenDetailsState extends State<ManagerDSRReportScreenDe
     }
     return totalCredit;
   }
+
   Future<void> fetchExpenseData(String flag) async {
     Constants.isNetworkAvailable =
     await InternetConnectionChecker().hasConnection;
@@ -188,7 +201,6 @@ class _ManagerDSRReportScreenDetailsState extends State<ManagerDSRReportScreenDe
         String? distributorId = prefs.getString('DistributorId');
         String? bearerToken = prefs.getString('token');
 
-        // DateTime now = DateTime.now();
         String formattedDate = DateFormat('yyyy-MM-dd').format(date!);
         debugPrint("formattedDate :- ${formattedDate.toString()}");
         if (bearerToken == null) {
@@ -238,11 +250,26 @@ class _ManagerDSRReportScreenDetailsState extends State<ManagerDSRReportScreenDe
       }
     }
   }
+  //To show screen mode title in lower case
+  String _capitalize(String s) {
+    if (s.isEmpty) return s;
+    return s[0].toUpperCase() + s.substring(1);
+  }
+
   @override
   Widget build(BuildContext context) {
      return Scaffold(
       appBar: AppBar(
-        title: Text('${screenMode} Details'),
+        //title: Text('${screenMode} Details'),
+        // title: Text('${_capitalize(screenMode!.toLowerCase())} Details'),
+        title: Text(
+          screenMode != null
+              ? '${_capitalize(screenMode!.toLowerCase())} Details'
+              : 'Unknown Details',  // Provide a fallback value in case it's null
+          textScaler:
+          TextScaler.noScaling,
+        ),
+
       ),
       body: isLoading
           ? const Center(
@@ -266,6 +293,8 @@ class _ManagerDSRReportScreenDetailsState extends State<ManagerDSRReportScreenDe
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
+                          textScaler:
+                          TextScaler.noScaling,
                         ),
                       ),
                       Expanded(
@@ -276,6 +305,8 @@ class _ManagerDSRReportScreenDetailsState extends State<ManagerDSRReportScreenDe
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
+                          textScaler:
+                          TextScaler.noScaling,
                         ),
                       ),
                       Visibility(
@@ -288,6 +319,8 @@ class _ManagerDSRReportScreenDetailsState extends State<ManagerDSRReportScreenDe
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
+                            textScaler:
+                            TextScaler.noScaling,
                           ),
                         ),
                       ),
@@ -301,6 +334,8 @@ class _ManagerDSRReportScreenDetailsState extends State<ManagerDSRReportScreenDe
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                             ),
+                            textScaler:
+                            TextScaler.noScaling,
                           ),
                         ),
                       ),
@@ -314,6 +349,8 @@ class _ManagerDSRReportScreenDetailsState extends State<ManagerDSRReportScreenDe
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
+                          textScaler:
+                          TextScaler.noScaling,
                         ),
                       ),
                     ],
@@ -340,32 +377,45 @@ class _ManagerDSRReportScreenDetailsState extends State<ManagerDSRReportScreenDe
             )
                 : Container(child: Text('No Records Found'))
                 : getDSRReportScreenDetailmodel.isNotEmpty?
-            getDSRReportScreenDetailmodel.any((item) => screenMode == "Credit"? item.creditAmt! > 0:screenMode == "Cash"?item.cashAmt! > 0:item.bankAmt! > 0)
-                ?
-
+            // getDSRReportScreenDetailmodel.any((item) => screenMode == "Credit"? item.creditAmt! > 0:screenMode == "Cash"?item.cashAmt! > 0:screenMode == "PREPAID"?item.prepaidAmt! > 0:screenMode == "MERCHANT"?item.merchantQR! > 0)
+            getDSRReportScreenDetailmodel.any((item) =>
+            screenMode == "Credit" ? item.creditAmt! > 0 :
+            screenMode == "Cash" ? item.cashAmt! > 0 :
+            screenMode == "PREPAID" ? item.prepaidAmt! > 0 :
+            screenMode == "MERCHANT" ? item.merchantQR! > 0 :
+            false
+            )
+          ?
             ListView.builder(
               physics: const BouncingScrollPhysics(),
               shrinkWrap: true,
-              itemCount: screenMode == "Cash"
+              itemCount:
+                 screenMode == "Cash"
                   ? getDSRReportScreenDetailmodel
                   .where((item) => item.cashAmt! > 0)
                   .length
-                  : screenMode == "Bank"
+                  : screenMode == "MERCHANT"
                   ? getDSRReportScreenDetailmodel
-                  .where((item) => item.bankAmt != null && item.bankAmt! > 0)
+                  .where((item) => item.merchantQR != null && item.merchantQR! > 0)
                   .length
                   : screenMode == "Credit"
                   ? getDSRReportScreenDetailmodel
                   .where((item) => item.creditAmt! > 0)
                   .length
+                     : screenMode == "PREPAID"
+                     ? getDSRReportScreenDetailmodel
+                     .where((item) => item.prepaidAmt! > 0)
+                     .length
                   : getDSRReportScreenDetailmodel.length,
               itemBuilder: (context, index) {
                 final filteredList = screenMode == "Cash"
                     ? getDSRReportScreenDetailmodel.where((item) => item.cashAmt != null && item.cashAmt! > 0).toList()
-                    : screenMode == "Bank"
-                    ? getDSRReportScreenDetailmodel.where((item) => item.bankAmt != null && item.bankAmt! > 0).toList()
+                    : screenMode == "MERCHANT"
+                    ? getDSRReportScreenDetailmodel.where((item) => item.merchantQR != null && item.merchantQR! > 0).toList()
                     : screenMode == "Credit"
                     ? getDSRReportScreenDetailmodel.where((item) => item.creditAmt != null && item.creditAmt! > 0).toList()
+                    : screenMode == "PREPAID"
+                    ? getDSRReportScreenDetailmodel.where((item) => item.prepaidAmt != null && item.prepaidAmt! > 0).toList()
                     : getDSRReportScreenDetailmodel;
                 return ManagerDSRReportScreenItemUI(
                   filteredList[index],
@@ -391,16 +441,20 @@ class _ManagerDSRReportScreenDetailsState extends State<ManagerDSRReportScreenDe
                             ? 'Total: ${formatCurrency(getTotalCash())}' // Display total cash
                             : '',
                         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        textScaler:
+                        TextScaler.noScaling,
                       ),
                     ),
                     // Total Amount for Bank
                     Align(
                       alignment: Alignment.centerRight, // Align text to the right
                       child: Text(
-                        screenMode == 'Bank'
+                        screenMode == 'MERCHANT'
                             ? 'Total: ${formatCurrency(getTotalBank())}' // Display total bank
                             : '',
                         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        textScaler:
+                        TextScaler.noScaling,
                       ),
                     ),
                     // Total Amount for Credit
@@ -411,6 +465,19 @@ class _ManagerDSRReportScreenDetailsState extends State<ManagerDSRReportScreenDe
                             ? 'Total: ${formatCurrency(getTotalCredit())}' // Display total credit
                             : '',
                         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        textScaler:
+                        TextScaler.noScaling,
+                      ),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight, // Align text to the right
+                      child: Text(
+                        screenMode == 'PREPAID'
+                            ? 'Total: ${formatCurrency(getTotalPrepaidOnline())}' // Display total credit
+                            : '',
+                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                        textScaler:
+                        TextScaler.noScaling,
                       ),
                     ),
                     // Additional Padding and Total Amount for Expenses
@@ -426,6 +493,8 @@ class _ManagerDSRReportScreenDetailsState extends State<ManagerDSRReportScreenDe
                               child: Text(
                                 'Cash Amt.- ${formatCurrency(getExpenseCashAmount())}',
                                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                textScaler:
+                                TextScaler.noScaling,
                               ),
                             ),
                           SizedBox(width: 8), // Add a gap between cash and bank amounts
@@ -436,6 +505,8 @@ class _ManagerDSRReportScreenDetailsState extends State<ManagerDSRReportScreenDe
                               child: Text(
                                 'Bank Amt.- ${formatCurrency(getExpenseBankAmount())}',
                                 style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                textScaler:
+                                TextScaler.noScaling,
                               ),
                             ),
                         ],

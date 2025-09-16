@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../ConstantScreen/widgets.dart';
+import '../IOSVersionUpdateService.dart';
 import '../UndocumentedSVDash/DashboardUndocumentedDetails.dart';
 import '../User/Login/provider/LoginProvider.dart';
 import '../User/splashscreen/page/splash_screen.dart';
@@ -25,6 +26,7 @@ import '../Utils/shared_preference.dart';
 import 'package:http/http.dart' as http;
 
 import 'CashHandoverScreen.dart';
+import 'DashboardItemClickUI/CreditSaleCountDetailListUI.dart';
 import 'DashboardItemClickUI/DashboardPostPaidVerifPendDetails.dart';
 import 'DashboardItemClickUI/DashboardPrepaidDetailUI.dart';
 import 'DashboardItemClickUI/DashboardPrepaidDetails.dart';
@@ -73,7 +75,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
   bool isLoading = true;
   String? mobileNo, cDCMDPendSince, settlementPendSince,totalPendingSettSince;
   int? deliveryMenCount,todaysPunchingInNiyojanC,pendingInNiyojanC,pendingInCdcmsC,todaysIncorrectPunchingC,settlPayReceiveDelPendC,settlDelPayPendC,oldBkgPendNewBkgRecv,delDonNiyoJanPunPend,niyoJanPunDelPend, postPaidVerifPend,
-      sVPendingStk, tVPendingStk,paymtDoneBtDelPendAmt,delDoneBtPaymtPendAmt,totalPendingSettCnt,totalPendingSettAmt,postPaidVerifPendAmt,UndocumentedSV;
+      sVPendingStk, tVPendingStk,paymtDoneBtDelPendAmt,delDoneBtPaymtPendAmt,totalPendingSettCnt,totalPendingSettAmt,postPaidVerifPendAmt,UndocumentedSV,TotalCrdtOutstd;
   double? totalAmount,
       totalIncome,
       totalExpense,
@@ -120,7 +122,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
       UpdateService.checkForUpdate(context);
       debugPrint("Firebase initialize Dash${Platform}");
     } else {
-      //1IosVersionUpdateCheck().checkForUpdate(context);
+      IosVersionUpdateCheck().checkForUpdate(context);
       debugPrint("Firebase not initialize");
     }
     debugPrint("ManagerDashboardScreen: initState called");
@@ -212,60 +214,69 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                   ),
                                                   const SizedBox(height: 15),
                                                   // Punching row
-                                                  Text(
-                                                    "Today's Punched",
-                                                    style: Styling.itemBlackTestTwoo,
-                                                    textScaler: TextScaler.noScaling,
+                                                  InkWell(
+                                                    onTap: () {
+                                                      showBottomSheet(context);
+                                                    },
+                                                    child: Text(
+                                                      "Today's Punched",
+                                                      style: Styling.itemBlackTestTwoo,
+                                                      textScaler: TextScaler.noScaling,
+                                                    ),
                                                   ),
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      Text(
-                                                        (todaysPunchingInNiyojanC ?? 0).toString(),
-                                                        style: Styling.bodyTitleBigBoldDashtwo,
-                                                        textScaler: TextScaler.noScaling,
-                                                      ),
-                                                      InkWell(
-                                                        onTap: () {
-                                                          showBottomSheet(context);
-                                                        },
-                                                        child: Icon(
-                                                          Icons.keyboard_arrow_down_sharp,
-                                                          size: 24,
-                                                          color: Colors.black54,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(height: 15),
-                                                  // Settled row
-                                                  Text(
-                                                    "Outstanding\nSettlement",
-                                                    style: Styling.itemBlackTestTwoo,
-                                                    textScaler: TextScaler.noScaling,
-                                                  ),
-                                                  SizedBox(height: 8),
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      Expanded(
-                                                        child: Text(
-                                                          formatCurrency(totalPendAmount),
+                                                  InkWell(
+                                                    onTap: () {
+                                                      showBottomSheet(context);
+                                                    },
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        Text(
+                                                          (todaysPunchingInNiyojanC ?? 0).toString(),
                                                           style: Styling.bodyTitleBigBoldDashtwo,
                                                           textScaler: TextScaler.noScaling,
                                                         ),
-                                                      ),
-                                                      InkWell(
-                                                        onTap: () {
-                                                          showBottomSheetPrepaidSettlementStatus(context);
-                                                        },
-                                                        child: Icon(
-                                                          Icons.keyboard_arrow_down_sharp,
-                                                          size: 24,
-                                                          color: Colors.black54,
+                                                          Icon(
+                                                            Icons.keyboard_arrow_down_sharp,
+                                                            size: 24,
+                                                            color: Colors.black54,
+                                                          ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 15),
+                                                  // Settled row
+                                                  InkWell(
+                                                      onTap: () {
+                                                      showBottomSheetPrepaidSettlementStatus(context);
+                                                    },
+                                                    child: Text(
+                                                      "Outstanding\nSettlement",
+                                                      style: Styling.itemBlackTestTwoo,
+                                                      textScaler: TextScaler.noScaling,
+                                                    ),
+                                                  ),
+                                                  InkWell(
+                                                      onTap: () {
+                                                      showBottomSheetPrepaidSettlementStatus(context);
+                                                    },
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        Expanded(
+                                                          child: Text(
+                                                            formatCurrency(totalPendAmount),
+                                                            style: Styling.bodyTitleBigBoldDashtwo,
+                                                            textScaler: TextScaler.noScaling,
+                                                          ),
                                                         ),
-                                                      ),
-                                                    ],
+                                                          Icon(
+                                                            Icons.keyboard_arrow_down_sharp,
+                                                            size: 24,
+                                                            color: Colors.black54,
+                                                          ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ],
                                               ),
@@ -301,11 +312,11 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                             style: Styling.bodyTitleBigBoldDashGrey,
                                                             textScaler: TextScaler.noScaling,
                                                           ),
-                                                          Icon(
-                                                            Icons.keyboard_arrow_right_sharp,
-                                                            size: 24,
-                                                            color: Colors.black54,
-                                                          ),
+                                                          // Icon(
+                                                          //   Icons.keyboard_arrow_right_sharp,
+                                                          //   size: 24,
+                                                          //   color: Colors.black54,
+                                                          // ),
                                                         ],
                                                       ),
                                                     ),
@@ -343,11 +354,11 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                             style: Styling.bodyTitleBigBoldDashGrey,
                                                             textScaler: TextScaler.noScaling,
                                                           ),
-                                                          Icon(
-                                                            Icons.keyboard_arrow_right_sharp,
-                                                            size: 24,
-                                                            color: Colors.black54,
-                                                          ),
+                                                          // Icon(
+                                                          //   Icons.keyboard_arrow_right_sharp,
+                                                          //   size: 24,
+                                                          //   color: Colors.black54,
+                                                          // ),
                                                         ],
                                                       ),
                                                     ),
@@ -369,6 +380,76 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                 ),
                               SizedBox(height: 10),
                                   Column(children: [
+                                    Row(children: [
+                                      Icon(
+                                        Icons.bolt_outlined,
+                                        size: 26,
+                                        // Bigger icon for a more clickable feel
+                                        color: Colors.black54,
+                                      ),
+                                      Text(
+                                        "Credit Sale",
+                                        style: Styling.bodyTitleBigBoldDashGrey,
+                                        textScaler: TextScaler.noScaling,
+                                      )
+                                    ]),
+                                    SizedBox(height: 10),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                            width: 1, color: Color(0xFFfbe9e9)),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Row(
+                                          children: [
+                                            CircleAvatar(
+                                              radius: 24,
+                                              backgroundColor: Color(0xFFfbe9e9),
+                                              child: const Icon(Icons.pending_actions,
+                                                  color: Colors.black, size: 24),
+                                            ),
+                                            const SizedBox(width: 25),
+                                            Column(
+                                              children: [
+                                                GestureDetector(
+                                                  onTap: (TotalCrdtOutstd ?? 0)! > 0
+                                                      ? () {
+                                                    Navigator.pushNamed(context, CreditSaleCountDetailListUI.screenName);
+                                                  }
+                                                      : null,
+                                                  behavior: HitTestBehavior.opaque,
+                                                  child: Text(
+                                                    formatCurrency(TotalCrdtOutstd?.toDouble() ?? 0.0),
+                                                    style: Styling
+                                                        .itemGreyTextBig
+                                                        .copyWith(
+                                                      color: Colors.blue,
+                                                      decoration:
+                                                      TextDecoration.underline,
+                                                      decorationColor: Colors.blue,
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                    textScaler: TextScaler.noScaling,
+                                                  ),
+                                                ),
+                                                SizedBox(height: 4),
+                                                Text(
+                                                  'Pending Amt.',
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: Colors.black54),
+                                                  textScaler: TextScaler.noScaling,
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 10),
                                     Row(children: [
                                       Icon(
                                         Icons.bolt_outlined,
@@ -425,7 +506,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                     SizedBox(height: 4),
                                                     Text(
                                                       "Today's Imbalance",
-                                                      style: Styling.itemTitleDash.copyWith(fontSize: 18),
+                                                      style: Styling.itemTitleDash.copyWith(fontSize: 16),
                                                       textAlign: TextAlign.left,
                                                       textScaler: TextScaler.noScaling,
                                                       overflow: TextOverflow.ellipsis,
@@ -477,7 +558,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                     SizedBox(height: 4),
                                                     Text(
                                                       "Total Imbalance",
-                                                      style: Styling.itemTitleDash.copyWith(fontSize: 18),
+                                                      style: Styling.itemTitleDash.copyWith(fontSize: 16),
                                                       textAlign: TextAlign.left,
                                                       textScaler: TextScaler.noScaling,
                                                       overflow: TextOverflow.ellipsis,
@@ -1135,15 +1216,12 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
 
                                                   // Replace this with your dynamic data
                                                   style: Styling
-                                                      .bodyTitleBigBoldDashGrey
+                                                      .itemGreyTextBig
                                                       .copyWith(
                                                     color: Colors.blue,
-                                                    // Make the text blue like a link
-                                                    decoration: TextDecoration
-                                                        .underline,
-                                                    // Underline the text
-                                                    decorationColor:
-                                                    Colors.blue,
+                                                    decoration:
+                                                    TextDecoration.underline,
+                                                    decorationColor: Colors.blue,
                                                   ),
                                                   textAlign: TextAlign.center,
                                                   textScaler:
@@ -1162,13 +1240,12 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                   formatCurrency(postPaidVerifPendAmt?.toDouble() ?? 0.0),
 
                                                   style: Styling
-                                                      .bodyTitleBigBoldDashGrey
+                                                      .itemGreyTextBig
                                                       .copyWith(
                                                     color: Colors.blue,
-                                                    decoration: TextDecoration
-                                                        .underline,
-                                                    decorationColor:
-                                                    Colors.blue,
+                                                    decoration:
+                                                    TextDecoration.underline,
+                                                    decorationColor: Colors.blue,
                                                   ),
                                                   textAlign: TextAlign.center,
                                                   textScaler:
@@ -1327,7 +1404,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                         child:
                                                         Text(
                                                           "Amount",
-                                                          style: Styling.itemTitleDash,
+                                                          style: Styling.bodyTitleBigBoldDashQuick,
                                                           textAlign: TextAlign.start,
                                                           textScaler:
                                                           TextScaler.noScaling,
@@ -2229,6 +2306,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                   getManagerDashboarDetail[0].totalPendingSettAmt?.toInt() ?? 0;
               postPaidVerifPendAmt = getManagerDashboarDetail[0].postPaidVerifPendAmt?.toInt() ?? 0;
               UndocumentedSV = getManagerDashboarDetail[0].UndocumentedSV?.toInt() ?? 0;
+              TotalCrdtOutstd = getManagerDashboarDetail[0].TotalCrdtOutstd?.toInt() ?? 0;
 
             }
           });

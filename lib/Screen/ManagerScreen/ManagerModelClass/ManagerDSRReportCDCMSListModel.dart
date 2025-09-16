@@ -38,7 +38,8 @@
         num? emptyDiff,
         num? defectiveDiff,
         num? total,
-        String? stockUpdatedOn,}){
+        String? stockUpdatedOn,
+        num? StkRecoId,}){
       _distributorId = distributorId;
       _godownId = godownId;
       _date = date;
@@ -58,6 +59,7 @@
       _defectiveDiff = defectiveDiff;
       _total = total;
       _stockUpdatedOn = stockUpdatedOn;
+      _StkRecoId = StkRecoId;
   }
 
     ManagerDsrReportCdcmsListModel.fromJson(dynamic json) {
@@ -80,6 +82,7 @@
       _defectiveDiff = json['DefectiveDiff'];
       _total = json['Total'];
       _stockUpdatedOn = json['StockUpdatedOn'];
+      _StkRecoId = json['StkRecoId'];
     }
     num? _distributorId;
     num? _godownId;
@@ -100,6 +103,7 @@
     num? _defectiveDiff;
     num? _total;
     String? _stockUpdatedOn;
+    num? _StkRecoId;
   ManagerDsrReportCdcmsListModel copyWith({  num? distributorId,
     num? godownId,
     String? date,
@@ -119,6 +123,7 @@
     num? defectiveDiff,
     num? total,
     String? stockUpdatedOn,
+    num? StkRecoId,
   }) => ManagerDsrReportCdcmsListModel(  distributorId: distributorId ?? _distributorId,
     godownId: godownId ?? _godownId,
     date: date ?? _date,
@@ -138,6 +143,7 @@
     defectiveDiff: defectiveDiff ?? _defectiveDiff,
     total: total ?? _total,
     stockUpdatedOn: stockUpdatedOn ?? _stockUpdatedOn,
+    StkRecoId: StkRecoId ?? _StkRecoId,
   );
     num? get distributorId => _distributorId;
     num? get godownId => _godownId;
@@ -158,6 +164,7 @@
     num? get defectiveDiff => _defectiveDiff;
     num? get total => _total;
     String? get stockUpdatedOn => _stockUpdatedOn;
+    num? get StkRecoId => _StkRecoId;
 
     Map<String, dynamic> toJson() {
       final map = <String, dynamic>{};
@@ -180,6 +187,7 @@
       map['DefectiveDiff'] = _defectiveDiff;
       map['Total'] = _total;
       map['StockUpdatedOn'] = _stockUpdatedOn;
+      map['StkRecoId'] = _StkRecoId;
       return map;
     }
 
