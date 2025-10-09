@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
+
 // import 'dart:nativewrappers/_internal/vm/lib/typed_data_patch.dart';
 import 'dart:ui';
 
@@ -35,12 +36,12 @@ import 'ManagerModelClass/ManagerDSRReportCDCMSListModel.dart';
 import 'ManagerModelClass/ManagerDSRReportCashDeniminationModel.dart';
 import 'ManagerModelClass/ManagerDSRReportCashHandOverModel.dart';
 import 'ManagerModelClass/ManagerDSRReportExpenseDetailListModel.dart';
-import 'ManagerModelClass/ManagerDSRReportIncomeSalesModel.dart';
 
 import 'dart:typed_data';
 
 import 'ManagerModelClass/ManagerDsrReoprtCashFlowSummaryMode.dart';
-import 'ManagerModelClass/ManagerDsrReportSavedDataFetchModelList.dart';  // Correct import for ByteData
+import 'ManagerModelClass/ManagerDsrReportIncomeSalesModel.dart';
+import 'ManagerModelClass/ManagerDsrReportSavedDataFetchModelList.dart'; // Correct import for ByteData
 
 class ManagerDSRReportScreen extends StatefulWidget {
   static const screenName = '/managerDSRReportScreen';
@@ -74,9 +75,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
   List<dynamic> dataCashFlowSummaryAmountList = [];
   List<ManagerDsrReportCdcmsListModel> cdcmsListData = [];
 
-
-
   double totalAmountCashDenomination = 0;
+
   // Create lists to store the differences for each item
   List<double> filledDiffList = [];
   List<double> emptyDiffList = [];
@@ -84,6 +84,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
 
   List<double> totalDiffList = [];
   String? startOnDate;
+
   ///regulator
   List<dynamic> dataIncomeRegulatorReplacementList = [];
 
@@ -134,7 +135,6 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
   final ScrollController _scrollController = ScrollController();
   List<GlobalKey> _tabKeys = List.generate(6, (_) => GlobalKey());
 
-
   void _scrollTabsRight() {
     _scrollController.animateTo(
       _scrollController.offset + 100, // Adjust scroll amount
@@ -167,23 +167,23 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
   }
 
   late bool isDateValid;
+
   @override
   Widget build(BuildContext context) {
-   isDateValid = selectedDate.isAfter(today.subtract(Duration(days: 1)));
-   var argLRAdd = ModalRoute.of(context)?.settings.arguments;
-    return
-      WillPopScope(
-        onWillPop: () async {
-          // Show a confirmation dialog
-          if (argLRAdd == "fromDrawer") {
-            Navigator.pushReplacementNamed(context, '/bottomNavBarExample');
-            return false;
-          } else {
-            Navigator.pushReplacementNamed(context, '/bottomNavBarExample');
-            return false;
-          } // In case `null` is returned, return `false`
-        },
-        child: Scaffold(
+    isDateValid = selectedDate.isAfter(today.subtract(Duration(days: 1)));
+    var argLRAdd = ModalRoute.of(context)?.settings.arguments;
+    return WillPopScope(
+      onWillPop: () async {
+        // Show a confirmation dialog
+        if (argLRAdd == "fromDrawer") {
+          Navigator.pushReplacementNamed(context, '/bottomNavBarExample');
+          return false;
+        } else {
+          Navigator.pushReplacementNamed(context, '/bottomNavBarExample');
+          return false;
+        } // In case `null` is returned, return `false`
+      },
+      child: Scaffold(
         // appBar: CustomAppBarManager(
         //   title: 'Daily Sale Report', // Title or hint text for the text field
         // ),
@@ -476,45 +476,58 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
 
                       Container(
                         child: Padding(
-                          padding: const EdgeInsets.all(4.0), // Reduced padding
+                          padding: const EdgeInsets.all(4.0),
+                          // Reduced padding
                           child: Column(
                             mainAxisSize: MainAxisSize.min, // Important
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   // First Column (Cash & Merchant)
                                   Column(
                                     mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         children: [
                                           SizedBox(
                                             width: 60,
-                                            child: Text('Cash:', style: Styling.itemGreyTextSmallReport,
-                                            textScaler:
-                                              TextScaler.noScaling,),
+                                            child: Text(
+                                              'Cash:',
+                                              style: Styling
+                                                  .itemGreyTextSmallReport,
+                                              textScaler: TextScaler.noScaling,
+                                            ),
                                           ),
                                           GestureDetector(
                                             onTap: () {
                                               Navigator.pushNamed(
                                                 context,
-                                                ManagerDSRReportScreenDetails.screenName,
-                                                arguments: {"ScreenMode": "Cash", "Date": selectedDate},
+                                                ManagerDSRReportScreenDetails
+                                                    .screenName,
+                                                arguments: {
+                                                  "ScreenMode": "Cash",
+                                                  "Date": selectedDate
+                                                },
                                               );
                                             },
                                             child: Text(
-                                              formatCurrency(totalCashAmountCashFlow),
-                                              style: Styling.itemBlackTestSmallReportBold.copyWith(
+                                              formatCurrency(
+                                                  totalCashAmountCashFlow),
+                                              style: Styling
+                                                  .itemBlackTestSmallReportBold
+                                                  .copyWith(
                                                 color: Colors.blue,
-                                                decoration: TextDecoration.underline,
+                                                decoration:
+                                                    TextDecoration.underline,
                                                 decorationColor: Colors.blue,
                                               ),
-                                              textScaler:
-                                              TextScaler.noScaling,
+                                              textScaler: TextScaler.noScaling,
                                             ),
                                           ),
                                         ],
@@ -524,26 +537,37 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                         children: [
                                           SizedBox(
                                             width: 90,
-                                            child: Text('Merchant QR:', style: Styling.itemGreyTextSmallReport,  textScaler:
-                                            TextScaler.noScaling,),
+                                            child: Text(
+                                              'Merchant QR:',
+                                              style: Styling
+                                                  .itemGreyTextSmallReport,
+                                              textScaler: TextScaler.noScaling,
+                                            ),
                                           ),
                                           GestureDetector(
                                             onTap: () {
                                               Navigator.pushNamed(
                                                 context,
-                                                ManagerDSRReportScreenDetails.screenName,
-                                                arguments: {"ScreenMode": "MERCHANT", "Date": selectedDate},
+                                                ManagerDSRReportScreenDetails
+                                                    .screenName,
+                                                arguments: {
+                                                  "ScreenMode": "MERCHANT",
+                                                  "Date": selectedDate
+                                                },
                                               );
                                             },
                                             child: Text(
-                                             formatCurrency(totalBankAmountCashFlow),
-                                              style: Styling.itemBlackTestSmallReportBold.copyWith(
+                                              formatCurrency(
+                                                  totalBankAmountCashFlow),
+                                              style: Styling
+                                                  .itemBlackTestSmallReportBold
+                                                  .copyWith(
                                                 color: Colors.blue,
-                                                decoration: TextDecoration.underline,
+                                                decoration:
+                                                    TextDecoration.underline,
                                                 decorationColor: Colors.blue,
                                               ),
-                                              textScaler:
-                                              TextScaler.noScaling,
+                                              textScaler: TextScaler.noScaling,
                                             ),
                                           ),
                                         ],
@@ -586,32 +610,44 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                   // Second Column (Credit & Expenses)
                                   Column(
                                     mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         children: [
                                           SizedBox(
                                             width: 80,
-                                            child: Text('Credit:', style: Styling.itemGreyTextSmallReport,  textScaler:
-                                            TextScaler.noScaling,),
+                                            child: Text(
+                                              'Credit:',
+                                              style: Styling
+                                                  .itemGreyTextSmallReport,
+                                              textScaler: TextScaler.noScaling,
+                                            ),
                                           ),
                                           GestureDetector(
                                             onTap: () {
                                               Navigator.pushNamed(
                                                 context,
-                                                ManagerDSRReportScreenDetails.screenName,
-                                                arguments: {"ScreenMode": "Credit", "Date": selectedDate},
+                                                ManagerDSRReportScreenDetails
+                                                    .screenName,
+                                                arguments: {
+                                                  "ScreenMode": "Credit",
+                                                  "Date": selectedDate
+                                                },
                                               );
                                             },
                                             child: Text(
-                                              formatCurrency(totalCreditAmountCashFlow),
-                                              style: Styling.itemBlackTestSmallReportBold.copyWith(
+                                              formatCurrency(
+                                                  totalCreditAmountCashFlow),
+                                              style: Styling
+                                                  .itemBlackTestSmallReportBold
+                                                  .copyWith(
                                                 color: Colors.blue,
-                                                decoration: TextDecoration.underline,
+                                                decoration:
+                                                    TextDecoration.underline,
                                                 decorationColor: Colors.blue,
                                               ),
-                                              textScaler:
-                                              TextScaler.noScaling,
+                                              textScaler: TextScaler.noScaling,
                                             ),
                                           ),
                                         ],
@@ -621,27 +657,37 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                         children: [
                                           SizedBox(
                                             width: 80,
-                                            child: Text('Expenses:', style: Styling.itemGreyTextSmallReport,
-                                              textScaler:
-                                              TextScaler.noScaling,),
+                                            child: Text(
+                                              'Expenses:',
+                                              style: Styling
+                                                  .itemGreyTextSmallReport,
+                                              textScaler: TextScaler.noScaling,
+                                            ),
                                           ),
                                           GestureDetector(
                                             onTap: () {
                                               Navigator.pushNamed(
                                                 context,
-                                                ManagerDSRReportScreenDetails.screenName,
-                                                arguments: {"ScreenMode": "Expenses", "Date": selectedDate},
+                                                ManagerDSRReportScreenDetails
+                                                    .screenName,
+                                                arguments: {
+                                                  "ScreenMode": "Expenses",
+                                                  "Date": selectedDate
+                                                },
                                               );
                                             },
                                             child: Text(
-                                              formatCurrency(totalExpenseAmountCashFlow),
-                                              style: Styling.itemBlackTestSmallReportBold.copyWith(
+                                              formatCurrency(
+                                                  totalExpenseAmountCashFlow),
+                                              style: Styling
+                                                  .itemBlackTestSmallReportBold
+                                                  .copyWith(
                                                 color: Colors.blue,
-                                                decoration: TextDecoration.underline,
+                                                decoration:
+                                                    TextDecoration.underline,
                                                 decorationColor: Colors.blue,
                                               ),
-                                              textScaler:
-                                              TextScaler.noScaling,
+                                              textScaler: TextScaler.noScaling,
                                             ),
                                           ),
                                         ],
@@ -650,33 +696,40 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                   ),
                                 ],
                               ),
-
                               SizedBox(height: 7),
                               Row(
                                 children: [
                                   SizedBox(
                                     width: 100,
-                                    child: Text('Prepaid Online:', style: Styling.itemGreyTextSmallReport,
-                                      textScaler:
-                                      TextScaler.noScaling,),
+                                    child: Text(
+                                      'Prepaid Online:',
+                                      style: Styling.itemGreyTextSmallReport,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
                                   ),
                                   GestureDetector(
                                     onTap: () {
                                       Navigator.pushNamed(
                                         context,
-                                        ManagerDSRReportScreenDetails.screenName,
-                                        arguments: {"ScreenMode": "PREPAID", "Date": selectedDate},
+                                        ManagerDSRReportScreenDetails
+                                            .screenName,
+                                        arguments: {
+                                          "ScreenMode": "PREPAID",
+                                          "Date": selectedDate
+                                        },
                                       );
                                     },
                                     child: Text(
-                                      formatCurrency(totalPrepaidOnlineCashFlow),
-                                      style: Styling.itemBlackTestSmallReportBold.copyWith(
+                                      formatCurrency(
+                                          totalPrepaidOnlineCashFlow),
+                                      style: Styling
+                                          .itemBlackTestSmallReportBold
+                                          .copyWith(
                                         color: Colors.blue,
                                         decoration: TextDecoration.underline,
                                         decorationColor: Colors.blue,
                                       ),
-                                      textScaler:
-                                      TextScaler.noScaling,
+                                      textScaler: TextScaler.noScaling,
                                     ),
                                   ),
                                 ],
@@ -685,7 +738,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                           ),
                         ),
                       ),
-                      SizedBox(height: 4), // Optional spacing between containers
+                      SizedBox(height: 4),
+                      // Optional spacing between containers
                       Container(
                         padding: const EdgeInsets.all(4.0),
                         child: Column(
@@ -697,8 +751,11 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                               children: [
                                 Row(
                                   children: [
-                                    Text("${selectedDate.toLocal()}".split(' ')[0], style: TextStyle(fontSize: 14),  textScaler:
-                                    TextScaler.noScaling,),
+                                    Text(
+                                      "${selectedDate.toLocal()}".split(' ')[0],
+                                      style: TextStyle(fontSize: 14),
+                                      textScaler: TextScaler.noScaling,
+                                    ),
                                     IconButton(
                                       icon: Icon(Icons.calendar_today),
                                       onPressed: () => _selectDate(context),
@@ -709,23 +766,29 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                 ElevatedButton(
                                   onPressed: () {
                                     checkIfSavedOrNot(selectedDate);
-                                    print("Date Submitted: ${selectedDate.toLocal()}");
+                                    print(
+                                        "Date Submitted: ${selectedDate.toLocal()}");
                                   },
                                   style: ButtonStyle(
                                     padding: MaterialStateProperty.all(
-                                      EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                      EdgeInsets.symmetric(
+                                          horizontal: 12, vertical: 8),
                                     ),
                                     backgroundColor: MaterialStateProperty.all(
                                       Color(0xff1280b3),
                                     ),
                                     shape: MaterialStateProperty.all(
                                       RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10), // Small rounding
+                                        borderRadius: BorderRadius.circular(
+                                            10), // Small rounding
                                       ),
                                     ),
                                   ),
-                                  child: Text('Show DSR', style: TextStyle(color: Colors.white),  textScaler:
-                                  TextScaler.noScaling,),
+                                  child: Text(
+                                    'Show DSR',
+                                    style: TextStyle(color: Colors.white),
+                                    textScaler: TextScaler.noScaling,
+                                  ),
                                   // style:
                                   // ButtonStyle(
                                   //   padding: MaterialStateProperty.all(EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
@@ -770,16 +833,19 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                               controller: _scrollController,
                               child: Row(
                                 children: [
-                                  _buildTabText('Income', 0),
+                                  _buildTabText('Revenue', 0),
                                   _buildTabText('DM Sale', 1),
                                   _buildTabText('Expense', 2),
                                   _buildTabText('SV&TV', 3),
                                   _buildTabText('CDCMS Stock', 4),
                                   _buildTabText('Cash', 5),
-                                ].map((tab) => Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                  child: tab,
-                                )).toList(),
+                                ]
+                                    .map((tab) => Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 8.0),
+                                          child: tab,
+                                        ))
+                                    .toList(),
                               ),
                             ),
                           ),
@@ -809,8 +875,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
             ],
           ),
         ),
-            ),
-      );
+      ),
+    );
   }
 
   Widget _buildTabText(String label, int index) {
@@ -879,20 +945,20 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
           color: isSelected ? Colors.blue.withOpacity(0.2) : Colors.white70,
           borderRadius: isSelected
               ? const BorderRadius.only(
-            topLeft: Radius.circular(10),
-            topRight: Radius.circular(10),
-            bottomLeft: Radius.circular(10),
-            bottomRight: Radius.circular(0),
-          )
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
+                  bottomLeft: Radius.circular(10),
+                  bottomRight: Radius.circular(0),
+                )
               : BorderRadius.circular(10), // fallback for unselected tab
           boxShadow: isSelected
               ? [
-            BoxShadow(
-              color: Colors.blue.withOpacity(0.3),
-              blurRadius: 6,
-              offset: Offset(0, 3),
-            ),
-          ]
+                  BoxShadow(
+                    color: Colors.blue.withOpacity(0.3),
+                    blurRadius: 6,
+                    offset: Offset(0, 3),
+                  ),
+                ]
               : null,
           border: Border.all(
             color: isSelected ? Colors.blue : Colors.transparent,
@@ -906,8 +972,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
             fontWeight: FontWeight.w600,
             fontSize: 13,
           ),
-          textScaler:
-          TextScaler.noScaling,
+          textScaler: TextScaler.noScaling,
         ),
       ),
     );
@@ -918,14 +983,16 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
     if (keyContext == null) return;
 
     final box = keyContext.findRenderObject() as RenderBox;
-    final tabPosition = box.localToGlobal(Offset.zero, ancestor: context.findRenderObject());
+    final tabPosition =
+        box.localToGlobal(Offset.zero, ancestor: context.findRenderObject());
     final tabWidth = box.size.width;
 
     final screenWidth = MediaQuery.of(context).size.width;
     final scrollOffset = _scrollController.offset;
 
     // Calculate target scroll offset so that the tab is centered horizontally
-    double targetScrollX = scrollOffset + tabPosition.dx - (screenWidth / 2) + (tabWidth / 2);
+    double targetScrollX =
+        scrollOffset + tabPosition.dx - (screenWidth / 2) + (tabWidth / 2);
 
     // Clamp to scroll extent
     if (targetScrollX < 0) targetScrollX = 0;
@@ -950,1237 +1017,1380 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
             children: [
               dataIncomeDailySaleList.isNotEmpty
                   ? Container(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Align(
-                          alignment: Alignment.centerLeft,
-                          child:
-                          Text("Sale", style: Styling.bodyTitleBigBold,   textScaler:
-                          TextScaler.noScaling,),),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(0),
-                          topRight: Radius.circular(0),
-                        ),
-                        // Add a color to differentiate header row
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              flex: 2,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
                               child: Text(
-                                'Item',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.left,
-                                textScaler:
-                                TextScaler.noScaling,
+                                "Sale",
+                                style: Styling.bodyTitleBigBold,
+                                textScaler: TextScaler.noScaling,
                               ),
                             ),
-                            Expanded(
-                              flex: 1,
-                              child: Text(
-                                'Qty',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                'Unsettled',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                overflow: TextOverflow.ellipsis,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                'Settled',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                overflow: TextOverflow.ellipsis,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                '',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 3,
-                              child: Text(
-                                'Amt',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.right,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: BouncingScrollPhysics(),
-                      itemCount: dataIncomeDailySaleList.length,
-                      itemBuilder: (context, index) {
-                        var item = dataIncomeDailySaleList[index];
-                        // Check if quantity and amount are zero and display empty text
-                        String? displayQuantity = (item
-                        is ManagerDsrReportIncomeSalesModel)
-                            ? (item.quantity == 0
-                            ? ''
-                            : item.quantity
-                            ?.toInt()
-                            .toString()) // Convert to integer if quantity is a double
-                            : (item.quantity == 0
-                            ? ''
-                            : item.quantity
-                            .toInt()
-                            .toString()); // For other cases
-
-                        String displayUnsettledQuantity =
-                        (item is ManagerDsrReportIncomeSalesModel)
-                            ? (item.unsettQty == 0
-                            ? ''
-                            : item.unsettQty.toString())
-                            : (item.unsettQty == 0
-                            ? ''
-                            : item.unsettQty.toString());
-
-                        String displaySettledQuantity =
-                        (item is ManagerDsrReportIncomeSalesModel)
-                            ? (item.settQty == 0
-                            ? ''
-                            : item.settQty.toString())
-                            : (item.settQty == 0
-                            ? ''
-                            : item.settQty.toString());
-
-                        String displayMode =
-                        (item is ManagerDsrReportIncomeSalesModel)
-                            ? (item.mode == null || item.mode == 0
-                            ? ''
-                            : item.mode.toString())
-                            : (item.mode == null || item.mode == 0
-                            ? ''
-                            : item.mode.toString());
-
-                        // Check if mode is null, 0, or empty and set the displayAmount accordingly
-                        double displayAmount =
-                        (item is ManagerDsrReportIncomeSalesModel)
-                            ? (item.amount == null || item.amount == 0
-                            ? 0.0
-                            : item.amount!)
-                            : (item.amount == null || item.amount == 0
-                            ? 0.0
-                            : item.amount);
-
-// Apply different styles based on the condition
-                        TextStyle amountStyle = (item.mode == null ||
-                            item.mode == 0 ||
-                            item.mode == "")
-                            ? Styling
-                            .itemBlackTestSmallReport // Normal style if condition is true
-                            : Styling
-                            .itemBlackTestSmallReportBold; // Bold and bigger font if condition is false
-
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  item is ManagerDsrReportIncomeSalesModel
-                                      ? item.itemName ?? ''
-                                      : item.itemName ?? '',
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.left,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Text(
-                                    displayQuantity!,
-                                    style: Styling.itemBlackTestSmallReport,
-                                    textAlign: TextAlign.center,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                  ),
-
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: GestureDetector(
-                                  onTap: (){
-                                    Navigator.pushNamed(
-                                        context,
-                                        ManagerIncomeUnsettledScreenDetails
-                                            .screenName,
-                                        arguments: {
-                                          "itemId":item is ManagerDsrReportIncomeSalesModel
-                                              ? item.itemId ?? ''
-                                              : item. itemId?? '',
-                                          "FlagCheck":1,
-                                          "Date":selectedDate,
-                                        }
-                                    );
-                                  },
-                                  child: Text(
-                                    displayUnsettledQuantity,
-                                    style: Styling.blueClrTextWithUnderline,
-                                    textAlign: TextAlign.center,
-                                    textScaler:
-                                    TextScaler.noScaling,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: GestureDetector(
-                                  onTap: (){
-                                    Navigator.pushNamed(
-                                        context,
-                                        ManagerIncomeUnsettledScreenDetails
-                                            .screenName,
-                                        arguments: {
-                                          "itemId":item is ManagerDsrReportIncomeSalesModel
-                                              ? item.itemId ?? ''
-                                              : item. itemId?? '',
-                                          "FlagCheck":2,
-                                          "Date":selectedDate,
-                                        }
-                                    );
-                                  },
-                                  child: Text(
-                                    displaySettledQuantity,
-                                    style: Styling.blueClrTextWithUnderline,
-                                    textAlign: TextAlign.center,
-                                    textScaler:
-                                    TextScaler.noScaling,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  displayMode,
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.center,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 3,
-                                child: Text(
-                                  formatCurrency(displayAmount),
-                                  style: amountStyle,
-                                  textAlign: TextAlign.right,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                            ],
                           ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              )
-                  : Container(),
-              dataIncomeArbSaleList.isNotEmpty
-                  ? Container(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text("ARB Sale",
-                              style: Styling.bodyTitleBigBold,  textScaler:
-                            TextScaler.noScaling,)),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(0),
-                          topRight: Radius.circular(0),
-                        ),
-                        // Add a color to differentiate header row
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              flex: 4,
-                              child: Text(
-                                'Item',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.left,
-                                textScaler:
-                                TextScaler.noScaling,
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(0),
+                                topRight: Radius.circular(0),
+                              ),
+                              // Add a color to differentiate header row
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    flex: 2,
+                                    child: Text(
+                                      'Item',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.left,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: Text(
+                                      'Qty',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.center,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Text(
+                                      'Unsettled',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.center,
+                                      overflow: TextOverflow.ellipsis,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Text(
+                                      'Settled',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.center,
+                                      overflow: TextOverflow.ellipsis,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Text(
+                                      '',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.center,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Text(
+                                      'Amt',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.right,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                'Qty',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Text(
-                                '',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Text(
-                                '',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                '',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 3,
-                              child: Text(
-                                'Amt',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.right,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: BouncingScrollPhysics(),
-                      itemCount: dataIncomeArbSaleList.length,
-                      // Change this to the length of your data
-                      itemBuilder: (context, index) {
-                        var item = dataIncomeArbSaleList[index];
-                        // Check if quantity and amount are zero and display empty text
-                        String? displayQuantity = (item
-                        is ManagerDsrReportIncomeSalesModel)
-                            ? (item.quantity == 0
-                            ? ''
-                            : item.quantity
-                            ?.toInt()
-                            .toString()) // Convert to integer if quantity is a double
-                            : (item.quantity == 0
-                            ? ''
-                            : item.quantity
-                            .toInt()
-                            .toString()); // For other cases
-
-                        String displayUnsettledQuantity =
-                        (item is ManagerDsrReportIncomeSalesModel)
-                            ? (item.unsettQty == 0
-                            ? ''
-                            : item.unsettQty.toString())
-                            : (item.unsettQty == 0
-                            ? ''
-                            : item.unsettQty.toString());
-
-                        String displaySettledQuantity =
-                        (item is ManagerDsrReportIncomeSalesModel)
-                            ? (item.settQty == 0
-                            ? ''
-                            : item.settQty.toString())
-                            : (item.settQty == 0
-                            ? ''
-                            : item.settQty.toString());
-
-                        String displayMode =
-                        (item is ManagerDsrReportIncomeSalesModel)
-                            ? (item.mode == null || item.mode == 0
-                            ? ''
-                            : item.mode.toString())
-                            : (item.mode == null || item.mode == 0
-                            ? ''
-                            : item.mode.toString());
-
-                        // Check if mode is null, 0, or empty and set the displayAmount accordingly
-                        double displayAmount =
-                        (item is ManagerDsrReportIncomeSalesModel)
-                            ? (item.amount == null || item.amount == 0
-                            ? 0.0
-                            : item.amount!)
-                            : (item.amount == null || item.amount == 0
-                            ? 0.0
-                            : item.amount);
-
-// Apply different styles based on the condition
-                        TextStyle amountStyle = (item.mode == null ||
-                            item.mode == 0 ||
-                            item.mode == "")
-                            ? Styling
-                            .itemBlackTestSmallReport // Normal style if condition is true
-                            : Styling
-                            .itemBlackTestSmallReportBold; // Bold and bigger font if condition is false
-
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                flex: 4,
-                                child: Text(
-                                  item is ManagerDsrReportIncomeSalesModel
-                                      ? item.itemName ?? ''
-                                      : item.itemName ?? '',
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.left,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  displayQuantity!,
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.center,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Text(
-                                  displayUnsettledQuantity,
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.center,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Text(
-                                  displaySettledQuantity,
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.center,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  displayMode,
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.center,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 3,
-                                child: Text(
-                                  formatCurrency(displayAmount),
-                                  style: amountStyle,
-                                  textAlign: TextAlign.right,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                            ],
                           ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              )
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: BouncingScrollPhysics(),
+                            itemCount: dataIncomeDailySaleList.length,
+                            itemBuilder: (context, index) {
+                              var item = dataIncomeDailySaleList[index];
+                              // Check if quantity and amount are zero and display empty text
+                              String? displayQuantity = (item
+                                      is ManagerDsrReportIncomeSalesModel)
+                                  ? (item.quantity == 0
+                                      ? ''
+                                      : item.quantity
+                                          ?.toInt()
+                                          .toString()) // Convert to integer if quantity is a double
+                                  : (item.quantity == 0
+                                      ? ''
+                                      : item.quantity
+                                          .toInt()
+                                          .toString()); // For other cases
+
+                              String displayUnsettledQuantity =
+                                  (item is ManagerDsrReportIncomeSalesModel)
+                                      ? (item.unsettQty == 0
+                                          ? ''
+                                          : item.unsettQty.toString())
+                                      : (item.unsettQty == 0
+                                          ? ''
+                                          : item.unsettQty.toString());
+
+                              String displaySettledQuantity =
+                                  (item is ManagerDsrReportIncomeSalesModel)
+                                      ? (item.settQty == 0
+                                          ? ''
+                                          : item.settQty.toString())
+                                      : (item.settQty == 0
+                                          ? ''
+                                          : item.settQty.toString());
+
+                              String displayMode =
+                                  (item is ManagerDsrReportIncomeSalesModel)
+                                      ? (item.mode == null || item.mode == 0
+                                          ? ''
+                                          : item.mode.toString())
+                                      : (item.mode == null || item.mode == 0
+                                          ? ''
+                                          : item.mode.toString());
+
+                              // Check if mode is null, 0, or empty and set the displayAmount accordingly
+                              double displayAmount =
+                                  (item is ManagerDsrReportIncomeSalesModel)
+                                      ? (item.amount == null || item.amount == 0
+                                          ? 0.0
+                                          : item.amount!)
+                                      : (item.amount == null || item.amount == 0
+                                          ? 0.0
+                                          : item.amount);
+
+                              TextStyle amountStyle = (item.mode == null ||
+                                      item.mode == 0 ||
+                                      item.mode == "")
+                                  ? Styling
+                                      .itemBlackTestSmallReport // Normal style if condition is true
+                                  : Styling
+                                      .itemBlackTestSmallReportBold; // Bold and bigger font if condition is false
+
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        item is ManagerDsrReportIncomeSalesModel
+                                            ? item.itemName ?? ''
+                                            : item.itemName ?? '',
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.left,
+                                        textScaler: TextScaler.noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        displayQuantity!,
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.center,
+                                        textScaler: TextScaler.noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          Navigator.pushNamed(
+                                              context,
+                                              ManagerIncomeUnsettledScreenDetails
+                                                  .screenName,
+                                              arguments: {
+                                                "itemId": item
+                                                        is ManagerDsrReportIncomeSalesModel
+                                                    ? item.itemId ?? ''
+                                                    : item.itemId ?? '',
+                                                "FlagCheck": 1,
+                                                "Date": selectedDate,
+                                              });
+                                        },
+                                        child: Text(
+                                          displayUnsettledQuantity,
+                                          style:
+                                              Styling.blueClrTextWithUnderline,
+                                          textAlign: TextAlign.center,
+                                          textScaler: TextScaler.noScaling,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          Navigator.pushNamed(
+                                              context,
+                                              ManagerIncomeUnsettledScreenDetails
+                                                  .screenName,
+                                              arguments: {
+                                                "itemId": item
+                                                        is ManagerDsrReportIncomeSalesModel
+                                                    ? item.itemId ?? ''
+                                                    : item.itemId ?? '',
+                                                "FlagCheck": 2,
+                                                "Date": selectedDate,
+                                              });
+                                        },
+                                        child: Text(
+                                          displaySettledQuantity,
+                                          style:
+                                              Styling.blueClrTextWithUnderline,
+                                          textAlign: TextAlign.center,
+                                          textScaler: TextScaler.noScaling,
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        displayMode,
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.center,
+                                        textScaler: TextScaler.noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 3,
+                                      child: Text(
+                                        formatCurrency(displayAmount),
+                                        style: amountStyle,
+                                        textAlign: TextAlign.right,
+                                        textScaler: TextScaler.noScaling,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    )
                   : Container(),
+//               dataIncomeArbSaleList.isNotEmpty
+//                   ? Container(
+//                 child: Column(
+//                   children: [
+//                     Padding(
+//                       padding: const EdgeInsets.only(bottom: 8.0),
+//                       child: Align(
+//                           alignment: Alignment.centerLeft,
+//                           child: Text("ARB Sale",
+//                               style: Styling.bodyTitleBigBold,  textScaler:
+//                             TextScaler.noScaling,)),
+//                     ),
+//                     Container(
+//                       decoration: BoxDecoration(
+//                         borderRadius: BorderRadius.only(
+//                           topLeft: Radius.circular(0),
+//                           topRight: Radius.circular(0),
+//                         ),
+//                         // Add a color to differentiate header row
+//                       ),
+//                       child: Padding(
+//                         padding: const EdgeInsets.all(8.0),
+//                         child: Row(
+//                           mainAxisAlignment: MainAxisAlignment.center,
+//                           children: [
+//                             Expanded(
+//                               flex: 4,
+//                               child: Text(
+//                                 'Item',
+//                                 style:
+//                                 Styling.itemBlackTestSmallReportBold,
+//                                 textAlign: TextAlign.left,
+//                                 textScaler:
+//                                 TextScaler.noScaling,
+//                               ),
+//                             ),
+//                             Expanded(
+//                               flex: 2,
+//                               child: Text(
+//                                 'Qty',
+//                                 style:
+//                                 Styling.itemBlackTestSmallReportBold,
+//                                 textAlign: TextAlign.center,
+//                                 textScaler:
+//                                 TextScaler.noScaling,
+//                               ),
+//                             ),
+//                             Expanded(
+//                               flex: 1,
+//                               child: Text(
+//                                 '',
+//                                 style:
+//                                 Styling.itemBlackTestSmallReportBold,
+//                                 textAlign: TextAlign.center,
+//                                 textScaler:
+//                                 TextScaler.noScaling,
+//                               ),
+//                             ),
+//                             Expanded(
+//                               flex: 1,
+//                               child: Text(
+//                                 '',
+//                                 style:
+//                                 Styling.itemBlackTestSmallReportBold,
+//                                 textAlign: TextAlign.center,
+//                                 textScaler:
+//                                 TextScaler.noScaling,
+//                               ),
+//                             ),
+//                             Expanded(
+//                               flex: 2,
+//                               child: Text(
+//                                 '',
+//                                 style:
+//                                 Styling.itemBlackTestSmallReportBold,
+//                                 textAlign: TextAlign.center,
+//                                 textScaler:
+//                                 TextScaler.noScaling,
+//                               ),
+//                             ),
+//                             Expanded(
+//                               flex: 3,
+//                               child: Text(
+//                                 'Amt',
+//                                 style:
+//                                 Styling.itemBlackTestSmallReportBold,
+//                                 textAlign: TextAlign.right,
+//                                 textScaler:
+//                                 TextScaler.noScaling,
+//                               ),
+//                             ),
+//                           ],
+//                         ),
+//                       ),
+//                     ),
+//                     ListView.builder(
+//                       shrinkWrap: true,
+//                       physics: BouncingScrollPhysics(),
+//                       itemCount: dataIncomeArbSaleList.length,
+//                       // Change this to the length of your data
+//                       itemBuilder: (context, index) {
+//                         var item = dataIncomeArbSaleList[index];
+//                         // Check if quantity and amount are zero and display empty text
+//                         String? displayQuantity = (item
+//                         is ManagerDsrReportIncomeSalesModel)
+//                             ? (item.quantity == 0
+//                             ? ''
+//                             : item.quantity
+//                             ?.toInt()
+//                             .toString()) // Convert to integer if quantity is a double
+//                             : (item.quantity == 0
+//                             ? ''
+//                             : item.quantity
+//                             .toInt()
+//                             .toString()); // For other cases
+//
+//                         String displayUnsettledQuantity =
+//                         (item is ManagerDsrReportIncomeSalesModel)
+//                             ? (item.unsettQty == 0
+//                             ? ''
+//                             : item.unsettQty.toString())
+//                             : (item.unsettQty == 0
+//                             ? ''
+//                             : item.unsettQty.toString());
+//
+//                         String displaySettledQuantity =
+//                         (item is ManagerDsrReportIncomeSalesModel)
+//                             ? (item.settQty == 0
+//                             ? ''
+//                             : item.settQty.toString())
+//                             : (item.settQty == 0
+//                             ? ''
+//                             : item.settQty.toString());
+//
+//                         String displayMode =
+//                         (item is ManagerDsrReportIncomeSalesModel)
+//                             ? (item.mode == null || item.mode == 0
+//                             ? ''
+//                             : item.mode.toString())
+//                             : (item.mode == null || item.mode == 0
+//                             ? ''
+//                             : item.mode.toString());
+//
+//                         // Check if mode is null, 0, or empty and set the displayAmount accordingly
+//                         double displayAmount =
+//                         (item is ManagerDsrReportIncomeSalesModel)
+//                             ? (item.amount == null || item.amount == 0
+//                             ? 0.0
+//                             : item.amount!)
+//                             : (item.amount == null || item.amount == 0
+//                             ? 0.0
+//                             : item.amount);
+//
+// // Apply different styles based on the condition
+//                         TextStyle amountStyle = (item.mode == null ||
+//                             item.mode == 0 ||
+//                             item.mode == "")
+//                             ? Styling
+//                             .itemBlackTestSmallReport // Normal style if condition is true
+//                             : Styling
+//                             .itemBlackTestSmallReportBold; // Bold and bigger font if condition is false
+//
+//                         return Padding(
+//                           padding: const EdgeInsets.all(8.0),
+//                           child: Row(
+//                             mainAxisAlignment: MainAxisAlignment.center,
+//                             children: [
+//                               Expanded(
+//                                 flex: 4,
+//                                 child: Text(
+//                                   item is ManagerDsrReportIncomeSalesModel
+//                                       ? item.itemName ?? ''
+//                                       : item.itemName ?? '',
+//                                   style: Styling.itemBlackTestSmallReport,
+//                                   textAlign: TextAlign.left,
+//                                   textScaler:
+//                                   TextScaler.noScaling,
+//                                 ),
+//                               ),
+//                               Expanded(
+//                                 flex: 2,
+//                                 child: Text(
+//                                   displayQuantity!,
+//                                   style: Styling.itemBlackTestSmallReport,
+//                                   textAlign: TextAlign.center,
+//                                   textScaler:
+//                                   TextScaler.noScaling,
+//                                 ),
+//                               ),
+//                               Expanded(
+//                                 flex: 1,
+//                                 child: Text(
+//                                   displayUnsettledQuantity,
+//                                   style: Styling.itemBlackTestSmallReport,
+//                                   textAlign: TextAlign.center,
+//                                   textScaler:
+//                                   TextScaler.noScaling,
+//                                 ),
+//                               ),
+//                               Expanded(
+//                                 flex: 1,
+//                                 child: Text(
+//                                   displaySettledQuantity,
+//                                   style: Styling.itemBlackTestSmallReport,
+//                                   textAlign: TextAlign.center,
+//                                   textScaler:
+//                                   TextScaler.noScaling,
+//                                 ),
+//                               ),
+//                               Expanded(
+//                                 flex: 2,
+//                                 child: Text(
+//                                   displayMode,
+//                                   style: Styling.itemBlackTestSmallReport,
+//                                   textAlign: TextAlign.center,
+//                                   textScaler:
+//                                   TextScaler.noScaling,
+//                                 ),
+//                               ),
+//                               Expanded(
+//                                 flex: 3,
+//                                 child: Text(
+//                                   formatCurrency(displayAmount),
+//                                   style: amountStyle,
+//                                   textAlign: TextAlign.right,
+//                                   textScaler:
+//                                   TextScaler.noScaling,
+//                                 ),
+//                               ),
+//                             ],
+//                           ),
+//                         );
+//                       },
+//                     ),
+//                   ],
+//                 ),
+//               )
+//                   : Container(),
               dataIncomeSVSaleList.isNotEmpty
                   ? Container(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "SV",
-                            style: Styling.bodyTitleBigBold,
-                            textScaler:
-                            TextScaler.noScaling,
-                          )),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(0),
-                          topRight: Radius.circular(0),
-                        ),
-                        // Add a color to differentiate header row
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              flex: 4,
-                              child: Text(
-                                'Category',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.left,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Text(
-                                'Qty',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Text(
-                                '',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Text(
-                                '',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                '',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 3,
-                              child: Text(
-                                'Amt',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.right,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: BouncingScrollPhysics(),
-                      itemCount: dataIncomeSVSaleList.length,
-                      // Change this to the length of your data
-                      itemBuilder: (context, index) {
-                        var item = dataIncomeSVSaleList[index];
-                        // Check if quantity and amount are zero and display empty text
-                        String? displayQuantity = (item
-                        is ManagerDsrReportIncomeSalesModel)
-                            ? (item.quantity == 0
-                            ? ''
-                            : item.quantity
-                            ?.toInt()
-                            .toString()) // Convert to integer if quantity is a double
-                            : (item.quantity == 0
-                            ? ''
-                            : item.quantity
-                            .toInt()
-                            .toString()); // For other cases
-
-                        String displayUnsettledQuantity =
-                        (item is ManagerDsrReportIncomeSalesModel)
-                            ? (item.unsettQty == 0
-                            ? ''
-                            : item.unsettQty.toString())
-                            : (item.unsettQty == 0
-                            ? ''
-                            : item.unsettQty.toString());
-
-                        String displaySettledQuantity =
-                        (item is ManagerDsrReportIncomeSalesModel)
-                            ? (item.settQty == 0
-                            ? ''
-                            : item.settQty.toString())
-                            : (item.settQty == 0
-                            ? ''
-                            : item.settQty.toString());
-
-                        String displayMode =
-                        (item is ManagerDsrReportIncomeSalesModel)
-                            ? (item.mode == null || item.mode == 0
-                            ? ''
-                            : item.mode.toString())
-                            : (item.mode == null || item.mode == 0
-                            ? ''
-                            : item.mode.toString());
-
-                        // Check if mode is null, 0, or empty and set the displayAmount accordingly
-                        double displayAmount =
-                        (item is ManagerDsrReportIncomeSalesModel)
-                            ? (item.amount == null || item.amount == 0
-                            ? 0.0
-                            : item.amount!)
-                            : (item.amount == null || item.amount == 0
-                            ? 0.0
-                            : item.amount);
-
-// Apply different styles based on the condition
-                        TextStyle amountStyle = (item.mode == null ||
-                            item.mode == 0 ||
-                            item.mode == "")
-                            ? Styling
-                            .itemBlackTestSmallReport // Normal style if condition is true
-                            : Styling
-                            .itemBlackTestSmallReportBold; // Bold and bigger font if condition is false
-
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                flex: 4,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Align(
+                                alignment: Alignment.centerLeft,
                                 child: Text(
-                                  item is ManagerDsrReportIncomeSalesModel
-                                      ? item.itemName ?? ''
-                                      : item.itemName ?? '',
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.left,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  displayQuantity!,
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.center,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Text(
-                                  displayUnsettledQuantity,
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.center,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Text(
-                                  displaySettledQuantity,
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.center,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  displayMode,
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.center,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 3,
-                                child: Text(
-                                  formatCurrency(displayAmount),
-                                  style: amountStyle,
-                                  textAlign: TextAlign.right,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                            ],
+                                  "ARB-SV",
+                                  style: Styling.bodyTitleBigBold,
+                                  textScaler: TextScaler.noScaling,
+                                )),
                           ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              )
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(0),
+                                topRight: Radius.circular(0),
+                              ),
+                              // Add a color to differentiate header row
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    flex: 4,
+                                    child: Text(
+                                      'Category',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.left,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: Text(
+                                      'Qty',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.center,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: Text(
+                                      '',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.center,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: Text(
+                                      '',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.center,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Text(
+                                      '',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.center,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Text(
+                                      'Amt',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.right,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          //  ListView.builder(
+                          //   shrinkWrap: true,
+                          //   physics: BouncingScrollPhysics(),
+                          //   itemCount: dataIncomeSVSaleList.length,
+                          //   // Change this to the length of your data
+                          //   itemBuilder: (context, index) {
+                          //     var item = dataIncomeSVSaleList[index];
+                          //     // Check if quantity and amount are zero and display empty text
+                          //     String? displayQuantity = (item
+                          //     is ManagerDsrReportIncomeSalesModel)
+                          //         ? (item.quantity == 0
+                          //         ? ''
+                          //         : item.quantity
+                          //         ?.toInt()
+                          //         .toString()) // Convert to integer if quantity is a double
+                          //         : (item.quantity == 0
+                          //         ? ''
+                          //         : item.quantity
+                          //         .toInt()
+                          //         .toString()); // For other cases
+                          //
+                          //     String displayUnsettledQuantity =
+                          //     (item is ManagerDsrReportIncomeSalesModel)
+                          //         ? (item.unsettQty == 0
+                          //         ? ''
+                          //         : item.unsettQty.toString())
+                          //         : (item.unsettQty == 0
+                          //         ? ''
+                          //         : item.unsettQty.toString());
+                          //
+                          //     String displaySettledQuantity =
+                          //     (item is ManagerDsrReportIncomeSalesModel)
+                          //         ? (item.settQty == 0
+                          //         ? ''
+                          //         : item.settQty.toString())
+                          //         : (item.settQty == 0
+                          //         ? ''
+                          //         : item.settQty.toString());
+                          //
+                          //     String displayMode =
+                          //     (item is ManagerDsrReportIncomeSalesModel)
+                          //         ? (item.mode == null || item.mode == 0
+                          //         ? ''
+                          //         : item.mode.toString())
+                          //         : (item.mode == null || item.mode == 0
+                          //         ? ''
+                          //         : item.mode.toString());
+                          //
+                          //     // Check if mode is null, 0, or empty and set the displayAmount accordingly
+                          //     double displayAmount =
+                          //     (item is ManagerDsrReportIncomeSalesModel)
+                          //         ? (item.amount == null || item.amount == 0
+                          //         ? 0.0
+                          //         : item.amount!)
+                          //         : (item.amount == null || item.amount == 0
+                          //         ? 0.0
+                          //         : item.amount);
+                          //
+                          //     // Apply different styles based on the condition
+                          //     TextStyle amountStyle = (item.mode == null ||
+                          //         item.mode == 0 ||
+                          //         item.mode == "")
+                          //         ? Styling
+                          //         .itemBlackTestSmallReport // Normal style if condition is true
+                          //         : Styling
+                          //         .itemBlackTestSmallReportBold; // Bold and bigger font if condition is false
+                          //
+                          //     return
+                          //       Padding(
+                          //       padding: const EdgeInsets.all(8.0),
+                          //       child:
+                          //       Row(
+                          //         mainAxisAlignment: MainAxisAlignment.center,
+                          //         children: [
+                          //           Expanded(
+                          //             flex: 4,
+                          //             child: Text(
+                          //               item is ManagerDsrReportIncomeSalesModel
+                          //                   ? item.itemName ?? ''
+                          //                   : item.itemName ?? '',
+                          //               style: Styling.itemBlackTestSmallReport,
+                          //               textAlign: TextAlign.left,
+                          //               textScaler:
+                          //               TextScaler.noScaling,
+                          //             ),
+                          //           ),
+                          //           Expanded(
+                          //             flex: 2,
+                          //             child: Text(
+                          //               displayQuantity!,
+                          //               style: Styling.itemBlackTestSmallReport,
+                          //               textAlign: TextAlign.center,
+                          //               textScaler:
+                          //               TextScaler.noScaling,
+                          //             ),
+                          //           ),
+                          //           Expanded(
+                          //             flex: 1,
+                          //             child: Text(
+                          //               displayUnsettledQuantity,
+                          //               style: Styling.itemBlackTestSmallReport,
+                          //               textAlign: TextAlign.center,
+                          //               textScaler:
+                          //               TextScaler.noScaling,
+                          //             ),
+                          //           ),
+                          //           Expanded(
+                          //             flex: 1,
+                          //             child: Text(
+                          //               displaySettledQuantity,
+                          //               style: Styling.itemBlackTestSmallReport,
+                          //               textAlign: TextAlign.center,
+                          //               textScaler:
+                          //               TextScaler.noScaling,
+                          //             ),
+                          //           ),
+                          //           Expanded(
+                          //             flex: 2,
+                          //             child: Text(
+                          //               displayMode,
+                          //               style: Styling.itemBlackTestSmallReport,
+                          //               textAlign: TextAlign.center,
+                          //               textScaler:
+                          //               TextScaler.noScaling,
+                          //             ),
+                          //           ),
+                          //           Expanded(
+                          //             flex: 3,
+                          //             child: Text(
+                          //               formatCurrency(displayAmount),
+                          //               style: amountStyle,
+                          //               textAlign: TextAlign.right,
+                          //               textScaler:
+                          //               TextScaler.noScaling,
+                          //             ),
+                          //           ),
+                          //         ],
+                          //       ),
+                          //     );
+                          //   },
+                          // ),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: BouncingScrollPhysics(),
+                            itemCount: dataIncomeSVSaleList.length,
+                            itemBuilder: (context, index) {
+                              var item = dataIncomeSVSaleList[index];
+
+                              // Helper to get seq safely for both models
+                              int? getSeq(dynamic model) {
+                                if (model is ManagerDsrReportIncomeSalesModel)
+                                  return model.seq?.toInt();
+                                if (model is IncDtls) return model.seq?.toInt();
+                                return null;
+                              }
+
+                              // Helper to get displayable properties similarly
+                              String getItemName(dynamic model) {
+                                if (model is ManagerDsrReportIncomeSalesModel)
+                                  return model.itemName ?? '';
+                                if (model is IncDtls)
+                                  return model.itemName ?? '';
+                                return '';
+                              }
+
+                              num? getQuantity(dynamic model) {
+                                if (model is ManagerDsrReportIncomeSalesModel)
+                                  return model.quantity;
+                                if (model is IncDtls) return model.quantity;
+                                return 0;
+                              }
+
+                              num? getUnsettQty(dynamic model) {
+                                if (model is ManagerDsrReportIncomeSalesModel)
+                                  return model.unsettQty;
+                                if (model is IncDtls) return model.unsettQty;
+                                return 0;
+                              }
+
+                              num? getSettQty(dynamic model) {
+                                if (model is ManagerDsrReportIncomeSalesModel)
+                                  return model.settQty;
+                                if (model is IncDtls) return model.settQty;
+                                return 0;
+                              }
+
+                              dynamic getMode(dynamic model) {
+                                if (model is ManagerDsrReportIncomeSalesModel)
+                                  return model.mode;
+                                if (model is IncDtls) return model.mode;
+                                return null;
+                              }
+
+                              double getAmount(dynamic model) {
+                                if (model is ManagerDsrReportIncomeSalesModel)
+                                  return model.amount?.toDouble() ?? 0.0;
+                                if (model is IncDtls)
+                                  return model.amount?.toDouble() ?? 0.0;
+                                return 0.0;
+                              }
+
+                              // Extract properties for the current item
+                              int? seq = getSeq(item);
+
+                              String displayQuantity = (getQuantity(item) == 0)
+                                  ? ''
+                                  : getQuantity(item)?.toInt().toString() ?? '';
+                              String displayUnsettledQuantity =
+                                  (getUnsettQty(item) == 0)
+                                      ? ''
+                                      : getUnsettQty(item).toString();
+                              String displaySettledQuantity =
+                                  (getSettQty(item) == 0)
+                                      ? ''
+                                      : getSettQty(item).toString();
+                              String displayMode = (getMode(item) == null ||
+                                      getMode(item) == 0 ||
+                                      getMode(item) == "0")
+                                  ? ''
+                                  : getMode(item).toString();
+
+                              double displayAmount = getAmount(item);
+
+                              TextStyle amountStyle = (getMode(item) == null ||
+                                      getMode(item) == 0 ||
+                                      getMode(item) == "0")
+                                  ? Styling.itemBlackTestSmallReport
+                                  : Styling.itemBlackTestSmallReportBold;
+
+                              // Check if this item is the last seq 1,2,3 item followed by non seq 1,2,3
+                              bool insertDivider = false;
+                              if (seq != null &&
+                                  [1, 2, 3].contains(seq) &&
+                                  index + 1 < dataIncomeSVSaleList.length) {
+                                var nextItem = dataIncomeSVSaleList[index + 1];
+                                int? nextSeq = getSeq(nextItem);
+                                if (nextSeq == null ||
+                                    ![1, 2, 3].contains(nextSeq)) {
+                                  insertDivider = true;
+                                }
+                              }
+
+                              return Column(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Expanded(
+                                          flex: 4,
+                                          child: Text(
+                                            getItemName(item),
+                                            style: Styling
+                                                .itemBlackTestSmallReport,
+                                            textAlign: TextAlign.left,
+                                            textScaler: TextScaler.noScaling,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 2,
+                                          child: Text(
+                                            displayQuantity,
+                                            style: Styling
+                                                .itemBlackTestSmallReport,
+                                            textAlign: TextAlign.center,
+                                            textScaler: TextScaler.noScaling,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 1,
+                                          child: Text(
+                                            displayUnsettledQuantity,
+                                            style: Styling
+                                                .itemBlackTestSmallReport,
+                                            textAlign: TextAlign.center,
+                                            textScaler: TextScaler.noScaling,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 1,
+                                          child: Text(
+                                            displaySettledQuantity,
+                                            style: Styling
+                                                .itemBlackTestSmallReport,
+                                            textAlign: TextAlign.center,
+                                            textScaler: TextScaler.noScaling,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 2,
+                                          child: Text(
+                                            displayMode,
+                                            style: Styling
+                                                .itemBlackTestSmallReport,
+                                            textAlign: TextAlign.center,
+                                            textScaler: TextScaler.noScaling,
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 3,
+                                          child: Text(
+                                            formatCurrency(displayAmount),
+                                            style: amountStyle,
+                                            textAlign: TextAlign.right,
+                                            textScaler: TextScaler.noScaling,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+
+                                  // Insert divider only once, between seq groups
+                                  if (insertDivider)
+                                    Divider(thickness: 1, color: Colors.grey),
+                                ],
+                              );
+                            },
+                          ),
+
+
+    ],
+                      ),
+                    )
                   : Container(),
               dataIncomeReceiptSaleList.isNotEmpty
                   ? Container(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "Credit Payment Receipt",
-                            style: Styling.bodyTitleBigBold,
-                            textScaler:
-                            TextScaler.noScaling,
-                          )),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(0),
-                          topRight: Radius.circular(0),
-                        ),
-                        // Add a color to differentiate header row
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              flex: 4,
-                              child: Text(
-                                'Receipt From',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.left,
-                                textScaler:
-                                TextScaler.noScaling,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "Credit Payment Receipt",
+                                  style: Styling.bodyTitleBigBold,
+                                  textScaler: TextScaler.noScaling,
+                                )),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(0),
+                                topRight: Radius.circular(0),
+                              ),
+                              // Add a color to differentiate header row
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    flex: 4,
+                                    child: Text(
+                                      'Receipt From',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.left,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: Text(
+                                      'Qty',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.center,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: Text(
+                                      '',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.center,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: Text(
+                                      '',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.center,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Text(
+                                      '',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.center,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Text(
+                                      'Amt',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.right,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            Expanded(
-                              flex: 1,
-                              child: Text(
-                                'Qty',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Text(
-                                '',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Text(
-                                '',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                '',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 3,
-                              child: Text(
-                                'Amt',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.right,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: BouncingScrollPhysics(),
-                      itemCount: dataIncomeReceiptSaleList.length,
-                      // Change this to the length of your data
-                      itemBuilder: (context, index) {
-                        var item = dataIncomeReceiptSaleList[index];
-                        // Check if quantity and amount are zero and display empty text
-                        String? displayQuantity = (item
-                        is ManagerDsrReportIncomeSalesModel)
-                            ? (item.quantity == 0
-                            ? ''
-                            : item.quantity
-                            ?.toInt()
-                            .toString()) // Convert to integer if quantity is a double
-                            : (item.quantity == 0
-                            ? ''
-                            : item.quantity
-                            .toInt()
-                            .toString()); // For other cases
+                          ),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: BouncingScrollPhysics(),
+                            itemCount: dataIncomeReceiptSaleList.length,
+                            // Change this to the length of your data
+                            itemBuilder: (context, index) {
+                              var item = dataIncomeReceiptSaleList[index];
+                              // Check if quantity and amount are zero and display empty text
+                              String? displayQuantity = (item
+                                      is ManagerDsrReportIncomeSalesModel)
+                                  ? (item.quantity == 0
+                                      ? ''
+                                      : item.quantity
+                                          ?.toInt()
+                                          .toString()) // Convert to integer if quantity is a double
+                                  : (item.quantity == 0
+                                      ? ''
+                                      : item.quantity
+                                          .toInt()
+                                          .toString()); // For other cases
 
-                        String displayUnsettledQuantity =
-                        (item is ManagerDsrReportIncomeSalesModel)
-                            ? (item.unsettQty == 0
-                            ? ''
-                            : item.unsettQty.toString())
-                            : (item.unsettQty == 0
-                            ? ''
-                            : item.unsettQty.toString());
+                              String displayUnsettledQuantity =
+                                  (item is ManagerDsrReportIncomeSalesModel)
+                                      ? (item.unsettQty == 0
+                                          ? ''
+                                          : item.unsettQty.toString())
+                                      : (item.unsettQty == 0
+                                          ? ''
+                                          : item.unsettQty.toString());
 
-                        String displaySettledQuantity =
-                        (item is ManagerDsrReportIncomeSalesModel)
-                            ? (item.settQty == 0
-                            ? ''
-                            : item.settQty.toString())
-                            : (item.settQty == 0
-                            ? ''
-                            : item.settQty.toString());
+                              String displaySettledQuantity =
+                                  (item is ManagerDsrReportIncomeSalesModel)
+                                      ? (item.settQty == 0
+                                          ? ''
+                                          : item.settQty.toString())
+                                      : (item.settQty == 0
+                                          ? ''
+                                          : item.settQty.toString());
 
-                        String displayMode =
-                        (item is ManagerDsrReportIncomeSalesModel)
-                            ? (item.mode == null || item.mode == 0
-                            ? ''
-                            : item.mode.toString())
-                            : (item.mode == null || item.mode == 0
-                            ? ''
-                            : item.mode.toString());
+                              String displayMode =
+                                  (item is ManagerDsrReportIncomeSalesModel)
+                                      ? (item.mode == null || item.mode == 0
+                                          ? ''
+                                          : item.mode.toString())
+                                      : (item.mode == null || item.mode == 0
+                                          ? ''
+                                          : item.mode.toString());
 
-                        // Check if mode is null, 0, or empty and set the displayAmount accordingly
-                        double displayAmount =
-                        (item is ManagerDsrReportIncomeSalesModel)
-                            ? (item.amount == null || item.amount == 0
-                            ? 0.0
-                            : item.amount!)
-                            : (item.amount == null || item.amount == 0
-                            ? 0.0
-                            : item.amount);
+                              // Check if mode is null, 0, or empty and set the displayAmount accordingly
+                              double displayAmount =
+                                  (item is ManagerDsrReportIncomeSalesModel)
+                                      ? (item.amount == null || item.amount == 0
+                                          ? 0.0
+                                          : item.amount!)
+                                      : (item.amount == null || item.amount == 0
+                                          ? 0.0
+                                          : item.amount);
 
 // Apply different styles based on the condition
-                        TextStyle amountStyle = (item.mode == null ||
-                            item.mode == 0 ||
-                            item.mode == "")
-                            ? Styling
-                            .itemBlackTestSmallReport // Normal style if condition is true
-                            : Styling
-                            .itemBlackTestSmallReportBold; // Bold and bigger font if condition is false
+                              TextStyle amountStyle = (item.mode == null ||
+                                      item.mode == 0 ||
+                                      item.mode == "")
+                                  ? Styling
+                                      .itemBlackTestSmallReport // Normal style if condition is true
+                                  : Styling
+                                      .itemBlackTestSmallReportBold; // Bold and bigger font if condition is false
 
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                flex: 4,
-                                child: Text(
-                                  item is ManagerDsrReportIncomeSalesModel
-                                      ? item.itemName ?? ''
-                                      : item.itemName ?? '',
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.left,
-                                  textScaler:
-                                  TextScaler.noScaling,
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      flex: 4,
+                                      child: Text(
+                                        item is ManagerDsrReportIncomeSalesModel
+                                            ? item.itemName ?? ''
+                                            : item.itemName ?? '',
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.left,
+                                        textScaler: TextScaler.noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        displayQuantity!,
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.center,
+                                        textScaler: TextScaler.noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        displayUnsettledQuantity,
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.center,
+                                        textScaler: TextScaler.noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        displaySettledQuantity,
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.center,
+                                        textScaler: TextScaler.noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        displayMode,
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.center,
+                                        textScaler: TextScaler.noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 3,
+                                      child: Text(
+                                        formatCurrency(displayAmount),
+                                        style: amountStyle,
+                                        textAlign: TextAlign.right,
+                                        textScaler: TextScaler.noScaling,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  displayQuantity!,
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.center,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Text(
-                                  displayUnsettledQuantity,
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.center,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Text(
-                                  displaySettledQuantity,
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.center,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  displayMode,
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.center,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 3,
-                                child: Text(
-                                  formatCurrency(displayAmount),
-                                  style: amountStyle,
-                                  textAlign: TextAlign.right,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                            ],
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              )
+                        ],
+                      ),
+                    )
                   : Container(),
               dataIncomeRegulatorReplacementList.isNotEmpty
                   ? Container(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "Regulator Replacement",
-                            style: Styling.bodyTitleBigBold,
-                            textScaler:
-                            TextScaler.noScaling,
-                          )),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(0),
-                          topRight: Radius.circular(0),
-                        ),
-                        // Add a color to differentiate header row
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              flex: 4,
-                              child: Text(
-                                'Item Name',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.left,
-                                textScaler:
-                                TextScaler.noScaling,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  "Regulator Replacement",
+                                  style: Styling.bodyTitleBigBold,
+                                  textScaler: TextScaler.noScaling,
+                                )),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(0),
+                                topRight: Radius.circular(0),
+                              ),
+                              // Add a color to differentiate header row
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    flex: 4,
+                                    child: Text(
+                                      'Item Name',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.left,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: Text(
+                                      'Qty',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.center,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: Text(
+                                      '',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.center,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: Text(
+                                      '',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.center,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Text(
+                                      '',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.center,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Text(
+                                      'Amt',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.right,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            Expanded(
-                              flex: 1,
-                              child: Text(
-                                'Qty',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Text(
-                                '',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Text(
-                                '',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                '',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 3,
-                              child: Text(
-                                'Amt',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.right,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: BouncingScrollPhysics(),
-                      itemCount: dataIncomeRegulatorReplacementList.length,
-                      // Change this to the length of your data
-                      itemBuilder: (context, index) {
-                        var item = dataIncomeRegulatorReplacementList[index];
-                        // Check if quantity and amount are zero and display empty text
-                        String? displayQuantity = (item
-                        is ManagerDsrReportIncomeSalesModel)
-                            ? (item.quantity == 0
-                            ? ''
-                            : item.quantity
-                            ?.toInt()
-                            .toString()) // Convert to integer if quantity is a double
-                            : (item.quantity == 0
-                            ? ''
-                            : item.quantity
-                            .toInt()
-                            .toString()); // For other cases
+                          ),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: BouncingScrollPhysics(),
+                            itemCount:
+                                dataIncomeRegulatorReplacementList.length,
+                            // Change this to the length of your data
+                            itemBuilder: (context, index) {
+                              var item =
+                                  dataIncomeRegulatorReplacementList[index];
+                              // Check if quantity and amount are zero and display empty text
+                              String? displayQuantity = (item
+                                      is ManagerDsrReportIncomeSalesModel)
+                                  ? (item.quantity == 0
+                                      ? ''
+                                      : item.quantity
+                                          ?.toInt()
+                                          .toString()) // Convert to integer if quantity is a double
+                                  : (item.quantity == 0
+                                      ? ''
+                                      : item.quantity
+                                          .toInt()
+                                          .toString()); // For other cases
 
-                        String displayUnsettledQuantity =
-                        (item is ManagerDsrReportIncomeSalesModel)
-                            ? (item.unsettQty == 0
-                            ? ''
-                            : item.unsettQty.toString())
-                            : (item.unsettQty == 0
-                            ? ''
-                            : item.unsettQty.toString());
+                              String displayUnsettledQuantity =
+                                  (item is ManagerDsrReportIncomeSalesModel)
+                                      ? (item.unsettQty == 0
+                                          ? ''
+                                          : item.unsettQty.toString())
+                                      : (item.unsettQty == 0
+                                          ? ''
+                                          : item.unsettQty.toString());
 
-                        String displaySettledQuantity =
-                        (item is ManagerDsrReportIncomeSalesModel)
-                            ? (item.settQty == 0
-                            ? ''
-                            : item.settQty.toString())
-                            : (item.settQty == 0
-                            ? ''
-                            : item.settQty.toString());
+                              String displaySettledQuantity =
+                                  (item is ManagerDsrReportIncomeSalesModel)
+                                      ? (item.settQty == 0
+                                          ? ''
+                                          : item.settQty.toString())
+                                      : (item.settQty == 0
+                                          ? ''
+                                          : item.settQty.toString());
 
-                        String displayMode =
-                        (item is ManagerDsrReportIncomeSalesModel)
-                            ? (item.mode == null || item.mode == 0
-                            ? ''
-                            : item.mode.toString())
-                            : (item.mode == null || item.mode == 0
-                            ? ''
-                            : item.mode.toString());
+                              String displayMode =
+                                  (item is ManagerDsrReportIncomeSalesModel)
+                                      ? (item.mode == null || item.mode == 0
+                                          ? ''
+                                          : item.mode.toString())
+                                      : (item.mode == null || item.mode == 0
+                                          ? ''
+                                          : item.mode.toString());
 
-                        // Check if mode is null, 0, or empty and set the displayAmount accordingly
-                        double displayAmount =
-                        (item is ManagerDsrReportIncomeSalesModel)
-                            ? (item.amount == null || item.amount == 0
-                            ? 0.0
-                            : item.amount!)
-                            : (item.amount == null || item.amount == 0
-                            ? 0.0
-                            : item.amount);
+                              // Check if mode is null, 0, or empty and set the displayAmount accordingly
+                              double displayAmount =
+                                  (item is ManagerDsrReportIncomeSalesModel)
+                                      ? (item.amount == null || item.amount == 0
+                                          ? 0.0
+                                          : item.amount!)
+                                      : (item.amount == null || item.amount == 0
+                                          ? 0.0
+                                          : item.amount);
 
 // Apply different styles based on the condition
-                        TextStyle amountStyle = (item.mode == null ||
-                            item.mode == 0 ||
-                            item.mode == "")
-                            ? Styling
-                            .itemBlackTestSmallReport // Normal style if condition is true
-                            : Styling
-                            .itemBlackTestSmallReportBold; // Bold and bigger font if condition is false
+                              TextStyle amountStyle = (item.mode == null ||
+                                      item.mode == 0 ||
+                                      item.mode == "")
+                                  ? Styling
+                                      .itemBlackTestSmallReport // Normal style if condition is true
+                                  : Styling
+                                      .itemBlackTestSmallReportBold; // Bold and bigger font if condition is false
 
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                flex: 4,
-                                child: Text(
-                                  item is ManagerDsrReportIncomeSalesModel
-                                      ? item.itemName ?? ''
-                                      : item.itemName ?? '',
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.left,
-                                  textScaler:
-                                  TextScaler.noScaling,
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      flex: 4,
+                                      child: Text(
+                                        item is ManagerDsrReportIncomeSalesModel
+                                            ? item.itemName ?? ''
+                                            : item.itemName ?? '',
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.left,
+                                        textScaler: TextScaler.noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        displayQuantity!,
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.center,
+                                        textScaler: TextScaler.noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        displayUnsettledQuantity,
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.center,
+                                        textScaler: TextScaler.noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        displaySettledQuantity,
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.center,
+                                        textScaler: TextScaler.noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        displayMode,
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.center,
+                                        textScaler: TextScaler.noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 3,
+                                      child: Text(
+                                        formatCurrency(displayAmount),
+                                        style: amountStyle,
+                                        textAlign: TextAlign.right,
+                                        textScaler: TextScaler.noScaling,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  displayQuantity!,
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.center,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Text(
-                                  displayUnsettledQuantity,
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.center,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Text(
-                                  displaySettledQuantity,
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.center,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  displayMode,
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.center,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 3,
-                                child: Text(
-                                  formatCurrency(displayAmount),
-                                  style: amountStyle,
-                                  textAlign: TextAlign.right,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                            ],
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              )
-                  :Container(),
+                        ],
+                      ),
+                    )
+                  : Container(),
             ],
           ),
         ),
@@ -2221,118 +2431,143 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
   Widget _buildDMSaleTab() {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.only(left: 8, right: 8, bottom: 10),
+        padding: const EdgeInsets.only(left: 4, right: 4, bottom: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             dataDMSaleList.isNotEmpty
                 ? ListView.builder(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              itemCount: dataDMSaleList.length,
-              itemBuilder: (context, index) {
-                var sale = dataDMSaleList[index];
-                return
-                  Card(
-                  elevation: 5,
-                  margin: EdgeInsets.all(8),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 12),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(sale.staffName ?? '',
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xff1280b3),
-                                    fontFamily: 'OpenSans'),
-                              textScaler:
-                              TextScaler.noScaling,),
-                            Text(sale.itemName ?? '',
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xff1280b3),
-                                    fontFamily: 'OpenSans'),
-                              textScaler:
-                              TextScaler.noScaling,),
-                          ],
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: dataDMSaleList.length,
+                    itemBuilder: (context, index) {
+                      var sale = dataDMSaleList[index];
+                      return Card(
+                        elevation: 2,
+                        margin: EdgeInsets.all(4),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        SizedBox(height: 5),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _buildHeaderText('Sale Qty'),
-                            _buildHeaderText('Act. Sale'),
-                            _buildHeaderText('SV'),
-                            _buildHeaderText('TV'),
-                            _buildHeaderText('Def'),
-                          ],
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 4.0, vertical: 6),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    sale.staffName ?? '',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xff1280b3),
+                                        fontFamily: 'OpenSans'),
+                                    textScaler: TextScaler.noScaling,
+                                  ),
+                                  Text(
+                                    sale.itemName ?? '',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xff1280b3),
+                                        fontFamily: 'OpenSans'),
+                                    textScaler: TextScaler.noScaling,
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 5),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  _buildHeaderText('Sale Qty'),
+                                  _buildHeaderText('Act.Sale'),
+                                  _buildHeaderText('SV'),
+                                  _buildHeaderText('TV'),
+                                  _buildHeaderText('Def'),
+                                ],
+                              ),
+                              SizedBox(height: 5),
+                              Row(
+                                children: [
+                                  _buildDataText('${sale.filledSaleQty ?? 0}'),
+                                  _buildDataText('${sale.actualSaleQty ?? 0}'),
+                                  _buildDataText('${sale.sVQty ?? 0}'),
+                                  _buildDataText('${sale.tVQty ?? 0}'),
+                                  _buildDataText('${sale.deffQty ?? 0}'),
+                                ],
+                              ),
+                              SizedBox(height: 7),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  _buildAmountText(
+                                      'Total Amt.: ',
+                                      formatCurrency(
+                                          (sale.totalAmount ?? 0).toDouble())),
+                                  _buildAmountText(
+                                      'Received Amt.',
+                                      formatCurrency(
+                                          (sale.denoCashRcvd ?? 0).toDouble())),
+                                ],
+                              ),
+                              SizedBox(height: 10),
+                              Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Expanded(
+                                        child: _buildSmallAmountRow(
+                                            'Online/Prepaid :',
+                                            formatCurrency(
+                                                (sale.totPrepaidAmt ?? 0)
+                                                    .toDouble())),
+                                      ),
+                                      _verticalDivider(),
+                                      Expanded(
+                                        child: _buildSmallAmountRow(
+                                            'Merchant QR :',
+                                            formatCurrency(
+                                                (sale.totPostpaidAmt ?? 0)
+                                                    .toDouble())),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 5),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Expanded(
+                                        child: _buildSmallAmountRow(
+                                            'Credit :',
+                                            formatCurrency(
+                                                (sale.totRetiCrAmt ?? 0)
+                                                    .toDouble())),
+                                      ),
+                                      _verticalDivider(),
+                                      Expanded(
+                                        child: _buildSmallAmountRow(
+                                            'Cash :',
+                                            formatCurrency(
+                                                (sale.totCashAmt ?? 0)
+                                                    .toDouble())),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
                         ),
-                        SizedBox(height: 5),
-                        Row(
-                          children: [
-                            _buildDataText('${sale.filledSaleQty ?? 0}'),
-                            _buildDataText('${sale.actualSaleQty ?? 0}'),
-                            _buildDataText('${sale.sVQty ?? 0}'),
-                            _buildDataText('${sale.tVQty ?? 0}'),
-                            _buildDataText('${sale.deffQty ?? 0}'),
-                          ],
-                        ),
-                        SizedBox(height: 7),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            _buildAmountText('Total Amt.: ', formatCurrency((sale.totalAmount ?? 0).toDouble())),
-                            _buildAmountText('Received Amt.', formatCurrency((sale.denoCashRcvd ?? 0).toDouble())),
-                          ],
-                        ),
-                        SizedBox(height: 10),
-                        Column(
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Expanded(
-                                  child: _buildSmallAmountRow('Online/Prepaid :',
-                                      formatCurrency((sale.totPrepaidAmt ?? 0).toDouble())),
-                                ),
-                                _verticalDivider(),
-                                Expanded(
-                                  child: _buildSmallAmountRow('Merchant QR :',
-                                      formatCurrency((sale.totPostpaidAmt ?? 0).toDouble())),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 5),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Expanded(
-                                  child: _buildSmallAmountRow(
-                                      'Credit :', formatCurrency((sale.totRetiCrAmt ?? 0).toDouble())),
-                                ),
-                                _verticalDivider(),
-                                Expanded(
-                                  child: _buildSmallAmountRow('Cash :',
-                                      formatCurrency((sale.totCashAmt ?? 0).toDouble())),
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                );
-              },
-            )
+                      );
+                    },
+                  )
                 : Text(''),
           ],
         ),
@@ -2343,17 +2578,23 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
   Widget _buildHeaderText(String title) {
     return Expanded(
       flex: 1,
-      child: Text(title,
-          style: TextStyle(fontSize: 14, fontFamily: 'OpenSans', color: Colors.grey[700]),  textScaler:
-        TextScaler.noScaling,),
+      child: Text(
+        title,
+        style: TextStyle(
+            fontSize: 14, fontFamily: 'OpenSans', color: Colors.grey[700]),
+        textScaler: TextScaler.noScaling,
+      ),
     );
   }
 
   Widget _buildDataText(String value) {
     return Expanded(
       flex: 1,
-      child: Text(value, style: TextStyle(fontSize: 14, fontFamily: 'OpenSans'),  textScaler:
-      TextScaler.noScaling,),
+      child: Text(
+        value,
+        style: TextStyle(fontSize: 14, fontFamily: 'OpenSans'),
+        textScaler: TextScaler.noScaling,
+      ),
     );
   }
 
@@ -2363,10 +2604,14 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
       child: Row(
         children: [
           Text(label,
-              style: TextStyle(fontSize: 14, fontFamily: 'OpenSans', color: Colors.grey[700]), textScaler:
-              TextScaler.noScaling),
-          Text(value, style: TextStyle(fontSize: 14, fontFamily: 'OpenSans'), textScaler:
-          TextScaler.noScaling),
+              style: TextStyle(
+                  fontSize: 14,
+                  fontFamily: 'OpenSans',
+                  color: Colors.grey[700]),
+              textScaler: TextScaler.noScaling),
+          Text(value,
+              style: TextStyle(fontSize: 14, fontFamily: 'OpenSans'),
+              textScaler: TextScaler.noScaling),
         ],
       ),
     );
@@ -2378,15 +2623,19 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
         SizedBox(width: 8),
         SizedBox(
           width: 70,
-          child: Text(label,
-              style: TextStyle(fontSize: 12, color: Colors.grey[700], fontFamily: 'OpenSans'),
-            textScaler:
-            TextScaler.noScaling,),
+          child: Text(
+            label,
+            style: TextStyle(
+                fontSize: 12, color: Colors.grey[700], fontFamily: 'OpenSans'),
+            textScaler: TextScaler.noScaling,
+          ),
         ),
-        Text(amount,
-            style: TextStyle(fontSize: 12, color: Colors.black, fontFamily: 'OpenSans'),
-          textScaler:
-          TextScaler.noScaling,),
+        Text(
+          amount,
+          style: TextStyle(
+              fontSize: 12, color: Colors.black, fontFamily: 'OpenSans'),
+          textScaler: TextScaler.noScaling,
+        ),
       ],
     );
   }
@@ -2455,8 +2704,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                     item.transCate,
                                     // Assuming 'transCate' is what you're checking
                                     style: Styling.bodyTitleBigBold,
-                                    textScaler:
-                                    TextScaler.noScaling,
+                                    textScaler: TextScaler.noScaling,
                                   ),
                                 ),
                               if (showHeaderRow)
@@ -2472,21 +2720,19 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                           style: Styling
                                               .itemBlackTestSmallReportBold,
                                           textAlign: TextAlign.left,
-                                          textScaler:
-                                          TextScaler.noScaling,
+                                          textScaler: TextScaler.noScaling,
                                         ),
                                       ),
                                       Expanded(
                                         flex: 1,
                                         child: Text(
-                                          item.transCate == "TV Refund"?
-                                          'Qty':
-                                          '',
+                                          item.transCate == "TV Refund"
+                                              ? 'Qty'
+                                              : '',
                                           style: Styling
                                               .itemBlackTestSmallReportBold,
                                           textAlign: TextAlign.center,
-                                          textScaler:
-                                          TextScaler.noScaling,
+                                          textScaler: TextScaler.noScaling,
                                         ),
                                       ),
                                       Expanded(
@@ -2496,8 +2742,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                           style: Styling
                                               .itemBlackTestSmallReportBold,
                                           textAlign: TextAlign.center,
-                                          textScaler:
-                                          TextScaler.noScaling,
+                                          textScaler: TextScaler.noScaling,
                                         ),
                                       ),
                                       Expanded(
@@ -2507,8 +2752,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                           style: Styling
                                               .itemBlackTestSmallReportBold,
                                           textAlign: TextAlign.right,
-                                          textScaler:
-                                          TextScaler.noScaling,
+                                          textScaler: TextScaler.noScaling,
                                         ),
                                       ),
                                     ],
@@ -2526,49 +2770,60 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                       child: GestureDetector(
                                         onTap: () {
                                           int expId;
-                                          expId = item is ManagerDsrReportExpenseDetailListModel
-                                              ? item.expHeadId?? ''
-                                              : item. expHeadId?? '';
+                                          expId = item
+                                                  is ManagerDsrReportExpenseDetailListModel
+                                              ? item.expHeadId ?? ''
+                                              : item.expHeadId ?? '';
                                           String flags;
-                                          if(expId != 0){
+                                          if (expId != 0) {
                                             flags = "Exp";
-                                          }else{
-                                            flags = item is ManagerDsrReportExpenseDetailListModel
-                                                ? item.expenseItemName?? ''
-                                                : item. expenseItemName?? '';
+                                          } else {
+                                            flags = item
+                                                    is ManagerDsrReportExpenseDetailListModel
+                                                ? item.expenseItemName ?? ''
+                                                : item.expenseItemName ?? '';
                                           }
                                           Navigator.pushNamed(
                                               context,
                                               ManagerExpenseTabScreenDetails
                                                   .screenName,
                                               arguments: {
-                                                "expenseHeadId":expId,
-                                                "FlagCheck":flags,
-                                                "Date":selectedDate,
-                                              }
-                                          );
+                                                "expenseHeadId": expId,
+                                                "FlagCheck": flags,
+                                                "Date": selectedDate,
+                                              });
                                         },
                                         child: Text(
-                                          item.expenseItemName.isEmpty ? '' : item.expenseItemName,
-                                          style: Styling.itemBlackTestSmallReport.copyWith(
-                                            color: Colors.blue, // Text color set to blue
-                                            decoration: TextDecoration.underline, // Underline the text
-                                            decorationColor: Colors.blue, // Color for the underline
+                                          item.expenseItemName.isEmpty
+                                              ? ''
+                                              : item.expenseItemName,
+                                          style: Styling
+                                              .itemBlackTestSmallReport
+                                              .copyWith(
+                                            color: Colors.blue,
+                                            // Text color set to blue
+                                            decoration:
+                                                TextDecoration.underline,
+                                            // Underline the text
+                                            decorationColor: Colors
+                                                .blue, // Color for the underline
                                           ),
                                           textAlign: TextAlign.left,
-                                          textScaler:
-                                          TextScaler.noScaling,
+                                          textScaler: TextScaler.noScaling,
                                         ),
                                       ),
                                     ),
                                     Expanded(
                                       flex: 1,
                                       child: Text(
-                                        item.transCate == "TV Refund"?item.quantity == 0 ? ' ' : item.quantity.toString():' ',
+                                        item.transCate == "TV Refund"
+                                            ? item.quantity == 0
+                                                ? ' '
+                                                : item.quantity.toString()
+                                            : ' ',
                                         style: Styling.itemBlackTestSmallReport,
                                         textAlign: TextAlign.center,
-                                        textScaler:
-                                        TextScaler.noScaling,
+                                        textScaler: TextScaler.noScaling,
                                       ),
                                     ),
                                     Expanded(
@@ -2577,8 +2832,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                         item.mode.isEmpty ? '' : item.mode,
                                         style: Styling.itemBlackTestSmallReport,
                                         textAlign: TextAlign.center,
-                                        textScaler:
-                                        TextScaler.noScaling,
+                                        textScaler: TextScaler.noScaling,
                                       ),
                                     ),
                                     Expanded(
@@ -2587,8 +2841,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                         formatCurrency(displayAmount),
                                         style: amountStyle,
                                         textAlign: TextAlign.right,
-                                        textScaler:
-                                        TextScaler.noScaling,
+                                        textScaler: TextScaler.noScaling,
                                       ),
                                     ),
                                   ],
@@ -2619,423 +2872,416 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
             children: [
               dataSVSaleList.isNotEmpty
                   ? Container(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            "SV Summary",
-                            style: Styling.bodyTitleBigBold,
-                            textScaler:
-                            TextScaler.noScaling,
-                          )),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(0),
-                          topRight: Radius.circular(0),
-                        ),
-                        // Add a color to differentiate header row
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              flex: 4,
-                              child: Text(
-                                'Item',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.left,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Text(
-                                'Qty',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Text(
-                                '',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                'Voucher Type',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                '',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 3,
-                              child: Text(
-                                'Amt',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.right,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: BouncingScrollPhysics(),
-                      itemCount: dataSVSaleList.length,
-                      // Change this to the length of your data
-                      itemBuilder: (context, index) {
-                        var item = dataSVSaleList[index];
-                        // Check if quantity and amount are zero and display empty text
-                        String? displayQuantity = (item
-                        is ManagerGetDsrSvtvListModel)
-                            ? (item.quantity == 0
-                            ? ''
-                            : item.quantity
-                            ?.toInt()
-                            .toString()) // Convert to integer if quantity is a double
-                            : (item.quantity == 0
-                            ? ''
-                            : item.quantity
-                            .toInt()
-                            .toString()); // For other cases
-
-
-                        String displayVoucherType =
-                        (item is ManagerGetDsrSvtvListModel && item.sVType != null && item.sVType != 0)
-                            ? item.sVType.toString()
-                            : '';
-
-                        debugPrint('displayVoucherType: $displayVoucherType');
-
-                        String displayMode =
-                        (item is ManagerGetDsrSvtvListModel)
-                            ? (item.mode == null || item.mode == 0
-                            ? ''
-                            : item.mode.toString())
-                            : (item.mode == null || item.mode == 0
-                            ? ''
-                            : item.mode.toString());
-
-                        // Check if mode is null, 0, or empty and set the displayAmount accordingly
-                        double displayAmount =
-                        (item is ManagerGetDsrSvtvListModel)
-                            ? (item.amount == null || item.amount == 0
-                            ? 0.0
-                            : item.amount!)
-                            : (item.amount == null || item.amount == 0
-                            ? 0.0
-                            : item.amount);
-
-                       // Apply different styles based on the condition
-                        TextStyle amountStyle = (item.mode == null ||
-                            item.mode == 0 ||
-                            item.mode == "")
-                            ? Styling
-                            .itemBlackTestSmallReport // Normal style if condition is true
-                            : Styling
-                            .itemBlackTestSmallReportBold; // Bold and bigger font if condition is false
-
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                flex: 4,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Align(
+                                alignment: Alignment.centerLeft,
                                 child: Text(
-                                  item is ManagerGetDsrSvtvListModel
-                                      ? item.itemName ?? ''
-                                      : item.itemName ?? '',
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.left,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  displayQuantity!,
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.center,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Text(
-                                  '',
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.center,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Text(
-                                  displayVoucherType,
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.left,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  displayMode,
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.center,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 3,
-                                child: Text(
-                                  formatCurrency(displayAmount),
-                                  style: amountStyle,
-                                  textAlign: TextAlign.right,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                            ],
+                                  "SV Summary",
+                                  style: Styling.bodyTitleBigBold,
+                                  textScaler: TextScaler.noScaling,
+                                )),
                           ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              )
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(0),
+                                topRight: Radius.circular(0),
+                              ),
+                              // Add a color to differentiate header row
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    flex: 4,
+                                    child: Text(
+                                      'Item',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.left,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: Text(
+                                      'Qty',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.center,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: Text(
+                                      '',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.center,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Text(
+                                      'Voucher Type',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.center,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Text(
+                                      '',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.center,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Text(
+                                      'Amt',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.right,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: BouncingScrollPhysics(),
+                            itemCount: dataSVSaleList.length,
+                            // Change this to the length of your data
+                            itemBuilder: (context, index) {
+                              var item = dataSVSaleList[index];
+                              // Check if quantity and amount are zero and display empty text
+                              String? displayQuantity = (item
+                                      is ManagerGetDsrSvtvListModel)
+                                  ? (item.quantity == 0
+                                      ? ''
+                                      : item.quantity
+                                          ?.toInt()
+                                          .toString()) // Convert to integer if quantity is a double
+                                  : (item.quantity == 0
+                                      ? ''
+                                      : item.quantity
+                                          .toInt()
+                                          .toString()); // For other cases
+
+                              // String displayVoucherType =
+                              // (item is ManagerGetDsrSvtvListModel && item.sVType != null && item.sVType != 0)
+                              //     ? item.sVType.toString()
+                              //     : '';
+
+                              String? displayVoucherType = (item
+                                      is ManagerGetDsrSvtvListModel)
+                                  ? (item.sVType == ''
+                                      ? ''
+                                      : item.sVType
+                                          ?.toString()
+                                          .toString()) // Convert to integer if quantity is a double
+                                  : (item.sVType == ''
+                                      ? ''
+                                      : item.sVType.toString().toString());
+                              debugPrint(
+                                  'displayVoucherType: $displayVoucherType');
+
+                              String displayMode =
+                                  (item is ManagerGetDsrSvtvListModel)
+                                      ? (item.mode == null || item.mode == 0
+                                          ? ''
+                                          : item.mode.toString())
+                                      : (item.mode == null || item.mode == 0
+                                          ? ''
+                                          : item.mode.toString());
+
+                              // Check if mode is null, 0, or empty and set the displayAmount accordingly
+                              double displayAmount =
+                                  (item is ManagerGetDsrSvtvListModel)
+                                      ? (item.amount == null || item.amount == 0
+                                          ? 0.0
+                                          : item.amount!)
+                                      : (item.amount == null || item.amount == 0
+                                          ? 0.0
+                                          : item.amount);
+
+                              // Apply different styles based on the condition
+                              TextStyle amountStyle = (item.mode == null ||
+                                      item.mode == 0 ||
+                                      item.mode == "")
+                                  ? Styling
+                                      .itemBlackTestSmallReport // Normal style if condition is true
+                                  : Styling
+                                      .itemBlackTestSmallReportBold; // Bold and bigger font if condition is false
+
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      flex: 4,
+                                      child: Text(
+                                        item is ManagerGetDsrSvtvListModel
+                                            ? item.itemName ?? ''
+                                            : item.itemName ?? '',
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.left,
+                                        textScaler: TextScaler.noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        displayQuantity!,
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.center,
+                                        textScaler: TextScaler.noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        '',
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.center,
+                                        textScaler: TextScaler.noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        displayVoucherType ?? '',
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.center,
+                                        textScaler: TextScaler.noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        displayMode,
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.center,
+                                        textScaler: TextScaler.noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 3,
+                                      child: Text(
+                                        formatCurrency(displayAmount),
+                                        style: amountStyle,
+                                        textAlign: TextAlign.right,
+                                        textScaler: TextScaler.noScaling,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    )
                   : Container(),
               dataTVSaleList.isNotEmpty
                   ? Container(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text("TV Summary",
-                              style: Styling.bodyTitleBigBold,   textScaler:
-                            TextScaler.noScaling,)),
-                    ),
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(0),
-                          topRight: Radius.circular(0),
-                        ),
-                        // Add a color to differentiate header row
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              flex: 4,
-                              child: Text(
-                                'Item',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.left,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                'Qty',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Text(
-                                '',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Text(
-                                '',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                '',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                            Expanded(
-                              flex: 3,
-                              child: Text(
-                                'Amt',
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.right,
-                                textScaler:
-                                TextScaler.noScaling,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: BouncingScrollPhysics(),
-                      itemCount: dataTVSaleList.length,
-                      itemBuilder: (context, index) {
-                        var item = dataTVSaleList[index];
-
-                        String? displayQuantity = (item.quantity == 0) ? '' : item.quantity.toInt().toString();
-
-                       String displayMode = (item.mode == null || item.mode == 0) ? '' : item.mode.toString();
-
-                       String displayVoucherType =
-                        (item is ManagerGetDsrSvtvListModel && item.sVType != null && item.sVType != 0)
-                            ? item.sVType.toString()
-                            : '';
-
-                       double displayAmount = (item.amount == null || item.amount == 0) ? 0.0 : item.amount;
-
-                       TextStyle amountStyle = (item.mode == null || item.mode == 0 || item.mode == "")
-                            ? Styling.itemBlackTestSmallReport
-                            : Styling.itemBlackTestSmallReportBold;
-
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                flex: 4,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8.0),
+                            child: Align(
+                                alignment: Alignment.centerLeft,
                                 child: Text(
-                                  item.itemName ?? '',
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.left,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  displayQuantity!,
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.center,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Text(
-                                  '',
-                                  textScaler:
-                                  TextScaler.noScaling,// keep if placeholder is necessary, else remove
-                                ),
-                              ),
-                              Expanded(
-                                flex: 1,
-                                child: Text(
-                                    '',
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.center,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  displayMode,
-                                  style: Styling.itemBlackTestSmallReport,
-                                  textAlign: TextAlign.center,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                              Expanded(
-                                flex: 3,
-                                child: Text(
-                                  formatCurrency(displayAmount),
-                                  style: amountStyle,
-                                  textAlign: TextAlign.right,
-                                  textScaler:
-                                  TextScaler.noScaling,
-                                ),
-                              ),
-                            ],
+                                  "TV Summary",
+                                  style: Styling.bodyTitleBigBold,
+                                  textScaler: TextScaler.noScaling,
+                                )),
                           ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              )
+                          Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(0),
+                                topRight: Radius.circular(0),
+                              ),
+                              // Add a color to differentiate header row
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    flex: 4,
+                                    child: Text(
+                                      'Item',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.left,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Text(
+                                      'Qty',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.center,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: Text(
+                                      '',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.center,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 1,
+                                    child: Text(
+                                      '',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.center,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Text(
+                                      '',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.center,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 3,
+                                    child: Text(
+                                      'Amt',
+                                      style:
+                                          Styling.itemBlackTestSmallReportBold,
+                                      textAlign: TextAlign.right,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: BouncingScrollPhysics(),
+                            itemCount: dataTVSaleList.length,
+                            itemBuilder: (context, index) {
+                              var item = dataTVSaleList[index];
+
+                              String? displayQuantity = (item.quantity == 0)
+                                  ? ''
+                                  : item.quantity.toInt().toString();
+
+                              String displayMode =
+                                  (item.mode == null || item.mode == 0)
+                                      ? ''
+                                      : item.mode.toString();
+
+                              double displayAmount =
+                                  (item.amount == null || item.amount == 0)
+                                      ? 0.0
+                                      : item.amount;
+
+                              TextStyle amountStyle = (item.mode == null ||
+                                      item.mode == 0 ||
+                                      item.mode == "")
+                                  ? Styling.itemBlackTestSmallReport
+                                  : Styling.itemBlackTestSmallReportBold;
+
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      flex: 4,
+                                      child: Text(
+                                        item.itemName ?? '',
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.left,
+                                        textScaler: TextScaler.noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        displayQuantity!,
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.center,
+                                        textScaler: TextScaler.noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        '',
+                                        textScaler: TextScaler
+                                            .noScaling, // keep if placeholder is necessary, else remove
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(
+                                        '',
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.center,
+                                        textScaler: TextScaler.noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 2,
+                                      child: Text(
+                                        displayMode,
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.center,
+                                        textScaler: TextScaler.noScaling,
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 3,
+                                      child: Text(
+                                        formatCurrency(displayAmount),
+                                        style: amountStyle,
+                                        textAlign: TextAlign.right,
+                                        textScaler: TextScaler.noScaling,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    )
                   : Container(),
             ],
           ),
@@ -3044,7 +3290,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
     );
   }
 
-  Widget _buildSectionCard({required String title, required List<Map<String, String>> data}) {
+  Widget _buildSectionCard(
+      {required String title, required List<Map<String, String>> data}) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       elevation: 2,
@@ -3054,10 +3301,15 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: Styling.itemBlackTestSmallReportBold,textScaler:
-            TextScaler.noScaling,),
+            Text(
+              title,
+              style: Styling.itemBlackTestSmallReportBold,
+              textScaler: TextScaler.noScaling,
+            ),
             const SizedBox(height: 12),
-            ...data.map((item) => _buildKeyValue(item['label']!, item['value']!)).toList(),
+            ...data
+                .map((item) => _buildKeyValue(item['label']!, item['value']!))
+                .toList(),
           ],
         ),
       ),
@@ -3070,10 +3322,18 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(child: Text(label, style: Styling.itemBlackTestSmall, textScaler:
-          TextScaler.noScaling,),),
-          Text(value, style: Styling.itemBlackTestSmall, textScaler:
-          TextScaler.noScaling,),
+          Expanded(
+            child: Text(
+              label,
+              style: Styling.itemBlackTestSmall,
+              textScaler: TextScaler.noScaling,
+            ),
+          ),
+          Text(
+            value,
+            style: Styling.itemBlackTestSmall,
+            textScaler: TextScaler.noScaling,
+          ),
         ],
       ),
     );
@@ -3094,194 +3354,371 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                     children: [
                       Align(
                           alignment: Alignment.centerLeft,
-                          child: Text("Stock Updated On : ", style: Styling.bodyTitleBigBold,  textScaler:
-                          TextScaler.noScaling,)),
-                      Text(startOnDate.toString(), style: Styling.bodyTitleBigBold,  textScaler:
-                      TextScaler.noScaling,)
+                          child: Text(
+                            "Stock Updated On : ",
+                            style: Styling.bodyTitleBigBold,
+                            textScaler: TextScaler.noScaling,
+                          )),
+                      Text(
+                        startOnDate.toString(),
+                        style: Styling.bodyTitleBigBold,
+                        textScaler: TextScaler.noScaling,
+                      )
                     ],
                   ),
                 ),
                 cdcmsListData.isNotEmpty
-                    ?
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: BouncingScrollPhysics(),
-                  itemCount: cdcmsListData.length,
-                  itemBuilder: (context, index) {
-                    // Ensure that the lists have valid lengths before accessing them
-                    if (index < filledCDControllers.length &&
-                        index < emptyCDControllers.length &&
-                        index < defectiveCDControllers.length) {
-                      ManagerDsrReportCdcmsListModel data = cdcmsListData[index];
+                    ? ListView.builder(
+                        shrinkWrap: true,
+                        physics: BouncingScrollPhysics(),
+                        itemCount: cdcmsListData.length,
+                        itemBuilder: (context, index) {
+                          // Ensure that the lists have valid lengths before accessing them
+                          if (index < filledCDControllers.length &&
+                              index < emptyCDControllers.length &&
+                              index < defectiveCDControllers.length) {
+                            ManagerDsrReportCdcmsListModel data =
+                                cdcmsListData[index];
 
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                            // Header row for stock item
-                            Row(
-                              children: [
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Text(data.itemName ?? 'Item Name', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),  textScaler:
-                                  TextScaler.noScaling,),
-                                ),
-                              ],
-                            ),
-                            // Current Stock row
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8.0),
-                              child: Row(
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
                                 children: [
-                                  Expanded(flex: 3, child: Text("Current Stock", style: TextStyle(fontSize: 12), textAlign: TextAlign.left,  textScaler:
-                                  TextScaler.noScaling,)),
-                                  Expanded(flex: 2, child: Text("Filled", style: TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.center,  textScaler:
-                                  TextScaler.noScaling,)),
-                                  Expanded(flex: 2, child: Text("Empty", style: TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.center,  textScaler:
-                                  TextScaler.noScaling,)),
-                                  Expanded(flex: 2, child: Text("Def", style: TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.center,  textScaler:
-                                  TextScaler.noScaling,)),
+                                  // Header row for stock item
+                                  Row(
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          data.itemName ?? 'Item Name',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14),
+                                          textScaler: TextScaler.noScaling,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  // Current Stock row
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                            flex: 3,
+                                            child: Text(
+                                              "Current Stock",
+                                              style: TextStyle(fontSize: 12),
+                                              textAlign: TextAlign.left,
+                                              textScaler: TextScaler.noScaling,
+                                            )),
+                                        Expanded(
+                                            flex: 2,
+                                            child: Text(
+                                              "Filled",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                              textAlign: TextAlign.center,
+                                              textScaler: TextScaler.noScaling,
+                                            )),
+                                        Expanded(
+                                            flex: 2,
+                                            child: Text(
+                                              "Empty",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                              textAlign: TextAlign.center,
+                                              textScaler: TextScaler.noScaling,
+                                            )),
+                                        Expanded(
+                                            flex: 2,
+                                            child: Text(
+                                              "Def",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                              textAlign: TextAlign.center,
+                                              textScaler: TextScaler.noScaling,
+                                            )),
+                                      ],
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                          flex: 3,
+                                          child: Text(
+                                            "Stock",
+                                            style: TextStyle(fontSize: 12),
+                                            textAlign: TextAlign.left,
+                                            textScaler: TextScaler.noScaling,
+                                          )),
+                                      Expanded(
+                                          flex: 2,
+                                          child: Text(
+                                            data.currentStkFilled?.toString() ??
+                                                '0',
+                                            style: TextStyle(fontSize: 12),
+                                            textAlign: TextAlign.center,
+                                            textScaler: TextScaler.noScaling,
+                                          )),
+                                      Expanded(
+                                          flex: 2,
+                                          child: Text(
+                                            data.currentStkEmpty?.toString() ??
+                                                '0',
+                                            style: TextStyle(fontSize: 12),
+                                            textAlign: TextAlign.center,
+                                            textScaler: TextScaler.noScaling,
+                                          )),
+                                      Expanded(
+                                          flex: 2,
+                                          child: Text(
+                                            data.currentStkDefective
+                                                    ?.toString() ??
+                                                '0',
+                                            style: TextStyle(fontSize: 12),
+                                            textAlign: TextAlign.center,
+                                            textScaler: TextScaler.noScaling,
+                                          )),
+                                    ],
+                                  ),
+                                  // Editable TextFields for the user to update stock values
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                            flex: 3,
+                                            child: Text(
+                                              "CDCMS",
+                                              style: TextStyle(fontSize: 12),
+                                              textAlign: TextAlign.left,
+                                              textScaler: TextScaler.noScaling,
+                                            )),
+                                        Expanded(
+                                          flex: 2,
+                                          child: TextField(
+                                            controller:
+                                                filledCDControllers[index],
+                                            decoration:
+                                                buildInputWithSmallUnderline(
+                                                    context),
+                                            style: TextStyle(fontSize: 12),
+                                            textAlign: TextAlign.center,
+                                            keyboardType: TextInputType.number,
+                                            onChanged: (value) {
+                                              double newValue =
+                                                  double.tryParse(value) ?? 0.0;
+                                              setState(() {
+                                                filledDiffList[index] = (data
+                                                            .currentStkFilled
+                                                            ?.toDouble() ??
+                                                        0.0) -
+                                                    newValue;
+                                                totalDiffList[index] =
+                                                    filledDiffList[index] +
+                                                        emptyDiffList[index] +
+                                                        defectiveDiffList[
+                                                            index];
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                        SizedBox(width: 7),
+                                        Expanded(
+                                          flex: 2,
+                                          child: TextField(
+                                            controller:
+                                                emptyCDControllers[index],
+                                            decoration:
+                                                buildInputWithSmallUnderline(
+                                                    context),
+                                            style: TextStyle(fontSize: 12),
+                                            textAlign: TextAlign.center,
+                                            keyboardType: TextInputType.number,
+                                            onChanged: (value) {
+                                              double newValue =
+                                                  double.tryParse(value) ?? 0.0;
+                                              setState(() {
+                                                emptyDiffList[index] = (data
+                                                            .currentStkEmpty
+                                                            ?.toDouble() ??
+                                                        0.0) -
+                                                    newValue;
+                                                totalDiffList[index] =
+                                                    filledDiffList[index] +
+                                                        emptyDiffList[index] +
+                                                        defectiveDiffList[
+                                                            index];
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                        SizedBox(width: 7),
+                                        Expanded(
+                                          flex: 2,
+                                          child: TextField(
+                                            controller:
+                                                defectiveCDControllers[index],
+                                            decoration:
+                                                buildInputWithSmallUnderline(
+                                                    context),
+                                            style: TextStyle(fontSize: 12),
+                                            textAlign: TextAlign.center,
+                                            keyboardType: TextInputType.number,
+                                            onChanged: (value) {
+                                              double newValue =
+                                                  double.tryParse(value) ?? 0.0;
+                                              setState(() {
+                                                defectiveDiffList[index] = (data
+                                                            .currentStkDefective
+                                                            ?.toDouble() ??
+                                                        0.0) -
+                                                    newValue;
+                                                totalDiffList[index] =
+                                                    filledDiffList[index] +
+                                                        emptyDiffList[index] +
+                                                        defectiveDiffList[
+                                                            index];
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  // Display calculated differences
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Expanded(
+                                          flex: 3,
+                                          child: Text(
+                                            "Difference",
+                                            style: TextStyle(fontSize: 12),
+                                            textAlign: TextAlign.left,
+                                            textScaler: TextScaler.noScaling,
+                                          )),
+                                      Expanded(
+                                          flex: 2,
+                                          child: Text(
+                                            filledDiffList[index]
+                                                .toStringAsFixed(2),
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                color: filledDiffList[index] < 0
+                                                    ? Colors.red
+                                                    : Colors.black),
+                                            textAlign: TextAlign.center,
+                                            textScaler: TextScaler.noScaling,
+                                          )),
+                                      Expanded(
+                                          flex: 2,
+                                          child: Text(
+                                            emptyDiffList[index]
+                                                .toStringAsFixed(2),
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                color: emptyDiffList[index] < 0
+                                                    ? Colors.red
+                                                    : Colors.black),
+                                            textAlign: TextAlign.center,
+                                            textScaler: TextScaler.noScaling,
+                                          )),
+                                      Expanded(
+                                          flex: 2,
+                                          child: Text(
+                                            defectiveDiffList[index]
+                                                .toStringAsFixed(2),
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                color:
+                                                    defectiveDiffList[index] < 0
+                                                        ? Colors.red
+                                                        : Colors.black),
+                                            textAlign: TextAlign.center,
+                                            textScaler: TextScaler.noScaling,
+                                          )),
+                                    ],
+                                  ),
+                                  // Display total difference
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                          flex: 0,
+                                          child: Text(
+                                            "Total : ",
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold),
+                                            textAlign: TextAlign.left,
+                                            textScaler: TextScaler.noScaling,
+                                          )),
+                                      Expanded(
+                                          flex: 0,
+                                          child: Text(
+                                            totalDiffList[index]
+                                                .toStringAsFixed(2),
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                                color: totalDiffList[index] < 0
+                                                    ? Colors.red
+                                                    : Colors.black),
+                                            textAlign: TextAlign.center,
+                                            textScaler: TextScaler.noScaling,
+                                          )),
+                                    ],
+                                  ),
                                 ],
                               ),
-                            ),
-                            Row(
-                              children: [
-                                Expanded(flex: 3, child: Text("Stock", style: TextStyle(fontSize: 12), textAlign: TextAlign.left,  textScaler:
-                                TextScaler.noScaling,)),
-                                Expanded(flex: 2, child: Text(data.currentStkFilled?.toString() ?? '0', style: TextStyle(fontSize: 12), textAlign: TextAlign.center,  textScaler:
-                                TextScaler.noScaling,)),
-                                Expanded(flex: 2, child: Text(data.currentStkEmpty?.toString() ?? '0', style: TextStyle(fontSize: 12), textAlign: TextAlign.center,  textScaler:
-                                TextScaler.noScaling,)),
-                                Expanded(flex: 2, child: Text(data.currentStkDefective?.toString() ?? '0', style: TextStyle(fontSize: 12), textAlign: TextAlign.center,  textScaler:
-                                TextScaler.noScaling,)),
-                              ],
-                            ),
-                            // Editable TextFields for the user to update stock values
-                            Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8.0),
-                              child: Row(
-                                children: [
-                                  Expanded(flex: 3, child: Text("CDCMS", style: TextStyle(fontSize: 12), textAlign: TextAlign.left,  textScaler:
-                                  TextScaler.noScaling,)),
-                                  Expanded(
-                                    flex: 2,
-                                    child: TextField(
-                                      controller: filledCDControllers[index],
-                                      decoration: buildInputWithSmallUnderline(context),
-                                      style: TextStyle(fontSize: 12),
-                                      textAlign: TextAlign.center,
-                                      keyboardType: TextInputType.number,
-                                      onChanged: (value) {
-                                        double newValue = double.tryParse(value) ?? 0.0;
-                                        setState(() {
-                                          filledDiffList[index] = (data.currentStkFilled?.toDouble() ?? 0.0) - newValue;
-                                          totalDiffList[index] = filledDiffList[index] + emptyDiffList[index] + defectiveDiffList[index];
-                                        });
-                                      },
-
-                                    ),
-                                  ),
-                                  SizedBox(width: 7),
-                                  Expanded(
-                                    flex: 2,
-                                    child: TextField(
-                                      controller: emptyCDControllers[index],
-                                      decoration: buildInputWithSmallUnderline(context),
-                                      style: TextStyle(fontSize: 12),
-                                      textAlign: TextAlign.center,
-                                      keyboardType: TextInputType.number,
-                                      onChanged: (value) {
-                                        double newValue = double.tryParse(value) ?? 0.0;
-                                        setState(() {
-                                          emptyDiffList[index] = (data.currentStkEmpty?.toDouble() ?? 0.0) - newValue;
-                                          totalDiffList[index] = filledDiffList[index] + emptyDiffList[index] + defectiveDiffList[index];
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                  SizedBox(width: 7),
-                                  Expanded(
-                                    flex: 2,
-                                    child: TextField(
-                                      controller: defectiveCDControllers[index],
-                                      decoration: buildInputWithSmallUnderline(context),
-                                      style: TextStyle(fontSize: 12),
-                                      textAlign: TextAlign.center,
-                                      keyboardType: TextInputType.number,
-                                      onChanged: (value) {
-                                        double newValue = double.tryParse(value) ?? 0.0;
-                                        setState(() {
-                                          defectiveDiffList[index] = (data.currentStkDefective?.toDouble() ?? 0.0) - newValue;
-                                          totalDiffList[index] = filledDiffList[index] + emptyDiffList[index] + defectiveDiffList[index];
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            // Display calculated differences
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Expanded(flex: 3, child: Text("Difference", style: TextStyle(fontSize: 12), textAlign: TextAlign.left,  textScaler:
-                                TextScaler.noScaling,)),
-                                Expanded(flex: 2, child: Text(filledDiffList[index].toStringAsFixed(2), style: TextStyle(fontSize: 12, color: filledDiffList[index] < 0 ? Colors.red : Colors.black), textAlign: TextAlign.center,  textScaler:
-                                TextScaler.noScaling,)),
-                                Expanded(flex: 2, child: Text(emptyDiffList[index].toStringAsFixed(2), style: TextStyle(fontSize: 12, color: emptyDiffList[index] < 0 ? Colors.red : Colors.black), textAlign: TextAlign.center,  textScaler:
-                                TextScaler.noScaling,)),
-                                Expanded(flex: 2, child: Text(defectiveDiffList[index].toStringAsFixed(2), style: TextStyle(fontSize: 12, color: defectiveDiffList[index] < 0 ? Colors.red : Colors.black), textAlign: TextAlign.center,  textScaler:
-                                TextScaler.noScaling,)),
-                              ],
-                            ),
-                            // Display total difference
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Expanded(flex: 0, child: Text("Total : ", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold), textAlign: TextAlign.left,  textScaler:
-                                TextScaler.noScaling,)),
-                                Expanded(flex: 0, child: Text(totalDiffList[index].toStringAsFixed(2), style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: totalDiffList[index] < 0 ? Colors.red : Colors.black), textAlign: TextAlign.center,  textScaler:
-                                TextScaler.noScaling,)),
-                              ],
-                            ),
-                          ],
-                        ),
-                      );
-                    } else {
-                      return SizedBox.shrink();  // Return an empty widget if index is out of bounds
-                    }
-                  },
-                )
+                            );
+                          } else {
+                            return SizedBox
+                                .shrink(); // Return an empty widget if index is out of bounds
+                          }
+                        },
+                      )
                     : Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Center(
-                    child: Text(
-                      'No CDCMS Data Available',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                      textScaler:
-                      TextScaler.noScaling,
-                    ),
-                  ),
-                ),
+                        padding: const EdgeInsets.all(16.0),
+                        child: Center(
+                          child: Text(
+                            'No CDCMS Data Available',
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                            textScaler: TextScaler.noScaling,
+                          ),
+                        ),
+                      ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ElevatedButton(
-                      onPressed: isDateValid ? (){
-                        if(saveFlag){
-                          debugPrint("Save data$saveFlag");
-                          showFlushBar(context,
-                              Constants.dayEndCompleted);
-                        }else{
-                          saveCDCMSDataMob();
-                          debugPrint("Save data$saveFlag");
-                        }
-
-                      }:null,
-                      child: Text("Save CDCMS Data",textScaler:
-                      TextScaler.noScaling,),
+                      onPressed: isDateValid
+                          ? () {
+                              if (saveFlag) {
+                                debugPrint("Save data$saveFlag");
+                                showFlushBar(
+                                    context, Constants.dayEndCompleted);
+                              } else {
+                                saveCDCMSDataMob();
+                                debugPrint("Save data$saveFlag");
+                              }
+                            }
+                          : null,
+                      child: Text(
+                        "Save CDCMS Data",
+                        textScaler: TextScaler.noScaling,
+                      ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:isDateValid? saveFlag ? Colors.grey : Colors.blue:Colors.grey,
+                        backgroundColor: isDateValid
+                            ? saveFlag
+                                ? Colors.grey
+                                : Colors.blue
+                            : Colors.grey,
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(50),
@@ -3315,9 +3752,11 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                         children: [
                           Align(
                               alignment: Alignment.centerLeft,
-                              child: Text("Cash In Hand ",
-                                  style: Styling.bodyTitleBigBold,  textScaler:
-                                TextScaler.noScaling,)),
+                              child: Text(
+                                "Cash In Hand ",
+                                style: Styling.bodyTitleBigBold,
+                                textScaler: TextScaler.noScaling,
+                              )),
                         ],
                       ),
                     ),
@@ -3325,38 +3764,43 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Expanded(
-                            flex: 3,
-                            child: Text("Staff Name",
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.left,
-                              textScaler:
-                              TextScaler.noScaling,),
+                          flex: 3,
+                          child: Text(
+                            "Staff Name",
+                            style: Styling.itemBlackTestSmallReportBold,
+                            textAlign: TextAlign.left,
+                            textScaler: TextScaler.noScaling,
+                          ),
                         ),
                         Expanded(
                             flex: 2,
-                            child: Text("Collected\nAmount",
-                                style: Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                              textScaler:
-                              TextScaler.noScaling,)),
+                            child: Text(
+                              "Collected\nAmount",
+                              style: Styling.itemBlackTestSmallReportBold,
+                              textAlign: TextAlign.center,
+                              textScaler: TextScaler.noScaling,
+                            )),
                         Expanded(
                             flex: 2,
-                            child: Text("Paid\nAmount",
-                                style:Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                              textScaler:
-                              TextScaler.noScaling,)),
+                            child: Text(
+                              "Paid\nAmount",
+                              style: Styling.itemBlackTestSmallReportBold,
+                              textAlign: TextAlign.center,
+                              textScaler: TextScaler.noScaling,
+                            )),
                         Expanded(
                             flex: 2,
-                            child: Text("Cash\nCollection",
-                                style:Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                              textScaler:
-                              TextScaler.noScaling,)),
+                            child: Text(
+                              "Cash\nCollection",
+                              style: Styling.itemBlackTestSmallReportBold,
+                              textAlign: TextAlign.center,
+                              textScaler: TextScaler.noScaling,
+                            )),
                       ],
                     ),
-                    SizedBox(height: 10,),
+                    SizedBox(
+                      height: 10,
+                    ),
                     ListView.builder(
                       shrinkWrap: true,
                       physics: BouncingScrollPhysics(),
@@ -3364,7 +3808,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                       itemBuilder: (context, index) {
                         var data = dataCashInHandList[index];
                         return Padding(
-                          padding: const EdgeInsets.only(bottom:0.0),
+                          padding: const EdgeInsets.only(bottom: 0.0),
                           child: Column(
                             children: [
                               Row(
@@ -3388,25 +3832,29 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                             ManagerCashInHandScreenDeails
                                                 .screenName,
                                             arguments: {
-                                              "staffId": data is ManagerDsrReportCashHandOverModel
+                                              "staffId": data
+                                                      is ManagerDsrReportCashHandOverModel
                                                   ? data.staffId
                                                   : data.staffId,
-                                              "Date":selectedDate,
-                                            }
-                                        );
+                                              "Date": selectedDate,
+                                            });
                                       },
                                       child: Text(
                                         data is ManagerDsrReportCashHandOverModel
                                             ? data.staffName
-                                            : data.staffName, // Display staffName based on data type
-                                        style: Styling.itemBlackTestSmallReport.copyWith(
-                                          color: Colors.blue, // Make the text blue like a link
-                                          decoration: TextDecoration.underline, // Underline the text
-                                          decorationColor: Colors.blue, // Set underline color to blue
+                                            : data.staffName,
+                                        // Display staffName based on data type
+                                        style: Styling.itemBlackTestSmallReport
+                                            .copyWith(
+                                          color: Colors.blue,
+                                          // Make the text blue like a link
+                                          decoration: TextDecoration.underline,
+                                          // Underline the text
+                                          decorationColor: Colors
+                                              .blue, // Set underline color to blue
                                         ),
                                         textAlign: TextAlign.left,
-                                        textScaler:
-                                        TextScaler.noScaling,
+                                        textScaler: TextScaler.noScaling,
                                       ),
                                     ),
                                   ),
@@ -3414,36 +3862,50 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                   Expanded(
                                       flex: 2,
                                       child: Text(
-                                          data is ManagerDsrReportCashHandOverModel
-                                              ? formatCurrency((data.collAmt ?? 0.0).toDouble())
-                                              : formatCurrency((data.collAmt ?? 0.0).toDouble()),
-                                          style: Styling.itemBlackTestSmallReport,
-                                          textAlign: TextAlign.center,
-                                        textScaler:
-                                        TextScaler.noScaling,)),
+                                        data is ManagerDsrReportCashHandOverModel
+                                            ? formatCurrency(
+                                                (data.collAmt ?? 0.0)
+                                                    .toDouble())
+                                            : formatCurrency(
+                                                (data.collAmt ?? 0.0)
+                                                    .toDouble()),
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.center,
+                                        textScaler: TextScaler.noScaling,
+                                      )),
                                   Expanded(
                                       flex: 2,
                                       child: Text(
-                                          data is ManagerDsrReportCashHandOverModel
-                                              ? formatCurrency((data.paidAmt ?? 0.0).toDouble())
-                                              : formatCurrency((data.paidAmt ?? 0.0).toDouble()),
-                                          style: Styling.itemBlackTestSmallReport,
-                                          textAlign: TextAlign.center,
-                                        textScaler:
-                                        TextScaler.noScaling,)),
+                                        data is ManagerDsrReportCashHandOverModel
+                                            ? formatCurrency(
+                                                (data.paidAmt ?? 0.0)
+                                                    .toDouble())
+                                            : formatCurrency(
+                                                (data.paidAmt ?? 0.0)
+                                                    .toDouble()),
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.center,
+                                        textScaler: TextScaler.noScaling,
+                                      )),
                                   Expanded(
                                       flex: 2,
                                       child: Text(
-                                          data is ManagerDsrReportCashHandOverModel
-                                              ? formatCurrency((data.totalAmt ?? 0.0).toDouble())
-                                              : formatCurrency((data.totalAmt ?? 0.0).toDouble()),
-                                          style: Styling.itemBlackTestSmallReport,
-                                          textAlign: TextAlign.center,
-                                        textScaler:
-                                        TextScaler.noScaling,)),
+                                        data is ManagerDsrReportCashHandOverModel
+                                            ? formatCurrency(
+                                                (data.totalAmt ?? 0.0)
+                                                    .toDouble())
+                                            : formatCurrency(
+                                                (data.totalAmt ?? 0.0)
+                                                    .toDouble()),
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.center,
+                                        textScaler: TextScaler.noScaling,
+                                      )),
                                 ],
                               ),
-                              SizedBox(height: 5,),
+                              SizedBox(
+                                height: 5,
+                              ),
                             ],
                           ),
                         );
@@ -3454,26 +3916,27 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                       children: [
                         Expanded(
                             flex: 0,
-                            child: Text("Total Cash In Hand : ",
-                                style: Styling.itemBlackTestBold,
-                                textAlign: TextAlign.left,
-                              textScaler:
-                              TextScaler.noScaling,)),
+                            child: Text(
+                              "Total Cash In Hand : ",
+                              style: Styling.itemBlackTestBold,
+                              textAlign: TextAlign.left,
+                              textScaler: TextScaler.noScaling,
+                            )),
                         Expanded(
                             flex: 0,
                             child: Text(
                               formatCurrency(totalCashInHandAmountCashFlow),
                               style: Styling.itemBlackTestBold,
-                              textScaler:
-                              TextScaler.noScaling,
-                            )
-                        ),
+                              textScaler: TextScaler.noScaling,
+                            )),
                       ],
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: 20,),
+              SizedBox(
+                height: 20,
+              ),
               Container(
                 child: Column(
                   children: [
@@ -3483,10 +3946,11 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                         children: [
                           Align(
                               alignment: Alignment.centerLeft,
-                              child: Text("Cash Flow Summary",
-                                  style: Styling.bodyTitleBigBold,
-                                textScaler:
-                                TextScaler.noScaling,)),
+                              child: Text(
+                                "Cash Flow Summary",
+                                style: Styling.bodyTitleBigBold,
+                                textScaler: TextScaler.noScaling,
+                              )),
                         ],
                       ),
                     ),
@@ -3495,31 +3959,33 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                       children: [
                         Expanded(
                             flex: 3,
-                            child: Text("",
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.left,
-                              textScaler:
-                              TextScaler.noScaling,)),
+                            child: Text(
+                              "",
+                              style: Styling.itemBlackTestSmallReportBold,
+                              textAlign: TextAlign.left,
+                              textScaler: TextScaler.noScaling,
+                            )),
                         Expanded(
                             flex: 3,
-                            child: Text("Staff/Bank Name",
-                                style:
-                                Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.left,
-                              textScaler:
-                              TextScaler.noScaling,
+                            child: Text(
+                              "Staff/Bank Name",
+                              style: Styling.itemBlackTestSmallReportBold,
+                              textAlign: TextAlign.left,
+                              textScaler: TextScaler.noScaling,
                             )),
                         Expanded(
                             flex: 2,
-                            child: Text("Amount",
-                                style: Styling.itemBlackTestSmallReportBold,
-                                textAlign: TextAlign.center,
-                              textScaler:
-                              TextScaler.noScaling,)),
+                            child: Text(
+                              "Amount",
+                              style: Styling.itemBlackTestSmallReportBold,
+                              textAlign: TextAlign.center,
+                              textScaler: TextScaler.noScaling,
+                            )),
                       ],
                     ),
-                    SizedBox(height: 10,),
+                    SizedBox(
+                      height: 10,
+                    ),
                     ListView.builder(
                       shrinkWrap: true,
                       physics: BouncingScrollPhysics(),
@@ -3535,73 +4001,82 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                 children: [
                                   Expanded(
                                       flex: 3,
-                                      child: Text(data is ManagerDsrReoprtCashFlowSummaryMode
-                                          ? data.headerNameStr
-                                          : data.headerNameStr,
-                                          style: TextStyle(fontSize: 14),
-                                          textAlign: TextAlign.left,
-                                        textScaler:
-                                        TextScaler.noScaling,)),
+                                      child: Text(
+                                        data is ManagerDsrReoprtCashFlowSummaryMode
+                                            ? data.headerNameStr
+                                            : data.headerNameStr,
+                                        style: TextStyle(fontSize: 14),
+                                        textAlign: TextAlign.left,
+                                        textScaler: TextScaler.noScaling,
+                                      )),
                                   Expanded(
                                       flex: 3,
-                                      child: Text(data is ManagerDsrReoprtCashFlowSummaryMode
-                                          ? data.staffName
-                                          : data.staffName,
-                                          style: TextStyle(fontSize: 14),
-                                          textAlign: TextAlign.left,
-                                        textScaler:
-                                        TextScaler.noScaling,)),
-                                  Expanded(
-                                      flex: 2,
                                       child: Text(
-                                          data is ManagerDsrReoprtCashFlowSummaryMode
-                                              ? formatCurrency((data.totalAmt ?? 0.0).toDouble())
-                                              : formatCurrency((data.totalAmt ?? 0.0).toDouble()),
-                                        style: Styling.itemBlackTestSmallReport.copyWith(
-                                          fontSize: 14,
-                                        ),
-                                          textAlign: TextAlign.center,
-                                        textScaler:
-                                        TextScaler.noScaling,),
+                                        data is ManagerDsrReoprtCashFlowSummaryMode
+                                            ? data.staffName
+                                            : data.staffName,
+                                        style: TextStyle(fontSize: 14),
+                                        textAlign: TextAlign.left,
+                                        textScaler: TextScaler.noScaling,
+                                      )),
+                                  Expanded(
+                                    flex: 2,
+                                    child: Text(
+                                      data is ManagerDsrReoprtCashFlowSummaryMode
+                                          ? formatCurrency(
+                                              (data.totalAmt ?? 0.0).toDouble())
+                                          : formatCurrency(
+                                              (data.totalAmt ?? 0.0)
+                                                  .toDouble()),
+                                      style: Styling.itemBlackTestSmallReport
+                                          .copyWith(
+                                        fontSize: 14,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 10,),
-
+                              SizedBox(
+                                height: 10,
+                              ),
                             ],
                           ),
                         );
                       },
                     ),
-                    SizedBox(height: 15,),
+                    SizedBox(
+                      height: 15,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Expanded(
                             flex: 0,
-                            child: Text("Total Cash Flow Amount : ",
-                                style: Styling.itemBlackTestBold,
-                                textAlign: TextAlign.left,
-                              textScaler:
-                              TextScaler.noScaling,)),
+                            child: Text(
+                              "Total Cash Flow Amount : ",
+                              style: Styling.itemBlackTestBold,
+                              textAlign: TextAlign.left,
+                              textScaler: TextScaler.noScaling,
+                            )),
                         Expanded(
                             flex: 0,
                             child: Text(
                               formatCurrency(totalCahFlowSummaryAmountCashFlow),
                               style: Styling.itemBlackTestBold,
-                              textScaler:
-                              TextScaler.noScaling,
-                            )
-                        ),
+                              textScaler: TextScaler.noScaling,
+                            )),
                       ],
                     ),
                   ],
                 ),
               ),
-              SizedBox(height: 20,),
+              SizedBox(
+                height: 20,
+              ),
               Container(
-                child:
-                Column(
+                child: Column(
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(bottom: 8.0),
@@ -3609,44 +4084,49 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                         children: [
                           Align(
                               alignment: Alignment.centerLeft,
-                              child: Text("Denomination Table",
-                                  style: Styling.bodyTitleBigBold,
-                                textScaler:
-                                TextScaler.noScaling,)),
+                              child: Text(
+                                "Denomination Table",
+                                style: Styling.bodyTitleBigBold,
+                                textScaler: TextScaler.noScaling,
+                              )),
                         ],
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 8.0,right: 8),
+                      padding: const EdgeInsets.only(left: 8.0, right: 8),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Expanded(
                               flex: 3,
-                              child: Text("Note Type",
-                                  style:
-                                  Styling.itemBlackTestSmallReportBold,
-                                  textAlign: TextAlign.left,
-                                textScaler:
-                                TextScaler.noScaling,)),
+                              child: Text(
+                                "Note Type",
+                                style: Styling.itemBlackTestSmallReportBold,
+                                textAlign: TextAlign.left,
+                                textScaler: TextScaler.noScaling,
+                              )),
                           Expanded(
                               flex: 2,
-                              child: Text("Qty",
-                                  style: Styling.itemBlackTestSmallReportBold,
-                                  textAlign: TextAlign.center,
-                                textScaler:
-                                TextScaler.noScaling,)),
+                              child: Text(
+                                "Qty",
+                                style: Styling.itemBlackTestSmallReportBold,
+                                textAlign: TextAlign.center,
+                                textScaler: TextScaler.noScaling,
+                              )),
                           Expanded(
                               flex: 2,
-                              child: Text("Amount",
-                                  style:Styling.itemBlackTestSmallReportBold,
-                                  textAlign: TextAlign.right,
-                                textScaler:
-                                TextScaler.noScaling,)),
+                              child: Text(
+                                "Amount",
+                                style: Styling.itemBlackTestSmallReportBold,
+                                textAlign: TextAlign.right,
+                                textScaler: TextScaler.noScaling,
+                              )),
                         ],
                       ),
                     ),
-                    SizedBox(height: 10,),
+                    SizedBox(
+                      height: 10,
+                    ),
                     ListView.builder(
                       shrinkWrap: true,
                       physics: BouncingScrollPhysics(),
@@ -3663,34 +4143,36 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                                 children: [
                                   Expanded(
                                       flex: 3,
-                                      child: Text(data is ManagerDsrReportCashDeniminationModel
-                                          ? "${data.noteType.toString()} X"
-                                          : "${data.noteType.toString()} X",
-                                          style: TextStyle(fontSize: 12),
-                                          textAlign: TextAlign.left,
-                                        textScaler:
-                                        TextScaler.noScaling,)),
+                                      child: Text(
+                                        data is ManagerDsrReportCashDeniminationModel
+                                            ? "${data.noteType.toString()} X"
+                                            : "${data.noteType.toString()} X",
+                                        style: TextStyle(fontSize: 12),
+                                        textAlign: TextAlign.left,
+                                        textScaler: TextScaler.noScaling,
+                                      )),
                                   Expanded(
                                       flex: 2,
                                       child: Text(
-                                          data is ManagerDsrReportCashDeniminationModel
-                                              ? data.qty?.toString() ??'0'
-                                              : data.qty?.toString() ??'0',
-                                          style: Styling.itemBlackTestSmallReport,
-                                          textAlign: TextAlign.center,
-                                        textScaler:
-                                        TextScaler.noScaling,)),
+                                        data is ManagerDsrReportCashDeniminationModel
+                                            ? data.qty?.toString() ?? '0'
+                                            : data.qty?.toString() ?? '0',
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.center,
+                                        textScaler: TextScaler.noScaling,
+                                      )),
                                   Expanded(
                                       flex: 2,
                                       child: Text(
-                                          data is ManagerDsrReportCashDeniminationModel
-                                              ? data.amount?.toStringAsFixed(2)??'0'
-                                              : data.amount?.toStringAsFixed(2) ??'0',
-                                          style: Styling.itemBlackTestSmallReport,
-                                          textAlign: TextAlign.right,
-                                        textScaler:
-                                        TextScaler.noScaling,)),
-
+                                        data is ManagerDsrReportCashDeniminationModel
+                                            ? data.amount?.toStringAsFixed(2) ??
+                                                '0'
+                                            : data.amount?.toStringAsFixed(2) ??
+                                                '0',
+                                        style: Styling.itemBlackTestSmallReport,
+                                        textAlign: TextAlign.right,
+                                        textScaler: TextScaler.noScaling,
+                                      )),
                                 ],
                               ),
                             ],
@@ -3698,7 +4180,9 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                         );
                       },
                     ),
-                    SizedBox(height: 10,),
+                    SizedBox(
+                      height: 10,
+                    ),
                     Padding(
                       padding: const EdgeInsets.only(right: 8.0),
                       child: Row(
@@ -3706,18 +4190,18 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                         children: [
                           Expanded(
                               flex: 0,
-                              child: Text("Total Amount : ",
-                                  style: Styling.itemBlackTestBold,
-                                  textAlign: TextAlign.left,
-                                textScaler:
-                                TextScaler.noScaling,)),
+                              child: Text(
+                                "Total Amount : ",
+                                style: Styling.itemBlackTestBold,
+                                textAlign: TextAlign.left,
+                                textScaler: TextScaler.noScaling,
+                              )),
                           Expanded(
                               flex: 0,
                               child: Text(
                                 totalAmountCashDenomination.toStringAsFixed(2),
                                 style: Styling.itemBlackTestBold,
-                                textScaler:
-                                TextScaler.noScaling,
+                                textScaler: TextScaler.noScaling,
                               )),
                         ],
                       ),
@@ -3798,48 +4282,65 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                         ElevatedButton(
                           onPressed: isDateValid
                               ? () {
-                            //saveDayEndDataMob();
-                            if (saveFlag) {
-                              debugPrint("Save data");
-                              showFlushBar(context, Constants.dayEndCompleted);
-                            } else {
-                              //  Check for missing CDCMS Stock entries
-                              bool hasMissingStockData = cdcmsListData.every((item) => item.StkRecoId == 0);
-                             // bool hasMissingStockData = cdcmsListData.any((item) => item.StkRecoId == 0);
+                                  //saveDayEndDataMob();
+                                  if (saveFlag) {
+                                    debugPrint("Save data");
+                                    showFlushBar(
+                                        context, Constants.dayEndCompleted);
+                                  } else {
+                                    //  Check for missing CDCMS Stock entries
+                                    bool hasMissingStockData = cdcmsListData
+                                        .every((item) => item.StkRecoId == 0);
+                                    // bool hasMissingStockData = cdcmsListData.any((item) => item.StkRecoId == 0);
 
-                              if (hasMissingStockData) {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: Text('Warning:',  textScaler:
-                                    TextScaler.noScaling,),
-                                    content: Text('Please update CDCM stock before confirming the DSR.', textScaler:
-                                    TextScaler.noScaling,),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        child: Text('OK', textScaler:
-                                        TextScaler.noScaling,),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                                return; // Stop further execution
-                              } else {
-                                    // Proceed with save logic (e.g., API call or local state update)
-                                    _showConfirmationDialog(context);
-                                    print('Saving data...');
+                                    if (hasMissingStockData) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: Text(
+                                            'Warning:',
+                                            textScaler: TextScaler.noScaling,
+                                          ),
+                                          content: Text(
+                                            'Please update CDCM stock before confirming the DSR.',
+                                            textScaler: TextScaler.noScaling,
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: Text(
+                                                'OK',
+                                                textScaler:
+                                                    TextScaler.noScaling,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                      return; // Stop further execution
+                                    } else {
+                                      // Proceed with save logic (e.g., API call or local state update)
+                                      _showConfirmationDialog(context);
+                                      print('Saving data...');
+                                    }
                                   }
-                              }
-                            }:null,
-                            child: Text("Confirm DSR", textScaler:
-                            TextScaler.noScaling,),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:isDateValid? saveFlag ? Colors.grey : Colors.blue:Colors.grey,
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(50),
-                              ),
+                                }
+                              : null,
+                          child: Text(
+                            "Confirm DSR",
+                            textScaler: TextScaler.noScaling,
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: isDateValid
+                                ? saveFlag
+                                    ? Colors.grey
+                                    : Colors.blue
+                                : Colors.grey,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
                           ),
                         ),
                       ],
@@ -3861,7 +4362,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
     String? addedBy = prefs.getString('StaffId');
     String? godownKeeperId = prefs.getString('godownKeeperId');
     String? token = prefs.getString('token'); // This is your bearer token
-    String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate); // Format selectedDate
+    String formattedDate =
+        DateFormat('yyyy-MM-dd').format(selectedDate); // Format selectedDate
     // String formattedDate = "2025-02-14"; // Format selectedDate
 
     try {
@@ -3878,7 +4380,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
         }),
       );
 
-      debugPrint('jsonRequestBodyGetDsrIncomeReportListForMob: ${response.request}');
+      debugPrint(
+          'jsonRequestBodyGetDsrIncomeReportListForMob: ${response.request}');
       debugPrint('responseGetDsrIncomeReportListForMob: ${response.body}');
 
       if (response.statusCode == 200) {
@@ -3893,14 +4396,14 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                 ManagerDsrReportIncomeSalesModel.fromJson(item)) // Map to model
             .toList();
 
-        var filteredDataArbSale = jsonResponse
-            .where((item) => item['TransCate'] == 'ARBSale') // Filter the list
-            .map((item) =>
-                ManagerDsrReportIncomeSalesModel.fromJson(item)) // Map to model
-            .toList();
+        // var filteredDataArbSale = jsonResponse
+        //     .where((item) => item['TransCate'] == 'ARBSale') // Filter the list
+        //     .map((item) =>
+        //         ManagerDsrReportIncomeSalesModel.fromJson(item)) // Map to model
+        //     .toList();
 
         var filteredDataSVSale = jsonResponse
-            .where((item) => item['TransCate'] == 'SV') // Filter the list
+            .where((item) => item['TransCate'] == 'ARB-SV') // Filter the list
             .map((item) =>
                 ManagerDsrReportIncomeSalesModel.fromJson(item)) // Map to model
             .toList();
@@ -3912,17 +4415,20 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
             .toList();
 
         var filteredDataRegReplacementSale = jsonResponse
-            .where((item) => item['TransCate'] == 'Regulator Replacement') // Filter the list
+            .where((item) =>
+                item['TransCate'] == 'Regulator Replacement') // Filter the list
             .map((item) =>
-            ManagerDsrReportIncomeSalesModel.fromJson(item)) // Map to model
+                ManagerDsrReportIncomeSalesModel.fromJson(item)) // Map to model
             .toList();
 
-        dataIncomeTotalAmountList = jsonResponse.map((json) => ManagerDsrReportIncomeSalesModel.fromJson(json)).toList();
+        dataIncomeTotalAmountList = jsonResponse
+            .map((json) => ManagerDsrReportIncomeSalesModel.fromJson(json))
+            .toList();
 
         setState(() {
           // Use filtered data to update the UI
           dataIncomeDailySaleList = filteredData;
-          dataIncomeArbSaleList = filteredDataArbSale;
+          // dataIncomeArbSaleList = filteredDataArbSale;
           dataIncomeSVSaleList = filteredDataSVSale;
           dataIncomeReceiptSaleList = filteredDataReceiptSale;
           dataIncomeRegulatorReplacementList = filteredDataRegReplacementSale;
@@ -3943,7 +4449,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
     String? addedBy = prefs.getString('StaffId');
     String? godownKeeperId = prefs.getString('godownKeeperId');
     String? token = prefs.getString('token'); // This is your bearer token
-    String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate); // Format selectedDate
+    String formattedDate =
+        DateFormat('yyyy-MM-dd').format(selectedDate); // Format selectedDate
 
     try {
       final response = await http.post(
@@ -3959,7 +4466,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
         }),
       );
 
-      debugPrint('jsonRequestBodyGetDsrDMSaleReportListForMob: ${response.request}');
+      debugPrint(
+          'jsonRequestBodyGetDsrDMSaleReportListForMob: ${response.request}');
       debugPrint('responseGetDsrDMSaleReportListForMob: ${response.body}');
 
       if (response.statusCode == 200) {
@@ -3968,16 +4476,17 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
 
         var dmSaleAmountList = jsonResponse
             .map((item) => ManagerGetDsrdMwiseSummaryListModel.fromJson(
-            item)) // Map to model
+                item)) // Map to model
             .toList();
 
-        dataDMSaleList = jsonResponse.map((json) => ManagerGetDsrdMwiseSummaryListModel.fromJson(json)).toList();
+        dataDMSaleList = jsonResponse
+            .map((json) => ManagerGetDsrdMwiseSummaryListModel.fromJson(json))
+            .toList();
         setState(() {
           // Use filtered data to update the UI
           dataDMSaleList = dmSaleAmountList;
           isLoading = false;
         });
-
       } else {
         throw Exception('Failed to load data');
       }
@@ -3985,7 +4494,6 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
       print('Error: $e');
     }
   }
-
 
   // Call first API when flag is 'y'
   Future<void> _fetchExpenseData() async {
@@ -4026,7 +4534,10 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
             .map((item) => ManagerDsrReportExpenseDetailListModel.fromJson(
                 item)) // Map to model
             .toList();
-        dataExpenseTotalAmountList = jsonResponse.map((json) => ManagerDsrReportExpenseDetailListModel.fromJson(json)).toList();
+        dataExpenseTotalAmountList = jsonResponse
+            .map(
+                (json) => ManagerDsrReportExpenseDetailListModel.fromJson(json))
+            .toList();
         setState(() {
           // Use filtered data to update the UI
           dataExpenseList = filteredDataExpenseList;
@@ -4047,7 +4558,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
     String? addedBy = prefs.getString('StaffId');
     String? godownKeeperId = prefs.getString('godownKeeperId');
     String? token = prefs.getString('token'); // This is your bearer token
-    String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate); // Format selectedDate
+    String formattedDate =
+        DateFormat('yyyy-MM-dd').format(selectedDate); // Format selectedDate
     // String formattedDate = "2025-02-14"; // Format selectedDate
 
     try {
@@ -4064,7 +4576,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
         }),
       );
 
-      debugPrint('jsonRequestBodyGetDsrSVTVReportListForMob: ${response.request}');
+      debugPrint(
+          'jsonRequestBodyGetDsrSVTVReportListForMob: ${response.request}');
       debugPrint('responseGetDsrSVTVReportListForMob: ${response.body}');
 
       if (response.statusCode == 200) {
@@ -4074,18 +4587,21 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
         // Filter the data based on the condition (TransCate == 'DailySale')
 
         var filteredTVData = jsonResponse
-            .where((item) => item['TransCate'] == 'TV Refund') // Filter the list
+            .where(
+                (item) => item['TransCate'] == 'TV Refund') // Filter the list
             .map((item) =>
-            ManagerGetDsrSvtvListModel.fromJson(item)) // Map to model
+                ManagerGetDsrSvtvListModel.fromJson(item)) // Map to model
             .toList();
 
         var filteredDataSVSale = jsonResponse
             .where((item) => item['TransCate'] == 'SV') // Filter the list
             .map((item) =>
-            ManagerGetDsrSvtvListModel.fromJson(item)) // Map to model
+                ManagerGetDsrSvtvListModel.fromJson(item)) // Map to model
             .toList();
 
-        dataSVTVSaleList = jsonResponse.map((json) => ManagerGetDsrSvtvListModel.fromJson(json)).toList();
+        dataSVTVSaleList = jsonResponse
+            .map((json) => ManagerGetDsrSvtvListModel.fromJson(json))
+            .toList();
 
         setState(() {
           // Use filtered data to update the UI
@@ -4110,7 +4626,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
     String? godownKeeperId = prefs.getString('godownKeeperId');
     String? token = prefs.getString('token'); // This is your bearer token
     String formattedDate =
-    DateFormat('yyyy-MM-dd').format(selectedDate); // Format selectedDate
+        DateFormat('yyyy-MM-dd').format(selectedDate); // Format selectedDate
     // String formattedDate = "2025-02-17"; // Format selectedDate
 
     try {
@@ -4138,7 +4654,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
         // Filter the data based on the condition (TransCate == 'DailySale')
         var filteredDataCashInHandList = jsonResponse
             .map((item) => ManagerDsrReportCashHandOverModel.fromJson(
-            item)) // Map to model
+                item)) // Map to model
             .toList();
 
         setState(() {
@@ -4163,7 +4679,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
     String? godownKeeperId = prefs.getString('godownKeeperId');
     String? token = prefs.getString('token'); // This is your bearer token
     String formattedDate =
-    DateFormat('yyyy-MM-dd').format(selectedDate); // Format selectedDate
+        DateFormat('yyyy-MM-dd').format(selectedDate); // Format selectedDate
     // String formattedDate = "2025-02-17"; // Format selectedDate
 
     try {
@@ -4191,10 +4707,12 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
         // Filter the data based on the condition (TransCate == 'DailySale')
         var filteredDataCashInHandList = jsonResponse
             .map((item) => ManagerDsrReoprtCashFlowSummaryMode.fromJson(
-            item)) // Map to model
+                item)) // Map to model
             .toList();
 
-        dataCashFlowSummaryAmountList = jsonResponse.map((json) => ManagerDsrReoprtCashFlowSummaryMode.fromJson(json)).toList();
+        dataCashFlowSummaryAmountList = jsonResponse
+            .map((json) => ManagerDsrReoprtCashFlowSummaryMode.fromJson(json))
+            .toList();
 
         setState(() {
           // Use filtered data to update the UI
@@ -4217,7 +4735,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
     String? addedBy = prefs.getString('StaffId');
     String? godownKeeperId = prefs.getString('godownKeeperId');
     String? token = prefs.getString('token'); // This is your bearer token
-    String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate); // Format selectedDate
+    String formattedDate =
+        DateFormat('yyyy-MM-dd').format(selectedDate); // Format selectedDate
     // String formattedDate = "2025-02-11"; // Format selectedDate
 
     try {
@@ -4245,9 +4764,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
         // Filter the data based on the condition (TransCate == 'DailySale')
         var filteredDataCashDenominationList = jsonResponse
             .map((item) => ManagerDsrReportCashDeniminationModel.fromJson(
-            item)) // Map to model
+                item)) // Map to model
             .toList();
-
 
         setState(() {
           // Use filtered data to update the UI
@@ -4282,7 +4800,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
 
     try {
       final response = await http.post(
-       // Uri.parse(AppUrl.GetCDCMsStockUpdateForMob),
+        // Uri.parse(AppUrl.GetCDCMsStockUpdateForMob),
         Uri.parse(AppUrl.GetCDCMsStockUpdateForMob),
         headers: {
           'Content-Type': 'application/json',
@@ -4348,7 +4866,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
         }),
       );
 
-      debugPrint('jsonRequestBody: ${response.request}');
+      debugPrint('jsonRequestBody: ${response.request}${formattedDate}');
       debugPrint('GetDSRDataAgainstDateForMobresponse: ${response.body}');
 
       if (response.statusCode == 200) {
@@ -4358,104 +4876,115 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
         // Check if the response contains valid data
         if (jsonResponse != null && jsonResponse['IncDtls'] != null) {
           // Access the 'IncDtls' list from the response map and filter based on 'TransCate'
-          var filteredData =
-              List.from(jsonResponse['IncDtls'] ?? []) // Access the list 'IncDtls'
-                  .where((item) =>
-                      item['TransCate'] == 'DailySale') // Filter the list
-                  .map((item) => IncDtls.fromJson(item)) // Map to IncDtls model
-                  .toList();
-
-          var filteredDataArbSale =
-              List.from(jsonResponse['IncDtls'] ?? []) // Access the list 'IncDtls'
-                  .where((item) =>
-                      item['TransCate'] == 'ARBSale') // Filter the list
-                  .map((item) => IncDtls.fromJson(item)) // Map to IncDtls model
-                  .toList();
-
-          var filteredDataSVSale =
-              List.from(jsonResponse['IncDtls'] ?? []) // Access the list 'IncDtls'
-                  .where((item) => item['TransCate'] == 'SV') // Filter the list
-                  .map((item) => IncDtls.fromJson(item)) // Map to IncDtls model
-                  .toList();
-
-          var filteredDataReceiptSale =
-              List.from(jsonResponse['IncDtls'] ?? []) // Access the list 'IncDtls'
-                  .where((item) =>
-                      item['TransCate'] == 'Receipt') // Filter the list
-                  .map((item) => IncDtls.fromJson(item)) // Map to IncDtls model
-                  .toList();
-
-          var filteredDataRegReplacementSale =
-          List.from(jsonResponse['IncDtls'] ?? []) // Access the list 'IncDtls'
-              .where((item) =>
-          item['TransCate'] == 'Regulator Replacement') // Filter the list
+          var filteredData = List.from(
+                  jsonResponse['IncDtls'] ?? []) // Access the list 'IncDtls'
+              .where(
+                  (item) => item['TransCate'] == 'DailySale') // Filter the list
               .map((item) => IncDtls.fromJson(item)) // Map to IncDtls model
               .toList();
 
-          var filteredDataExpenseList =
-              List.from(jsonResponse['expDtls'] ?? []) // Access the list 'IncDtls'
-                  .map((item) => ExpDtls.fromJson(item)) // Map to IncDtls model
-                  .toList();
+          // var filteredDataArbSale =
+          //     List.from(jsonResponse['IncDtls'] ?? []) // Access the list 'IncDtls'
+          //         .where((item) =>
+          //             item['TransCate'] == 'ARBSale') // Filter the list
+          //         .map((item) => IncDtls.fromJson(item)) // Map to IncDtls model
+          //         .toList();
 
-          var filteredDataCashInHandList =
-          List.from(jsonResponse['handoverDtls'] ?? []) // Access the list 'IncDtls'
-              .map((item) => HandoverDtls.fromJson(item)) // Map to IncDtls model
+          var filteredDataSVSale = List.from(
+                  jsonResponse['IncDtls'] ?? []) // Access the list 'IncDtls'
+              .where((item) => item['TransCate'] == 'ARB-SV') // Filter the list
+              .map((item) => IncDtls.fromJson(item)) // Map to IncDtls model
               .toList();
 
-          var filteredDataCashDenominationList =
-          List.from(jsonResponse['CashDenomDtls'] ?? []) // Access the list 'IncDtls'
-              .map((item) => CashDenomDtls.fromJson(item)) // Map to IncDtls model
+          var filteredDataReceiptSale = List.from(
+                  jsonResponse['IncDtls'] ?? []) // Access the list 'IncDtls'
+              .where(
+                  (item) => item['TransCate'] == 'Receipt') // Filter the list
+              .map((item) => IncDtls.fromJson(item)) // Map to IncDtls model
               .toList();
 
-          var filteredDataCashFlowSummaryList =
-          List.from(jsonResponse['cashflowDtls'] ?? []) // Access the list 'IncDtls'
-              .map((item) => CashflowDtls.fromJson(item)) // Map to IncDtls model
+          var filteredDataRegReplacementSale = List.from(
+                  jsonResponse['IncDtls'] ?? []) // Access the list 'IncDtls'
+              .where((item) =>
+                  item['TransCate'] ==
+                  'Regulator Replacement') // Filter the list
+              .map((item) => IncDtls.fromJson(item)) // Map to IncDtls model
               .toList();
 
-          var filteredDataDMSaleSummaryList =
-          List.from(jsonResponse['dmsaleDtls'] ?? []) // Access the list 'IncDtls'
+          var filteredDataExpenseList = List.from(
+                  jsonResponse['expDtls'] ?? []) // Access the list 'IncDtls'
+              .map((item) => ExpDtls.fromJson(item)) // Map to IncDtls model
+              .toList();
+
+          var filteredDataCashInHandList = List.from(
+                  jsonResponse['handoverDtls'] ??
+                      []) // Access the list 'IncDtls'
+              .map(
+                  (item) => HandoverDtls.fromJson(item)) // Map to IncDtls model
+              .toList();
+
+          var filteredDataCashDenominationList = List.from(
+                  jsonResponse['CashDenomDtls'] ??
+                      []) // Access the list 'IncDtls'
+              .map((item) =>
+                  CashDenomDtls.fromJson(item)) // Map to IncDtls model
+              .toList();
+
+          var filteredDataCashFlowSummaryList = List.from(
+                  jsonResponse['cashflowDtls'] ??
+                      []) // Access the list 'IncDtls'
+              .map(
+                  (item) => CashflowDtls.fromJson(item)) // Map to IncDtls model
+              .toList();
+
+          var filteredDataDMSaleSummaryList = List.from(
+                  jsonResponse['dmsaleDtls'] ?? []) // Access the list 'IncDtls'
               .map((item) => DmsaleDtls.fromJson(item)) // Map to IncDtls model
               .toList();
 
-
-          var filteredDataSVSaleSummaryList =
-          List.from(jsonResponse['SvTvDtls'] ?? []) // Access the list 'IncDtls'
+          var filteredDataSVSaleSummaryList = List.from(
+                  jsonResponse['SvTvDtls'] ?? []) // Access the list 'IncDtls'
               .where((item) => item['TransCate'] == 'SV') // Filter the list
               .map((item) => SvTvDtls.fromJson(item)) // Map to IncDtls model
               .toList();
 
-          var filteredDataTVSaleSummaryList =
-          List.from(jsonResponse['SvTvDtls'] ?? []) // Access the list 'IncDtls'
-              .where((item) =>
-          item['TransCate'] == 'TV Refund') // Filter the list
+          var filteredDataTVSaleSummaryList = List.from(
+                  jsonResponse['SvTvDtls'] ?? []) // Access the list 'IncDtls'
+              .where(
+                  (item) => item['TransCate'] == 'TV Refund') // Filter the list
               .map((item) => SvTvDtls.fromJson(item)) // Map to IncDtls model
               .toList();
 
-          dataIncomeTotalAmountList = List.from(jsonResponse['IncDtls'] ?? []) // Access the list 'IncDtls'
+          dataIncomeTotalAmountList = List.from(
+                  jsonResponse['IncDtls'] ?? []) // Access the list 'IncDtls'
               .map((item) => IncDtls.fromJson(item)) // Map to IncDtls model
               .toList();
 
-          dataExpenseTotalAmountList = List.from(jsonResponse['expDtls'] ?? []) // Access the list 'IncDtls'
+          dataExpenseTotalAmountList = List.from(
+                  jsonResponse['expDtls'] ?? []) // Access the list 'IncDtls'
               .map((item) => ExpDtls.fromJson(item)) // Map to IncDtls model
               .toList();
 
-          dataCashFlowSummaryAmountList = List.from(jsonResponse['cashflowDtls'] ?? []) // Access the list 'IncDtls'
-              .map((item) => CashflowDtls.fromJson(item)) // Map to IncDtls model
+          dataCashFlowSummaryAmountList = List.from(
+                  jsonResponse['cashflowDtls'] ??
+                      []) // Access the list 'IncDtls'
+              .map(
+                  (item) => CashflowDtls.fromJson(item)) // Map to IncDtls model
               .toList();
 
-          dataDMSaleList = List.from(jsonResponse['dmsaleDtls'] ?? []) // Access the list 'IncDtls'
+          dataDMSaleList = List.from(
+                  jsonResponse['dmsaleDtls'] ?? []) // Access the list 'IncDtls'
               .map((item) => DmsaleDtls.fromJson(item)) // Map to IncDtls model
               .toList();
 
-
-          dataSVTVSaleList = List.from(jsonResponse['SvTvDtls'] ?? []) // Access the list 'IncDtls'
+          dataSVTVSaleList = List.from(
+                  jsonResponse['SvTvDtls'] ?? []) // Access the list 'IncDtls'
               .map((item) => SvTvDtls.fromJson(item)) // Map to IncDtls model
               .toList();
 
-
           setState(() {
             dataIncomeDailySaleList = filteredData;
-            dataIncomeArbSaleList = filteredDataArbSale;
+            //dataIncomeArbSaleList = filteredDataArbSale;
             dataIncomeSVSaleList = filteredDataSVSale;
             dataIncomeReceiptSaleList = filteredDataReceiptSale;
             dataExpenseList = filteredDataExpenseList;
@@ -4485,7 +5014,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
     if (flag == 'Y') {
       await _fetchSavedListData();
       await _fetchCDCMSStockData();
-      if(mounted){
+      if (mounted) {
         EasyLoading.dismiss();
       }
     } else {
@@ -4503,7 +5032,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
     }
 
     // Ensure the diff lists have the correct length based on cdcmsListData
-    if(mounted) {
+    if (mounted) {
       setState(() {
         filledDiffList.clear();
         emptyDiffList.clear();
@@ -4514,7 +5043,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
 
         debugPrint("cdcmsListData Length: ${cdcmsListData.length}");
         // Add the initial values to the lists
-        if(cdcmsListData.isNotEmpty) {
+        if (cdcmsListData.isNotEmpty) {
           for (int i = 0; i < cdcmsListData.length; i++) {
             ManagerDsrReportCdcmsListModel data = cdcmsListData[i];
             startOnDate = cdcmsListData[0].stockUpdatedOn ?? '';
@@ -4533,7 +5062,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
             filledCDControllers[i].text = (data.filledCD?.toString() ?? '0');
             emptyCDControllers[i].text = (data.emptyCD?.toString() ?? '0');
             defectiveCDControllers[i].text =
-            (data.defectiveCD?.toString() ?? '0');
+                (data.defectiveCD?.toString() ?? '0');
           }
         }
         debugPrint("filledCDControllers Length: ${filledCDControllers.length}");
@@ -4550,7 +5079,6 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
         // Update the totalAmountCashDenomination only once here
         totalAmountCashDenomination = totalAmount;
         debugPrint("totalAmountCashDenomination: $totalAmountCashDenomination");
-
 
         double totalCashAmount = 0.0;
         double totalBankAmount = 0.0;
@@ -4605,7 +5133,6 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
         debugPrint("Total Unsettled Amount: $totalUnsettledAmount");
         debugPrint("Total Settled Amount: $totalSettledAmount");
         debugPrint("Total prepaid online Amount: $totalPrepaiOnlineAmount");
-
 
         for (var expensess in dataExpenseTotalAmountList) {
           if (expensess.mode != null) {
@@ -4666,16 +5193,19 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
       // Calculate differences based on current values and input values
       int filledDiff = (data.currentStkFilled?.toInt() ?? 0) - filledCDValue;
       int emptyDiff = (data.currentStkEmpty?.toInt() ?? 0) - emptyCDValue;
-      int defectiveDiff = (data.currentStkDefective?.toInt() ?? 0) - defectiveCDValue;
+      int defectiveDiff =
+          (data.currentStkDefective?.toInt() ?? 0) - defectiveCDValue;
       int totalDiff = filledDiff + emptyDiff + defectiveDiff;
 
       // Create a new Map for the cDCMS model to be sent in the request
       Map<String, dynamic> cDCMSData = {
         "DistributorId": distributorIds,
-        "ItemId": data.itemId, // Assuming ItemId is available in your data
+        "ItemId": data.itemId,
+        // Assuming ItemId is available in your data
         "AddedBy": staffIds,
         "IsDayEndDone": 1,
-        "DayEndTime":formattedDate, // If you want to send a specific time, update it
+        "DayEndTime": formattedDate,
+        // If you want to send a specific time, update it
         "FilledCurr": data.currentStkFilled?.toInt() ?? 0,
         "EmptyCurr": data.currentStkEmpty?.toInt() ?? 0,
         "DefectiveCurr": data.currentStkDefective?.toInt() ?? 0,
@@ -4714,7 +5244,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
         },
         body: json.encode(requestBody),
       );
-      print("response SavecDCMSDataFromMob: ${response.statusCode} - ${response.body}");
+      print(
+          "response SavecDCMSDataFromMob: ${response.statusCode} - ${response.body}");
       print("requestBody SavecDCMSDataFromMob: $requestBody");
 
       // Handling response
@@ -4748,7 +5279,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
     // Process and filter the relevant data for each model
 
     // Process Cash Denomination Data
-    final List<Map<String, dynamic>> dataCashDenomination = dataCashDenominationList.map((e) {
+    final List<Map<String, dynamic>> dataCashDenomination =
+        dataCashDenominationList.map((e) {
       return {
         "Noteid": e.noteId,
         "NoteQty": e.qty,
@@ -4759,29 +5291,31 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
     }).toList();
 
     // Process Cash In Hand Data
-    final List<Map<String, dynamic>> dataCashInHand = dataCashInHandList.map((e) {
+    final List<Map<String, dynamic>> dataCashInHand =
+        dataCashInHandList.map((e) {
       return {
         "StaffId": e.staffId,
         "CollAmt": e.collAmt,
         "PaidAmt": e.paidAmt,
         "TotalAmt": e.totalAmt,
-        "CashStatus":0
+        "CashStatus": 0
       };
     }).toList();
 
-
-    final List<Map<String, dynamic>> dataCashFlowSummary= dataCashFlowSummaryList.map((e) {
+    final List<Map<String, dynamic>> dataCashFlowSummary =
+        dataCashFlowSummaryList.map((e) {
       return {
         "StaffId": e.staffId ?? 0,
         "DistributorId": distributorIds,
         "HeaderNameStr": e.headerNameStr,
         "BankId": e.bankId ?? 0,
-        "TotalAmt":e.totalAmt ?? 0,
-        "MappingId":e.mappingId ?? 0
+        "TotalAmt": e.totalAmt ?? 0,
+        "MappingId": e.mappingId ?? 0
       };
     }).toList();
     for (var e in dataIncomeTotalAmountList) {
       print('quantity: ${e.quantity}, type: ${e.quantity.runtimeType}');
+      print('Seq: ${e.seq.toString()}');
     }
     // Process Income & Expense Data
     final List<Map<String, dynamic>> dataIncomeTotalAmount = []
@@ -4790,12 +5324,13 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
           "TransCate": e.transCate,
           "ItemId": e.itemId,
           "ItemName": e.itemName,
+          "Seq": e.seq,
           "TotalSaleQty": double.tryParse(e.quantity.toString())?.toInt() ?? 0,
           "UnsettQty": e.unsettQty,
           "SettQty": e.settQty,
           "Mode": e.mode,
           "Amount": e.amount,
-          "SectionType":1
+          "SectionType": 1,
         };
       }).toList())
       ..addAll(dataExpenseList.map((e) {
@@ -4805,7 +5340,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
           "Mode": e.mode,
           "TotalSaleQty": e.quantity,
           "Amount": e.expenseAmount,
-          "SectionType":2,
+          "SectionType": 2,
         };
       }).toList());
 
@@ -4902,7 +5437,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
         },
         body: json.encode(requestBody),
       );
-      print("response SaveAllDSRDataFromMob: ${response.statusCode} - ${response.body}");
+      print(
+          "response SaveAllDSRDataFromMob: ${response.statusCode} - ${response.body}");
       print("requestBody SaveAllDSRDataFromMob: $requestBody");
 
       //Handling response
@@ -4936,8 +5472,10 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
     // String formattedDate = DateFormat('yyyy-MM-dd').format(now);
     String formattedDate = DateFormat('yyyy-MM-dd').format(selectedDateS);
     final Map<String, dynamic> requestBody = {
-      "DistributorId":distributorIds,  // Replace with your actual distributor ID
-      "DSRDate":formattedDate      // Replace with the actual date
+      "DistributorId": distributorIds,
+      // Replace with your actual distributor ID
+      "DSRDate": formattedDate
+      // Replace with the actual date
     };
 
     try {
@@ -4965,10 +5503,12 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
           _fetchData("N");
           _fetchCDCMSStockData();
           checkAndSaveDayEndData();
-          print("Response is less than or equal to 0DSRCheckSavedornot: $responseData");
+          print(
+              "Response is less than or equal to 0DSRCheckSavedornot: $responseData");
         }
       } else {
-        print("Request failed with statusDSRCheckSavedornot: ${response.statusCode}");
+        print(
+            "Request failed with statusDSRCheckSavedornot: ${response.statusCode}");
       }
     } catch (e) {
       print("Error occurred: $e");
@@ -4980,8 +5520,10 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Confirm DSR Submission",textScaler:
-          TextScaler.noScaling,),
+          title: Text(
+            "Confirm DSR Submission",
+            textScaler: TextScaler.noScaling,
+          ),
           content: Text(Constants.DSRMessage),
           actions: [
             TextButton(
@@ -4989,8 +5531,10 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                 // If "No" is clicked, close the dialog
                 Navigator.of(context).pop();
               },
-              child: Text("Cancel",  textScaler:
-              TextScaler.noScaling,),
+              child: Text(
+                "Cancel",
+                textScaler: TextScaler.noScaling,
+              ),
             ),
             TextButton(
               onPressed: () {
@@ -4998,8 +5542,10 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                 saveDayEndDataMob();
                 Navigator.of(context).pop();
               },
-              child: Text("Yes Confirm DSR",  textScaler:
-              TextScaler.noScaling,),
+              child: Text(
+                "Yes Confirm DSR",
+                textScaler: TextScaler.noScaling,
+              ),
             ),
           ],
         );
@@ -5020,7 +5566,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
         Uri.parse('${AppUrl.CheckDayEndConfirmation}/$distributorIds'),
         headers: {
           "Content-Type": "application/json",
-          "Authorization": "Bearer $bearerToken", // Pass bearer token in headers
+          "Authorization": "Bearer $bearerToken",
+          // Pass bearer token in headers
         },
       );
       debugPrint("Response bodyCheckDayEndConfirmation: ${response.body}");
@@ -5036,7 +5583,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
           print("The list is empty, no data to save.");
         } else {
           saveFlag = true;
-          var dayEndData = apiResponse[0]; // Access the first item in the list (assuming it's an object)
+          var dayEndData = apiResponse[
+              0]; // Access the first item in the list (assuming it's an object)
 
           // You can validate the fields in the response as needed
           int DSRSaved = dayEndData['DSRSaved'] ?? 0;
@@ -5057,8 +5605,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
         // Handle API error
         print("Error: ${response.statusCode}");
       }
-    }
-    catch (e) {
+    } catch (e) {
       // Exception handling
       print("Exception: $e");
     }
@@ -5068,7 +5615,8 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
     if (amount == 0) {
       return '0.00'; // Return "0.00" if the amount is zero
     }
-    final format = NumberFormat('#,##,###.00', 'en_IN'); // Indian locale with comma separator
+    final format = NumberFormat(
+        '#,##,###.00', 'en_IN'); // Indian locale with comma separator
 
     // Ensure the result always shows a leading zero before the decimal point
     String formattedAmount = format.format(amount);
@@ -5082,11 +5630,11 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
   }
 
   void showCustomAlertDialog(
-      BuildContext context, {
-        required String title,
-        required String content,
-        String cancelText = 'OK',
-      }) {
+    BuildContext context, {
+    required String title,
+    required String content,
+    String cancelText = 'OK',
+  }) {
     showDialog(
       context: context,
       barrierDismissible: false, // optional: prevent tap outside to dismiss
@@ -5124,13 +5672,11 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                       textAlign: TextAlign.left,
                       softWrap: true,
                       overflow: TextOverflow.visible,
-                      textScaler:
-                      TextScaler.noScaling,
+                      textScaler: TextScaler.noScaling,
                     ),
                   ),
                 ],
               ),
-
               const SizedBox(height: 20),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -5147,8 +5693,7 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
                   child: Text(
                     cancelText,
                     style: const TextStyle(color: Colors.white),
-                    textScaler:
-                    TextScaler.noScaling,
+                    textScaler: TextScaler.noScaling,
                   ),
                 ),
               ),
@@ -5159,4 +5704,3 @@ class _ManagerDSRReportScreenState extends State<ManagerDSRReportScreen> {
     );
   }
 }
-

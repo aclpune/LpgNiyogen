@@ -160,6 +160,7 @@ class _ManagerUpdateSaleCashUpdationState
   int? cashQtys = 0;
   bool isItemSubtypeND = false;
   var argValue;
+  bool isStockSave = false;
   String? delBoyNameName, itemName, vehicleNumber,receiptNoText,actionMode,itemSubtypes;
   int? saleQty,
       svQty,
@@ -1999,12 +2000,25 @@ class _ManagerUpdateSaleCashUpdationState
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: ElevatedButton(
-                  onPressed: () {
-                    if(actionMode == "EDIT"){
-                      updateSaleAddEditForMob("EDIT");
-                    }else{
-                      updateSaleAddEditForMob("ADD");
+                  onPressed: () async {
+                    Constants.isNetworkAvailable =
+                        await InternetConnectionChecker().hasConnection;
+                    if (Constants.isNetworkAvailable) {
+                      if(actionMode == "EDIT"){
+                        EasyLoading.show(status: 'Saving...');
+                        updateSaleAddEditForMob("EDIT");
+                        EasyLoading.dismiss();
+                      }else{
+                        EasyLoading.show(status: 'Saving...');
+                        updateSaleAddEditForMob("ADD");
+                        EasyLoading.dismiss();
+                      }
+                    }else {
+
+                      showFlushBar(context, Constants.connectionMessage);
                     }
+
+
                     // prepareDenominationData(
                     //     getNoteTypeAndIdFroDenominationListModel);
                   },
@@ -5776,6 +5790,10 @@ class _ManagerUpdateSaleCashUpdationState
     String? addedBy = prefs.getString('StaffId');
     int? addedBys = int.parse(addedBy!);
     int? distributorIds = int.parse(distributorId!);
+
+    EasyLoading.show();
+
+
     String formatDate(DateTime dateTime) {
       return DateFormat('yyyy-MM-dd').format(dateTime);
     }
@@ -5887,23 +5905,28 @@ class _ManagerUpdateSaleCashUpdationState
       if (retTotalQty != qtyControllerCredits) {
         // Show a message
         showFlushBar(context, Constants.reticulatedCylinderQuantity);
+        EasyLoading.dismiss();
         // You can also return this message from a function or show a snackbar/dialog
         return;
       }
       if(qtyControllerCredits >0){
         if(_reticulatedList.length <= 0){
+          EasyLoading.dismiss();
           showFlushBar(context, Constants.customerDetails);
+          return;
         }
       }
 
       if(totalExpectedAmountCash! > 0){
         if(_totalReceivedAmountCash.text.isEmpty) {
           showFlushBar(context, Constants.receivedAmount);
+          EasyLoading.dismiss();
           // You can also return this message from a function or show a snackbar/dialog
           return;
         }else{
           if (totalReceivedAmountCash! > totalExpectedAmountCash!) {
             showFlushBar(context, Constants.receivedAmount);
+            EasyLoading.dismiss();
             // You can also return this message from a function or show a snackbar/dialog
             return;
           }
@@ -5914,6 +5937,7 @@ class _ManagerUpdateSaleCashUpdationState
       if(qtyControllerPostpaids > 0 || postpaidAmountCash! > 0){
         if(_transactionList.length <= 0){
           showFlushBar(context, Constants.transactionDetails);
+          EasyLoading.dismiss();
           // You can also return this message from a function or show a snackbar/dialog
           return;
         }
@@ -5921,12 +5945,14 @@ class _ManagerUpdateSaleCashUpdationState
       if(isLumsumAmountAdd == false){
         if(postpaidAmountCash! + prepaidAmountCash! + creditAmountCash! + cashAmountCash! > amountTotal!){
           showFlushBar(context, Constants.totalReceivedAmountLumpsum);
+          EasyLoading.dismiss();
           // You can also return this message from a function or show a snackbar/dialog
           return;
         }
         if(postpaidAmountCash > 0){
           if(_transactionList.length <= 0){
             showFlushBar(context, Constants.transactionDetails);
+            EasyLoading.dismiss();
             // You can also return this message from a function or show a snackbar/dialog
             return;
           }
@@ -5936,6 +5962,7 @@ class _ManagerUpdateSaleCashUpdationState
       if(finalsAmount > 0){
         if(finalsAmount != totalReceivedAmountCash){
           showFlushBar(context, Constants.denominationAmount);
+          EasyLoading.dismiss();
           // You can also return this message from a function or show a snackbar/dialog
           return;
         }
@@ -5946,11 +5973,13 @@ class _ManagerUpdateSaleCashUpdationState
           if (finalsAmount > 0) {
             if (finalsAmount != totalReceivedAmountCash) {
               showFlushBar(context, Constants.denominationAmount);
+              EasyLoading.dismiss();
               // You can also return this message from a function or show a snackbar/dialog
               return;
             }
           } else {
             showFlushBar(context, Constants.cashDenominationIsMandatory);
+            EasyLoading.dismiss();
             return;
           }
         }
@@ -5960,6 +5989,7 @@ class _ManagerUpdateSaleCashUpdationState
         if(isCheckedBalanceCash == false){
           if(finalsAmount != totalReceivedAmountCash){
             showFlushBar(context, Constants.addBalanceDelBoyAccount);
+            EasyLoading.dismiss();
             // You can also return this message from a function or show a snackbar/dialog
             return;
           }
@@ -6040,16 +6070,20 @@ class _ManagerUpdateSaleCashUpdationState
           );
           EasyLoading.showToast(Constants.expenseSendMgr,
               duration: const Duration(milliseconds: 3000));
+          EasyLoading.dismiss();
         } else {
           // Error response
+          EasyLoading.dismiss();
           print("Error UpdateSaleAddEditForMob: ${response.statusCode} - ${response.body}");
         }
       } catch (e) {
         // Exception handling
+        EasyLoading.dismiss();
         print("Exception UpdateSaleAddEditForMob: $e");
       }
     }else{
       print("wrong UpdateSaleAddEditForMob");
+      EasyLoading.dismiss();
       showFlushBar(context, Constants.allDataEmpty);
     }
 

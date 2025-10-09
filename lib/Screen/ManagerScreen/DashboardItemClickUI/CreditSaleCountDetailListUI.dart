@@ -101,47 +101,50 @@ class _CreditSaleCountDetailListUI extends State<CreditSaleCountDetailListUI>{
         child:
         Scaffold(
           appBar:
-          AppBar(
-            automaticallyImplyLeading: false,
-            flexibleSpace: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      onPressed: () {
-                        // Navigator.pop(context);
-                        Navigator.pushNamed(context, BottomNavBarExample.screenName);
-                      },
-                    ),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Credit Sale Ledger',
-                            style: TextStyle(fontSize: 16, color: Colors.white),
-                            textScaler: TextScaler.noScaling,
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  'Total Outstanding Amount: ${formattedAmount}',
-                                  //'Total Outstanding Amount: 4,12,23,456.00',
-                                  style: TextStyle(fontSize: 14, color: Colors.white),
-                                  overflow: TextOverflow.ellipsis,
-                                  textScaler: TextScaler.noScaling,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+          PreferredSize(
+            preferredSize: Size.fromHeight(60.0),
+            child: AppBar(
+              automaticallyImplyLeading: false,
+              flexibleSpace: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.white),
+                        onPressed: () {
+                          // Navigator.pop(context);
+                          Navigator.pushNamed(context, BottomNavBarExample.screenName);
+                        },
                       ),
-                    ),
-                  ],
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Credit Sale Ledger',
+                              style: TextStyle(fontSize: 16, color: Colors.white),
+                              textScaler: TextScaler.noScaling,
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    'Total Outstanding Amount: ${formattedAmount}',
+                                    //'Total Outstanding Amount: 4,12,23,456.00',
+                                    style: TextStyle(fontSize: 12, color: Colors.white),
+                                    overflow: TextOverflow.ellipsis,
+                                    textScaler: TextScaler.noScaling,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -219,7 +222,7 @@ class _CreditSaleCountDetailListUI extends State<CreditSaleCountDetailListUI>{
                     debugPrint("Rendering Expense Item: ${_items[index]}");
                     GetCreditSaleLedgerDtlsListModel? sale = _items[index];
                     return Card(
-                      elevation: 4.0,
+                      elevation: 2.0,
                       margin: const EdgeInsets.symmetric(vertical: 2, horizontal: 2.0),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(4.0),
@@ -248,69 +251,64 @@ class _CreditSaleCountDetailListUI extends State<CreditSaleCountDetailListUI>{
                               ],
                             ),
                             const SizedBox(height: 2),
-                            // Row(
-                            //   children: [
-                            //     Expanded(
-                            //       flex: 1,
-                            //       child: countTextWidgetText(
-                            //           context, "Total Outstanding Bal.",
-                            //           nullToDash(sale.totalOutstanding! % 1 == 0
-                            //               ? sale.totalOutstanding?.toStringAsFixed(0)
-                            //               : sale.totalOutstanding.toString())
-                            //       ),
-                            //     ),
-                            //   ],
-                            // ),
                             Row(children: [
-                              Expanded(
-                                  child: Container(
-                                      child: Row(children: [
-                                        Text(
-                                            "Total Outstanding Bal.",
-                                            style:
-                                            Styling.itemGreyText,
-                                            maxLines: 2,
-                                            textScaler:
-                                            TextScaler.noScaling,
-                                            overflow:
-                                            TextOverflow.ellipsis),
-                                         Text(": ${nullToDash(sale.totalOutstanding! % 1 == 0
-                                                ? sale.totalOutstanding?.toStringAsFixed(0)
-                                                : sale.totalOutstanding.toString())}",
-                                                style: Styling
-                                                    .itemBlackTest,
-                                                textScaler: TextScaler
-                                                    .noScaling)
-                                      ])))
+                              Text(
+                                  "Total Outstanding Bal.",
+                                  style:
+                                  Styling.itemGreyText,
+                                  maxLines: 2,
+                                  textScaler:
+                                  TextScaler.noScaling,
+                                  overflow:
+                                  TextOverflow.ellipsis),
+                              Text(": ${nullToDash(sale.totalOutstanding! % 1 == 0
+                                  ? sale.totalOutstanding?.toStringAsFixed(0)
+                                  : sale.totalOutstanding.toString())}",
+                                  style: Styling
+                                      .itemBlackTest,
+                                  textScaler: TextScaler
+                                      .noScaling)
                             ]),
                             const SizedBox(height: 2),
-                                    Row(children: [
-                                      Expanded(
-                                          child: Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 5),
-                                              child: Row(children: [
-                                                Text(
-                                                    "Pending Since No. of Days",
-                                                    style: Styling.itemGreyText,
-                                                    maxLines: 2,
-                                                    textScaler:
-                                                        TextScaler.noScaling,
-                                                    overflow:
-                                                        TextOverflow.ellipsis
-                                                ),
-                                                SizedBox(
-                                                    width: 100,
-                                                    child: Text(
-                                                        "  : ${nullToDash(sale.pendingSinceDays?.toStringAsFixed(0))}",
-                                                        style: Styling
-                                                            .itemBlackTest,
-                                                        textScaler: TextScaler
-                                                            .noScaling)),
-                                              ]))),
+                            Row(children: [
+                              Text(
+                                  "Pending Since No. of Days",
+                                  style: Styling.itemGreyText,
+                                  maxLines: 2,
+                                  textScaler:
+                                  TextScaler.noScaling,
+                                  overflow:
+                                  TextOverflow.ellipsis
+                              ),
+                              SizedBox(
+                                  width: 100,
+                                  child: Text(
+                                      "  : ${nullToDash(sale.pendingSinceDays?.toStringAsFixed(0))}",
+                                      style: Styling
+                                          .itemBlackTest,
+                                      textScaler: TextScaler
+                                          .noScaling)),
                             ]),
                             const SizedBox(height: 2),
+                            Row(children: [
+                              Text(
+                                  "Customer Type",
+                                  style: Styling.itemGreyText,
+                                  maxLines: 2,
+                                  textScaler:
+                                  TextScaler.noScaling,
+                                  overflow:
+                                  TextOverflow.ellipsis
+                              ),
+                              SizedBox(
+                                  width: 100,
+                                  child: Text(
+                                      "  : ${nullToDash(sale.customerType)}",
+                                      style: Styling
+                                          .itemBlackTest,
+                                      textScaler: TextScaler
+                                          .noScaling)),
+                            ]),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [

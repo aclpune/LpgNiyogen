@@ -1,28 +1,30 @@
-/// ARBSalesId : 193
+/// ARBSalesId : 291
 /// DistributorId : 8118
-/// SaleDate : "2025-07-16T11:55:52"
-/// StaffId : 45
-/// StaffName : "19kg Gopal"
-/// ConsumerNo : "546878"
+/// SaleDate : "2025-09-18T07:01:09.15"
+/// StaffId : 42
+/// StaffName : "5kg Swarup"
+/// ConsumerNo : "588588"
 /// ConsumerName : ""
-/// TotalAmount : 2750.0
+/// TotalAmount : 1140.0
 /// PaymentMode : "Bank"
-/// TransactionCode : "fgdfg"
+/// TransactionCode : "1234"
 /// TransactionTime : ""
 /// TransactionRemark : ""
 /// AddedBy : 0
 /// Action : null
-/// ItemId : 5
-/// ItemName : "2 Burner Delux"
-/// Rate : 2750.0
+/// ItemId : 9
+/// ItemName : "2 Burner Ujjawala"
+/// Rate : 950.0
 /// ItemQty : 1
 /// DiscountAmt : 0.0
-/// ARBAmount : 2750.0
-/// ItemDataList : [{"ARBSalesId":0,"ItemId":5,"ItemName":"2 Burner Delux","Rate":2750.0,"ItemQty":1,"DiscountAmt":0.0,"ARBAmount":2750.0}]
+/// ARBAmount : 950.0
+/// ItemDataList : [{"ARBSalesId":0,"ItemId":9,"ItemName":"2 Burner Ujjawala","Rate":950.0,"ItemQty":1,"DiscountAmt":0.0,"ARBAmount":950.0},{"ARBSalesId":0,"ItemId":10,"ItemName":"Suraksha Hose","Rate":190.0,"ItemQty":1,"DiscountAmt":0.0,"ARBAmount":190.0}]
 /// DenomDtList : null
-/// BankId : 14
-/// BankMappingId : 19
+/// BankId : 12
+/// BankMappingId : 38
 /// UpdatedFrom : null
+/// ReceiptAmt : 0.00
+/// QRReceiptAmt : 1140.00
 
 class GetArbSalesListModel {
   GetArbSalesListModel({
@@ -50,7 +52,9 @@ class GetArbSalesListModel {
       dynamic denomDtList, 
       num? bankId, 
       num? bankMappingId, 
-      dynamic updatedFrom,}){
+      dynamic updatedFrom, 
+      num? receiptAmt, 
+      num? qRReceiptAmt,}){
     _aRBSalesId = aRBSalesId;
     _distributorId = distributorId;
     _saleDate = saleDate;
@@ -76,6 +80,8 @@ class GetArbSalesListModel {
     _bankId = bankId;
     _bankMappingId = bankMappingId;
     _updatedFrom = updatedFrom;
+    _receiptAmt = receiptAmt;
+    _qRReceiptAmt = qRReceiptAmt;
 }
 
   GetArbSalesListModel.fromJson(dynamic json) {
@@ -109,6 +115,8 @@ class GetArbSalesListModel {
     _bankId = json['BankId'];
     _bankMappingId = json['BankMappingId'];
     _updatedFrom = json['UpdatedFrom'];
+    _receiptAmt = json['ReceiptAmt'];
+    _qRReceiptAmt = json['QRReceiptAmt'];
   }
   num? _aRBSalesId;
   num? _distributorId;
@@ -135,6 +143,8 @@ class GetArbSalesListModel {
   num? _bankId;
   num? _bankMappingId;
   dynamic _updatedFrom;
+  num? _receiptAmt;
+  num? _qRReceiptAmt;
 GetArbSalesListModel copyWith({  num? aRBSalesId,
   num? distributorId,
   String? saleDate,
@@ -160,6 +170,8 @@ GetArbSalesListModel copyWith({  num? aRBSalesId,
   num? bankId,
   num? bankMappingId,
   dynamic updatedFrom,
+  num? receiptAmt,
+  num? qRReceiptAmt,
 }) => GetArbSalesListModel(  aRBSalesId: aRBSalesId ?? _aRBSalesId,
   distributorId: distributorId ?? _distributorId,
   saleDate: saleDate ?? _saleDate,
@@ -185,6 +197,8 @@ GetArbSalesListModel copyWith({  num? aRBSalesId,
   bankId: bankId ?? _bankId,
   bankMappingId: bankMappingId ?? _bankMappingId,
   updatedFrom: updatedFrom ?? _updatedFrom,
+  receiptAmt: receiptAmt ?? _receiptAmt,
+  qRReceiptAmt: qRReceiptAmt ?? _qRReceiptAmt,
 );
   num? get aRBSalesId => _aRBSalesId;
   num? get distributorId => _distributorId;
@@ -211,6 +225,8 @@ GetArbSalesListModel copyWith({  num? aRBSalesId,
   num? get bankId => _bankId;
   num? get bankMappingId => _bankMappingId;
   dynamic get updatedFrom => _updatedFrom;
+  num? get receiptAmt => _receiptAmt;
+  num? get qRReceiptAmt => _qRReceiptAmt;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -241,18 +257,20 @@ GetArbSalesListModel copyWith({  num? aRBSalesId,
     map['BankId'] = _bankId;
     map['BankMappingId'] = _bankMappingId;
     map['UpdatedFrom'] = _updatedFrom;
+    map['ReceiptAmt'] = _receiptAmt;
+    map['QRReceiptAmt'] = _qRReceiptAmt;
     return map;
   }
 
 }
 
 /// ARBSalesId : 0
-/// ItemId : 5
-/// ItemName : "2 Burner Delux"
-/// Rate : 2750.0
+/// ItemId : 9
+/// ItemName : "2 Burner Ujjawala"
+/// Rate : 950.0
 /// ItemQty : 1
 /// DiscountAmt : 0.0
-/// ARBAmount : 2750.0
+/// ARBAmount : 950.0
 
 class ItemDataList {
   ItemDataList({

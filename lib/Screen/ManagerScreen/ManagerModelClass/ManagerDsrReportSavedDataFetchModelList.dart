@@ -946,7 +946,8 @@ class IncDtls {
       num? amount, 
       String? itemName, 
       num? itemId, 
-      String? date,}){
+      String? date,
+      num? seq,}){
     _distributorId = distributorId;
     _incomeId = incomeId;
     _transCate = transCate;
@@ -958,6 +959,7 @@ class IncDtls {
     _itemName = itemName;
     _itemId = itemId;
     _date = date;
+    _seq = seq;
 }
 
   IncDtls.fromJson(dynamic json) {
@@ -972,6 +974,7 @@ class IncDtls {
     _itemName = json['ItemName'];
     _itemId = json['ItemId'];
     _date = json['Date'];
+    _seq = json['Seq'];
   }
   num? _distributorId;
   num? _incomeId;
@@ -984,6 +987,7 @@ class IncDtls {
   String? _itemName;
   num? _itemId;
   String? _date;
+  num? _seq;
 IncDtls copyWith({  num? distributorId,
   num? incomeId,
   String? transCate,
@@ -995,6 +999,7 @@ IncDtls copyWith({  num? distributorId,
   String? itemName,
   num? itemId,
   String? date,
+  num? seq,
 }) => IncDtls(  distributorId: distributorId ?? _distributorId,
   incomeId: incomeId ?? _incomeId,
   transCate: transCate ?? _transCate,
@@ -1006,6 +1011,7 @@ IncDtls copyWith({  num? distributorId,
   itemName: itemName ?? _itemName,
   itemId: itemId ?? _itemId,
   date: date ?? _date,
+  seq: seq ?? _seq,
 );
   num? get distributorId => _distributorId;
   num? get incomeId => _incomeId;
@@ -1018,6 +1024,7 @@ IncDtls copyWith({  num? distributorId,
   String? get itemName => _itemName;
   num? get itemId => _itemId;
   String? get date => _date;
+  num? get seq => _seq;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -1032,6 +1039,7 @@ IncDtls copyWith({  num? distributorId,
     map['ItemName'] = _itemName;
     map['ItemId'] = _itemId;
     map['Date'] = _date;
+    map['Seq'] = _seq;
     return map;
   }
 

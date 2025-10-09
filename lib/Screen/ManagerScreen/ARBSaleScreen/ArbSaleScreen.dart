@@ -52,6 +52,8 @@ class _ArbSaleScreen extends State<ArbSaleScreen> {
   final TranCodeController = TextEditingController();
   final timeController = TextEditingController();
   final transReviewController = TextEditingController();
+  final cashTotalReceiptAmount = TextEditingController();
+  final merchantQrTotalReceiptAmount = TextEditingController();
   List<GetArbSalesListModel> arbSalesModel = [];
   List<Map<String, TextEditingController>> items = [];
   Map<int, String?> _selectedItems = {};
@@ -60,7 +62,7 @@ class _ArbSaleScreen extends State<ArbSaleScreen> {
   GetArbCurrentStockListModel? _selectStockModel;
   Map<int, int?> _itemStockByIndex = {};
   Map<int, int?> _selectedItemIds = {};
-  List<String> getTransMode = ["Cash", "Merchant QR"];
+  List<String> getTransMode = ["Cash", "Merchant QR","Partial"];
   String? selectedTransMode;
   int _selectedIndex = 0;
   List<DenomModel>getNoteTypeAndIdFroDenominationListModel = [];
@@ -89,6 +91,8 @@ class _ArbSaleScreen extends State<ArbSaleScreen> {
   bool cashDenominationMandatory = false;
   List<FocusNode> _discountFocusNodes = [];
   List<FocusNode> _dropdownFocusNodes = [];
+  bool isEditingQR = false;
+  bool isEditingCash = false;
   @override
   void initState() {
     super.initState();
@@ -138,6 +142,8 @@ class _ArbSaleScreen extends State<ArbSaleScreen> {
           }
 
           double amountTotalEdit = double.tryParse(argValue["amountTotalV"] ?? '') ?? 0;
+          double amountCashEdit = double.tryParse(argValue["cashReceiptAmtV"] ?? '') ?? 0;
+          double amountQrEdit = double.tryParse(argValue["qrReceiptAmtV"] ?? '') ?? 0;
           String transTimeEdit = argValue["transTimeV"] ?? 0;
           timeController.text = transTimeEdit;
           String transationCodeEdit = argValue["transationCodeV"] ?? 0;
@@ -145,6 +151,8 @@ class _ArbSaleScreen extends State<ArbSaleScreen> {
           String transRemarkEdit = argValue["transRemarkV"] ?? 0;
           transReviewController.text = transRemarkEdit;
           totalAmountController.text = amountTotalEdit.toString();
+          cashTotalReceiptAmount.text = amountCashEdit.toString();
+          merchantQrTotalReceiptAmount.text = amountQrEdit.toString();
           String bankIdV = argValue["bankIdV"] ?? '';
           debugPrint("bank id1 $bankIdV");
           String accMappingIdEdit =argValue["mappingIdV"] ?? 0;
@@ -631,6 +639,7 @@ void _addNewItem() {
                                             if (category != "Non ARB Item") {
                                               if (stockLimit != null && enteredQty > stockLimit) {
                                                 items[index]['amt']?.clear();
+                                                items[index]['qty']?.clear();
                                                 ScaffoldMessenger.of(context).showSnackBar(
                                                   SnackBar(
                                                     content: Text('The Item Quantity Cannot Exceed The Available Stock: $stockLimit'),
@@ -751,25 +760,218 @@ void _addNewItem() {
                         ),
                       ],
                     ),
-                    if (selectedTransMode == 'Cash')
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Row(
-                        mainAxisAlignment:
-                        MainAxisAlignment.spaceBetween,
+                    if (selectedTransMode == 'Cash' || selectedTransMode == 'Partial')
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                            child: textWidgetBlueColorWithStar('Receipt Amount','*')),
+                        Flexible(
+                          flex: 1,
+                          child: TextField(
+                            controller: cashTotalReceiptAmount,
+                            keyboardType:
+                            TextInputType.numberWithOptions(
+                                decimal: true),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d*\.?\d{0,10}')),
+                            ],
+                            onChanged: (value){
+                              setState(() {
+                                var _isCash = value.isEmpty;
+                                isEditingQR = false;
+                                isEditingCash = true;
+
+                                double totalAmount = double.tryParse(
+                                    totalAmountController.text) ??
+                                    0.0;
+                                double qrAmount =
+                                    double.tryParse(value) ?? 0.0;
+
+                                if (qrAmount > totalAmount) {
+                                  cashTotalReceiptAmount.clear();
+                                } else {
+                                  if(selectedTransMode == 'Partial'){
+                                    updateRemainingAmount();
+                                  }
+                                }
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    if (selectedTransMode == 'Merchant QR' || selectedTransMode == 'Partial')
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                            child: textWidgetBlueColorWithStar('Merchant Qr Amount','*')),
+                        Flexible(
+                          flex: 1,
+                          child: TextField(
+                            controller: merchantQrTotalReceiptAmount,
+                            keyboardType:
+                            TextInputType.numberWithOptions(
+                                decimal: true),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d*\.?\d{0,10}')),
+                            ],
+                            onChanged: (value){
+                              setState(() {
+                                var _isQRcode = value.isEmpty;
+                                isEditingQR = true;
+                                isEditingCash = false;
+                                double totalAmount = double.tryParse(
+                                    totalAmountController.text) ??
+                                    0.0;
+                                double qrAmount =
+                                    double.tryParse(value) ?? 0.0;
+
+                                if (qrAmount > totalAmount) {
+                                  merchantQrTotalReceiptAmount.clear();
+                                } else {
+                                  if(selectedTransMode == 'Partial'){
+                                    updateRemainingAmount();
+                                  }
+                                }
+                              });
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (selectedTransMode == 'Merchant QR' || selectedTransMode == 'Partial')
+                      Column(
                         children: [
-                          Text(
-                            cashDenominationMandatory?"Cash Denomination Is Mandatory":
-                            "Cash denomination",
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.blue,
-                              fontWeight: FontWeight.bold,),
+                          Row(
+                            children: [
+                              Expanded(
+                                child:
+                                DropdownButtonFormField<
+                                    GetBankMappingDetailsListModel>(
+                                  value:bankModel.contains(_selectBankModel)?_selectBankModel:null ,
+                                  items: bankModel.map((item) {
+                                    return DropdownMenuItem<
+                                        GetBankMappingDetailsListModel>(
+                                      value: item,
+                                      child: Text(
+                                        '${item.bankName ?? ''} - ${item.accountNo ?? ''}',
+                                      ),
+                                    );
+                                  }).toList(),
+                                  onChanged: (selectedItem) {
+                                    setState(() {
+                                      _selectBankModel = selectedItem;
+                                      selectedBankName = selectedItem?.bankName;
+                                      selectedBankId = selectedItem?.accountNo;
+                                      selecteBankIDApi = selectedItem?.bankId?.toInt();
+                                      accMappingId = selectedItem?.mappingId?.toInt();
+                                    });
+                                  },
+                                  hint: Text('Select Acc No'),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child:
+                                TextField(
+                                  controller: TranCodeController,
+                                  maxLengthEnforcement: MaxLengthEnforcement.enforced, // Enforce max length
+                                  inputFormatters: <TextInputFormatter>[
+                                    LengthLimitingTextInputFormatter(30), // Limit to 30 characters
+                                    FilteringTextInputFormatter.deny(
+                                      RegExp(r'[^\u0000-\u007F]'), // Block emojis and non-ASCII characters
+                                    ),
+                                    FilteringTextInputFormatter.deny(
+                                      RegExp(r'\s'), // Block all whitespace including space, tab, etc.
+                                    ),
+                                  ],
+                                  decoration: InputDecoration(
+                                    errorText: _isTranscode
+                                        ? 'Transaction code is Required'
+                                        : null,
+                                    label: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        countTextWidgetTextStar(
+                                          context,
+                                          'Transaction Code',
+                                          showAsterisk: true,
+                                        ),
+                                      ],
+                                    ),
+                                    contentPadding: EdgeInsets.symmetric(
+                                        vertical: 8.0, horizontal: 12.0),
+                                  ),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _isTranscode = value.isEmpty;
+                                    });
+                                  },
+                                ),
+                              ),
+                              SizedBox(width: 8),
+                              Expanded(
+                                child: TextField(
+                                  controller: timeController,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(RegExp(r'^\d{0,2}:?\d{0,2}$')),
+                                    LengthLimitingTextInputFormatter(5),
+                                  ],
+                                  decoration: InputDecoration(
+                                    labelText: 'Time',
+                                    labelStyle: Styling.itemBlackTestSmall,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              Expanded(
+                                child:
+                                TextField(
+                                  controller: transReviewController,
+                                  inputFormatters: [
+                                    LengthLimitingTextInputFormatter(250), // Limit to 250 characters
+                                  ],
+                                  decoration: InputDecoration(
+                                    labelText: 'Transaction Remark',
+                                    labelStyle: Styling.itemBlackTestSmall,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                    ),
-                    if (selectedTransMode == 'Cash')
+                    SizedBox(height: 10),
+                    if (selectedTransMode == 'Cash' || selectedTransMode == 'Partial')
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Row(
+                          mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              cashDenominationMandatory?"Cash Denomination Is Mandatory":
+                              "Cash denomination",
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold,),
+                            ),
+                          ],
+                        ),
+                      ),
+                    if (selectedTransMode == 'Cash' || selectedTransMode == 'Partial')
                       Container(
                         height: 30,
                         decoration: BoxDecoration(
@@ -841,7 +1043,7 @@ void _addNewItem() {
                           ],
                         ),
                       ),
-                    if (selectedTransMode == 'Cash')
+                    if (selectedTransMode == 'Cash' || selectedTransMode == 'Partial')
                       Visibility(
                         visible: _selectedIndex == 0,
                         child: Column(
@@ -1299,114 +1501,6 @@ void _addNewItem() {
                         ],
                       ),
                     ),
-                    if (selectedTransMode == 'Merchant QR')
-                      Column(
-                        children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child:
-                                DropdownButtonFormField<
-                                    GetBankMappingDetailsListModel>(
-                                  value:bankModel.contains(_selectBankModel)?_selectBankModel:null ,
-                                  items: bankModel.map((item) {
-                                    return DropdownMenuItem<
-                                        GetBankMappingDetailsListModel>(
-                                      value: item,
-                                      child: Text(
-                                        '${item.bankName ?? ''} - ${item.accountNo ?? ''}',
-                                      ),
-                                    );
-                                  }).toList(),
-                                  onChanged: (selectedItem) {
-                                    setState(() {
-                                      _selectBankModel = selectedItem;
-                                      selectedBankName = selectedItem?.bankName;
-                                      selectedBankId = selectedItem?.accountNo;
-                                      selecteBankIDApi = selectedItem?.bankId?.toInt();
-                                      accMappingId = selectedItem?.mappingId?.toInt();
-                                    });
-                                  },
-                                  hint: Text('Select Acc No'),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child:
-                                TextField(
-                                  controller: TranCodeController,
-                                  maxLengthEnforcement: MaxLengthEnforcement.enforced, // Enforce max length
-                                  inputFormatters: <TextInputFormatter>[
-                                    LengthLimitingTextInputFormatter(30), // Limit to 30 characters
-                                    FilteringTextInputFormatter.deny(
-                                      RegExp(r'[^\u0000-\u007F]'), // Block emojis and non-ASCII characters
-                                    ),
-                                    FilteringTextInputFormatter.deny(
-                                      RegExp(r'\s'), // Block all whitespace including space, tab, etc.
-                                    ),
-                                  ],
-                                  decoration: InputDecoration(
-                                    errorText: _isTranscode
-                                        ? 'Transaction code is Required'
-                                        : null,
-                                    label: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        countTextWidgetTextStar(
-                                          context,
-                                          'Transaction Code',
-                                          showAsterisk: true,
-                                        ),
-                                      ],
-                                    ),
-                                    contentPadding: EdgeInsets.symmetric(
-                                        vertical: 8.0, horizontal: 12.0),
-                                  ),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _isTranscode = value.isEmpty;
-                                    });
-                                  },
-                                ),
-                              ),
-                              SizedBox(width: 8),
-                              Expanded(
-                                child: TextField(
-                                  controller: timeController,
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.allow(RegExp(r'^\d{0,2}:?\d{0,2}$')),
-                                    LengthLimitingTextInputFormatter(5),
-                                  ],
-                                  decoration: InputDecoration(
-                                    labelText: 'Time',
-                                    labelStyle: Styling.itemBlackTestSmall,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child:
-                                TextField(
-                                  controller: transReviewController,
-                                  inputFormatters: [
-                                    LengthLimitingTextInputFormatter(250), // Limit to 250 characters
-                                  ],
-                                  decoration: InputDecoration(
-                                    labelText: 'Transaction Remark',
-                                    labelStyle: Styling.itemBlackTestSmall,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
                     SizedBox(height: 5),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -1507,6 +1601,8 @@ void _addNewItem() {
                                               var bankId = payList.bankId.toString();
                                               var mappingId = payList.bankMappingId.toString();
                                               var arbSaleId = payList.aRBSalesId.toString();
+                                              var cashReceiptAmt = payList.receiptAmt.toString();
+                                              var qrReceiptAmt = payList.qRReceiptAmt.toString();
                                               int payId = int.parse(arbSaleId);
 
                                               if (saveFlag) {
@@ -1531,7 +1627,9 @@ void _addNewItem() {
                                                     'transRemarkV': transRemark,
                                                     'bankIdV': bankId,
                                                     'mappingIdV': mappingId,
-                                                    'modeChange': "EDIT"
+                                                    'modeChange': "EDIT",
+                                                    'cashReceiptAmtV': cashReceiptAmt,
+                                                    'qrReceiptAmtV': qrReceiptAmt,
                                                   },
                                                 );
                                               }
@@ -1658,8 +1756,7 @@ void _addNewItem() {
         });
 
         // Directly assign the selected item name for this index in _selectedItems map
-        _selectedItems[items.length - 1] = item.itemName ??
-            ''; // Ensure this is added correctly for each index
+        _selectedItems[items.length - 1] = item.itemName ?? ''; // Ensure this is added correctly for each index
         _discountFocusNodes.add(FocusNode());
         _dropdownFocusNodes.add(FocusNode());
 
@@ -1670,7 +1767,6 @@ void _addNewItem() {
       print('Selected Items: $_selectedItems');
     });
   }
-
 
   void _updateSum(int index) {
     // Get the values from the receivedQty, discount, and rate controllers
@@ -1735,31 +1831,6 @@ void _addNewItem() {
     }
   }
 
-
-  // void updateTotalAmount() {
-  //   double total = 0.0;
-  //
-  //   for (var item in items) {
-  //     // Get the quantity (assuming 'qty' is the key for quantity)
-  //     final qty = item['qty'] ?? 0;
-  //
-  //     // If the quantity is 0, set the total amount to 0.00 immediately
-  //     if (qty == 0) {
-  //       totalAmountController.text = '0.00';
-  //       debugPrint("Quantity is 0, total set to 0.00");
-  //       return; // No need to continue further if qty is 0
-  //     }
-  //     final netAmtText = item['amt']?.text.trim() ?? '';
-  //     final netAmt = double.tryParse(netAmtText) ?? 0.0;
-  //     total += netAmt;
-  //   }
-  //   final formattedTotal = total.toStringAsFixed(2);
-  //
-  //   totalAmountController.text = formattedTotal;
-  //
-  //   debugPrint("formattedTotal $formattedTotal");
-  // }
-
   void updateTotalAmount() {
     double total = 0.0;
 
@@ -1790,7 +1861,6 @@ void _addNewItem() {
 
     debugPrint("formattedTotal $formattedTotal");
   }
-
 
   Future<void> getStaffDetailsList() async {
     EasyLoading.show();
@@ -2116,6 +2186,8 @@ void _addNewItem() {
     String? consumerName;
     String? bankName;
     double amtController = 0.0;
+    double cashController = 0.0;
+    double merchantQrController = 0.0;
 
     List<Map<String, dynamic>> ItemDetails = items.map((item) {
       String? selectedItemName = _selectedItems[items.indexOf(item)];
@@ -2187,6 +2259,22 @@ void _addNewItem() {
         amtController = double.parse(totalAmountController.text);
       }
 
+      if(selectedTransMode == "Merchant QR" || selectedTransMode == 'Partial'){
+        if (merchantQrTotalReceiptAmount.text.isNotEmpty) {
+          merchantQrController = double.parse(merchantQrTotalReceiptAmount.text);
+        }
+      }else{
+        merchantQrController = 0.0;
+      }
+
+      if (selectedTransMode == 'Cash' || selectedTransMode == 'Partial'){
+        if (cashTotalReceiptAmount.text.isNotEmpty) {
+          cashController = double.parse(cashTotalReceiptAmount.text);
+        }
+      }else{
+        cashController = 0.0;
+      }
+
       if (conNoController.text.isNotEmpty) {
         consumerNo = conNoController.text;
       }
@@ -2236,7 +2324,7 @@ void _addNewItem() {
         return;
       }
 
-      if(selectedTransMode == "Merchant QR"){
+      if(selectedTransMode == "Merchant QR" || selectedTransMode == 'Partial'){
         if(selectedBankName == null || selectedBankId == null){
           showFlushBar(context, "Select Bank.");
           return;
@@ -2247,10 +2335,53 @@ void _addNewItem() {
         }
       }
 
-      // Conditional check for cash payment mode
+      if(selectedTransMode == "Merchant QR" || selectedTransMode == 'Partial'){
+        if(merchantQrTotalReceiptAmount.text.isEmpty){
+          showFlushBar(context, Constants.arbSaleQrAmount);
+          return;
+        }
+      }
+      if (selectedTransMode == 'Cash' || selectedTransMode == 'Partial'){
+        if(cashTotalReceiptAmount.text.isEmpty){
+          showFlushBar(context, Constants.arbSaleCashAmount);
+          return;
+        }
+      }
+
       if (selectedTransMode == 'Cash'){
+        if(amtController != cashController){
+          showFlushBar(context, Constants.arbSaleCashAmount);
+          return;
+        }
+      }
+      if(selectedTransMode == "Merchant QR"){
+        if(amtController != merchantQrController){
+          showFlushBar(context, Constants.arbSaleQrAmount);
+          return;
+        }
+      }
+      if (selectedTransMode == 'Partial'){
+        if(cashController > 0){
+          if(merchantQrController > 0){
+            double amtTotal = cashController + merchantQrController;
+            if(amtController != amtTotal){
+              showFlushBar(context, Constants.arbSaleQrCashAmount);
+              return;
+            }
+          }else{
+            showFlushBar(context, Constants.arbSaleQrAmount);
+            return;
+          }
+        }else{
+          showFlushBar(context, Constants.arbSaleCashAmount);
+          return;
+        }
+
+      }
+      // Conditional check for cash payment mode
+      if (selectedTransMode == 'Cash' || selectedTransMode == 'Partial'){
         if(finalAmountCashDeno > 0) {
-          if (finalAmountCashDeno != amtController) {
+          if (finalAmountCashDeno != cashController) {
             showFlushBar(context, Constants.denominationAmount);
             return;
           }
@@ -2258,9 +2389,9 @@ void _addNewItem() {
       }
 
       if(cashDenominationMandatory){
-        if (selectedTransMode == 'Cash'){
+        if (selectedTransMode == 'Cash' || selectedTransMode == 'Partial'){
           if(finalAmountCashDeno > 0) {
-            if (finalAmountCashDeno != amtController) {
+            if (finalAmountCashDeno != cashController) {
               showFlushBar(context, Constants.denominationAmount);
               return;
             }
@@ -2274,6 +2405,7 @@ void _addNewItem() {
     if (selectedTransMode != null && selectedTransMode == "Merchant QR") {
       selectedTransMode = 'Bank';
     }
+
 
     final Map<String, dynamic> requestBody =
     {
@@ -2303,6 +2435,8 @@ void _addNewItem() {
       "BankMappingId": accMappingIds ?? 0,
       "ItemDataList": ItemDetails,
       "DenomDtList": dataCashDenomination,
+      "QRReceiptAmt": merchantQrController,
+      "ReceiptAmt": cashController,
     };
     print("DepositCashAddEdit: ${requestBody}");
     requestBody.forEach((key, value) {
@@ -2585,5 +2719,29 @@ void _addNewItem() {
       }
     }
   }
+
+
+
+ double remainingAmount = 0.0;
+
+  void updateRemainingAmount() {
+  double totalAmount = double.tryParse(totalAmountController.text) ?? 0.0;
+  double qrAmount = double.tryParse(merchantQrTotalReceiptAmount.text) ?? 0.0;
+  double cashAmount = double.tryParse(cashTotalReceiptAmount.text) ?? 0.0;
+
+  setState(() {
+  if (isEditingQR) {
+  remainingAmount = totalAmount - qrAmount;
+  if (remainingAmount < 0) remainingAmount = 0.0;
+  cashTotalReceiptAmount.text = remainingAmount.toStringAsFixed(2);
+  } else if (isEditingCash) {
+  remainingAmount = totalAmount - cashAmount;
+  if (remainingAmount < 0) remainingAmount = 0.0;
+  merchantQrTotalReceiptAmount.text = remainingAmount.toStringAsFixed(2);
+  }
+  });
+  }
+
+
 }
 

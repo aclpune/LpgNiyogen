@@ -1,14 +1,15 @@
 /// DistributorId : 0
 /// IncomeId : 0
-/// TransCate : "ARBSale"
-/// Quantity : 1.0
+/// TransCate : "ARB-SV"
+/// Quantity : 6.0
 /// UnsettQty : 0
 /// SettQty : 0
 /// Mode : null
-/// Amount : 100.00
-/// ItemName : "Prestige  Lighter"
-/// ItemId : 38
+/// Amount : 5133.00
+/// ItemName : "14.2 Kg - Refill"
+/// ItemId : 1
 /// Date : "0001-01-01T00:00:00"
+/// Seq : 1
 
 class ManagerDsrReportIncomeSalesModel {
   ManagerDsrReportIncomeSalesModel({
@@ -22,7 +23,8 @@ class ManagerDsrReportIncomeSalesModel {
       num? amount, 
       String? itemName, 
       num? itemId, 
-      String? date,}){
+      String? date, 
+      num? seq,}){
     _distributorId = distributorId;
     _incomeId = incomeId;
     _transCate = transCate;
@@ -34,6 +36,7 @@ class ManagerDsrReportIncomeSalesModel {
     _itemName = itemName;
     _itemId = itemId;
     _date = date;
+    _seq = seq;
 }
 
   ManagerDsrReportIncomeSalesModel.fromJson(dynamic json) {
@@ -48,6 +51,7 @@ class ManagerDsrReportIncomeSalesModel {
     _itemName = json['ItemName'];
     _itemId = json['ItemId'];
     _date = json['Date'];
+    _seq = json['Seq'];
   }
   num? _distributorId;
   num? _incomeId;
@@ -60,6 +64,7 @@ class ManagerDsrReportIncomeSalesModel {
   String? _itemName;
   num? _itemId;
   String? _date;
+  num? _seq;
 ManagerDsrReportIncomeSalesModel copyWith({  num? distributorId,
   num? incomeId,
   String? transCate,
@@ -71,6 +76,7 @@ ManagerDsrReportIncomeSalesModel copyWith({  num? distributorId,
   String? itemName,
   num? itemId,
   String? date,
+  num? seq,
 }) => ManagerDsrReportIncomeSalesModel(  distributorId: distributorId ?? _distributorId,
   incomeId: incomeId ?? _incomeId,
   transCate: transCate ?? _transCate,
@@ -82,6 +88,7 @@ ManagerDsrReportIncomeSalesModel copyWith({  num? distributorId,
   itemName: itemName ?? _itemName,
   itemId: itemId ?? _itemId,
   date: date ?? _date,
+  seq: seq ?? _seq,
 );
   num? get distributorId => _distributorId;
   num? get incomeId => _incomeId;
@@ -94,6 +101,7 @@ ManagerDsrReportIncomeSalesModel copyWith({  num? distributorId,
   String? get itemName => _itemName;
   num? get itemId => _itemId;
   String? get date => _date;
+  num? get seq => _seq;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -108,6 +116,7 @@ ManagerDsrReportIncomeSalesModel copyWith({  num? distributorId,
     map['ItemName'] = _itemName;
     map['ItemId'] = _itemId;
     map['Date'] = _date;
+    map['Seq'] = _seq;
     return map;
   }
 

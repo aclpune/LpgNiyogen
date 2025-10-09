@@ -124,6 +124,9 @@ BranchAdminAH	cnf@1234*/
   static String expenseSendMgrEdit = "Data Updated successfully.";
   static String expenseSendMgrDelete = "Data deleted successfully.";
   static String failToDelete = "Failed to delete record.";
+  static String arbSaleCashAmount = "Please enter valid cash amount.";
+  static String arbSaleQrAmount = "Please enter valid QR amount.";
+  static String arbSaleQrCashAmount = "Please enter valid QR and Cash amount.";
   //TextSizes
   static double size20 = 20;
   static double size18 = 18;

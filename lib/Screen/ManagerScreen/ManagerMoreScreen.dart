@@ -10,6 +10,7 @@ import 'ARBScreen/ArbScreen.dart';
 import 'CashDepositToBankScreen.dart';
 import 'CashHandoverScreen.dart';
 import 'PaymentReceiptScreen/PaymentReceiptScreen.dart';
+import 'ReceiptRegulatorScreen/ReceiptRegulatorScreen.dart';
 import 'SVSaleReportScreen.dart';
 import 'SalaryPaymentScreen/SalaryPaymentScreen.dart';
 import 'TVSaleScreen/TVSalesScreen.dart';
@@ -204,6 +205,30 @@ class _ManagerMoreScreeState extends State<ManagerMoreScree> {
                                           ],
                                         ),
                                 
+                                        Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
+                                      ],
+                                    )
+                                ),
+                              ),
+                              Container(height: 1,color: Colors.grey[300],),
+                              GestureDetector(
+                                onTap: (){
+                                  Navigator.pushReplacementNamed(context, ReceiptRegulatorScreen.screenName);
+                                },
+                                child: Padding(
+                                    padding: const EdgeInsets.all(10.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+
+                                        Row(
+                                          children: [
+                                            Icon(Icons.broken_image_outlined),
+                                            SizedBox(width: 10,),
+                                            Text("Receipt Defective Regulator",style: Styling.itemBlackTestMore,),
+                                          ],
+                                        ),
+
                                         Icon(Icons.arrow_forward_ios_sharp,color: Colors.grey,size: 20,),
                                       ],
                                     )

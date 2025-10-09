@@ -2,10 +2,12 @@
 /// CustomerId : 0
 /// CustomerName : null
 /// CollRcptDate : "2025-02-04T00:00:00"
-/// TotalCredit : 150628.50
-/// TotalReceipt : 322860.00
-/// TotalOutstanding : -172231.50
-/// PendingSinceDays : 218.0
+/// TotalCredit : 177210.00
+/// TotalReceipt : 337860.00
+/// TotalOutstanding : -160650.00
+/// PendingSinceDays : 227.0
+/// CustTypeId : 0
+/// CustomerType : null
 
 class GetCreditSaleLedgerDtlsListModel {
   GetCreditSaleLedgerDtlsListModel({
@@ -16,7 +18,9 @@ class GetCreditSaleLedgerDtlsListModel {
       num? totalCredit, 
       num? totalReceipt, 
       num? totalOutstanding, 
-      num? pendingSinceDays,}){
+      num? pendingSinceDays, 
+      num? custTypeId, 
+      dynamic customerType,}){
     _distributorId = distributorId;
     _customerId = customerId;
     _customerName = customerName;
@@ -25,6 +29,8 @@ class GetCreditSaleLedgerDtlsListModel {
     _totalReceipt = totalReceipt;
     _totalOutstanding = totalOutstanding;
     _pendingSinceDays = pendingSinceDays;
+    _custTypeId = custTypeId;
+    _customerType = customerType;
 }
 
   GetCreditSaleLedgerDtlsListModel.fromJson(dynamic json) {
@@ -36,6 +42,8 @@ class GetCreditSaleLedgerDtlsListModel {
     _totalReceipt = json['TotalReceipt'];
     _totalOutstanding = json['TotalOutstanding'];
     _pendingSinceDays = json['PendingSinceDays'];
+    _custTypeId = json['CustTypeId'];
+    _customerType = json['CustomerType'];
   }
   num? _distributorId;
   num? _customerId;
@@ -45,6 +53,8 @@ class GetCreditSaleLedgerDtlsListModel {
   num? _totalReceipt;
   num? _totalOutstanding;
   num? _pendingSinceDays;
+  num? _custTypeId;
+  dynamic _customerType;
 GetCreditSaleLedgerDtlsListModel copyWith({  num? distributorId,
   num? customerId,
   dynamic customerName,
@@ -53,6 +63,8 @@ GetCreditSaleLedgerDtlsListModel copyWith({  num? distributorId,
   num? totalReceipt,
   num? totalOutstanding,
   num? pendingSinceDays,
+  num? custTypeId,
+  dynamic customerType,
 }) => GetCreditSaleLedgerDtlsListModel(  distributorId: distributorId ?? _distributorId,
   customerId: customerId ?? _customerId,
   customerName: customerName ?? _customerName,
@@ -61,6 +73,8 @@ GetCreditSaleLedgerDtlsListModel copyWith({  num? distributorId,
   totalReceipt: totalReceipt ?? _totalReceipt,
   totalOutstanding: totalOutstanding ?? _totalOutstanding,
   pendingSinceDays: pendingSinceDays ?? _pendingSinceDays,
+  custTypeId: custTypeId ?? _custTypeId,
+  customerType: customerType ?? _customerType,
 );
   num? get distributorId => _distributorId;
   num? get customerId => _customerId;
@@ -70,6 +84,8 @@ GetCreditSaleLedgerDtlsListModel copyWith({  num? distributorId,
   num? get totalReceipt => _totalReceipt;
   num? get totalOutstanding => _totalOutstanding;
   num? get pendingSinceDays => _pendingSinceDays;
+  num? get custTypeId => _custTypeId;
+  dynamic get customerType => _customerType;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -81,6 +97,8 @@ GetCreditSaleLedgerDtlsListModel copyWith({  num? distributorId,
     map['TotalReceipt'] = _totalReceipt;
     map['TotalOutstanding'] = _totalOutstanding;
     map['PendingSinceDays'] = _pendingSinceDays;
+    map['CustTypeId'] = _custTypeId;
+    map['CustomerType'] = _customerType;
     return map;
   }
 

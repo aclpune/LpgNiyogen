@@ -321,7 +321,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                       ),
                                                     ),
                                                     Text(
-                                                      "Today's Income",
+                                                      "Today's Revenue",
                                                       style: Styling.countNumberReds,
                                                       textAlign: TextAlign.left,
                                                       textScaler: TextScaler.noScaling,

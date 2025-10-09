@@ -65,6 +65,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
   final recPaymentController = TextEditingController();
   final stampDutyController = TextEditingController();
   final TranCodeController = TextEditingController();
+  final partialQRController = TextEditingController();
   final timeController = TextEditingController();
   final transReviewController = TextEditingController();
   final rateController = TextEditingController();
@@ -110,6 +111,8 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
   bool _isInvalidMobile = false;
   bool _isShortLength = false;
   bool _isTranscode = false;
+  bool _iscashcode = false;
+  bool _isQRcode = false;
   List<double> amounts = [];
   List<double> amountsReturn = [];
   bool isLoading = true;
@@ -117,11 +120,9 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
   double returnAmount = 0.0;
   double finalAmountCashDeno = 0.0;
   Map<int, bool> isQtyFilled = {};
-  List<String> getTransMode = ["Cash", "Merchant QR"];
+  List<String> getTransMode = ["Cash", "Merchant QR", "Partial"];
   List<GetAddEditDataSvSaleItemModel> receiptList = [];
   List<GetDenominationListForAddEdit> getDenominationLis = [];
-
-  // List<String> getTransacc = ["NC", "RC", "DBC", "Name Change"];
   List<String> getTransacc = ["NC", "RC", "DBC", "Name Change"];
   List<String> getTransqty = ["1", "2"];
   List<String> getSelectedFTLRegulatorQty = ["0", "1"];
@@ -147,6 +148,9 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
   List<FocusNode> _dropdownFocusNodes = [];
   late FocusNode _conNoFocusNode;
   bool _isInitComplete = false; // This avoids API call during initState prefill
+  bool isEditingQR = false;
+  bool isEditingCash = false;
+
   @override
   void initState() {
     super.initState();
@@ -211,6 +215,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
         String consumerNameEdit = argValue["consumerNameV"] ?? 0;
         String consuContactNoEdit = argValue["consuContactNoV"] ?? 0;
         String totalAmountEdit = argValue["totalAmountV"] ?? 0;
+        String partialQREdit = argValue["partialQRV"] ?? 0;
         String receiptAmtEdit = argValue["receiptAmtV"] ?? 0;
         String paymentModeEdit = argValue["paymentModeV"] ?? 0;
         String transactionCodeEdit = argValue["transactionCodeV"] ?? 0;
@@ -257,6 +262,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
         timeController.text = transactionTimeEdit;
         transReviewController.text = transactionRemarkEdit;
         totalAmountController.text = totalAmountEdit;
+        partialQRController.text = partialQREdit;
 
         if (getTransMode.contains(paymentModeEdit)) {
           selectedTransMode = paymentModeEdit;
@@ -385,18 +391,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     super.dispose();
   }
 
-  // void _addNewItem() {
-  //   setState(() {
-  //     int newIndex = items.length;
-  //     items.add({
-  //       'rate': TextEditingController(),
-  //       'qty': TextEditingController(),
-  //       'discount': TextEditingController(),
-  //       'amt': TextEditingController(),
-  //     });
-  //     _selectedItems[newIndex] = null; // Initializing the new index
-  //   });
-  // }
   void _addNewItem() {
     _discountFocusNodes.add(FocusNode());
     _dropdownFocusNodes.add(FocusNode());
@@ -543,7 +537,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                         key: formKey1,
                         // value: selectedStaff,
                         value: staffdetailsmodel.contains(selectedStaff) ? selectedStaff : null,
-                        // This should be a GetStaffDetailsListModel? variable
                         items: staffdetailsmodel
                             .map((GetStaffDetailsListModel staff) {
                           return DropdownMenuItem<GetStaffDetailsListModel>(
@@ -579,26 +572,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                     Flexible(
                       flex: 1,
                       child:
-                          // DropdownButtonFormField<GetItemMasterListModel>(
-                          //   key: formKey2,
-                          //   value: selectedMaster,
-                          //   // This should be a GetStaffDetailsListModel? variable
-                          //   items:
-                          //   masterListModel.map((GetItemMasterListModel staff) {
-                          //     return DropdownMenuItem<GetItemMasterListModel>(
-                          //       value: staff,
-                          //       child: Text(
-                          //           staff.itemName ?? ''), // Use a default if null
-                          //     );
-                          //   }).toList(),
-                          //   onChanged: (value) {
-                          //     setState(() {
-                          //       selectedMaster = value!;
-                          //       debugPrint("selectedMasteritemType: ${selectedMaster?.itemSubType}");// value is of type GetStaffDetailsListModel?
-                          //     });
-                          //   },
-                          //   isExpanded: true,
-                          // )
                           // Dropdown 1 - for selectedMaster
                           DropdownButtonFormField<GetItemMasterListModel>(
                         key: formKey2,
@@ -632,7 +605,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                               selectedTransacc =
                                   null; // Clear the selected value in selectedTransacc for other itemSubType
                             }
-                            // ✅ Clear list view data
+                            // Clear list view data
                             items.clear();
                             _selectedItems.clear();
                             _itemStockByIndex.clear();
@@ -651,15 +624,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                               calculateGrandTotalAmount();
                               regulatorDepositAmountController.text = getRegulatorDepositAmountFromApi.toString();
                             }
-                            // if(selectedTranssvItemName == "19 KG"){
-                            //   regulatorDepositAmountController.text = "0.0";
-                            //   calculateBasicAmountSum();
-                            //   calculateGrandTotalAmount();
-                            // }else{
-                            //   calculateBasicAmountSum();
-                            //   calculateGrandTotalAmount();
-                            //   regulatorDepositAmountController.text = getRegulatorDepositAmountFromApi.toString();
-                            // }
                           });
                         },
                         isExpanded: true,
@@ -682,25 +646,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                     Flexible(
                       flex: 1,
                       child:
-                          // DropdownButtonFormField<String>(
-                          //   key: formKey5,
-                          //   value: selectedTransacc,
-                          //   // Bind the selected value
-                          //   items: getTransacc
-                          //       .map((String value) => DropdownMenuItem<String>(
-                          //     value: value,
-                          //     child: Text(value),
-                          //   ))
-                          //       .toList(),
-                          //   onChanged: (value) {
-                          //     setState(() {
-                          //       selectedTransacc =
-                          //           value;
-                          //       debugPrint("selectedTransacc: $selectedTransacc");// Update the selected value
-                          //     });
-                          //   },
-                          //   isExpanded: true,
-                          // ),
                           DropdownButtonFormField<String>(
                         key: formKey5,
                         value: selectedTransacc ??
@@ -718,10 +663,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                   if (selectedTransacc != value && conNoController.text.isNotEmpty) {
                                     conNoController.clear();
                                     FocusScope.of(context).unfocus(); // Optional
-                                    // EasyLoading.showToast(
-                                    //   "Consumer/DC No. cleared due to SV Type change.",
-                                    //   duration: Duration(seconds: 2),
-                                    // );
                                   }
                                   selectedTransacc = value;
                                   debugPrint(
@@ -972,7 +913,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                 },
                                 isExpanded: true,
                                 decoration: InputDecoration(
-                                  //errorText: selectedTranqty ? 'Deposit Amt. is Required' : null, // Show error if required
                                   errorText:
                                       (getSelectedFTLRegulatorQtyString == null ||
                                               getSelectedFTLRegulatorQtyString!
@@ -1245,7 +1185,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                         controller: conNameController,
                         decoration: InputDecoration(
                           labelText: 'Enter Consumer Name',
-                          //  errorText: _isDepositEmpty ? 'Deposit Amt. is Required' : null, // Show error if required
                         ),
                         onChanged: (value) {},
                       ),
@@ -1478,7 +1417,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                             showAsterisk: true),
                                       ],
                                     ),
-                                    //errorText: items[index]['qty']?.text.isEmpty ?? true ? 'Qty is required' : null, // Error text check
                                   ),
                                   onChanged: (value) {
                                     setState(() {
@@ -1574,43 +1512,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                         onChanged: (value) {},
                       ),
                     ),
-                    // SizedBox(width: 8),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                        child:
-                        countTextWidgetTextStar(context, 'Receipt Payment',showAsterisk: true)),
-                    Flexible(
-                      flex: 1,
-                      child: TextField(
-                        controller: recPaymentController,
-                        decoration: InputDecoration(
-                          labelText: 'Enter Receipt Payment',
-                          errorText: _isConsumerEmpty
-                              ? 'Receipt Payment is Required'
-                              : null, // Show error if required
-                        ),
-                        keyboardType: TextInputType.numberWithOptions(decimal: true),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,10}')),
-                        ],
-                        onChanged: (value) {
-                          double amt = double.parse(totalAmountController.text);
-                          setState(() {
-                            _isConsumerEmpty = value.isEmpty;
-                            // double val = double.parse(value);
-                            // if(val > amt){
-                            //
-                            // }
-                            //Please Enter A Valid Consumer Contact No.
-                          });
-                        },
-                      ),
-                    ),
-                    // SizedBox(width: 8),
                   ],
                 ),
                 Row(
@@ -1642,8 +1543,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                             .toList(),
                         onChanged: (value) {
                           setState(() {
-                            selectedTransMode =
-                                value; // Update the selected value
+                            selectedTransMode = value; // Update the selected value
                           });
                         },
                         isExpanded: true,
@@ -1654,11 +1554,114 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                 SizedBox(
                   height: 10,
                 ),
+                if (selectedTransMode == 'Partial' || selectedTransMode == 'Merchant QR' )
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Expanded(
+                          child: countTextWidgetTextStar(context, 'QR Receipt Payment', showAsterisk: true)),
+                      Flexible(
+                        flex: 1,
+                        child: TextField(
+                          controller: partialQRController,
+                          decoration: InputDecoration(
+                            errorText: _isQRcode
+                                ? 'QR amount is Required'
+                                : null,
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 12.0),
+                          ),
+                          keyboardType:
+                          TextInputType.numberWithOptions(
+                              decimal: true),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^\d*\.?\d{0,10}')),
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              _isQRcode = value.isEmpty;
+                              isEditingQR = true;
+                              isEditingCash = false;
+
+                              double totalAmount = double.tryParse(
+                                  totalAmountController.text) ??
+                                  0.0;
+                              double qrAmount =
+                                  double.tryParse(value) ?? 0.0;
+
+                              if (qrAmount > totalAmount) {
+                                partialQRController.clear();
+                              } else {
+                                if (selectedTransMode == 'Partial') {
+                                  updateRemainingAmount(); // Call this only if the mode is "Partial"
+                                }
+                              }
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                if (selectedTransMode == 'Partial' || selectedTransMode == 'Cash')
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Expanded(
+                          child: countTextWidgetTextStar(context, 'Cash Receipt Payment', showAsterisk: true)),
+                      Flexible(
+                        flex: 1,
+                        child:
+                        TextField(
+                          controller: recPaymentController,
+                          decoration: InputDecoration(
+                            errorText: _isConsumerEmpty
+                                ? 'Receipt cash is Required'
+                                : null,
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 8.0, horizontal: 12.0),
+                          ),
+                          keyboardType:
+                          TextInputType.numberWithOptions(
+                              decimal: true),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^\d*\.?\d{0,10}')),
+                          ],
+                          onChanged: (value) {
+                            double amt = double.tryParse(
+                                totalAmountController.text) ??
+                                0.0;
+                            setState(() {
+                              _isConsumerEmpty = value.isEmpty;
+                              isEditingCash = true;
+                              isEditingQR = false;
+
+                              double totalAmount = double.tryParse(
+                                  totalAmountController.text) ??
+                                  0.0;
+                              double recAmount =
+                                  double.tryParse(value) ?? 0.0;
+
+                              if (recAmount > totalAmount) {
+                                recPaymentController.clear();
+                              } else {
+                                if (selectedTransMode == 'Partial') {
+                                  updateRemainingAmount(); // Call this only if the mode is "Partial"
+                                }
+                              }
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 Padding(
                   padding: const EdgeInsets.all(0.0),
-                  child: Column(
+                  child:
+                  Column(
                     children: [
-                      if (selectedTransMode == 'Merchant QR')
+                      if (selectedTransMode == 'Merchant QR' || selectedTransMode == 'Partial')
                         Column(
                           children: [
                             Row(
@@ -1676,7 +1679,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                       ),
                                     ),
                                     value: bankModel.contains(_selectBankModel) ? _selectBankModel : null,
-
                                     items: bankModel.map((item) {
                                       return
                                         DropdownMenuItem<GetBankMappingDetailsListModel>(
@@ -1695,8 +1697,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                         accMappingId = selectedItem?.mappingId?.toInt();
                                       });
                                     },
-                                    // hint: Text('Select Acc No'),
-
                                   ),
                                 ),
                               ],
@@ -1753,11 +1753,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                       FilteringTextInputFormatter.allow(
                                         RegExp(r'^[\d.:]{0,5}$'),
                                       ),
-                                      // FilteringTextInputFormatter.allow(
-                                      //   RegExp(r'^\d{0,5}:?$'), // up to 5 digits, optional 1 colon at end
-                                      // ),
                                     ],
-
                                     onChanged: (value) {
                                       setState(() {});
                                     },
@@ -1787,7 +1783,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                           ],
                         ),
                       SizedBox(height: 10,),
-                      if (selectedTransMode == 'Cash')
+                      if (selectedTransMode == 'Cash' || selectedTransMode == 'Partial')
                       Padding(
                         padding: const EdgeInsets.only(bottom: 8.0),
                         child: Row(
@@ -1805,7 +1801,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                           ],
                         ),
                       ),
-                      if (selectedTransMode == 'Cash')
+                      if (selectedTransMode == 'Cash' || selectedTransMode == 'Partial')
                         Container(
                           height: 30,
                           decoration: BoxDecoration(
@@ -1877,7 +1873,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                             ],
                           ),
                         ),
-                      if (selectedTransMode == 'Cash')
+                      if (selectedTransMode == 'Cash'  || selectedTransMode == 'Partial')
                         Visibility(
                           visible: _selectedIndex == 0,
                           child: Column(
@@ -2472,6 +2468,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                                 var consuContactNo = svSale.consuContactNo.toString();
                                                 var totalAmount = svSale.totalAmount.toString();
                                                 var receiptAmt = svSale.receiptAmt.toString();
+                                                var partialQRAmt = svSale.qrReceiptAmt.toString();
                                                 var paymentMode = svSale.paymentMode.toString();
                                                 var transactionCode = svSale.transactionCode.toString();
                                                 var transactionTime = svSale.transactionTime.toString();
@@ -2492,6 +2489,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                                 var bankName = svSale.bankName.toString();
                                                 var isExemptReti = svSale.isExemptReti.toString();
                                                 var sVDiscountAmt = svSale.sVDiscountAmt.toString();
+                                               //
                                                 debugPrint("cylQty $cylQty");
                                                   // Navigate to the target screen and pass the data
                                                 if (saveFlag) {
@@ -2545,6 +2543,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                                       'bankNameV' : bankName,
                                                       'isExemptRetiV' : isExemptReti,
                                                       'sVDiscountAmtV' : sVDiscountAmt,
+                                                      'partialQRV' : partialQRAmt,
                                                       'itemsToShow': itemsToShow,
                                                       'modeChange': "Edit"
                                                     },
@@ -2587,8 +2586,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                                   );
                                                   // If user confirmed deletion
                                                   if (confirmDelete == true) {
-                                                    // Check if receiptId is not null
-                                                    // int? pId = payList.receiptId;
                                                     if (psv != null) {
                                                       updateSVAddEditForMob(context,psv!,"DELETE");
                                                       print('Delete button pressed$psv');
@@ -2682,8 +2679,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
                                       )
                                     ],
                                   ),
-                                  // if (widget.serialNumber != widget.listLength)
-                                  //   Divider(),
+
                                 ],
                               ),
                             );
@@ -2743,50 +2739,11 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     }
   }
 
-  // Future<void> fetchItems() async {
-  //   Constants.isNetworkAvailable =
-  //       await InternetConnectionChecker().hasConnection;
-  //   if (Constants.isNetworkAvailable) {
-  //     SharedPreferences prefs = await SharedPreferences.getInstance();
-  //     String? distributorId = prefs.getString('DistributorId');
-  //     String? bearerToken =
-  //         prefs.getString('token'); // Assuming the token is stored here
-  //
-  //     if (bearerToken == null) {
-  //       throw Exception('Bearer Token Is Missing');
-  //     }
-  //
-  //     final response = await http.get(
-  //       Uri.parse('${AppUrl.GetARBItemMasterList}/$distributorId/1/C'),
-  //       headers: {
-  //         'Authorization': 'Bearer $bearerToken', // Add Bearer token here
-  //       },
-  //     );
-  //     debugPrint("itemGetARBItemMasterList" + '${AppUrl.GetARBItemMasterList}/$distributorId/1/C');
-  //     debugPrint("itemGetARBItemMasterList" + response.body);
-  //     if (response.statusCode == 200) {
-  //       // Parse the response
-  //       List<dynamic> data = json.decode(response.body);
-  //       setState(() {
-  //         svcStock = data
-  //             .map((json) => GetArbCurrentStockListModel.fromJson(json))
-  //             .toList();
-  //       });
-  //     } else {
-  //       // refreshTokens();
-  //       throw Exception('Unable To Load Data At This Time. Please Try Again');
-  //     }
-  //   } else {
-  //     showFlushBar(context, Constants.connectionMessage);
-  //   }
-  // }
-
   Future<void> getNoteTypeAndIDList() async {
     Constants.isNetworkAvailable =
     await InternetConnectionChecker().hasConnection;
 
     if (!Constants.isNetworkAvailable) {
-      // Return an empty list if there is no network connection
       showFlushBar(
           context,  Constants.connectionMessage);
       isLoading = false;
@@ -2807,7 +2764,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
             'Authorization': 'Bearer $bearerToken',
           },
         );
-
         debugPrint(
             "Response body GetCashDenominationItemList: ${response.body}");
         debugPrint(
@@ -2848,7 +2804,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
               getNoteTypeAndIdFroDenominationListModel.length,
                   (index) => 0.0,
             );
-            // totalAmountCashDenomination = totalAmount;
           });
         } else {
           isLoading = false;
@@ -2871,7 +2826,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     String? bearerToken =
         prefs.getString('token'); // Assuming the token is stored here
 
-    //String formattedDate = DateFormat('yyyy-MM-dd').format(date! as DateTime);
     if (bearerToken == null) {
       throw Exception('Bearer token is missing');
     }
@@ -2894,24 +2848,11 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
 
-      // setState(() {
-      //   staffdetailsmodel = data.map((json) {
-      //     // String dateString = json['TransDate'];
-      //     // DateTime date = DateTime.parse(dateString);
-      //     // String formattedDate = DateFormat('yyyy-MM-dd').format(date);
-      //     // json['TransDate'] = formattedDate;
-      //
-      //     return GetStaffDetailsListModel.fromJson(json);
-      //   }).toList();
-      //   isLoading = false;
-      //   EasyLoading.dismiss();
-      // });
       setState(() {
         staffdetailsmodel = data.map((json) {
           return GetStaffDetailsListModel.fromJson(json);
         }).toList();
 
-        // 🔤 Sort alphabetically by a string field like "staffName"
         staffdetailsmodel.sort((a, b) {
           final nameA = a.staffName ?? '';
           final nameB = b.staffName ?? '';
@@ -2935,7 +2876,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     String? bearerToken =
         prefs.getString('token'); // Assuming the token is stored here
 
-    //String formattedDate = DateFormat('yyyy-MM-dd').format(date! as DateTime);
     if (bearerToken == null) {
       throw Exception('Bearer token is missing');
     }
@@ -2954,11 +2894,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
 
       setState(() {
         masterListModel = data.map((json) {
-          // String dateString = json['TransDate'];
-          // DateTime date = DateTime.parse(dateString);
-          // String formattedDate = DateFormat('yyyy-MM-dd').format(date);
-          // json['TransDate'] = formattedDate;
-
           return GetItemMasterListModel.fromJson(json);
         }).toList();
         isLoading = false;
@@ -3174,18 +3109,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     }
   }
 
-  // num? getArbItemCurrentStock(int? itemId) {
-  //   if (itemId == null) return null;
-  //
-  //   try {
-  //     return svcStock
-  //         .firstWhere((element) => element.itemId == itemId)
-  //         .currentStk;
-  //   } catch (e) {
-  //     // No matching item found
-  //     return null;
-  //   }
-  // }
   num? getArbItemCurrentStock(int? itemId) {
     if (itemId == null) return null;
 
@@ -3325,9 +3248,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
         setState(() {
           isLoading = false;
         });
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(content: Text('Error: $e')),
-        // );
+
         showFlushBar(context, Constants.listGettingFail);
       }
     }else{
@@ -3381,9 +3302,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
         setState(() {
           isLoading = false;
         });
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(content: Text('Error: $e')),
-        // );
         showFlushBar(context, Constants.listGettingFail);
       }
     }else{
@@ -3463,16 +3381,13 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     String? conCont;
     double totalAmt = 0.0;
     double receiveAmt = 0.0 ;
-
-
+    double partialQRAmt = 0.0 ;
     String? tranCode;
     String? times;
     String? transRemark;
-
     double nameChangeCharges = 0.0;
-
     double discountAmount = 0.0;
-
+    List<Map<String, dynamic>> dataCashDenomination = [];
     String? payMode;
 
     if(actionMode != "DELETE"){
@@ -3492,12 +3407,10 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
           if(regulatorDepositAmountController.text.isNotEmpty || regulatorDepositAmountController.text != null || regulatorDepositAmountController.text != "null"){
             regDeposit = double.parse(regulatorDepositAmountController.text);
           }
-
         }
       }else{
         regDeposit = 0;
       }
-
 
       if(stampDutyController.text.isNotEmpty){
         stampD = double.parse(stampDutyController.text);
@@ -3523,6 +3436,9 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
       }
       if(recPaymentController.text.isNotEmpty){
         receiveAmt = double.parse(recPaymentController.text);
+      }
+      if(partialQRController.text.isNotEmpty){
+        partialQRAmt = double.parse(partialQRController.text);
       }
       if(TranCodeController.text.isNotEmpty){
         tranCode = TranCodeController.text;
@@ -3579,7 +3495,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
         }
       }
 
-
       if(selectedTransacc != "DBC" && selectedTransacc != "Name Change"){
         if(regulatorDepositAmountController.text.isEmpty){
           showFlushBar(context, "Enter Regulator Deposit Amount.");
@@ -3594,36 +3509,85 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
         }
       }
 
-
-
       if(conNoController.text.isEmpty){
         showFlushBar(context,"Enter Consumer Number.");
         return;
       }
-
-      if(recPaymentController.text.isEmpty){
-        showFlushBar(context, "Enter Receipt payment amount.");
-        return;
-      }
-
+     if(selectedTransMode == "Cash" ) {
+        if (recPaymentController.text.isEmpty) {
+          showFlushBar(context, "Enter Cash Receipt Payment.");
+          return;
+        }
+     }
+     if(selectedTransMode == "Merchant QR" ) {
+        if (partialQRController.text.isEmpty) {
+          showFlushBar(context, "Enter QR Receipt Payment.");
+          return;
+        }
+     }
       if(selectedTransMode == null){
         showFlushBar(context, "Select Transaction Mode.");
         return;
       }
 
+      if(selectedTransMode == "Merchant QR" || selectedTransMode == 'Partial'){
+        if (partialQRController.text.isNotEmpty) {
+          partialQRAmt = double.parse(partialQRController.text);
+        }
+      }else{
+        partialQRAmt = 0.0;
+      }
 
-      if(selectedTransMode == "Merchant QR"){
+      if (selectedTransMode == 'Cash' || selectedTransMode == 'Partial'){
+        if (recPaymentController.text.isNotEmpty) {
+          receiveAmt = double.parse(recPaymentController.text);
+          dataCashDenomination = getNoteTypeAndIdFroDenominationListModel.asMap().entries.map((entry) {
+            int index = entry.key;
+            var data = entry.value;
+            return {
+              "NoteId": data.id ?? 0, // Use null-aware operator to handle null values
+              "NoteQty": qtyController[index].text.isNotEmpty ? int.tryParse(qtyController[index].text) : 0,
+              "NoteAmt": amounts[index],
+              "RetNoteQty": qtyControllerReturn[index].text.isNotEmpty ? int.tryParse(qtyControllerReturn[index].text) : 0, // Replace with actual value if available
+              "RetNoteAmt":amountsReturn[index], // Replace with actual value if available
+            };
+          }).toList();
+        }
+      }else{
+        receiveAmt = 0.0;
+        dataCashDenomination = getNoteTypeAndIdFroDenominationListModel.asMap().entries.map((entry) {
+          int index = entry.key;
+          var data = entry.value;
+          return {
+            "NoteId": data.id ?? 0, // Use null-aware operator to handle null values
+            "NoteQty": 0,
+            "NoteAmt":0,
+            "RetNoteQty":0, // Replace with actual value if available
+            "RetNoteAmt":0, // Replace with actual value if available
+          };
+        }).toList();
+      }
+
+      if(selectedTransMode == "Merchant QR" || selectedTransMode == "Partial"){
         if(selectedBankName == null || selectedBankId == null){
-          showFlushBar(context, "Select Merchant QR.");
+          showFlushBar(context, "Select Account No");
           return;
         }
+
         if(TranCodeController.text.isEmpty){
           showFlushBar(context, "Enter Transaction Code.");
           return;
         }
       }
 
-      if(selectedTransMode == 'Cash'){
+      if(selectedTransMode == 'Merchant QR'){
+          if(totalAmt != partialQRAmt){
+            showFlushBar(context, "QR Receipt Amount Should Be Equals To Total Amount.");
+            return;
+          }
+      }
+
+      if(selectedTransMode == 'Cash' || selectedTransMode == 'Partial'){
         if(finalAmountCashDeno > 0){
           if(finalAmountCashDeno != receiveAmt){
             showFlushBar(context, "The Entered Cash Denomination Total Should Be Equal To Received Cash Amount.");
@@ -3631,7 +3595,8 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
           }
         }
       }
-      if(selectedTransMode == 'Cash'){
+
+      if(selectedTransMode == 'Cash' || selectedTransMode == 'Partial'){
         if(cashDenominationMandatory){
           if(finalAmountCashDeno != null || finalAmountCashDeno > 0){
             if(finalAmountCashDeno != receiveAmt){
@@ -3644,104 +3609,47 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
           }
         }
       }
-
-      if(receiveAmt != totalAmt){
-        showFlushBar(context, "The Entered Receipt Payment Amount Should Be Equal To Total Amount.");
-        return;
+      if (selectedTransMode == 'Cash') {
+        tranCode = "";
+        times = "";
+        transRemark = "";
+        selecteBankIDApi = 0;
+        selectedBankName = "";
+        selectedBankId = "0";
+        accMappingId = 0;
+      } else if (selectedTransMode == 'Merchant QR') {
+        dataCashDenomination = [];
       }
+
+      if (selectedTransMode == "Partial") {
+        if (receiveAmt <= 0 || partialQRAmt <= 0 || (receiveAmt + partialQRAmt != totalAmt)) {
+          String errorMessage = (receiveAmt <= 0 || partialQRAmt <= 0)
+              ? "Both Cash Receipt Amount And QR Amount Should Be Greater Than Zero."
+              : "The Entered Receipt Payment Amount Should Be Equal To Total Amount.";
+
+          showFlushBar(context, errorMessage);
+          return;
+        }
+      }
+
+      if (selectedTransMode == "Cash") {
+        if (receiveAmt != totalAmt) {
+          showFlushBar(context, "The Entered Receipt Payment Amount Should Be Equal To Total Amount.");
+          return;
+        }
+      }
+
       if(selectedTransMode == "Merchant QR"){
         payMode = "Bank";
       }else if(selectedTransMode == "Cash"){
         payMode = "Cash";
+      }else if(selectedTransMode == 'Partial'){
+        payMode = "Partial";
       }else{
         payMode = "";
       }
     }
-      //   int cylQty;
-    // if(selectedTranssvItemName != "14.2 KG" || isExemptedReticulated){
-    //   cylQty = int.parse(cylinderQtyAddController.text);
-    // }else{
-    //     cylQty = int.parse(selectedTranqty!);
-    // }
 
-    final List<Map<String, dynamic>> dataCashDenomination = getNoteTypeAndIdFroDenominationListModel.asMap().entries.map((entry) {
-      int index = entry.key;
-      var data = entry.value;
-      return {
-        "NoteId": data.id ?? 0, // Use null-aware operator to handle null values
-        "NoteQty": qtyController[index].text.isNotEmpty ? int.tryParse(qtyController[index].text) : 0,
-        "NoteAmt": amounts[index],
-        "RetNoteQty": qtyControllerReturn[index].text.isNotEmpty ? int.tryParse(qtyControllerReturn[index].text) : 0, // Replace with actual value if available
-        "RetNoteAmt":amountsReturn[index], // Replace with actual value if available
-      };
-    }).toList();
-
-    // List<Map<String, dynamic>> itemDetails = items.map((item) {
-    //   String? selectedItemName = _selectedItems[items.indexOf(item)];
-    //
-    //   GetArbItemMasterListModel? selectedItem = _items.firstWhere(
-    //         (model) => model.itemName == selectedItemName,
-    //     orElse: () => GetArbItemMasterListModel(itemId: 0, itemName: ''),
-    //   );
-    //   return {
-    //     'ItemId': selectedItem.itemId ?? '',
-    //     'Rate': item['rate']?.text ?? '',
-    //     'ItemQty': item['qty']?.text ?? '',
-    //     'DiscountAmt': item['discount']?.text ?? '',
-    //     'ARBAmount': item['amt']?.text ?? '',
-    //   };
-    // }).toList();
-
-    // List<Map<String, dynamic>> itemDetails = items.where((item) {
-    //   int index = items.indexOf(item);
-    //   String? selectedItemName = _selectedItems[index];
-    //
-    //   GetArbItemMasterListModel selectedItem = _items.firstWhere(
-    //         (model) => model.itemName == selectedItemName,
-    //     orElse: () => GetArbItemMasterListModel(itemId: 0, itemName: ''),
-    //   );
-    //
-    //   int? currentStock = getArbItemCurrentStock(selectedItem.itemId?.toInt())?.toInt();
-    //   _itemStockByIndex[index] = currentStock;
-    //
-    //   int itemId = selectedItem.itemId?.toInt() ?? 0;
-    //   int qty = int.tryParse(item['qty']?.text ?? '0') ?? 0;
-    //   debugPrint("selectedItem.categoryName ${selectedItem.categoryName}");
-    //   debugPrint("qty ${qty}");
-    //   debugPrint("currentStock ${currentStock}");
-    //
-    //   if (selectedItem.categoryName != "Non ARB Item") {
-    //     if (qty <= 0) {
-    //       // Show a message and stop the process
-    //       showFlushBar(context, "Quantity must be greater than 0 for item ${selectedItem.itemName}");
-    //       throw Exception("Quantity must be greater than 0 for item ${selectedItem.itemName}");
-    //     }
-    //     if (qty > currentStock!) {
-    //       // Show a message and return early to stop further processing
-    //       showFlushBar(context,"Quantity exceeds available stock for item ${selectedItem.itemName}");
-    //       throw Exception("Quantity exceeds available stock for item ${selectedItem.itemName}"); // <-- Stop process here
-    //
-    //     }
-    //   }
-    //   // Filter condition: only include if both > 0
-    //   return itemId > 0;
-    // }).map((item) {
-    //   int index = items.indexOf(item);
-    //   String? selectedItemName = _selectedItems[index];
-    //
-    //   GetArbItemMasterListModel selectedItem = _items.firstWhere(
-    //         (model) => model.itemName == selectedItemName,
-    //     orElse: () => GetArbItemMasterListModel(itemId: 0, itemName: ''),
-    //   );
-    //
-    //   return {
-    //     'ItemId': selectedItem.itemId ?? '',
-    //     'Rate': item['rate']?.text ?? '',
-    //     'ItemQty': item['qty']?.text ?? '',
-    //     'DiscountAmt': item['discount']?.text ?? '',
-    //     'ARBAmount': item['amt']?.text ?? '',
-    //   };
-    // }).toList();
 
     List<Map<String, dynamic>> itemDetails = [];
 
@@ -3874,6 +3782,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
       "ConsuContactNo": conCont ??'',
       "TotalAmount": totalAmt,
       "ReceiptAmt": receiveAmt,
+      "QRReceiptAmt":partialQRAmt,
       "PaymentMode": payMode ??'',
       "TransactionCode": tranCode ?? '',
       "TransactionTime": times ?? '',
@@ -3924,31 +3833,29 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
         EasyLoading.showToast(Constants.failToInserRecord,
             duration: const Duration(milliseconds: 3000));
       }else{
-        // Successful response
-        print("Response UpdateSaleAddEditForMob: ${response.body}");
-          if(actionMode == "ADD"){
-            print("save");
-            EasyLoading.showToast(Constants.expenseSendMgr,
-                duration: const Duration(milliseconds: 3000));
-          }else if(actionMode == "EDIT"){
-            print("edit");
-            EasyLoading.showToast(Constants.dataUpdated,
-                duration: const Duration(milliseconds: 3000));
-          } else{
-            print("Delete");
-            EasyLoading.showToast(Constants.dataDeleted,
-                duration: const Duration(milliseconds: 3000));
+        Future.delayed(Duration(milliseconds: 300), () {
+          if (actionMode == "DELETE") {
+            EasyLoading.showToast(
+              Constants.expenseSendMgrDelete,
+              duration: const Duration(milliseconds: 3000),
+            );
+          }else if(actionMode == "EDIT") {
+            EasyLoading.showToast(
+              Constants.expenseSendMgrEdit,
+              duration: const Duration(milliseconds: 3000),
+            );
+          }else {
+            EasyLoading.showToast(
+              Constants.expenseSendMgr,
+              duration: const Duration(milliseconds: 3000),
+            );
           }
+        });
         Navigator.pushNamed(
           context,
           SVSaleReportScreen.screenName,
           //arguments: 3, // This opens the third tab
         );
-        // Navigator.pushNamed(
-        //   context,
-        //   BottomNavBarExample.screenName,
-        //   arguments: 3, // This opens the third tab
-        // );
         setState(() {
           fetchItemSvAddEditList();
         });
@@ -3957,10 +3864,6 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
       // Error response
       print("Error UpdateSaleAddEditForMob: ${response.statusCode} - ${response.body}");
     }
-    // } catch (e) {
-    //   // Exception handling
-    //   print("Exception UpdateSaleAddEditForMob: $e");
-    // }
   }
 
   void calculateGrandTotalAmount() {
@@ -4142,12 +4045,7 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
           int DSRSaved = dayEndData['DSRSaved'] ?? 0;
           int CDCMSStkSaved = dayEndData['CDCMSStkSaved'] ?? 0;
           int OpClSaved = dayEndData['OpClSaved'] ?? 0;
-          // if (DSRSaved == 1 && CDCMSStkSaved == 1 && OpClSaved == 1) {
-          //   saveFlag = true;
-          //   print("Data is valid, proceeding to save.");
-          // } else {
-          //   print("Data is incomplete. Cannot proceed to save.");
-          // }
+
         }
       } else {
         print("Error: ${response.statusCode}");
@@ -4350,6 +4248,25 @@ class _SVSaleReportScreen extends State<SVSaleReportScreen> {
     }
   }
 
+   double remainingAmount = 0.0;
+
+  void updateRemainingAmount() {
+    double totalAmount = double.tryParse(totalAmountController.text) ?? 0.0;
+    double qrAmount = double.tryParse(partialQRController.text) ?? 0.0;
+    double cashAmount = double.tryParse(recPaymentController.text) ?? 0.0;
+
+    setState(() {
+      if (isEditingQR) {
+        remainingAmount = totalAmount - qrAmount;
+        if (remainingAmount < 0) remainingAmount = 0.0;
+        recPaymentController.text = remainingAmount.toStringAsFixed(2);
+      } else if (isEditingCash) {
+        remainingAmount = totalAmount - cashAmount;
+        if (remainingAmount < 0) remainingAmount = 0.0;
+        partialQRController.text = remainingAmount.toStringAsFixed(2);
+      }
+    });
+  }
 }
 
 

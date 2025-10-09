@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:lpgsalesandinventory/Screen/Utils/Styling.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../ConstantScreen/widgets.dart';
 import '../../../GodownKeeper/BottomNavigationForGodownKeeper.dart';
 import '../../../GodownKeeper/DashboardScreen.dart';
 import '../../../ManagerScreen/BootomNavigatinBarManager.dart';
@@ -39,7 +41,8 @@ class _VerifyOtpState extends State<VerifyOtp> {
             child:
             Container(
               margin: EdgeInsets.only(left: 40,right: 40,top: 60),
-              child: Column(
+              child:
+              Column(
                 children: [
                   Image.asset(
                     'assets/icononlytransparentnobuffer.png',  // Path to your image
@@ -106,6 +109,29 @@ class _VerifyOtpState extends State<VerifyOtp> {
                       ),
                     ),
                   ),
+                  SizedBox(height: 30.0),
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 14),
+                    child: Column(mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                      Text(
+                        "OTP Guide",
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue),
+                      ),
+                        SizedBox(height: 7,),
+                        countTextWidgetOptSteps(context," Login to the ","Niyojan Portal"),
+                        SizedBox(height: 4,),
+                        countTextWidgetOptSteps(context,"	Go to ","Masters"),
+                        SizedBox(height: 4,),
+                        countTextWidgetOptSteps(context," Select ","Staff"),
+                        SizedBox(height: 4,),
+                        countTextWidgetOptSteps(context," Search with your ","mobile number"),
+                        SizedBox(height: 4,),
+                        countTextWidgetOptSteps(context," View  ","OTP column"),
+                    ],
+                    ),
+                  )
                 ],
               ),
             ),

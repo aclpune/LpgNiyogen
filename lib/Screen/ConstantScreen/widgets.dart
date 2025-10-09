@@ -221,4 +221,49 @@ Widget countTextWidgetTextWithoutHeadingGrey(
   );
 }
 
+// Widget countTextWidgetOptSteps(
+//     BuildContext context, String count, String title) {
+//   return Container(
+//     padding: const EdgeInsets.only(right: 5, left: 5),
+//     child: Row(
+//       children: <Widget>[
+//           Text(count,
+//               style: Styling.itemBlackTest),
+//
+//         Text(
+//           "$title",
+//           style:Styling.itemBlackTestBold,
+//         ),
+//
+//       ],
+//     ),
+//   );
+// }
+// Helper widget for guide steps
+Widget countTextWidgetOptSteps( BuildContext context,String step, String highlight) {
+  return Padding(
+    padding: const EdgeInsets.only(bottom: 6.0),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(Icons.check_circle_outline_outlined, size: 18, color: Colors.green,),
+        SizedBox(width: 8),
+        Expanded(
+          child: RichText(
+            text: TextSpan(
+              text: step + " ",
+              style: TextStyle(color: Colors.black, fontSize: 14),
+              children: [
+                TextSpan(
+                  text: highlight,
+                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black87),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
 

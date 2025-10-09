@@ -70,7 +70,8 @@ class GetAddEditDataSvSaleItemModel {
       String? consuContactNo, 
       num? totalAmount, 
       num? receiptAmt, 
-      String? paymentMode, 
+      num? qrReceiptAmt,
+      String? paymentMode,
       String? transactionCode, 
       String? transactionTime, 
       String? transactionRemark, 
@@ -116,6 +117,7 @@ class GetAddEditDataSvSaleItemModel {
     _consuContactNo = consuContactNo;
     _totalAmount = totalAmount;
     _receiptAmt = receiptAmt;
+    _qrReceiptAmt = qrReceiptAmt;
     _paymentMode = paymentMode;
     _transactionCode = transactionCode;
     _transactionTime = transactionTime;
@@ -165,6 +167,7 @@ class GetAddEditDataSvSaleItemModel {
     _consuContactNo = json['ConsuContactNo'];
     _totalAmount = json['TotalAmount'];
     _receiptAmt = json['ReceiptAmt'];
+    _qrReceiptAmt = json['QRReceiptAmt'];
     _paymentMode = json['PaymentMode'];
     _transactionCode = json['TransactionCode'];
     _transactionTime = json['TransactionTime'];
@@ -217,6 +220,7 @@ class GetAddEditDataSvSaleItemModel {
   String? _consuContactNo;
   num? _totalAmount;
   num? _receiptAmt;
+  num? _qrReceiptAmt;
   String? _paymentMode;
   String? _transactionCode;
   String? _transactionTime;
@@ -263,6 +267,7 @@ GetAddEditDataSvSaleItemModel copyWith({  num? pSVId,
   String? consuContactNo,
   num? totalAmount,
   num? receiptAmt,
+  num? qrReceiptAmt,
   String? paymentMode,
   String? transactionCode,
   String? transactionTime,
@@ -309,6 +314,7 @@ GetAddEditDataSvSaleItemModel copyWith({  num? pSVId,
   consuContactNo: consuContactNo ?? _consuContactNo,
   totalAmount: totalAmount ?? _totalAmount,
   receiptAmt: receiptAmt ?? _receiptAmt,
+  qrReceiptAmt: qrReceiptAmt ?? _qrReceiptAmt,
   paymentMode: paymentMode ?? _paymentMode,
   transactionCode: transactionCode ?? _transactionCode,
   transactionTime: transactionTime ?? _transactionTime,
@@ -356,6 +362,7 @@ GetAddEditDataSvSaleItemModel copyWith({  num? pSVId,
   String? get consuContactNo => _consuContactNo;
   num? get totalAmount => _totalAmount;
   num? get receiptAmt => _receiptAmt;
+  num? get qrReceiptAmt => _qrReceiptAmt;
   String? get paymentMode => _paymentMode;
   String? get transactionCode => _transactionCode;
   String? get transactionTime => _transactionTime;
@@ -405,6 +412,7 @@ GetAddEditDataSvSaleItemModel copyWith({  num? pSVId,
     map['ConsuContactNo'] = _consuContactNo;
     map['TotalAmount'] = _totalAmount;
     map['ReceiptAmt'] = _receiptAmt;
+    map['QRReceiptAmt'] = _qrReceiptAmt;
     map['PaymentMode'] = _paymentMode;
     map['TransactionCode'] = _transactionCode;
     map['TransactionTime'] = _transactionTime;
@@ -507,7 +515,8 @@ class ItemDetails {
       dynamic consuContactNo, 
       num? totalAmount, 
       num? receiptAmt, 
-      dynamic paymentMode, 
+      num? qrReceiptAmt,
+      dynamic paymentMode,
       dynamic transactionCode, 
       dynamic transactionTime, 
       dynamic transactionRemark, 
@@ -553,6 +562,7 @@ class ItemDetails {
     _consuContactNo = consuContactNo;
     _totalAmount = totalAmount;
     _receiptAmt = receiptAmt;
+    _qrReceiptAmt = qrReceiptAmt;
     _paymentMode = paymentMode;
     _transactionCode = transactionCode;
     _transactionTime = transactionTime;
@@ -602,6 +612,7 @@ class ItemDetails {
     _consuContactNo = json['ConsuContactNo'];
     _totalAmount = json['TotalAmount'];
     _receiptAmt = json['ReceiptAmt'];
+    _qrReceiptAmt = json['QRReceiptAmt'];
     _paymentMode = json['PaymentMode'];
     _transactionCode = json['TransactionCode'];
     _transactionTime = json['TransactionTime'];
@@ -649,6 +660,7 @@ class ItemDetails {
   dynamic _consuContactNo;
   num? _totalAmount;
   num? _receiptAmt;
+  num? _qrReceiptAmt;
   dynamic _paymentMode;
   dynamic _transactionCode;
   dynamic _transactionTime;
@@ -695,6 +707,7 @@ ItemDetails copyWith({  num? pSVId,
   dynamic consuContactNo,
   num? totalAmount,
   num? receiptAmt,
+  num? qrReceiptAmt,
   dynamic paymentMode,
   dynamic transactionCode,
   dynamic transactionTime,
@@ -741,6 +754,7 @@ ItemDetails copyWith({  num? pSVId,
   consuContactNo: consuContactNo ?? _consuContactNo,
   totalAmount: totalAmount ?? _totalAmount,
   receiptAmt: receiptAmt ?? _receiptAmt,
+  qrReceiptAmt: qrReceiptAmt ?? _qrReceiptAmt,
   paymentMode: paymentMode ?? _paymentMode,
   transactionCode: transactionCode ?? _transactionCode,
   transactionTime: transactionTime ?? _transactionTime,
@@ -788,6 +802,7 @@ ItemDetails copyWith({  num? pSVId,
   dynamic get consuContactNo => _consuContactNo;
   num? get totalAmount => _totalAmount;
   num? get receiptAmt => _receiptAmt;
+  num? get qrReceiptAmt => _qrReceiptAmt;
   dynamic get paymentMode => _paymentMode;
   dynamic get transactionCode => _transactionCode;
   dynamic get transactionTime => _transactionTime;
@@ -837,6 +852,7 @@ ItemDetails copyWith({  num? pSVId,
     map['ConsuContactNo'] = _consuContactNo;
     map['TotalAmount'] = _totalAmount;
     map['ReceiptAmt'] = _receiptAmt;
+    map['QRReceiptAmt'] = _qrReceiptAmt;
     map['PaymentMode'] = _paymentMode;
     map['TransactionCode'] = _transactionCode;
     map['TransactionTime'] = _transactionTime;

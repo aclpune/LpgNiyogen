@@ -172,6 +172,12 @@ class AppUrl {
   static const String GetDsrSVTVList = '$baseUrl/Reports/GetDsrSVTVList';
   static const String GetCustDiscountDtlsByCustType = '$baseUrl/Masters/GetCustDiscountDtlsByCustType';
   static const String GetCustomerListByCustType = '$baseUrl/Masters/GetCustomerListByCustType';
+
+  ///Regulator Defective Receipt
+  static const String RegDefReceiptAddEdit = '$baseUrl/DailyStockCash/RegDefReceiptAddEdit';
+  static const String GetItemMasterListRegulatorList = '$baseUrl/DailyStockCash/GetItemMasterListRegulatorList';
+  static const String GetRegDefReceiptDetails = '$baseUrl/DailyStockCash/GetRegDefReceiptDetails';
+  static const String GetRegDefReceiptDenominationDtl = '$baseUrl/DailyStockCash/GetRegDefReceiptDenominationDtl';
 }
 
 

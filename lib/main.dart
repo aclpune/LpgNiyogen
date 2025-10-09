@@ -49,6 +49,7 @@ import 'Screen/ManagerScreen/ManagerMoreScreen.dart';
 import 'Screen/ManagerScreen/ManagerUpdateSaleCashUpdation.dart';
 import 'Screen/ManagerScreen/ManagerUpdateSaleScreen.dart';
 import 'Screen/ManagerScreen/PaymentReceiptScreen/PaymentReceiptScreen.dart';
+import 'Screen/ManagerScreen/ReceiptRegulatorScreen/ReceiptRegulatorScreen.dart';
 import 'Screen/ManagerScreen/RegulatorItemReceiptScreen.dart';
 import 'Screen/ManagerScreen/SVSaleReportScreen.dart';
 import 'Screen/ManagerScreen/SalaryPaymentScreen/SalaryPaymentScreen.dart';
@@ -221,6 +222,7 @@ class MyApp extends StatelessWidget {
             OnAccountPopupScreen.screenName: (context) => OnAccountPopupScreen(),
             DashboardUndocumentedDetails.screenName: (context) => DashboardUndocumentedDetails(),
             CreditSaleCountDetailListUI.screenName: (context) => CreditSaleCountDetailListUI(),
+            ReceiptRegulatorScreen.screenName: (context) => ReceiptRegulatorScreen(),
 
             //ManagerCashInHandScreenDetails.screenName: (context) => ManagerCashInHandScreenDetails(),
 
