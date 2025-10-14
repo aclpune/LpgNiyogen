@@ -439,6 +439,30 @@ class Styling {
     fontWeight: FontWeight.bold,
     color: Color(0xff1280b3),);
 
+  static final TextStyle bodyTitleBigBoldExp = TextStyle(
+      fontSize:
+      2.2 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
+      fontWeight: FontWeight.bold,
+      color: Colors.black54);
+
+  static final TextStyle itemBlackTestOne = TextStyle(
+    fontSize: 2.0 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
+    fontFamily: 'OpenSans',
+    color: Colors.black,);
+
+  static final TextStyle bodyTitleBigBoldDashBlack = TextStyle(
+      fontSize:
+      2.4 * SizeConfig.textMultiplier!,
+      fontWeight: FontWeight.normal,
+      fontFamily: 'Inter',// Size = 18-- [18/8.66] = 2.07
+      color: Colors.black);
+
+  static final TextStyle bodyTitleBigBoldForPrice = TextStyle(
+      fontSize:
+      2.2 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
+      fontWeight: FontWeight.bold,
+      color: Colors.black);
+
   /* static final TextStyle selectedTabLight = TextStyle(
     color: Colors.black,
     fontWeight: FontWeight.bold,

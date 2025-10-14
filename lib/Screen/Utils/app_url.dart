@@ -178,6 +178,19 @@ class AppUrl {
   static const String GetItemMasterListRegulatorList = '$baseUrl/DailyStockCash/GetItemMasterListRegulatorList';
   static const String GetRegDefReceiptDetails = '$baseUrl/DailyStockCash/GetRegDefReceiptDetails';
   static const String GetRegDefReceiptDenominationDtl = '$baseUrl/DailyStockCash/GetRegDefReceiptDenominationDtl';
+
+  static const String GetDashboardProfitCount_Mob = '$baseUrl/Dashboard/GetDashboardProfitCount_Mob';
+  static const String GetDashboardSVProfitDtls_Mob = '$baseUrl/Dashboard/GetDashboardSVProfitDtls_Mob';
+  static const String GetDashboardARBProfitDtls_Mob = '$baseUrl/Dashboard/GetDashboardARBProfitDtls_Mob';
+  static const String GetHeadWiseExpense = '$baseUrl/Dashboard/GetHeadWiseExpense';
+  static const String GetDashboardProductListForMob = '$baseUrl/Dashboard/GetDashboardProductListForMob';
+  static const String GetDashboardPrepaidPunchDtls_Mob = '$baseUrl/Dashboard/GetDashboardPrepaidPunchDtls_Mob';
+
+
+  static const String GetDashProductSaleComparisonMob = '$baseUrl/Dashboard/GetDashProductSaleComparisonMob';
+  static const String GetDashboardFYGrossExpenseDtls_Mob = '$baseUrl/Dashboard/GetDashboardFYGrossExpenseDtls_Mob';
+  static const String GetDashboardFYGrossProfitDtls_Mob = '$baseUrl/Dashboard/GetDashboardFYGrossProfitDtls_Mob';
+  static const String GetTopFiveCreditors = '$baseUrl/Dashboard/GetTopFiveCreditors';
 }
 
 

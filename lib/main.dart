@@ -33,6 +33,7 @@ import 'Screen/ManagerScreen/DSRItemClickUI/ManagerCashInHandScreenDetails.dart'
 import 'Screen/ManagerScreen/DSRItemClickUI/ManagerDSRReportScreenDetails.dart';
 import 'Screen/ManagerScreen/DSRItemClickUI/ManagerExpenseTabScreenDetails.dart';
 import 'Screen/ManagerScreen/DSRItemClickUI/ManagerIncomeUnsettledScreenDetails.dart';
+import 'Screen/ManagerScreen/DashboardItemClickUI/ARBProfitDetailScreenUi.dart';
 import 'Screen/ManagerScreen/DashboardItemClickUI/CreditSaleCountDetailListUI.dart';
 import 'Screen/ManagerScreen/DashboardItemClickUI/DashboardPostPaidVerifPendDetails.dart';
 import 'Screen/ManagerScreen/DashboardItemClickUI/DashboardPrepaidDetails.dart';
@@ -40,9 +41,14 @@ import 'Screen/ManagerScreen/DashboardItemClickUI/DashboardSVDetails.dart';
 import 'Screen/ManagerScreen/DashboardItemClickUI/DashboardTVDetails.dart';
 import 'Screen/ManagerScreen/DashboardItemClickUI/ImbalanceCountClickUI.dart';
 import 'Screen/ManagerScreen/DashboardItemClickUI/OnAccountPopupScreen.dart';
+import 'Screen/ManagerScreen/DashboardItemClickUI/PrepaidBookingAndSettlementGraphScreen.dart';
+import 'Screen/ManagerScreen/DashboardItemClickUI/RefillProfitDetailScreenUi.dart';
+import 'Screen/ManagerScreen/DashboardItemClickUI/SVProfitdetailScreenUi.dart';
 import 'Screen/ManagerScreen/DashboardItemClickUI/TodaysCashSummaryOnAccountList.dart';
 import 'Screen/ManagerScreen/DashboardItemClickUI/UnsettledSaleDetailList.dart';
 import 'Screen/ManagerScreen/DeliveryBoyWiseListShow.dart';
+import 'Screen/ManagerScreen/ExpensesScreen/ExpensesScreenUI.dart';
+import 'Screen/ManagerScreen/ExpensesScreen/SalesComparisonScreen.dart';
 import 'Screen/ManagerScreen/ManagerDSRReportScreen.dart';
 import 'Screen/ManagerScreen/ManagerDashboard.dart';
 import 'Screen/ManagerScreen/ManagerMoreScreen.dart';
@@ -223,6 +229,12 @@ class MyApp extends StatelessWidget {
             DashboardUndocumentedDetails.screenName: (context) => DashboardUndocumentedDetails(),
             CreditSaleCountDetailListUI.screenName: (context) => CreditSaleCountDetailListUI(),
             ReceiptRegulatorScreen.screenName: (context) => ReceiptRegulatorScreen(),
+            SVProfitDetailScreenUI.screenName: (context) => SVProfitDetailScreenUI(),
+            ARBProfitDetailScreenUi.screenName: (context) => ARBProfitDetailScreenUi(),
+            RefillProfitDetailScreenUi.screenName: (context) => RefillProfitDetailScreenUi(),
+            PrepaidBookingAndSettlementGraphScreen.screenName: (context) => PrepaidBookingAndSettlementGraphScreen(),
+            SalesComparisonScreen.screenName: (context) => SalesComparisonScreen(),
+            ExpensesScreenUI.screenName: (context) => ExpensesScreenUI(),
 
             //ManagerCashInHandScreenDetails.screenName: (context) => ManagerCashInHandScreenDetails(),
 
