@@ -40,9 +40,13 @@ import 'DashboardItemClickUI/RefillProfitDetailScreenUi.dart';
 import 'DashboardItemClickUI/SVProfitdetailScreenUi.dart';
 import 'DashboardItemClickUI/TodaysCashSummaryOnAccountList.dart';
 import 'DashboardItemClickUI/UnsettledSaleDetailList.dart';
+import 'DashboardItemClickUI/VendorPaymentDetailListUI.dart';
 import 'ExpensesScreen/ExpensesScreenUI.dart';
 import 'ExpensesScreen/SalesComparisonScreen.dart';
 import 'ManagerModelClass/GetCurrentStockDetailManagerModel.dart';
+import 'ManagerModelClass/GetDashSummaryAllCountForMgrModel.dart';
+import 'ManagerModelClass/GetDashSummaryItemWiseForMgrModel.dart';
+import 'ManagerModelClass/GetDashSummarySettAllCountForMgrModel.dart';
 import 'ManagerModelClass/GetManagerDashboarDetailModel.dart';
 
 import 'ManagerModelClass/GetSVARBManagerDashboardCountModel.dart';
@@ -77,7 +81,10 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
   bool isOutwardStockImbalanceListViewVisible = false;
   bool isOpeningStockListViewVisible = false;
   bool isCurrentStockListViewVisible = false;
-  List<GetManagerDashboarDetailModel> getManagerDashboarDetail = [];
+  // List<GetManagerDashboarDetailModel> getManagerDashboarDetail = [];
+  List<GetDashSummaryItemWiseForMgrModel> getManagerDashboarDetailItemWise = [];
+  List<GetDashSummaryAllCountForMgrModel> getManagerDashboarDetailAllCount = [];
+  List<GetDashSummarySettAllCountForMgrModel> getManagerDashboarDetailSettCount = [];
   List<GetCurrentStockDetailManagerModel> getCurrentStockDetailManager = [];
   List<String> getTransMode = ["Today's", "This Month","Financial Year"];
   String? selectedTransMode = "This Month";
@@ -103,7 +110,8 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
       totalPendingSettAmt,
       postPaidVerifPendAmt,
       UndocumentedSV,
-      TotalCrdtOutstd;
+      TotalCrdtOutstd,
+      TotalVendorDueAmt;
   double? totalAmount,
       totalIncome,
       totalExpense,
@@ -120,7 +128,6 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
   double? defectivePercent = 0;
   int? total = 0;
 
-
   int? totalOpeningStockFilled = 0;
   int? totalOpeningStockEmpty = 0;
   int? totalOpeningStockDefective = 0;
@@ -129,10 +136,8 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
   int? totalCurrentStockDefective = 0;
   int? selectedItemId;
   int? selectedItemIdCDCMS;
-
   List<GetSvarbManagerDashboardCountModel> svarbManagerDashboardCountModel = [];
   List<HeadWiseExpenseLstModel> expenseReportModel = [];
-
   double? svGrossRevenueCount = 0;
   double? arbGrossRevenueCount = 0;
   double? arbGrossProfitCount = 0;
@@ -166,7 +171,10 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
       debugPrint("Firebase not initialize");
     }
     debugPrint("ManagerDashboardScreen: initState called");
-    fetchDashboarDetail();
+    // fetchDashboarDetail();
+    fetchDashboarDetailForSettItem();
+    fetchDashboarDetailItemWise();
+    fetchDashboarDetailForAllCount();
     fetchCurrentStock();
     fetchSavedData();
     fetchSVARBFilterCountList("THISMONTH");
@@ -174,8 +182,26 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
 
   Future<void> _onRefresh() async {
     fetchCurrentStock();
-    fetchDashboarDetail();
-    fetchSVARBFilterCountList("THISMONTH");// Fetch the data again
+    // fetchDashboarDetail();
+    fetchDashboarDetailItemWise();
+    fetchDashboarDetailForAllCount();
+    fetchDashboarDetailForSettItem();
+    if(selectedTransMode == "Today's"){
+      dayFlag = "TODAYS";
+      debugPrint("dayFlag $dayFlag");
+      fetchSVARBFilterCountList(dayFlag!);
+    }else if(selectedTransMode == "This Month"){
+      dayFlag = "THISMONTH";
+      debugPrint("dayFlag $dayFlag");
+      fetchSVARBFilterCountList(dayFlag!);
+    }else if(selectedTransMode == "Financial Year"){
+      dayFlag = "FINYEAR";
+      debugPrint("dayFlag $dayFlag");
+      fetchSVARBFilterCountList(dayFlag!);
+    }else{
+      dayFlag = "";
+    }
+
   }
 
   final List<String> months = ['Apr', 'May', 'Jun', 'Jul', 'Aug'];
@@ -579,6 +605,83 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                       color: Colors.black54,
                                     ),
                                     Text(
+                                      "Vendor Payment",
+                                      style: Styling.bodyTitleBigBoldDashGrey,
+                                      textScaler: TextScaler.noScaling,
+                                    )
+                                  ]),
+                                  SizedBox(height: 5),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(
+                                          width: 1, color: Color(0xFFfbe9e9)),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 24,
+                                            backgroundColor: Color(0xFFfbe9e9),
+                                            child: const Icon(
+                                                Icons.pending_actions,
+                                                color: Colors.black,
+                                                size: 24),
+                                          ),
+                                          const SizedBox(width: 25),
+                                          Column(
+                                            children: [
+                                              GestureDetector(
+                                                onTap: (TotalCrdtOutstd ?? 0)! > 0
+                                                    ? () {
+                                                  Navigator.pushNamed(
+                                                      context,
+                                                      VendorPaymentDetailListUI
+                                                          .screenName);
+                                                }
+                                                    : null,
+                                                behavior: HitTestBehavior.opaque,
+                                                child: Text(
+                                                  formatCurrency(TotalVendorDueAmt
+                                                      ?.toDouble() ??
+                                                      0.0),
+                                                  style: Styling.itemGreyTextBig
+                                                      .copyWith(
+                                                    color: Colors.blue,
+                                                    decoration:
+                                                    TextDecoration.underline,
+                                                    decorationColor: Colors.blue,
+                                                  ),
+                                                  textAlign: TextAlign.center,
+                                                  textScaler:
+                                                  TextScaler.noScaling,
+                                                ),
+                                              ),
+                                              SizedBox(height: 4),
+                                              Text(
+                                                'Vendor Due Amt.',
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.black54),
+                                                textScaler: TextScaler.noScaling,
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 5),
+                                  Row(children: [
+                                    Icon(
+                                      Icons.bolt_outlined,
+                                      size: 26,
+                                      // Bigger icon for a more clickable feel
+                                      color: Colors.black54,
+                                    ),
+                                    Text(
                                       "Imbalance Stock",
                                       style: Styling.bodyTitleBigBoldDashGrey,
                                       textScaler: TextScaler.noScaling,
@@ -752,7 +855,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                     SizedBox(width: 10),
                                     DropdownButton<num>(
                                       value: selectedItemIdCDCMS,
-                                      items: getManagerDashboarDetail.map((item) {
+                                      items: getManagerDashboarDetailItemWise.map((item) {
                                         return DropdownMenuItem<num>(
                                           value: item.itemId,
                                           child: Text(item.itemName ?? 'Unknown',
@@ -764,12 +867,12 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                         setState(() {
                                           selectedItemIdCDCMS = value!.toInt();
                                           final selectedItem =
-                                          getManagerDashboarDetail.firstWhere(
+                                          getManagerDashboarDetailItemWise.firstWhere(
                                                 (item) =>
                                             item.itemId ==
                                                 selectedItemIdCDCMS,
                                             orElse: () =>
-                                                GetManagerDashboarDetailModel(),
+                                                GetDashSummaryItemWiseForMgrModel(),
                                           );
                                           cdcmsFilledDiffShow =
                                               selectedItem.filledDiff!.toInt();
@@ -1160,7 +1263,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                   ),
                                                 ),
                                                 Text(
-                                                  sVPendingStk.toString() ,
+                                                    sVPendingStk != null? sVPendingStk.toString():'0' ,
                                                   style: Styling
                                                       .bodyTitleBigBoldDashGrey,
                                                   textScaler:
@@ -1214,7 +1317,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                   ),
                                                 ),
                                                 Text(
-                                                  tVPendingStk.toString(),
+                                                    tVPendingStk != null? tVPendingStk.toString() :'0',
                                                   style: Styling
                                                       .bodyTitleBigBoldDashGrey,
                                                   textScaler:
@@ -1276,7 +1379,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                   : null,
                                               behavior: HitTestBehavior.opaque,
                                               child: Text(
-                                                UndocumentedSV.toString(),
+                                                  UndocumentedSV != null? UndocumentedSV.toString():'0',
                                                 // Replace this with your dynamic data
                                                 style: Styling
                                                     .bodyTitleBigBoldDashGrey
@@ -1366,7 +1469,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                               child: Row(
                                                 children: [
                                                   Text(
-                                                    postPaidVerifPend.toString(),
+                                                  postPaidVerifPend != null? postPaidVerifPend.toString():'0',
 
                                                     // Replace this with your dynamic data
                                                     style: Styling.itemGreyTextBig
@@ -1472,7 +1575,8 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                     //       UnsettledSaleDetailList
                                                     //           .screenName);
                                                     // },
-                                                    onTap: deliveryMenCount !=
+                                                    onTap:
+                                                    deliveryMenCount !=
                                                         null &&
                                                         deliveryMenCount! > 0
                                                         ? () {
@@ -2185,9 +2289,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                           ),
                                         ),
                                       ),
-
                                     ),
-
                                     Visibility(
                                       visible:roleId == Constants.roleIdOwner,
                                       child: Flexible(
@@ -2311,7 +2413,216 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
       );
   }
 
-  Future<void> fetchDashboarDetail() async {
+  // Future<void> fetchDashboarDetail() async {
+  //   EasyLoading.show();
+  //   Constants.isNetworkAvailable =
+  //   await InternetConnectionChecker().hasConnection;
+  //   if (Constants.isNetworkAvailable) {
+  //     SharedPreferences prefs = await SharedPreferences.getInstance();
+  //     String? distributorId = prefs.getString('DistributorId');
+  //     String? godownId = prefs.getString('godownId');
+  //     String? addedBy = prefs.getString('StaffId');
+  //     String? godownKeeperId = prefs.getString('godownKeeperId');
+  //     String? token = prefs.getString('token'); // This is your bearer token
+  //
+  //     DateTime now = DateTime.now();
+  //     String formattedDate = DateFormat('yyyy-MM-dd')
+  //         .format(now); // You can change the format as needed
+  //
+  //     try {
+  //       final response = await http.get(
+  //         Uri.parse('${AppUrl.GetMobDashboardSummaryForMgr}/$distributorId'),
+  //         headers: {
+  //           'Authorization': 'Bearer $token', // Add the Bearer token here
+  //           'cDCMDPendSince': formattedDate,
+  //           'SettlementPendSince': formattedDate,
+  //           // Any other headers you need can go here
+  //         },
+  //       );
+  //
+  //       // Print the URL and the headers (including the Bearer token)
+  //       print("Request URL GetMobDashboardSummaryForMgr: ${response.request}");
+  //       print("Request Headers: {'Authorization': 'Bearer $token'}");
+  //       // Print the raw response for debugging
+  //       print(
+  //           "API Response Status GetMobDashboardSummaryForMgr: ${response.statusCode}");
+  //       print("API Response GetMobDashboardSummaryForMgr: ${response.body}");
+  //       if (response.statusCode == 200) {
+  //         final List<dynamic> data = json.decode(response.body);
+  //         setState(() {
+  //           getManagerDashboarDetail = data
+  //               .map((json) => GetManagerDashboarDetailModel.fromJson(json))
+  //               .toList();
+  //           isLoading = false;
+  //           EasyLoading.dismiss();
+  //
+  //           // Initialize totalImbQty
+  //           num dMCounts = 0;
+  //           double totalAmounts = 0;
+  //           double totalIncomes = 0;
+  //           double totalExpenses = 0;
+  //           double onAccountTodays = 0;
+  //           double onAccountAsOfDates = 0;
+  //           int asOfDateImbQtys = 0;
+  //           int todayImbCount = 0;
+  //           // int cdcmsFilledDiff = 0;
+  //           // int cdcmsEmptyDiff = 0;
+  //           // int cdcmsDefectiveDiff = 0;
+  //
+  //           // Loop through each receipt and each item inside itemImbDtls to sum ImbQty
+  //           for (var receipt in getManagerDashboarDetail) {
+  //             // Add imbQty to totalImbQty, treating null as 0
+  //             dMCounts += receipt.dMCount ?? 0;
+  //             totalAmounts +=
+  //                 receipt.totalAmount ?? 0; // Corrected summing of imbQty
+  //             totalIncomes +=
+  //                 receipt.totalIncome ?? 0; // Corrected summing of imbQty
+  //             totalExpenses +=
+  //                 receipt.totalExp ?? 0; // Corrected summing of imbQty
+  //             onAccountTodays +=
+  //                 receipt.staffOnAccToday ?? 0; // Corrected summing of imbQty
+  //             onAccountAsOfDates +=
+  //                 receipt.staffOnAccAsOf ?? 0; // Corrected summing of imbQty
+  //             asOfDateImbQtys += (receipt.asOfDateImbQty ?? 0).toInt();
+  //             todayImbCount += (receipt.todayImbQty ?? 0).toInt();
+  //             // cdcmsFilledDiff += (receipt.filledDiff ?? 0).toInt();
+  //             // cdcmsEmptyDiff += (receipt.emptyDiff ?? 0).toInt();
+  //             // cdcmsDefectiveDiff += (receipt.defectiveDiff ?? 0).toInt();
+  //           }
+  //           asOfDateImbQtyShow = asOfDateImbQtys;
+  //           todaysImbQtyShow = todayImbCount;
+  //           // cdcmsFilledDiffShow = cdcmsFilledDiff;
+  //           // cdcmsEmptyDiffShow = cdcmsEmptyDiff;
+  //           // cdcmsDefectiveDiffShow = cdcmsDefectiveDiff;
+  //           // total = cdcmsFilledDiff + cdcmsEmptyDiff + cdcmsDefectiveDiff;
+  //           // filledPercent = cdcmsFilledDiff / total! * 100;
+  //           // emptyPercent = cdcmsEmptyDiff / total! * 100;
+  //           // defectivePercent = cdcmsDefectiveDiff / total! * 100;
+  //
+  //           // deliveryMenCount = dMCounts.toInt();
+  //           // totalAmount = totalAmounts.toDouble();
+  //           // totalIncome = totalIncomes.toDouble();
+  //           // totalExpense = totalExpenses.toDouble();
+  //           // onAccountToday = onAccountTodays.toDouble();
+  //           // onAccountAsOfDate = onAccountAsOfDates.toDouble();
+  //
+  //           // Print the totalAmount of the first item (if exists)
+  //
+  //           String _normalize(String? value) {
+  //             return value
+  //                 ?.toLowerCase()
+  //                 .replaceAll(RegExp(r'\s+'), '')
+  //                 .trim() ??
+  //                 '';
+  //           }
+  //
+  //           final defaultItem = getManagerDashboarDetail.firstWhere(
+  //                 (item) => _normalize(item.itemName) == '14.2kg',
+  //             orElse: () => GetManagerDashboarDetailModel(),
+  //           );
+  //
+  //           if (defaultItem.itemId != null) {
+  //             selectedItemIdCDCMS = defaultItem.itemId!.toInt();
+  //             // Set opening stock values
+  //             cdcmsFilledDiffShow = defaultItem.filledDiff?.toInt() ?? 0;
+  //             cdcmsEmptyDiffShow = defaultItem.emptyDiff?.toInt() ?? 0;
+  //             cdcmsDefectiveDiffShow = defaultItem.defectiveDiff!.toInt();
+  //           }
+  //           if (getManagerDashboarDetail.isNotEmpty) {
+  //             print(
+  //                 'Total Amount of the first item: ${getManagerDashboarDetail[0].totalAmount}');
+  //             deliveryMenCount = getManagerDashboarDetail[0].dMCount?.toInt();
+  //             totalAmount = getManagerDashboarDetail[0].totalAmount?.toDouble();
+  //             totalIncome = getManagerDashboarDetail[0].totalIncome?.toDouble();
+  //             totalExpense = getManagerDashboarDetail[0].totalExp?.toDouble();
+  //             onAccountToday =
+  //                 getManagerDashboarDetail[0].staffOnAccToday?.toDouble();
+  //             onAccountAsOfDate =
+  //                 getManagerDashboarDetail[0].staffOnAccAsOf?.toDouble();
+  //
+  //             todaysPunchingInNiyojanC =
+  //                 getManagerDashboarDetail[0].niyojanPun?.toInt() ?? 0;
+  //             pendingInNiyojanC =
+  //                 getManagerDashboarDetail[0].niyoJanPunDelPend?.toInt() ?? 0;
+  //             pendingInCdcmsC =
+  //                 getManagerDashboarDetail[0].cDCMSPunPend?.toInt() ?? 0;
+  //             todaysIncorrectPunchingC =
+  //                 getManagerDashboarDetail[0].niyojanDuplicate?.toInt() ?? 0;
+  //             settlPayReceiveDelPendC =
+  //                 getManagerDashboarDetail[0].paymtDoneBtDelPend?.toInt() ?? 0;
+  //             settlDelPayPendC =
+  //                 getManagerDashboarDetail[0].delDoneBtPaymtPend?.toInt() ?? 0;
+  //             oldBkgPendNewBkgRecv =
+  //                 getManagerDashboarDetail[0].oldBkgPendNewBkgRecv?.toInt() ??
+  //                     0;
+  //             delDonNiyoJanPunPend =
+  //                 getManagerDashboarDetail[0].delDonNiyoJanPunPend?.toInt() ??
+  //                     0;
+  //             niyoJanPunDelPend =
+  //                 getManagerDashboarDetail[0].niyoJanPunDelPend?.toInt() ?? 0;
+  //             postPaidVerifPend =
+  //                 getManagerDashboarDetail[0].postPaidVerifPend?.toInt() ?? 0;
+  //             sVPendingStk =
+  //                 getManagerDashboarDetail[0].sVPendingStk?.toInt() ?? 0;
+  //             tVPendingStk =
+  //                 getManagerDashboarDetail[0].tVPendingStk?.toInt() ?? 0;
+  //             cDCMDPendSince =
+  //                 getManagerDashboarDetail[0].cDCMDPendSince?.toString();
+  //             settlementPendSince =
+  //                 getManagerDashboarDetail[0].settlementPendSince?.toString();
+  //             totalPendingSettSince =
+  //                 getManagerDashboarDetail[0].totalPendingSettSince?.toString();
+  //             paymtDoneBtDelPendAmt =
+  //                 getManagerDashboarDetail[0].paymtDoneBtDelPendAmt?.toInt() ??
+  //                     0;
+  //             delDoneBtPaymtPendAmt =
+  //                 getManagerDashboarDetail[0].delDoneBtPaymtPendAmt?.toInt() ??
+  //                     0;
+  //             totalPendingSettCnt =
+  //                 getManagerDashboarDetail[0].totalPendingSettCnt?.toInt() ?? 0;
+  //             totalPendingSettAmt =
+  //                 getManagerDashboarDetail[0].totalPendingSettAmt?.toInt() ?? 0;
+  //             postPaidVerifPendAmt =
+  //                 getManagerDashboarDetail[0].postPaidVerifPendAmt?.toInt() ??
+  //                     0;
+  //             UndocumentedSV =
+  //                 getManagerDashboarDetail[0].UndocumentedSV?.toInt() ?? 0;
+  //             TotalCrdtOutstd =
+  //                 getManagerDashboarDetail[0].TotalCrdtOutstd?.toInt() ?? 0;
+  //           }
+  //         });
+  //       } else {
+  //         // Handle non-200 responses
+  //         setState(() {
+  //           refreshTokens();
+  //           isLoading = false;
+  //           EasyLoading.dismiss();
+  //         });
+  //         // refreshTokens();
+  //         // showFlushBar(context, Constants.listGettingFail);
+  //       }
+  //     } catch (e) {
+  //       if (mounted) {
+  //         // Check if the widget is still mounted
+  //         setState(() {
+  //           refreshTokens();
+  //           EasyLoading.dismiss();
+  //           isLoading = false;
+  //         });
+  //       }
+  //       // refreshTokens();
+  //       // ScaffoldMessenger.of(context).showSnackBar(
+  //       //   SnackBar(content: Text('Error: $e')),
+  //       // );
+  //       // showFlushBar(context, Constants.listGettingFail);
+  //     }
+  //   } else {
+  //     EasyLoading.dismiss();
+  //     showFlushBar(context, Constants.connectionMessage);
+  //   }
+  // }
+
+  Future<void> fetchDashboarDetailItemWise() async {
     EasyLoading.show();
     Constants.isNetworkAvailable =
     await InternetConnectionChecker().hasConnection;
@@ -2329,7 +2640,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
 
       try {
         final response = await http.get(
-          Uri.parse('${AppUrl.GetMobDashboardSummaryForMgr}/$distributorId'),
+          Uri.parse('${AppUrl.GetDashSummaryItemWiseForMgr}/$distributorId'),
           headers: {
             'Authorization': 'Bearer $token', // Add the Bearer token here
             'cDCMDPendSince': formattedDate,
@@ -2339,17 +2650,116 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
         );
 
         // Print the URL and the headers (including the Bearer token)
-        print("Request URL GetMobDashboardSummaryForMgr: ${response.request}");
+        print("Request URL GetDashSummaryItemWiseForMgr: ${response.request}");
         print("Request Headers: {'Authorization': 'Bearer $token'}");
         // Print the raw response for debugging
         print(
-            "API Response Status GetMobDashboardSummaryForMgr: ${response.statusCode}");
-        print("API Response GetMobDashboardSummaryForMgr: ${response.body}");
+            "API Response Status GetDashSummaryItemWiseForMgr: ${response.statusCode}");
+        print("API Response GetDashSummaryItemWiseForMgr: ${response.body}");
         if (response.statusCode == 200) {
           final List<dynamic> data = json.decode(response.body);
           setState(() {
-            getManagerDashboarDetail = data
-                .map((json) => GetManagerDashboarDetailModel.fromJson(json))
+            getManagerDashboarDetailItemWise = data
+                .map((json) => GetDashSummaryItemWiseForMgrModel.fromJson(json))
+                .toList();
+            isLoading = false;
+            EasyLoading.dismiss();
+
+            // Initialize totalImbQty
+            num dMCounts = 0;
+            double totalAmounts = 0;
+            double totalIncomes = 0;
+            double totalExpenses = 0;
+            double onAccountTodays = 0;
+            double onAccountAsOfDates = 0;
+            int asOfDateImbQtys = 0;
+            int todayImbCount = 0;
+
+            String _normalize(String? value) {
+              return value?.toLowerCase().replaceAll(RegExp(r'\s+'), '').trim() ?? '';
+            }
+            final defaultItem = getManagerDashboarDetailItemWise.firstWhere(
+                  (item) => _normalize(item.itemName) == '14.2kg',
+              orElse: () => GetDashSummaryItemWiseForMgrModel(),
+            );
+
+            if (defaultItem.itemId != null) {
+              selectedItemIdCDCMS = defaultItem.itemId!.toInt();
+              // Set opening stock values
+
+              cdcmsFilledDiffShow = defaultItem.filledDiff?.toInt() ?? 0;
+              cdcmsEmptyDiffShow = defaultItem.emptyDiff?.toInt() ?? 0;
+              cdcmsDefectiveDiffShow = defaultItem.defectiveDiff!.toInt();
+            }
+            for (var receipt in getManagerDashboarDetailItemWise) {
+              asOfDateImbQtys += (receipt.asOfDateImbQty ?? 0).toInt();
+              todayImbCount += (receipt.todayImbQty ?? 0).toInt();
+            }
+            asOfDateImbQtyShow = asOfDateImbQtys;
+            todaysImbQtyShow = todayImbCount;
+          });
+        } else {
+          // Handle non-200 responses
+          setState(() {
+            refreshTokens();
+            isLoading = false;
+            EasyLoading.dismiss();
+          });
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() {
+            refreshTokens();
+            EasyLoading.dismiss();
+            isLoading = false;
+          });
+        }
+      }
+    } else {
+      EasyLoading.dismiss();
+      showFlushBar(context, Constants.connectionMessage);
+    }
+  }
+
+  Future<void> fetchDashboarDetailForAllCount() async {
+    EasyLoading.show();
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+    if (Constants.isNetworkAvailable) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? distributorId = prefs.getString('DistributorId');
+      String? godownId = prefs.getString('godownId');
+      String? addedBy = prefs.getString('StaffId');
+      String? godownKeeperId = prefs.getString('godownKeeperId');
+      String? token = prefs.getString('token'); // This is your bearer token
+
+      DateTime now = DateTime.now();
+      String formattedDate = DateFormat('yyyy-MM-dd')
+          .format(now); // You can change the format as needed
+
+      try {
+        final response = await http.get(
+          Uri.parse('${AppUrl.GetDashSummaryAllCountForMgr}/$distributorId'),
+          headers: {
+            'Authorization': 'Bearer $token', // Add the Bearer token here
+            'cDCMDPendSince': formattedDate,
+            'SettlementPendSince': formattedDate,
+            // Any other headers you need can go here
+          },
+        );
+
+        // Print the URL and the headers (including the Bearer token)
+        print("Request URL GetDashSummaryAllCountForMgr: ${response.request}");
+        print("Request Headers: {'Authorization': 'Bearer $token'}");
+        // Print the raw response for debugging
+        print(
+            "API Response Status GetDashSummaryAllCountForMgr: ${response.statusCode}");
+        print("API Response GetDashSummaryAllCountForMgr: ${response.body}");
+        if (response.statusCode == 200) {
+          final List<dynamic> data = json.decode(response.body);
+          setState(() {
+            getManagerDashboarDetailAllCount = data
+                .map((json) => GetDashSummaryAllCountForMgrModel.fromJson(json))
                 .toList();
             isLoading = false;
             EasyLoading.dismiss();
@@ -2368,7 +2778,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
             // int cdcmsDefectiveDiff = 0;
 
             // Loop through each receipt and each item inside itemImbDtls to sum ImbQty
-            for (var receipt in getManagerDashboarDetail) {
+            for (var receipt in getManagerDashboarDetailAllCount) {
               // Add imbQty to totalImbQty, treating null as 0
               dMCounts += receipt.dMCount ?? 0;
               totalAmounts +=
@@ -2381,123 +2791,51 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                   receipt.staffOnAccToday ?? 0; // Corrected summing of imbQty
               onAccountAsOfDates +=
                   receipt.staffOnAccAsOf ?? 0; // Corrected summing of imbQty
-              asOfDateImbQtys += (receipt.asOfDateImbQty ?? 0).toInt();
-              todayImbCount += (receipt.todayImbQty ?? 0).toInt();
-              // cdcmsFilledDiff += (receipt.filledDiff ?? 0).toInt();
-              // cdcmsEmptyDiff += (receipt.emptyDiff ?? 0).toInt();
-              // cdcmsDefectiveDiff += (receipt.defectiveDiff ?? 0).toInt();
-            }
-            asOfDateImbQtyShow = asOfDateImbQtys;
-            todaysImbQtyShow = todayImbCount;
-            // cdcmsFilledDiffShow = cdcmsFilledDiff;
-            // cdcmsEmptyDiffShow = cdcmsEmptyDiff;
-            // cdcmsDefectiveDiffShow = cdcmsDefectiveDiff;
-            // total = cdcmsFilledDiff + cdcmsEmptyDiff + cdcmsDefectiveDiff;
-            // filledPercent = cdcmsFilledDiff / total! * 100;
-            // emptyPercent = cdcmsEmptyDiff / total! * 100;
-            // defectivePercent = cdcmsDefectiveDiff / total! * 100;
 
-            // deliveryMenCount = dMCounts.toInt();
-            // totalAmount = totalAmounts.toDouble();
-            // totalIncome = totalIncomes.toDouble();
-            // totalExpense = totalExpenses.toDouble();
-            // onAccountToday = onAccountTodays.toDouble();
-            // onAccountAsOfDate = onAccountAsOfDates.toDouble();
+              if (getManagerDashboarDetailAllCount.isNotEmpty) {
+                print(
+                    'Total Amount of the first item: ${getManagerDashboarDetailAllCount[0]
+                        .totalAmount}');
+                deliveryMenCount =
+                    getManagerDashboarDetailAllCount[0].dMCount?.toInt();
+                totalAmount =
+                    getManagerDashboarDetailAllCount[0].totalAmount?.toDouble();
+                totalIncome =
+                    getManagerDashboarDetailAllCount[0].totalIncome?.toDouble();
+                totalExpense =
+                    getManagerDashboarDetailAllCount[0].totalExp?.toDouble();
+                onAccountToday =
+                    getManagerDashboarDetailAllCount[0].staffOnAccToday
+                        ?.toDouble();
+                onAccountAsOfDate =
+                    getManagerDashboarDetailAllCount[0].staffOnAccAsOf
+                        ?.toDouble();
+                postPaidVerifPend =
+                    getManagerDashboarDetailAllCount[0].postPaidVerifPend
+                        ?.toInt() ?? 0;
+                sVPendingStk =
+                    getManagerDashboarDetailAllCount[0].sVPendingStk?.toInt() ??
+                        0;
+                tVPendingStk =
+                    getManagerDashboarDetailAllCount[0].tVPendingStk?.toInt() ??
+                        0;
+                postPaidVerifPendAmt =
+                    getManagerDashboarDetailAllCount[0].postPaidVerifPendAmt
+                        ?.toInt() ?? 0;
+                TotalCrdtOutstd = getManagerDashboarDetailAllCount[0].totalCrdtOutstd?.toInt() ?? 0;
 
-            // Print the totalAmount of the first item (if exists)
+                UndocumentedSV = getManagerDashboarDetailAllCount[0].undocumentedSV?.toInt() ?? 0;
 
-            String _normalize(String? value) {
-              return value
-                  ?.toLowerCase()
-                  .replaceAll(RegExp(r'\s+'), '')
-                  .trim() ??
-                  '';
-            }
-
-            final defaultItem = getManagerDashboarDetail.firstWhere(
-                  (item) => _normalize(item.itemName) == '14.2kg',
-              orElse: () => GetManagerDashboarDetailModel(),
-            );
-
-            if (defaultItem.itemId != null) {
-              selectedItemIdCDCMS = defaultItem.itemId!.toInt();
-              // Set opening stock values
-              cdcmsFilledDiffShow = defaultItem.filledDiff?.toInt() ?? 0;
-              cdcmsEmptyDiffShow = defaultItem.emptyDiff?.toInt() ?? 0;
-              cdcmsDefectiveDiffShow = defaultItem.defectiveDiff!.toInt();
-            }
-            if (getManagerDashboarDetail.isNotEmpty) {
-              print(
-                  'Total Amount of the first item: ${getManagerDashboarDetail[0].totalAmount}');
-              deliveryMenCount = getManagerDashboarDetail[0].dMCount?.toInt();
-              totalAmount = getManagerDashboarDetail[0].totalAmount?.toDouble();
-              totalIncome = getManagerDashboarDetail[0].totalIncome?.toDouble();
-              totalExpense = getManagerDashboarDetail[0].totalExp?.toDouble();
-              onAccountToday =
-                  getManagerDashboarDetail[0].staffOnAccToday?.toDouble();
-              onAccountAsOfDate =
-                  getManagerDashboarDetail[0].staffOnAccAsOf?.toDouble();
-
-              todaysPunchingInNiyojanC =
-                  getManagerDashboarDetail[0].niyojanPun?.toInt() ?? 0;
-              pendingInNiyojanC =
-                  getManagerDashboarDetail[0].niyoJanPunDelPend?.toInt() ?? 0;
-              pendingInCdcmsC =
-                  getManagerDashboarDetail[0].cDCMSPunPend?.toInt() ?? 0;
-              todaysIncorrectPunchingC =
-                  getManagerDashboarDetail[0].niyojanDuplicate?.toInt() ?? 0;
-              settlPayReceiveDelPendC =
-                  getManagerDashboarDetail[0].paymtDoneBtDelPend?.toInt() ?? 0;
-              settlDelPayPendC =
-                  getManagerDashboarDetail[0].delDoneBtPaymtPend?.toInt() ?? 0;
-              oldBkgPendNewBkgRecv =
-                  getManagerDashboarDetail[0].oldBkgPendNewBkgRecv?.toInt() ??
-                      0;
-              delDonNiyoJanPunPend =
-                  getManagerDashboarDetail[0].delDonNiyoJanPunPend?.toInt() ??
-                      0;
-              niyoJanPunDelPend =
-                  getManagerDashboarDetail[0].niyoJanPunDelPend?.toInt() ?? 0;
-              postPaidVerifPend =
-                  getManagerDashboarDetail[0].postPaidVerifPend?.toInt() ?? 0;
-              sVPendingStk =
-                  getManagerDashboarDetail[0].sVPendingStk?.toInt() ?? 0;
-              tVPendingStk =
-                  getManagerDashboarDetail[0].tVPendingStk?.toInt() ?? 0;
-              cDCMDPendSince =
-                  getManagerDashboarDetail[0].cDCMDPendSince?.toString();
-              settlementPendSince =
-                  getManagerDashboarDetail[0].settlementPendSince?.toString();
-              totalPendingSettSince =
-                  getManagerDashboarDetail[0].totalPendingSettSince?.toString();
-              paymtDoneBtDelPendAmt =
-                  getManagerDashboarDetail[0].paymtDoneBtDelPendAmt?.toInt() ??
-                      0;
-              delDoneBtPaymtPendAmt =
-                  getManagerDashboarDetail[0].delDoneBtPaymtPendAmt?.toInt() ??
-                      0;
-              totalPendingSettCnt =
-                  getManagerDashboarDetail[0].totalPendingSettCnt?.toInt() ?? 0;
-              totalPendingSettAmt =
-                  getManagerDashboarDetail[0].totalPendingSettAmt?.toInt() ?? 0;
-              postPaidVerifPendAmt =
-                  getManagerDashboarDetail[0].postPaidVerifPendAmt?.toInt() ??
-                      0;
-              UndocumentedSV =
-                  getManagerDashboarDetail[0].UndocumentedSV?.toInt() ?? 0;
-              TotalCrdtOutstd =
-                  getManagerDashboarDetail[0].TotalCrdtOutstd?.toInt() ?? 0;
+                TotalVendorDueAmt = getManagerDashboarDetailAllCount[0].totalVendorDueAmt?.toInt() ?? 0;
+              }
             }
           });
         } else {
-          // Handle non-200 responses
           setState(() {
             refreshTokens();
             isLoading = false;
             EasyLoading.dismiss();
           });
-          // refreshTokens();
-          // showFlushBar(context, Constants.listGettingFail);
         }
       } catch (e) {
         if (mounted) {
@@ -2508,11 +2846,130 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
             isLoading = false;
           });
         }
-        // refreshTokens();
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(content: Text('Error: $e')),
-        // );
-        // showFlushBar(context, Constants.listGettingFail);
+      }
+    } else {
+      EasyLoading.dismiss();
+      showFlushBar(context, Constants.connectionMessage);
+    }
+  }
+
+  Future<void> fetchDashboarDetailForSettItem() async {
+    EasyLoading.show();
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+    if (Constants.isNetworkAvailable) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? distributorId = prefs.getString('DistributorId');
+      String? godownId = prefs.getString('godownId');
+      String? addedBy = prefs.getString('StaffId');
+      String? godownKeeperId = prefs.getString('godownKeeperId');
+      String? token = prefs.getString('token'); // This is your bearer token
+
+      DateTime now = DateTime.now();
+      String formattedDate = DateFormat('yyyy-MM-dd')
+          .format(now); // You can change the format as needed
+
+      try {
+        final response = await http.get(
+          Uri.parse('${AppUrl.GetDashSummarySettAllCountForMgr}/$distributorId'),
+          headers: {
+            'Authorization': 'Bearer $token', // Add the Bearer token here
+            'cDCMDPendSince': formattedDate,
+            'SettlementPendSince': formattedDate,
+            // Any other headers you need can go here
+          },
+        );
+        // Print the URL and the headers (including the Bearer token)
+        print("Request URL GetMobDashboardSummaryForMgr: ${response.request}");
+        print("Request Headers: {'Authorization': 'Bearer $token'}");
+        // Print the raw response for debugging
+        print(
+            "API Response Status GetMobDashboardSummaryForMgr: ${response.statusCode}");
+        print("API Response GetMobDashboardSummaryForMgr: ${response.body}");
+        if (response.statusCode == 200) {
+          final List<dynamic> data = json.decode(response.body);
+          setState(() {
+            getManagerDashboarDetailSettCount = data
+                .map((json) => GetDashSummarySettAllCountForMgrModel.fromJson(json))
+                .toList();
+            isLoading = false;
+            EasyLoading.dismiss();
+
+            // Initialize totalImbQty
+            num dMCounts = 0;
+            double totalAmounts = 0;
+            double totalIncomes = 0;
+            double totalExpenses = 0;
+            double onAccountTodays = 0;
+            double onAccountAsOfDates = 0;
+            int asOfDateImbQtys = 0;
+            int todayImbCount = 0;
+
+            // asOfDateImbQtyShow = asOfDateImbQtys;
+            // todaysImbQtyShow = todayImbCount;
+
+
+            String _normalize(String? value) {
+              return value?.toLowerCase().replaceAll(RegExp(r'\s+'), '').trim() ?? '';
+            }
+
+            if (getManagerDashboarDetailSettCount.isNotEmpty) {
+              print(
+                  'niyojan Amount of the first item: ${getManagerDashboarDetailSettCount[0]
+                      .niyojanPun}');
+              todaysPunchingInNiyojanC =
+                  getManagerDashboarDetailSettCount[0].niyojanPun?.toInt() ?? 0;
+              pendingInNiyojanC =
+                  getManagerDashboarDetailSettCount[0].niyoJanPunDelPend?.toInt() ?? 0;
+              pendingInCdcmsC =
+                  getManagerDashboarDetailSettCount[0].cDCMSPunPend?.toInt() ?? 0;
+              todaysIncorrectPunchingC =
+                  getManagerDashboarDetailSettCount[0].niyojanDuplicate?.toInt() ?? 0;
+              settlPayReceiveDelPendC =
+                  getManagerDashboarDetailSettCount[0].paymtDoneBtDelPend?.toInt() ?? 0;
+              settlDelPayPendC =
+                  getManagerDashboarDetailSettCount[0].delDoneBtPaymtPend?.toInt() ?? 0;
+              oldBkgPendNewBkgRecv =
+                  getManagerDashboarDetailSettCount[0].oldBkgPendNewBkgRecv?.toInt() ??
+                      0;
+              delDonNiyoJanPunPend =
+                  getManagerDashboarDetailSettCount[0].delDonNiyoJanPunPend?.toInt() ??
+                      0;
+              niyoJanPunDelPend =
+                  getManagerDashboarDetailSettCount[0].niyoJanPunDelPend?.toInt() ?? 0;
+              cDCMDPendSince =
+                  getManagerDashboarDetailSettCount[0].cDCMDPendSince?.toString();
+              settlementPendSince =
+                  getManagerDashboarDetailSettCount[0].settlementPendSince?.toString();
+              totalPendingSettSince =
+                  getManagerDashboarDetailSettCount[0].totalPendingSettSince?.toString();
+              paymtDoneBtDelPendAmt =
+                  getManagerDashboarDetailSettCount[0].paymtDoneBtDelPendAmt?.toInt() ??
+                      0;
+              delDoneBtPaymtPendAmt =
+                  getManagerDashboarDetailSettCount[0].delDoneBtPaymtPendAmt?.toInt() ??
+                      0;
+              totalPendingSettCnt =
+                  getManagerDashboarDetailSettCount[0].totalPendingSettCnt?.toInt() ?? 0;
+              totalPendingSettAmt =
+                  getManagerDashboarDetailSettCount[0].totalPendingSettAmt?.toInt() ?? 0;
+            }
+          });
+        } else {
+          setState(() {
+            refreshTokens();
+            isLoading = false;
+            EasyLoading.dismiss();
+          });
+        }
+      } catch (e) {
+        if (mounted) {
+          setState(() {
+            refreshTokens();
+            EasyLoading.dismiss();
+            isLoading = false;
+          });
+        }
       }
     } else {
       EasyLoading.dismiss();
@@ -2680,7 +3137,8 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
           if (response['status']) {
             debugPrint('RefreshTokenStatus - True');
             fetchCurrentStock();
-            fetchDashboarDetail();
+            // fetchDashboarDetail();
+            fetchDashboarDetailForSettItem();
             fetchSVARBFilterCountList("THISMONTH");
           } else if (response['message'] == "Token Expired") {
             debugPrint('RefreshTokenExc401 - true');
@@ -3044,7 +3502,8 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 GestureDetector(
-                                  onTap: settlPayReceiveDelPendC! > 0
+                                  // onTap: settlPayReceiveDelPendC! > 0
+                            onTap: settlPayReceiveDelPendC != null && settlPayReceiveDelPendC! > 0
                                       ? () {
                                     Navigator.pushNamed(
                                         context,
@@ -3126,7 +3585,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 GestureDetector(
-                                  onTap: settlDelPayPendC! > 0
+                                  onTap: settlDelPayPendC != null && settlDelPayPendC! > 0
                                       ? () {
                                     Navigator.pushNamed(
                                         context,
@@ -3216,7 +3675,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 GestureDetector(
-                                  onTap: totalPendingSettCnt! > 0
+                                  onTap: totalPendingSettCnt != null && totalPendingSettCnt! > 0
                                       ? () {
                                     Navigator.pushNamed(
                                         context,
@@ -3416,7 +3875,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                       height: 5,
                     ),
                     // Display dynamic data or No Data Available message
-                    getManagerDashboarDetail.isNotEmpty
+                    getManagerDashboarDetailItemWise.isNotEmpty
                         ? Column(
                       children: [
                         // Table Header with gradient and modern styling
@@ -3441,14 +3900,14 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                           shrinkWrap: true,
                           padding: EdgeInsets.zero,
                           physics: NeverScrollableScrollPhysics(),
-                          itemCount: getManagerDashboarDetail
+                          itemCount: getManagerDashboarDetailItemWise
                               .where((item) =>
                           item.todayImbQty! > 0 ||
                               item.asOfDateImbQty! > 0)
                               .toList()
                               .length,
                           itemBuilder: (context, index) {
-                            var item = getManagerDashboarDetail
+                            var item = getManagerDashboarDetailItemWise
                                 .where((item) =>
                             item.todayImbQty! > 0 ||
                                 item.asOfDateImbQty! > 0)
@@ -3676,7 +4135,6 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                             orElse: () =>
                                                 GetCurrentStockDetailManagerModel(),
                                           );
-
                                           totalOpeningStockFilled =
                                               selectedItem.filledOpeningStk!
                                                   .toInt();
@@ -4007,7 +4465,6 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                   ],
                                 ),
                               ),
-
                               getCurrentStockDetailManager.any((item) =>
                               item.totalInvoiceCnt! > 0 ||
                                   item.filledEMRCnt! > 0)
@@ -4195,7 +4652,6 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                 ),
                               )
                                   : Container(),
-
                               getCurrentStockDetailManager
                                   .any((item) => item.emptyTVCnt! > 0)
                                   ? Container(
@@ -5247,6 +5703,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
       rethrow;
     }
   }
+
 }
 
 

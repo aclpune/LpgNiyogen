@@ -162,7 +162,7 @@ class _SalesComparisonScreenState extends State<SalesComparisonScreen> {
                   width: 0.9, // Adjust the bar width
                   spacing: 0.4,
                   dataLabelSettings: DataLabelSettings(
-                    isVisible: false,
+                    isVisible: true,
                   ),
                   pointColorMapper: (SalesData sales, int index) {
                     if (index == 0) return Colors.lightBlueAccent;

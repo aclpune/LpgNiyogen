@@ -49,6 +49,12 @@ class _DashboardSVDetailUI extends State<DashboardSVDetailUI> {
           Row(
             children: [
               Expanded(flex:1,child: countTextWidgetText(context, "Doc. Status", nullToDash(sale.isUndocument == true ? "Pending" : (sale.isUndocument == false ? "Received" : ""))),),
+              Expanded(flex:1,child: countTextWidgetText(context,"SV Type", sale.sVType ?? '')),
+            ],
+          ),
+          SizedBox(height: 2),
+          Row(
+            children: [
               Expanded(flex:1,child: countTextWidgetText(context,"Amount", nullToDash(formatCurrency((sale.totalAmount ?? 0.0).toDouble())))),
             ],
           ),
@@ -56,6 +62,10 @@ class _DashboardSVDetailUI extends State<DashboardSVDetailUI> {
           Row(
             children: [
               Expanded(flex:1,child: countTextWidgetText(context,"Stock Status", nullToDash(sale.stockStatus))),
+            ],
+          ),
+          Row(
+            children: [
               Expanded(flex:1,child: countTextWidgetText(context,"Delivery Date", '')),
             ],
           ),
@@ -63,7 +73,7 @@ class _DashboardSVDetailUI extends State<DashboardSVDetailUI> {
           Row(
             children: [
               Expanded(flex:1,child: countTextWidgetText(context,"Consumer No.", sale.consumerNo ?? '-')),
-              Expanded(flex:1,child: countTextWidgetText(context,"SV Type", sale.sVType ?? '')),
+
 
             ],
           ),

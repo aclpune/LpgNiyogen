@@ -141,46 +141,6 @@ class _PrepaidBookingAndSettlementGraphScreenState extends State<PrepaidBookingA
     );
   }
 
-  // Future<void> _generatePdf() async {
-  //   final pdf = pw.Document();
-  //
-  //   // Generate the chart image
-  //   final imageBytes = await _captureChartToImage();
-  //   final pdfImage = pw.MemoryImage(imageBytes);
-  //
-  //   // Add a page to the PDF in landscape orientation
-  //   pdf.addPage(
-  //     pw.Page(
-  //       pageFormat: PdfPageFormat(595.27, 841.89, marginAll: 10), // A4 landscape format
-  //       build: (pw.Context context) {
-  //         return pw.Column(
-  //           children: [
-  //             pw.Text("Dynamic Bar Width Chart", style: pw.TextStyle(fontSize: 24)),
-  //             pw.SizedBox(height: 20),
-  //             pw.Image(pdfImage), // Add the image of the chart
-  //           ],
-  //         );
-  //       },
-  //     ),
-  //   );
-  //
-  //   // Get the app's document directory
-  //   final output = await getApplicationDocumentsDirectory();
-  //   final filePath = '${output.path}/chart.pdf';
-  //   final file = File(filePath);
-  //
-  //   // Save the PDF file to the device
-  //   await file.writeAsBytes(await pdf.save());
-  //
-  //   // Notify the user where the PDF was saved
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     SnackBar(content: Text('PDF saved to: $filePath')),
-  //   );
-  //
-  //   // Optional: Open the folder where the file was saved (if supported)
-  //   // For Android, you might need a third-party package like 'open_file' to open the file
-  // }
-
   @override
   Widget build(BuildContext context) {
     final double barWidth = 60;

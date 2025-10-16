@@ -92,7 +92,8 @@ class _SVProfitDetailScreenUIState extends State<SVProfitDetailScreenUI> {
             ),
           ),
         ),
-        body: isLoading
+        body:
+        isLoading
             ? const Center(child: CircularProgressIndicator())
             : Column(
           children: [

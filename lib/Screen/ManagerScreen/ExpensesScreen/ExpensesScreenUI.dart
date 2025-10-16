@@ -65,7 +65,31 @@ class _ExpensesScreenUIState extends  State<ExpensesScreenUI>{
     super.initState();
     getHeadWiseExpenseLstModel("THISMONTH");
     getDashboardData("FINYEAR");
-
+    _tooltipBehavior = TooltipBehavior(
+      enable: true,
+      format: 'point.x : point.y',
+      header: '',
+      canShowMarker: true,
+      // 👇 Add number format
+      textStyle: TextStyle(
+        fontSize: 12,
+        color: Colors.white,
+      ),
+      builder: (dynamic data, dynamic point, dynamic series, int pointIndex, int seriesIndex) {
+        final value = (data as MonthProfitData).profit;
+        return Container(
+          padding: EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            color: Colors.black87,
+            borderRadius: BorderRadius.circular(5),
+          ),
+          child: Text(
+            '${data.month}: ₹${value?.toStringAsFixed(2)}', // ✅ Format to 2 decimal points
+            style: TextStyle(color: Colors.white),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -88,7 +112,7 @@ class _ExpensesScreenUIState extends  State<ExpensesScreenUI>{
       }
     }
 
-    final double barWidth = 60;
+    final double barWidth = 50;
     final double barSpacing = 8;
     final int itemCount = 22;
     final double chartWidth = (barWidth + barSpacing) * itemCount;
@@ -132,7 +156,7 @@ class _ExpensesScreenUIState extends  State<ExpensesScreenUI>{
                             },
                           ),
                           Text(
-                            "Expense Head",
+                            isOn?"Revenue Vs Expense":"Top Expenses",
                             style: TextStyle(fontSize: 18, color: Colors.black),
                           ),
                         // SizedBox(width: 170,),
@@ -171,86 +195,156 @@ class _ExpensesScreenUIState extends  State<ExpensesScreenUI>{
             child:
             Column(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Transform.scale(
-                      scale: 1.0, // Adjust the scale value as needed
-                      child: Column(
-                        children: [
-                          Switch(
-                            value: isOn,
-                            onChanged: (bool value) {
-                              setState(() {
-                                isOn = value;
-                              });
-                            },
-                          ),
-                        ],
+                Padding(
+                  padding: const EdgeInsets.only(left: 6.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      isOn?
+                      SizedBox(
+                        width: 140,  // Control the width of the dropdown
+                        child: DropdownButton<String>(
+                          value: selectedRegReceived ?? "This Year",
+                          items: regReceived.map((transMode) {
+                            return DropdownMenuItem<String>(
+                              value: transMode,
+                              child: Text(
+                                transMode,
+                                style: Styling.itemBlackTestOne,
+                                textScaler: TextScaler.noScaling,
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedRegReceived = value;
+                              grossExpenseModel.clear();
+                              grossProfitModel.clear();
+                            });
+                            if (selectedRegReceived == "This Year") {
+                              getDashboardData("FINYEAR");
+                            } else if (selectedRegReceived == "Prev Year") {
+                              getDashboardData("PREFINYEAR");
+                            }
+                          },
+                          isExpanded: true,
+                        ),
+                      ):
+                      SizedBox(
+                        width: 140,
+                        child:
+                        DropdownButton<String>(
+                          value: selectedRegulatorReceived ?? "This Month",
+                          items: (regulatorReceived ?? []).map((transMode) {
+                            return DropdownMenuItem<String>(
+                              value: transMode,
+                              child: Text(
+                                transMode,
+                                style: Styling.itemBlackTestOne,
+                                textScaler:
+                                TextScaler.noScaling,
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              selectedRegulatorReceived = value;
+                              expenseReportModel = [];
+                              segmentPercentages.clear();
+                              segmentColors.clear();
+                            });
+                            if (selectedRegulatorReceived == "Today's") {
+                              getHeadWiseExpenseLstModel("TODAYS");
+                            } else if (selectedRegulatorReceived ==
+                                "This Month") {
+                              getHeadWiseExpenseLstModel("THISMONTH");
+                            } else if (selectedRegulatorReceived ==
+                                "Financial Year") {
+                              getHeadWiseExpenseLstModel("FINYEAR");
+                            }
+                          },
+                          isExpanded: true,
+                        ),
                       ),
-                    ),
-                  ],
+                      Transform.scale(
+                        scale: 0.7, // Adjust the scale value as needed
+                        child: Column(
+                          children: [
+                            Switch(
+                              value: isOn,
+                              onChanged: (bool value) {
+                                setState(() {
+                                  isOn = value;
+                                });
+                              },
+
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                SizedBox(height: 8,),
                 if(!isOn)...[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.currency_exchange,
-                          size: 22,
-                          color: Colors.black54,
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          "Top Expenses",
-                          style: Styling.bodyTitleBigBoldExp,
-                          textScaler: TextScaler.noScaling,
-                        ),
-                      ],
-                    ),
-                    SizedBox(width: 10),
-                    SizedBox(
-                      width: 140,
-                      child:
-                      DropdownButton<String>(
-                        value: selectedRegulatorReceived ?? "This Month",
-                        items: (regulatorReceived ?? []).map((transMode) {
-                          return DropdownMenuItem<String>(
-                            value: transMode,
-                            child: Text(
-                              transMode,
-                              style: Styling.itemBlackTestOne,
-                              textScaler:
-                              TextScaler.noScaling,
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedRegulatorReceived = value;
-                            expenseReportModel = [];
-                            segmentPercentages.clear();
-                            segmentColors.clear();
-                          });
-                          if (selectedRegulatorReceived == "Today's") {
-                            getHeadWiseExpenseLstModel("TODAYS");
-                          } else if (selectedRegulatorReceived ==
-                              "This Month") {
-                            getHeadWiseExpenseLstModel("THISMONTH");
-                          } else if (selectedRegulatorReceived ==
-                              "Financial Year") {
-                            getHeadWiseExpenseLstModel("FINYEAR");
-                          }
-                        },
-                        isExpanded: true,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 8),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //   children: [
+                //     Row(
+                //       children: [
+                //         Icon(
+                //           Icons.currency_exchange,
+                //           size: 22,
+                //           color: Colors.black54,
+                //         ),
+                //         SizedBox(width: 8),
+                //         Text(
+                //           "Top Expenses",
+                //           style: Styling.bodyTitleBigBoldExp,
+                //           textScaler: TextScaler.noScaling,
+                //         ),
+                //       ],
+                //     ),
+                //     SizedBox(width: 10),
+                //     SizedBox(
+                //       width: 140,
+                //       child:
+                //       DropdownButton<String>(
+                //         value: selectedRegulatorReceived ?? "This Month",
+                //         items: (regulatorReceived ?? []).map((transMode) {
+                //           return DropdownMenuItem<String>(
+                //             value: transMode,
+                //             child: Text(
+                //               transMode,
+                //               style: Styling.itemBlackTestOne,
+                //               textScaler:
+                //               TextScaler.noScaling,
+                //             ),
+                //           );
+                //         }).toList(),
+                //         onChanged: (value) {
+                //           setState(() {
+                //             selectedRegulatorReceived = value;
+                //             expenseReportModel = [];
+                //             segmentPercentages.clear();
+                //             segmentColors.clear();
+                //           });
+                //           if (selectedRegulatorReceived == "Today's") {
+                //             getHeadWiseExpenseLstModel("TODAYS");
+                //           } else if (selectedRegulatorReceived ==
+                //               "This Month") {
+                //             getHeadWiseExpenseLstModel("THISMONTH");
+                //           } else if (selectedRegulatorReceived ==
+                //               "Financial Year") {
+                //             getHeadWiseExpenseLstModel("FINYEAR");
+                //           }
+                //         },
+                //         isExpanded: true,
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                // SizedBox(height: 8),
                 Card(
                   color: Color(0xFFF8FBFF),
                   shape: RoundedRectangleBorder(
@@ -418,102 +512,53 @@ class _ExpensesScreenUIState extends  State<ExpensesScreenUI>{
                    child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,  // Align items to the left
-                            children: [
-                              Icon(
-                                Icons.auto_graph,
-                                size: 22,
-                                color: Colors.black54,
-                              ),
-                              SizedBox(width: 8),  // Add space between icon and text
-                              Text(
-                                "Revenue Vs Expense",
-                                style: Styling.bodyTitleBigBoldExp,
-                                textScaler: TextScaler.noScaling,
-                              ),
-                              Spacer(),  // Push the dropdown to the far right
-                              SizedBox(
-                                width: 140,  // Control the width of the dropdown
-                                child: DropdownButton<String>(
-                                  value: selectedRegReceived ?? "This Year",
-                                  items: regReceived.map((transMode) {
-                                    return DropdownMenuItem<String>(
-                                      value: transMode,
-                                      child: Text(
-                                        transMode,
-                                        style: Styling.itemBlackTestOne,
-                                        textScaler: TextScaler.noScaling,
-                                      ),
-                                    );
-                                  }).toList(),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedRegReceived = value;
-                                      grossExpenseModel.clear();
-                                      grossProfitModel.clear();
-                                    });
-                                    if (selectedRegReceived == "This Year") {
-                                      getDashboardData("FINYEAR");
-                                    } else if (selectedRegReceived == "Prev Year") {
-                                      getDashboardData("PREFINYEAR");
-                                    }
-                                  },
-                                  isExpanded: true,
-                                ),
-                              ),
-                            ],
-                          ),
-                           SizedBox(height: 20,),
-                           // SizedBox(height: 8,),
-
-                            // SingleChildScrollView(
-                            //   scrollDirection: Axis.horizontal,
-                            //   child: Container(
-                            //     width: chartWidth,
-                            //     child: SfCartesianChart(
-                            //       primaryXAxis: CategoryAxis(
-                            //         labelRotation: 45,
-                            //         interval: 1,
-                            //         majorGridLines: MajorGridLines(width: 0),
-                            //       ),
-                            //       primaryYAxis: NumericAxis(
-                            //         axisLine: AxisLine(width: 1), // shows axis line
-                            //         majorTickLines: MajorTickLines(size: 0), // hides ticks
-                            //         axisLabelFormatter: (AxisLabelRenderDetails details) {
-                            //           // Hide all Y-axis labels
-                            //           return ChartAxisLabel('', TextStyle(fontSize: 0));
-                            //         },
-                            //       ),
-                            //       series: <CartesianSeries<dynamic, dynamic>>[
-                            //         // Expense Data Series (Orange bars)
-                            //         ColumnSeries<MonthProfitData, String>(
-                            //           name: 'Expense',
-                            //           dataSource: expenseDataForChart,
-                            //           xValueMapper: (MonthProfitData data, _) => data.month,
-                            //           yValueMapper: (MonthProfitData data, _) => data.profit,
-                            //           color: Colors.blue,
-                            //           width: 0.8,
-                            //         dataLabelSettings: DataLabelSettings(isVisible: true,
-                            //         textStyle: TextStyle(fontSize: 10,),
-                            //         ),// Adjust bar width
-                            //         ),
-                            //         // Profit Data Series (Blue bars)
-                            //         ColumnSeries<MonthProfitData, String>(
-                            //           name: 'Profit',
-                            //           dataSource: profitDataForChart,
-                            //           xValueMapper: (MonthProfitData data, _) => data.month,
-                            //           yValueMapper: (MonthProfitData data, _) => data.profit,
-                            //           color: Colors.orange,  // Blue color for profit bars
-                            //           width: 0.8,
-                            //           dataLabelSettings: DataLabelSettings(isVisible: true,
-                            //             textStyle: TextStyle(fontSize: 10,),
-                            //           ),
-                            //         ),
-                            //       ],
-                            //     ),
-                            //   ),
-                            // ),
+                          // Row(
+                          //   mainAxisAlignment: MainAxisAlignment.start,  // Align items to the left
+                          //   children: [
+                          //     Icon(
+                          //       Icons.auto_graph,
+                          //       size: 22,
+                          //       color: Colors.black54,
+                          //     ),
+                          //     SizedBox(width: 8),  // Add space between icon and text
+                          //     Text(
+                          //       "Revenue Vs Expense",
+                          //       style: Styling.bodyTitleBigBoldExp,
+                          //       textScaler: TextScaler.noScaling,
+                          //     ),
+                          //     Spacer(),  // Push the dropdown to the far right
+                          //     SizedBox(
+                          //       width: 140,  // Control the width of the dropdown
+                          //       child: DropdownButton<String>(
+                          //         value: selectedRegReceived ?? "This Year",
+                          //         items: regReceived.map((transMode) {
+                          //           return DropdownMenuItem<String>(
+                          //             value: transMode,
+                          //             child: Text(
+                          //               transMode,
+                          //               style: Styling.itemBlackTestOne,
+                          //               textScaler: TextScaler.noScaling,
+                          //             ),
+                          //           );
+                          //         }).toList(),
+                          //         onChanged: (value) {
+                          //           setState(() {
+                          //             selectedRegReceived = value;
+                          //             grossExpenseModel.clear();
+                          //             grossProfitModel.clear();
+                          //           });
+                          //           if (selectedRegReceived == "This Year") {
+                          //             getDashboardData("FINYEAR");
+                          //           } else if (selectedRegReceived == "Prev Year") {
+                          //             getDashboardData("PREFINYEAR");
+                          //           }
+                          //         },
+                          //         isExpanded: true,
+                          //       ),
+                          //     ),
+                          //   ],
+                          // ),
+                          //  SizedBox(height: 20,),
                           Row(
                             children: [
                               Padding(
@@ -556,14 +601,13 @@ class _ExpensesScreenUIState extends  State<ExpensesScreenUI>{
                                           dataSource: expenseDataForChart,
                                           xValueMapper: (MonthProfitData data, _) => data.month,
                                           yValueMapper: (MonthProfitData data, _) => data.profit,
-                                          color: Color(0xFF1271b5),
+                                          color: Colors.blue,
                                           width: 0.5,
                                           dataLabelSettings: DataLabelSettings(
                                             isVisible: false,  // Hide data label on the bars
                                           ),
                                         ),
 
-// Profit Data Series
                                         ColumnSeries<MonthProfitData, String>(
                                           name: 'Profit',
                                           dataSource: profitDataForChart,

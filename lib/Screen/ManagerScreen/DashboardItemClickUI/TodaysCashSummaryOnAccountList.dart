@@ -152,6 +152,8 @@ class _TodaysCashSummaryOnAccountListState extends State<TodaysCashSummaryOnAcco
     Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        surfaceTintColor: Color(0xFFECEFFF),
+        backgroundColor: Color(0xFFECEFFF),
         flexibleSpace: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 0),
@@ -164,7 +166,7 @@ class _TodaysCashSummaryOnAccountListState extends State<TodaysCashSummaryOnAcco
                     Row(
                       children: [
                         IconButton(
-                          icon: const Icon(Icons.arrow_back, color: Colors.white),
+                          icon: const Icon(Icons.arrow_back, color: Colors.black),
                           onPressed: () {
                             Navigator.pushNamed(context, BottomNavBarExample.screenName);
                           },
@@ -175,11 +177,11 @@ class _TodaysCashSummaryOnAccountListState extends State<TodaysCashSummaryOnAcco
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text('Staff Ledger',
-                                style: TextStyle(fontSize: 14, color: Colors.white),
+                                style: TextStyle(fontSize: 14, color: Colors.black),
                               ),
                               Text(
                                 'Count: $cashsummary',
-                                style: TextStyle(fontSize: 12, color: Colors.white),
+                                style: TextStyle(fontSize: 12, color: Colors.black),
                               ),
                             ],
                           ),

@@ -47,6 +47,8 @@ class _ImbalanceCountClickUIState extends State<ImbalanceCountClickUI> {
       appBar:
       AppBar(
         automaticallyImplyLeading: false,
+        surfaceTintColor: Color(0xFFECEFFF),
+        backgroundColor: Color(0xFFECEFFF),
         flexibleSpace: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 0.0),
@@ -56,7 +58,7 @@ class _ImbalanceCountClickUIState extends State<ImbalanceCountClickUI> {
                 Row(
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                      icon: const Icon(Icons.arrow_back, color: Colors.black),
                       onPressed: () {
                         Navigator.pop(context);
                       },
@@ -65,7 +67,7 @@ class _ImbalanceCountClickUIState extends State<ImbalanceCountClickUI> {
                       "Current Imbalance Stock",
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.white,
+                        color: Colors.black,
                       ),
                     ),
                   ],

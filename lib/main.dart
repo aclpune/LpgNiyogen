@@ -46,6 +46,7 @@ import 'Screen/ManagerScreen/DashboardItemClickUI/RefillProfitDetailScreenUi.dar
 import 'Screen/ManagerScreen/DashboardItemClickUI/SVProfitdetailScreenUi.dart';
 import 'Screen/ManagerScreen/DashboardItemClickUI/TodaysCashSummaryOnAccountList.dart';
 import 'Screen/ManagerScreen/DashboardItemClickUI/UnsettledSaleDetailList.dart';
+import 'Screen/ManagerScreen/DashboardItemClickUI/VendorPaymentDetailListUI.dart';
 import 'Screen/ManagerScreen/DeliveryBoyWiseListShow.dart';
 import 'Screen/ManagerScreen/ExpensesScreen/ExpensesScreenUI.dart';
 import 'Screen/ManagerScreen/ExpensesScreen/SalesComparisonScreen.dart';
@@ -235,6 +236,7 @@ class MyApp extends StatelessWidget {
             PrepaidBookingAndSettlementGraphScreen.screenName: (context) => PrepaidBookingAndSettlementGraphScreen(),
             SalesComparisonScreen.screenName: (context) => SalesComparisonScreen(),
             ExpensesScreenUI.screenName: (context) => ExpensesScreenUI(),
+            VendorPaymentDetailListUI.screenName: (context) => VendorPaymentDetailListUI(),
 
             //ManagerCashInHandScreenDetails.screenName: (context) => ManagerCashInHandScreenDetails(),
 

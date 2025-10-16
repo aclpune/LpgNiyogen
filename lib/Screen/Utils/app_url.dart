@@ -191,6 +191,11 @@ class AppUrl {
   static const String GetDashboardFYGrossExpenseDtls_Mob = '$baseUrl/Dashboard/GetDashboardFYGrossExpenseDtls_Mob';
   static const String GetDashboardFYGrossProfitDtls_Mob = '$baseUrl/Dashboard/GetDashboardFYGrossProfitDtls_Mob';
   static const String GetTopFiveCreditors = '$baseUrl/Dashboard/GetTopFiveCreditors';
+  static const String GetVendorDuePaymentList = '$baseUrl/Reports/GetVendorDuePaymentList';
+
+  static const String GetDashSummaryItemWiseForMgr = '$baseUrl/Dashboard/GetDashSummaryItemWiseForMgr';
+  static const String GetDashSummaryAllCountForMgr = '$baseUrl/Dashboard/GetDashSummaryAllCountForMgr';
+  static const String GetDashSummarySettAllCountForMgr = '$baseUrl/Dashboard/GetDashSummarySettAllCountForMgr';
 }
 
 

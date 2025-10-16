@@ -151,6 +151,8 @@ class _DashboardPostPaidVerifPendDetails extends State<DashboardPostPaidVerifPen
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        surfaceTintColor: Color(0xFFECEFFF),
+        backgroundColor: Color(0xFFECEFFF),
         flexibleSpace: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -160,7 +162,7 @@ class _DashboardPostPaidVerifPendDetails extends State<DashboardPostPaidVerifPen
                 Row(
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                      icon: const Icon(Icons.arrow_back, color: Colors.black),
                       onPressed: () {
                         Navigator.pop(context);
                       },
@@ -171,11 +173,11 @@ class _DashboardPostPaidVerifPendDetails extends State<DashboardPostPaidVerifPen
                         crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text('Postpaid Verification',
-                              style: TextStyle(fontSize: 14, color: Colors.white),
+                              style: TextStyle(fontSize: 14, color: Colors.black),
                             ),
                             Text(
                               'Count: $postCount',
-                              style: TextStyle(fontSize: 12, color: Colors.white),
+                              style: TextStyle(fontSize: 12, color: Colors.black),
                             ),
                           ],
                         ),

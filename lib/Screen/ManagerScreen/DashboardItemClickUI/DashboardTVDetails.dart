@@ -134,6 +134,8 @@ class _DashboardTVDetails extends State<DashboardTVDetails>{
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        surfaceTintColor: Color(0xFFECEFFF),
+        backgroundColor: Color(0xFFECEFFF),
         flexibleSpace: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -143,7 +145,7 @@ class _DashboardTVDetails extends State<DashboardTVDetails>{
                 Row(
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                      icon: const Icon(Icons.arrow_back, color: Colors.black),
                       onPressed: () {
                         Navigator.pop(context);
                       },
@@ -154,11 +156,11 @@ class _DashboardTVDetails extends State<DashboardTVDetails>{
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('TV Stock Movement',
-                            style: TextStyle(fontSize: 14, color: Colors.white),
+                            style: TextStyle(fontSize: 14, color: Colors.black),
                           ),
                           Text(
                             'Count: $tvCount',
-                            style: TextStyle(fontSize: 12, color: Colors.white),
+                            style: TextStyle(fontSize: 12, color: Colors.black),
                           ),
                         ],
                       ),

@@ -105,13 +105,15 @@ class _DashboardUndocumentedDetails extends State<DashboardUndocumentedDetails>{
       appBar:
       AppBar(
         automaticallyImplyLeading: false,
+        surfaceTintColor: Color(0xFFECEFFF),
+        backgroundColor: Color(0xFFECEFFF),
         flexibleSpace: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
             child: Row(
               children: [
                 IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  icon: const Icon(Icons.arrow_back, color: Colors.black),
                   onPressed: () {
                    // Navigator.pop(context);
                     Navigator.pushNamed(context, BottomNavBarExample.screenName);
@@ -125,7 +127,7 @@ class _DashboardUndocumentedDetails extends State<DashboardUndocumentedDetails>{
                     children: [
                       Text(
                         'Undocumented SV',
-                        style: TextStyle(fontSize: 14, color: Colors.white),
+                        style: TextStyle(fontSize: 14, color: Colors.black),
                       ),
                       SizedBox(height: 4),
                       Row(
@@ -133,13 +135,13 @@ class _DashboardUndocumentedDetails extends State<DashboardUndocumentedDetails>{
                           Expanded(
                             child: Text(
                               'Total: ${formatCurrency(totalAmount!)}',
-                              style: TextStyle(fontSize: 14, color: Colors.white),
+                              style: TextStyle(fontSize: 14, color: Colors.black),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           Text(
                             'Count: $itemCount',
-                            style: TextStyle(fontSize: 14, color: Colors.white),
+                            style: TextStyle(fontSize: 14, color: Colors.black),
                           ),
                         ],
                       ),

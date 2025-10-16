@@ -207,6 +207,8 @@ class _DashboardPrepaidDetailsState extends State<DashboardPrepaidDetails> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        surfaceTintColor: Color(0xFFECEFFF),
+        backgroundColor: Color(0xFFECEFFF),
         flexibleSpace: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 0.0),
@@ -216,7 +218,7 @@ class _DashboardPrepaidDetailsState extends State<DashboardPrepaidDetails> {
                 Row(
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                      icon: const Icon(Icons.arrow_back, color: Colors.black),
                       onPressed: () {
                         Navigator.pop(context);
                       },
@@ -230,7 +232,7 @@ class _DashboardPrepaidDetailsState extends State<DashboardPrepaidDetails> {
                             _getDisplayText(flag?? ''),
                             style: TextStyle(
                               fontSize: 16,
-                              color: Colors.white,
+                              color: Colors.black,
                             ),
                           ),
                           Text(
@@ -242,7 +244,7 @@ class _DashboardPrepaidDetailsState extends State<DashboardPrepaidDetails> {
                                 || flag == "OldBkgPendNewBkgRecv")
                                 ? 'List Count: $preCount'
                                 : 'List Count: $punchCount',
-                            style: const TextStyle(fontSize: 16, color: Colors.white),
+                            style: const TextStyle(fontSize: 16, color: Colors.black),
                           ),
                         ],
                       ),

@@ -143,6 +143,8 @@ class _DashboardSVDetails extends State<DashboardSVDetails>{
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        surfaceTintColor: Color(0xFFECEFFF),
+        backgroundColor: Color(0xFFECEFFF),
         flexibleSpace: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -152,7 +154,7 @@ class _DashboardSVDetails extends State<DashboardSVDetails>{
                 Row(
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                      icon: const Icon(Icons.arrow_back, color: Colors.black),
                       onPressed: () {
                         Navigator.pop(context);
                       },
@@ -163,11 +165,11 @@ class _DashboardSVDetails extends State<DashboardSVDetails>{
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text('SV Stock Movement',
-                            style: TextStyle(fontSize: 14, color: Colors.white),
+                            style: TextStyle(fontSize: 14, color: Colors.black),
                           ),
                           Text(
                             'Count: $svCount',
-                            style: TextStyle(fontSize: 12, color: Colors.white),
+                            style: TextStyle(fontSize: 12, color: Colors.black),
                           ),
                         ],
                       ),
