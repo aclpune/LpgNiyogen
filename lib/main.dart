@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:provider/provider.dart';
@@ -62,6 +63,7 @@ import 'Screen/ManagerScreen/SVSaleReportScreen.dart';
 import 'Screen/ManagerScreen/SalaryPaymentScreen/SalaryPaymentScreen.dart';
 import 'Screen/ManagerScreen/TVSaleScreen/TVSalesScreen.dart';
 import 'Screen/ManagerScreen/UpdatePaymentsScreen/UpdatePaymentScreen.dart';
+import 'Screen/PushNotification/NotificationService.dart';
 import 'Screen/UndocumentedSVDash/DashboardUndocumentedDetails.dart';
 import 'Screen/User/Login/Screen/MyLogin.dart';
 import 'Screen/User/Login/Screen/VerifyOTP.dart';
@@ -78,18 +80,35 @@ class MyHttpOverrides extends HttpOverrides {
     //todo check proper solution for ssl certificate for production mode
   }
 }
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(
+    RemoteMessage message) async {
+  await Firebase.initializeApp();
+  if (message.notification != null) {
+    await NotificationService.showNotification(
+      message.notification!.title ?? 'Notification',
+      message.notification!.body ?? '',
+    );
+  }
+  print('Background message received: ${message.messageId}');
+}
 
 void main() async{
   /// Http ssl certificate...
   HttpOverrides.global = MyHttpOverrides();
   try{
     WidgetsFlutterBinding.ensureInitialized();
-    if(Platform.isAndroid){
-      await Firebase.initializeApp();
-      debugPrint("Firebase initialize");
-    }else{
-      debugPrint("Firebase not initialize");
-    }
+    await Firebase.initializeApp();
+
+    FirebaseMessaging.onBackgroundMessage(
+        firebaseMessagingBackgroundHandler);
+    // if(Platform.isAndroid){
+    //   await Firebase.initializeApp();
+    //
+    //   debugPrint("Firebase initialize");
+    // }else{
+    //   debugPrint("Firebase not initialize");
+    // }
   }catch(e){
     debugPrint("Firebase not initialize");
   }

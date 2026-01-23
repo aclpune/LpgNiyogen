@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +13,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../ConstantScreen/widgets.dart';
 import '../IOSVersionUpdateService.dart';
+import '../PushNotification/NotificationApiHelper.dart';
+import '../PushNotification/NotificationService.dart';
 import '../UndocumentedSVDash/DashboardUndocumentedDetails.dart';
 import '../User/Login/provider/LoginProvider.dart';
 import '../User/splashscreen/page/splash_screen.dart';
@@ -158,11 +161,18 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
       return value.floor().toString();
     }
   }
-
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
   @override
   void initState() {
     super.initState();
     getUserDetail();
+    NotificationService.init();
+    requestNotificationPermission();
+    getFcmToken();
+    listenForegroundMessages();
+
+    // Send token to backend
+    NotificationApiHelper.sendTokenToBackend();
     if (Platform.isAndroid) {
       UpdateService.checkForUpdate(context);
       debugPrint("Firebase initialize Dash${Platform}");
@@ -5702,6 +5712,50 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
     } catch (error) {
       rethrow;
     }
+  }
+
+  Future<void> requestNotificationPermission() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    await messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+  }
+
+  Future<void> getFcmToken() async {
+    String? token = await messaging.getToken();
+    print("FCM Token: $token");
+
+    // Send token to backend API
+  }
+
+  // void listenForegroundMessages() {
+  //   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+  //     if (message.notification != null) {
+  //       showNotification(
+  //         message.notification!.title!,
+  //         message.notification!.body!,
+  //       );
+  //     }
+  //   });
+  // }
+  void listenForegroundMessages() {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      // Check if the message contains a notification
+      if (message.notification != null) {
+        NotificationService.showNotification(
+          message.notification!.title ?? 'Notification',
+          message.notification!.body ?? '',
+        );
+      }
+
+      // Optional: handle data messages as well
+      if (message.data.isNotEmpty) {
+        debugPrint('Foreground data message: ${message.data}');
+      }
+    });
   }
 
 }

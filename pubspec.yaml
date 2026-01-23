@@ -55,7 +55,7 @@ dependencies:
   syncfusion_flutter_charts: ^31.1.21
   pdf: ^3.6.0 # To generate PDF
   printing: ^5.8.0 # To print or save the PDF
-
+  flutter_local_notifications: ^17.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
