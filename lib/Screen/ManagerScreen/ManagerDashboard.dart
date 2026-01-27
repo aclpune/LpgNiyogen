@@ -167,18 +167,23 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
     super.initState();
     getUserDetail();
     NotificationService.init();
-    requestNotificationPermission();
-    getFcmToken();
+
+
+    FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+      alert: false,
+      badge: false,
+      sound: false,
+    );
     listenForegroundMessages();
 
-    // Send token to backend
-    NotificationApiHelper.sendTokenToBackend();
+    setupNotifications(); // ✅ async flow
     if (Platform.isAndroid) {
       UpdateService.checkForUpdate(context);
       debugPrint("Firebase initialize Dash${Platform}");
     } else {
       IosVersionUpdateCheck().checkForUpdate(context);
-      debugPrint("Firebase not initialize");
+
     }
     debugPrint("ManagerDashboardScreen: initState called");
     // fetchDashboarDetail();
@@ -5726,7 +5731,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
 
   Future<void> getFcmToken() async {
     String? token = await messaging.getToken();
-    print("FCM Token: $token");
+    print("Firebase not initialize Token: $token");
 
     // Send token to backend API
   }
@@ -5755,6 +5760,102 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
       if (message.data.isNotEmpty) {
         debugPrint('Foreground data message: ${message.data}');
       }
+    });
+  }
+
+  // Future<void> _setupNotifications() async {
+  //   await requestNotificationPermission();
+  //
+  //   // iOS ONLY: wait for APNS token
+  //   String? apnsToken =
+  //   await FirebaseMessaging.instance.getAPNSToken();
+  //
+  //   if (apnsToken == null) {
+  //     // Wait a bit and retry (iOS needs time)
+  //     await Future.delayed(const Duration(seconds: 2));
+  //     apnsToken =
+  //     await FirebaseMessaging.instance.getAPNSToken();
+  //   }
+  //
+  //   // if (apnsToken == null) {
+  //   //   debugPrint('APNS token still not available');
+  //   //   return;
+  //   // }
+  //
+  //   // Now it's safe
+  //   await getFcmToken();
+  //
+  //   // Send token AFTER it exists
+  //   NotificationApiHelper.sendTokenToBackend();
+  // }
+  // Future<void> setupNotifications() async {
+  //   FirebaseMessaging messaging = FirebaseMessaging.instance;
+  //
+  //   // Request permission
+  //   NotificationSettings settings = await messaging.requestPermission(
+  //     alert: true,
+  //     badge: true,
+  //     sound: true,
+  //   );
+  //
+  //   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+  //     print('User granted permission');
+  //
+  //     // Wait a moment for APNs token to be registered
+  //     await Future.delayed(Duration(seconds: 1));
+  //
+  //     String? token = await messaging.getToken();
+  //     if (token != null) {
+  //       print('FCM Token: $token');
+  //       // send token to your backend
+  //     } else {
+  //       print('APNs token not ready yet.');
+  //     }
+  //   } else {
+  //     print('User denied notification permission');
+  //   }
+  // }
+
+  Future<void> setupNotifications() async {
+    final messaging = FirebaseMessaging.instance;
+
+    // 1️⃣ Request permission (iOS + Android safe)
+    await messaging.requestPermission(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+
+    // 2️⃣ iOS: wait until APNS token is ready
+    if (Platform.isIOS) {
+      String? apnsToken;
+      int retry = 0;
+
+      while (apnsToken == null && retry < 5) {
+        apnsToken = await messaging.getAPNSToken();
+        retry++;
+        await Future.delayed(const Duration(seconds: 1));
+      }
+
+      if (apnsToken == null) {
+        debugPrint("❌ APNS token not available");
+        return;
+      }
+
+      debugPrint("✅ APNS token ready");
+    }
+
+    // 3️⃣ Now it's safe to get FCM token
+    final fcmToken = await messaging.getToken();
+    debugPrint("✅ FCM Token: $fcmToken");
+
+    if (fcmToken != null) {
+      await NotificationApiHelper.sendTokenToBackend();
+    }
+
+    // 4️⃣ Optional: listen for token refresh
+    FirebaseMessaging.instance.onTokenRefresh.listen((token) {
+      NotificationApiHelper.sendTokenToBackend();
     });
   }
 

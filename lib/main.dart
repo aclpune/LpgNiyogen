@@ -110,7 +110,7 @@ void main() async{
     //   debugPrint("Firebase not initialize");
     // }
   }catch(e){
-    debugPrint("Firebase not initialize");
+    debugPrint("Firebase not initialize${e.toString()}");
   }
   runApp(
       const MyApp()
