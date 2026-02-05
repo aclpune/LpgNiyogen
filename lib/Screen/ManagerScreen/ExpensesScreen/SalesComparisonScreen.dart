@@ -78,7 +78,7 @@ class _SalesComparisonScreenState extends State<SalesComparisonScreen> {
                             },
                           ),
                           Text(
-                            "Sales Comparion",
+                            "Sales Comparison",
                             style: TextStyle(fontSize: 18, color: Colors.black),
 
                           ),

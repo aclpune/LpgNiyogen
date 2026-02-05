@@ -1012,17 +1012,19 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
     final DateTime now = DateTime.now();
     String formattedDate = DateFormat('yyyy-MM-dd').format(now);
     double hvrBnkDepAmt = 0;
-    if(depositController.text.isNotEmpty){
-      hvrBnkDepAmt = double.parse(depositController.text);
-      if(totalAmount != null){
-        if(totalAmount != hvrBnkDepAmt){
-          showFlushBar(context, Constants.cashHandOverDeno);
-          return;
-        }
-      }
-    }else{
-      showFlushBar(context, Constants.cashAmount);
-    }
+    // if(depositController.text.isNotEmpty){
+    //   hvrBnkDepAmt = double.parse(depositController.text);
+    //   if(totalAmount != null){
+    //     if(totalAmount != hvrBnkDepAmt){
+    //       showFlushBar(context, Constants.cashHandOverDeno);
+    //       return;
+    //     }
+    //   }
+    // }else{
+    //   showFlushBar(context, Constants.cashAmount);
+    // }
+
+
 
     if((_selectedItem == null || selectedItemId == null) && (selectedBankName == null || selectedBankId == null)){
       showFlushBar(context, Constants.selectValidItemReceipt);
@@ -1034,6 +1036,32 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
         showFlushBar(context, Constants.selectValidItemReceipt);
         return;
       }
+    }
+
+    if (cashDenominationMandatory) {
+      if (depositController.text.isEmpty) {
+        showFlushBar(context, Constants.cashAmount);
+        return;
+      }
+
+      hvrBnkDepAmt = double.parse(depositController.text);
+
+      if (totalAmount == null || totalAmount <= 0) {
+        showFlushBar(context, Constants.cashDenominationIsMandatory);
+        return;
+      }
+
+      if (totalAmount != hvrBnkDepAmt) {
+        showFlushBar(context, Constants.cashHandOverDeno);
+        return;
+      }
+    } else {
+      // Bank / BRANCH → denomination NOT mandatory
+      if (depositController.text.isEmpty) {
+        showFlushBar(context, Constants.cashAmount);
+        return;
+      }
+      hvrBnkDepAmt = double.parse(depositController.text);
     }
 
     final List<Map<String, dynamic>> dataCashDenomination = getNoteTypeAndIdFroDenominationListModel.asMap().entries.map((entry) {
@@ -1064,6 +1092,9 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
         return;
       }
     }
+
+
+
 
     int? bankId;
     int? accMappingIds;
@@ -1132,6 +1163,151 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
     //   print("Exception UpdateSaleAddEditForMob: $e");
     // }
   }
+
+  // Future<void> updateCashAddEditForMob() async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //
+  //   String? distributorId = prefs.getString('DistributorId');
+  //   String? bearerToken = prefs.getString('token');
+  //   String? addedBy = prefs.getString('StaffId');
+  //   String? userId = prefs.getString("UserId");
+  //
+  //   int distributorIds = int.parse(distributorId!);
+  //   int addedBys = int.parse(addedBy!);
+  //
+  //   final DateTime now = DateTime.now();
+  //   String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+  //
+  //   double hvrBnkDepAmt = 0.0;
+  //
+  //   // ===================== BASIC SELECTION VALIDATION =====================
+  //
+  //   if ((_selectedItem == null || selectedItemId == null) &&
+  //       (selectedBankName == null || selectedBankId == null)) {
+  //     showFlushBar(context, Constants.selectValidItemReceipt);
+  //     return;
+  //   }
+  //
+  //   if (selectedBankName != null || selectedBankId != null) {
+  //     if (selectedTransMode == null) {
+  //       showFlushBar(context, Constants.selectValidItemReceipt);
+  //       return;
+  //     }
+  //   }
+  //
+  //   // ===================== DENOMINATION VALIDATION =====================
+  //
+  //   if (cashDenominationMandatory) {
+  //     if (depositController.text.isEmpty) {
+  //       showFlushBar(context, Constants.cashAmount);
+  //       return;
+  //     }
+  //
+  //     hvrBnkDepAmt = double.parse(depositController.text);
+  //
+  //     if (totalAmount == null || totalAmount <= 0) {
+  //       showFlushBar(context, Constants.cashDenominationIsMandatory);
+  //       return;
+  //     }
+  //
+  //     if (totalAmount != hvrBnkDepAmt) {
+  //       showFlushBar(context, Constants.cashHandOverDeno);
+  //       return;
+  //     }
+  //   } else {
+  //     // Bank / BRANCH → denomination NOT mandatory
+  //     if (depositController.text.isEmpty) {
+  //       showFlushBar(context, Constants.cashAmount);
+  //       return;
+  //     }
+  //     hvrBnkDepAmt = double.parse(depositController.text);
+  //   }
+  //
+  //   // ===================== DENOMINATION DATA =====================
+  //
+  //   final List<Map<String, dynamic>> dataCashDenomination =
+  //   getNoteTypeAndIdFroDenominationListModel
+  //       .asMap()
+  //       .entries
+  //       .map((entry) {
+  //     int index = entry.key;
+  //     var data = entry.value;
+  //
+  //     return {
+  //       "NoteId": data.id ?? 0,
+  //       "NoteQty": qtyController[index].text.isNotEmpty
+  //           ? int.tryParse(qtyController[index].text)
+  //           : 0,
+  //       "NoteAmt": amounts[index],
+  //       "RetNoteQty": 0,
+  //       "RetNoteAmt": 0.0,
+  //     };
+  //   }).toList();
+  //
+  //   // ===================== BANK DETAILS =====================
+  //
+  //   int? bankId = selectedBankName != null ? selecteBankIDApi : 0;
+  //   int? accMappingIds = selectedBankName != null ? accMappingId : 0;
+  //
+  //   // ===================== REQUEST BODY =====================
+  //
+  //   final Map<String, dynamic> requestBody = {
+  //     "HvrBnkDepId": 0,
+  //     "DistributorId": distributorIds,
+  //     "HvrBnkDepDate": formattedDate,
+  //     "HvrBnkDepFrom": userId,
+  //     "CashInHand": totalamt,
+  //     "HandoverToId": selectedItemId,
+  //     "BankId": bankId,
+  //     "AccMappingId": accMappingIds,
+  //     "HvrBnkDepAmt": hvrBnkDepAmt,
+  //     "BalAmt": remainingAmount,
+  //     "DepositMode": selectedTransMode ?? '',
+  //     "HandoverStatus": 2,
+  //     "AddedBy": userId,
+  //     "UpdatedFrom": 'MOB',
+  //     "DenomDtList": dataCashDenomination,
+  //   };
+  //
+  //   debugPrint("DepositCashAddEdit Request: $requestBody");
+  //
+  //   // ===================== API CALL =====================
+  //
+  //   final response = await http.post(
+  //     Uri.parse(AppUrl.DepositCashAddEdit),
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       "Authorization": "Bearer $bearerToken",
+  //     },
+  //     body: json.encode(requestBody),
+  //   );
+  //
+  //   // ===================== RESPONSE HANDLING =====================
+  //
+  //   if (response.statusCode == 200) {
+  //     debugPrint("DepositCashAddEdit Success: ${response.body}");
+  //
+  //     Navigator.pushNamed(
+  //       context,
+  //       BottomNavBarExample.screenName,
+  //       arguments: 3,
+  //     );
+  //
+  //     EasyLoading.showToast(
+  //       Constants.expenseSendMgr,
+  //       duration: const Duration(milliseconds: 3000),
+  //     );
+  //
+  //     setState(() {
+  //       fetchStaffList(selectedDate);
+  //     });
+  //   } else {
+  //     debugPrint(
+  //         "DepositCashAddEdit Error: ${response.statusCode} - ${response.body}");
+  //   }
+  // }
+
+
   Future<void> checkAndSaveDayEndData() async {
     EasyLoading.instance
       ..maskType = EasyLoadingMaskType.black // This creates a modal blocking interaction

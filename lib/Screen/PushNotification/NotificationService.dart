@@ -1,3 +1,160 @@
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:flutter/cupertino.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
+//
+// class NotificationService {
+//   static final FlutterLocalNotificationsPlugin _notificationsPlugin =
+//   FlutterLocalNotificationsPlugin();
+//
+//   /// =========================
+//   /// Initialization
+//   /// =========================
+//   static Future<void> init() async {
+//     const AndroidInitializationSettings androidSettings =
+//     AndroidInitializationSettings('@mipmap/ic_launcher');
+//
+//     final DarwinInitializationSettings iosSettings =
+//     DarwinInitializationSettings(
+//       requestAlertPermission: true,
+//       requestBadgePermission: true,
+//       requestSoundPermission: true,
+//       onDidReceiveLocalNotification: _onDidReceiveLocalNotification,
+//     );
+//
+//     final InitializationSettings settings = InitializationSettings(
+//       android: androidSettings,
+//       iOS: iosSettings,
+//     );
+//
+//     await _notificationsPlugin.initialize(
+//       settings,
+//       onDidReceiveNotificationResponse: _onNotificationTap,
+//     );
+//   }
+//
+//   /// =========================
+//   /// Show Notification
+//   /// =========================
+//   // static Future<void> showNotification(
+//   //     String title,
+//   //     String body, {
+//   //       required bool playSound,
+//   //     }) async {
+//   //   final AndroidNotificationDetails androidDetails =
+//   //   AndroidNotificationDetails(
+//   //     'file_import_channel',
+//   //     'File Import Status',
+//   //     channelDescription: 'Notification for file import status',
+//   //     importance: Importance.max,
+//   //     priority: Priority.high,
+//   //     playSound: playSound,
+//   //     sound: playSound
+//   //         ? const RawResourceAndroidNotificationSound('notification')
+//   //         : null,
+//   //   );
+//   //
+//   //   final DarwinNotificationDetails iosDetails =
+//   //   DarwinNotificationDetails(
+//   //     presentAlert: true,
+//   //     presentBadge: true,
+//   //     presentSound: playSound,
+//   //   );
+//   //
+//   //   final NotificationDetails details = NotificationDetails(
+//   //     android: androidDetails,
+//   //     iOS: iosDetails,
+//   //   );
+//   //
+//   //   await _notificationsPlugin.show(
+//   //     DateTime.now().millisecondsSinceEpoch ~/ 1000,
+//   //     title,
+//   //     body,
+//   //     details,
+//   //   );
+//   // }
+//
+//   static Future<void> showNotification(
+//       String title,
+//       String body,
+//       ) async {
+//     final bool playSound = await canPlaySound();
+//
+//     final AndroidNotificationDetails androidDetails =
+//     AndroidNotificationDetails(
+//       'file_import_channel',
+//       'File Import Status',
+//       channelDescription: 'Notification for file import status',
+//       importance: Importance.max,
+//       priority: Priority.high,
+//       playSound: playSound,
+//       sound: playSound
+//           ? const RawResourceAndroidNotificationSound('notification')
+//           : null,
+//     );
+//
+//     final DarwinNotificationDetails iosDetails =
+//     DarwinNotificationDetails(
+//       presentAlert: true,
+//       presentBadge: true,
+//       presentSound: playSound,
+//     );
+//
+//     final NotificationDetails details = NotificationDetails(
+//       android: androidDetails,
+//       iOS: iosDetails,
+//     );
+//
+//     await _notificationsPlugin.show(
+//       DateTime.now().millisecondsSinceEpoch ~/ 1000,
+//       title,
+//       body,
+//       details,
+//     );
+//
+//     /// 🔑 Mark sound as played AFTER first notification
+//     if (playSound) {
+//       await markSoundPlayed();
+//     }
+//   }
+//
+//
+//   /// =========================
+//   /// Sound Control Helpers
+//   /// =========================
+//   static Future<bool> canPlaySound() async {
+//     final prefs = await SharedPreferences.getInstance();
+//     return !(prefs.getBool('soundPlayed') ?? false);
+//   }
+//
+//   static Future<void> markSoundPlayed() async {
+//     final prefs = await SharedPreferences.getInstance();
+//     await prefs.setBool('soundPlayed', true);
+//   }
+//
+//   static Future<void> resetSoundFlag() async {
+//     final prefs = await SharedPreferences.getInstance();
+//     await prefs.setBool('soundPlayed', false);
+//   }
+//
+//   /// =========================
+//   /// Notification Callbacks
+//   /// =========================
+//   static void _onNotificationTap(NotificationResponse response) async {
+//     debugPrint('Notification tapped');
+//     await resetSoundFlag(); // 🔑 allow next notification sound
+//   }
+//
+//   static void _onDidReceiveLocalNotification(
+//       int id,
+//       String? title,
+//       String? body,
+//       String? payload,
+//       ) {
+//     debugPrint('iOS < 10 notification: $title - $body');
+//   }
+// }
+
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/cupertino.dart';
 

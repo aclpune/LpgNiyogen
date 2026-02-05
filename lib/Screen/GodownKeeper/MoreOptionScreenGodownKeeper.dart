@@ -1,8 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../User/splashscreen/page/splash_screen.dart';
 import '../Utils/Styling.dart';
+import '../Utils/app_url.dart';
 import '../Utils/shared_preference.dart';
 import 'ItemReceipt/AddItem/ItemReceiptScreen.dart';
 import 'ItemReceipt/ItemReturn/ItenRetun.dart';
@@ -366,11 +373,47 @@ class _MoreOptionScreenGodownKeeperState
     );
   }
 
+  // Future<void> logoutUser(BuildContext context) async {
+  //   ///Save data before logout logic
+  //   EasyLoading.show(status: 'Loading...');
+  //
+  //   try {
+  //     SharedPref().removeUser();
+  //
+  //     // try {
+  //     //   if (Platform.isAndroid) {
+  //     //     await FirebaseMessaging.instance
+  //     //         .deleteToken()
+  //     //         .whenComplete(() => debugPrint("Android FCM Token Deleted"));
+  //     //   } else if (Platform.isIOS) {
+  //     //     await FirebaseMessaging.instance
+  //     //         .deleteToken()
+  //     //         .whenComplete(() => debugPrint("iOS FCM Token Deleted"));
+  //     //   }
+  //     // } on PlatformException {
+  //     //   debugPrint('###PlatformExc');
+  //     // }
+  //
+  //     EasyLoading.dismiss();
+  //
+  //     Navigator.pushNamedAndRemoveUntil(
+  //         context, SplashScreen.screenName, (r) => false);
+  //
+  //     debugPrint("Logout Successful");
+  //   } catch (error) {
+  //     EasyLoading.dismiss();
+  //     debugPrint("LogoutPrefEcx: $error");
+  //   }
+  // }
+
   Future<void> logoutUser(BuildContext context) async {
     ///Save data before logout logic
     EasyLoading.show(status: 'Loading...');
 
     try {
+
+      sendPostRequest(0);
+
       SharedPref().removeUser();
 
       // try {
@@ -396,6 +439,80 @@ class _MoreOptionScreenGodownKeeperState
     } catch (error) {
       EasyLoading.dismiss();
       debugPrint("LogoutPrefEcx: $error");
+    }
+  }
+
+  Future<void> sendPostRequest(int flag) async {
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? distributorId = prefs.getString('DistributorId');
+    String? bearerToken = prefs.getString('token');
+    String? staffId = prefs.getString('StaffId');
+    String? userId = prefs.getString("UserId");
+    String? roleId = prefs.getString('roleId');
+    String? mobileNoStr = prefs.getString('MobileNo');
+    final DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+
+    // Fetch app version
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    String versionNo = packageInfo.version; // Get app version number
+
+    // Debug output
+    debugPrint('versionNo: $versionNo');
+    debugPrint('distributorId: $distributorId');
+    debugPrint('staffId: $staffId');
+    debugPrint('activatedOn: $formattedDate');
+    debugPrint('mobileNo: $mobileNoStr');
+
+    int distributorIdd = int.tryParse(distributorId ?? '') ?? 0;
+    int staffIdd = int.tryParse(staffId ?? '') ?? 0;
+    int mobileNo = int.tryParse(mobileNoStr ?? '') ?? 0;
+
+
+    final Map<String, dynamic> requestBody =
+    {
+      "VersionNo":versionNo,
+      "DistributorId":distributorIdd,
+      "StaffId":staffIdd,
+      "ActivatedOn":formattedDate,
+      "IsActive":flag,
+      "RoleId":roleId,
+      "MobileNo":mobileNo
+
+    };
+
+    print("MobileStaffwiseVersionAdd: ${requestBody}");
+    requestBody.forEach((key, value) {
+      print('$key: $value');
+    });
+    // try {
+    final response = await http.post(
+      Uri.parse('${AppUrl.MobileStaffwiseVersionAdd}'),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $bearerToken",
+      },
+      body: json.encode(requestBody),
+    );
+    print(
+        "requestBody MobileStaffwiseVersionAdd: ${response.statusCode} - ${response.request}${requestBody}");
+
+    print("Response Status Code: ${response.statusCode}");
+    if (response.statusCode == 200) {
+      if (response.body == '0') {
+        // Show a user-friendly error if the response body is 0
+        EasyLoading.showToast("Something went wrong. Please try again.", duration: const Duration(milliseconds: 3000));
+        print("Error: Response returned 0");
+      } else {
+
+        print("Response MobileStaffwiseVersionAdd: ${response.body}");
+
+        EasyLoading.dismiss();
+      }
+    } else {
+      print("Error PaymentDetailAddEdit: ${response.statusCode} - ${response.body}");
+      EasyLoading.showToast("Request failed. Please try again.", duration: const Duration(milliseconds: 3000));
     }
   }
 

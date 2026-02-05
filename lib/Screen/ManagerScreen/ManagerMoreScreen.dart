@@ -1,8 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:lpgsalesandinventory/Screen/Utils/Styling.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../User/splashscreen/page/splash_screen.dart';
+import '../Utils/app_url.dart';
 import '../Utils/shared_preference.dart';
 import 'ARBReturnScreen/ArbReturnScreen.dart';
 import 'ARBSaleScreen/ArbSaleScreen.dart';
@@ -378,12 +385,51 @@ class _ManagerMoreScreeState extends State<ManagerMoreScree> {
     );
   }
 
+  // Future<void> logoutUser(BuildContext context) async {
+  //   ///Save data before logout logic
+  //   EasyLoading.show(status: 'Loading...');
+  //
+  //   try {
+  //     SharedPref().removeUser();
+  //
+  //     // try {
+  //     //   if (Platform.isAndroid) {
+  //     //     await FirebaseMessaging.instance
+  //     //         .deleteToken()
+  //     //         .whenComplete(() => debugPrint("Android FCM Token Deleted"));
+  //     //   } else if (Platform.isIOS) {
+  //     //     await FirebaseMessaging.instance
+  //     //         .deleteToken()
+  //     //         .whenComplete(() => debugPrint("iOS FCM Token Deleted"));
+  //     //   }
+  //     // } on PlatformException {
+  //     //   debugPrint('###PlatformExc');
+  //     // }
+  //
+  //     EasyLoading.dismiss();
+  //
+  //     Navigator.pushNamedAndRemoveUntil(
+  //         context, SplashScreen.screenName, (r) => false);
+  //
+  //     debugPrint("Logout Successful");
+  //   } catch (error) {
+  //     EasyLoading.dismiss();
+  //     debugPrint("LogoutPrefEcx: $error");
+  //   }
+  // }
+
   Future<void> logoutUser(BuildContext context) async {
+
     ///Save data before logout logic
     EasyLoading.show(status: 'Loading...');
 
     try {
-      SharedPref().removeUser();
+
+      await getDeactiveUserForNotiMob("N");
+
+      await sendPostRequest(0);
+
+       SharedPref().removeUser();
 
       // try {
       //   if (Platform.isAndroid) {
@@ -411,26 +457,190 @@ class _ManagerMoreScreeState extends State<ManagerMoreScree> {
     }
   }
 
+  Future<void> sendPostRequest(int flag) async {
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? distributorId = prefs.getString('DistributorId');
+    String? bearerToken = prefs.getString('token');
+    String? staffId = prefs.getString('StaffId');
+    String? userId = prefs.getString("UserId");
+    String? roleId = prefs.getString('roleId');
+    String? mobileNoStr = prefs.getString('MobileNo');
+    final DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+
+
+    // Fetch app version
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    String versionNo = packageInfo.version; // Get app version number
+
+
+    // Debug output
+    debugPrint('versionNo: $versionNo');
+    debugPrint('distributorId: $distributorId');
+    debugPrint('staffId: $staffId');
+    debugPrint('activatedOn: $formattedDate');
+    debugPrint('mobileNo: $mobileNoStr');
+
+    int distributorIdd = int.tryParse(distributorId ?? '') ?? 0;
+    int staffIdd = int.tryParse(staffId ?? '') ?? 0;
+    int mobileNo = int.tryParse(mobileNoStr ?? '') ?? 0;
+
+
+
+    final Map<String, dynamic> requestBody =
+    {
+      "VersionNo":versionNo,
+      "DistributorId":distributorIdd,
+      "StaffId":staffIdd,
+      "ActivatedOn":formattedDate,
+      "IsActive":flag,
+      "RoleId":roleId,
+      "MobileNo":mobileNo
+
+    };
+    print("MobileStaffwiseVersionAdd: ${requestBody}");
+    requestBody.forEach((key, value) {
+      print('$key: $value');
+    });
+    // try {
+    final response = await http.post(
+      Uri.parse('${AppUrl.MobileStaffwiseVersionAdd}'),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $bearerToken",
+      },
+      body: json.encode(requestBody),
+    );
+    print(
+        "requestBody MobileStaffwiseVersionAdd: ${response.statusCode} - ${response.request}${requestBody}");
+
+    print("Response Status Code: ${response.statusCode}");
+    if (response.statusCode == 200) {
+      if (response.body == '0') {
+        // Show a user-friendly error if the response body is 0
+        EasyLoading.showToast("Something went wrong. Please try again.", duration: const Duration(milliseconds: 3000));
+        print("Error: Response returned 0");
+      } else {
+
+        print("Response MobileStaffwiseVersionAdd: ${response.body}");
+
+        EasyLoading.dismiss();
+      }
+    } else {
+      print("Error PaymentDetailAddEdit: ${response.statusCode} - ${response.body}");
+      EasyLoading.showToast("Request failed. Please try again.", duration: const Duration(milliseconds: 3000));
+    }
+  }
+
+  // Future<void> getDeactiveUserForNotiMob(String flag) async {
+  //   EasyLoading.show();
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   String? distributorId = prefs.getString('DistributorId');
+  //   String? userId = prefs.getString("UserId");
+  //   String? bearerToken = prefs.getString('token'); // Assuming the token is stored here
+  //
+  //   if (bearerToken == null) {
+  //     throw Exception('Bearer token is missing');
+  //   }
+  //
+  //   Map<String, dynamic> requestBody = {
+  //     "DistributorId": distributorId,
+  //     "UserId": userId
+  //   };
+  //
+  //   final response = await http.get(
+  //     Uri.parse('${AppUrl.DeactiveUserForNotiMob}/$distributorId/$userId/$flag'),
+  //     headers: {
+  //       'Authorization': 'Bearer $bearerToken', // Add Bearer token here
+  //     },
+  //   );
+  //   debugPrint("GetDashPunchSummaryCnt : " +
+  //       '${AppUrl.DeactiveUserForNotiMob}/$distributorId/$userId/$flag');
+  //   debugPrint("GetDashPunchSummaryCnt : " + '${response.body}');
+  //   if (response.statusCode == 200) {
+  //     final List<dynamic> data = json.decode(response.body);
+  //     // setState(() {
+  //     //   getDashPunchSummaryCntModel = data.map((json) {
+  //     //     return GetDashPunchSummaryCntModel.fromJson(json);
+  //     //   }).toList();
+  //     //
+  //     //   // totalExpenseForProfit = expenseReportModel.fold(0.0, (sum, item) {
+  //     //   //   return sum! + (item.totExpAmt ?? 0.0);
+  //     //   // });
+  //     //   // incomeProfit = totalGrossProfit! - totalExpenseForProfit!;
+  //     //   // debugPrint("totalGrossProfit $totalGrossProfit");
+  //     //   // debugPrint("totalExpenseForProfit $totalExpenseForProfit");
+  //     //   // debugPrint("incomeProfit $incomeProfit");
+  //     //   // debugPrint("Total Expense: $totalExpenseForProfit");
+  //     //   EasyLoading.dismiss();
+  //     // });
+  //   } else {
+  //     EasyLoading.dismiss();
+  //     throw Exception('Failed to load items');
+  //   }
+  // }
+
+  Future<void> getDeactiveUserForNotiMob(String flag) async {
+    try {
+      EasyLoading.show();
+
+      final prefs = await SharedPreferences.getInstance();
+      final String? distributorId = prefs.getString('DistributorId');
+      final String? userId = prefs.getString('UserId');
+      final String? bearerToken = prefs.getString('token');
+
+      // // Safety checks
+      // if (distributorId == null || userId == null || bearerToken == null) {
+      //   debugPrint('Logout API skipped: missing user data');
+      //   return;
+      // }
+
+      final uri = Uri.parse(
+        '${AppUrl.DeactiveUserForNotiMob}/$distributorId/$userId/$flag',
+      );
+
+      final response = await http.get(
+        uri,
+        headers: {
+          'Authorization': 'Bearer $bearerToken',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      debugPrint('Deactivate API URL: $uri');
+      debugPrint('Deactivate API Response: ${response.body}');
+
+      if (response.statusCode != 204) {
+        debugPrint('Deactivate API failed: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('Deactivate API error: $e');
+    } finally {
+      EasyLoading.dismiss();
+    }
+  }
+
   // Function to show logout confirmation dialog
-  void _showLogoutDialog(BuildContext context) {
+  void _showLogoutDialog(BuildContext parentContext) {
     showDialog(
-      context: context,
-      builder: (BuildContext context) {
+      context: parentContext,
+      builder: (BuildContext dialogcontext) {
         return AlertDialog(
           title: Text("Confirm Logout"),
           content: Text("Are you sure you want to logout?"),
           actions: [
             TextButton(
-              onPressed: () {
+              onPressed: () async {
                 // Logic for confirming logout
-                Navigator.of(context).pop(); // Close the dialog
-                logoutUser(context); // Call logout function here
+                Navigator.of(dialogcontext).pop(); // Close the dialog
+                await logoutUser(parentContext); // Call logout function here
               },
               child: Text("Yes"),
             ),
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+                Navigator.of(dialogcontext).pop(); // Close the dialog
               },
               child: Text("No"),
             ),

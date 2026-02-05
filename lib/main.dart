@@ -80,18 +80,53 @@ class MyHttpOverrides extends HttpOverrides {
     //todo check proper solution for ssl certificate for production mode
   }
 }
+// @pragma('vm:entry-point')
+// Future<void> firebaseMessagingBackgroundHandler(
+//     RemoteMessage message) async {
+//   await Firebase.initializeApp();
+//   if (message.notification != null) {
+//     await NotificationService.showNotification(
+//       message.notification!.title ?? 'Notification',
+//       message.notification!.body ?? '',
+//     );
+//   }
+//   print('Background message received: ${message.messageId}');
+// }
+
 @pragma('vm:entry-point')
-Future<void> firebaseMessagingBackgroundHandler(
-    RemoteMessage message) async {
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // Initialize Firebase (required in background isolate)
   await Firebase.initializeApp();
-  if (message.notification != null) {
-    await NotificationService.showNotification(
-      message.notification!.title ?? 'Notification',
-      message.notification!.body ?? '',
-    );
-  }
+
+  // Only show notification for data-only messages
+  // if (message.data.isNotEmpty) {
+  //   await NotificationService.showNotification(
+  //     message.data['title'] ?? 'Notification',
+  //     message.data['body'] ?? '',
+  //   );
+  // }
+
   print('Background message received: ${message.messageId}');
 }
+//
+// @pragma('vm:entry-point')
+// Future<void> firebaseMessagingBackgroundHandler(
+//     RemoteMessage message,
+//     ) async {
+//   // Initialize Flutter bindings and Firebase for background isolate
+//   WidgetsFlutterBinding.ensureInitialized();
+//   await Firebase.initializeApp();
+//
+//   // Show notification if it exists
+//   if (message.notification != null) {
+//     await NotificationService.showNotification(
+//       message.notification!.title ?? 'Notification',
+//       message.notification!.body ?? '',
+//     );
+//   }
+//
+//   debugPrint('Background message received: ${message.messageId}');
+// }
 
 void main() async{
   /// Http ssl certificate...

@@ -46,6 +46,7 @@ import 'DashboardItemClickUI/UnsettledSaleDetailList.dart';
 import 'DashboardItemClickUI/VendorPaymentDetailListUI.dart';
 import 'ExpensesScreen/ExpensesScreenUI.dart';
 import 'ExpensesScreen/SalesComparisonScreen.dart';
+import 'GetDashPunchSummaryCntModel.dart';
 import 'ManagerModelClass/GetCurrentStockDetailManagerModel.dart';
 import 'ManagerModelClass/GetDashSummaryAllCountForMgrModel.dart';
 import 'ManagerModelClass/GetDashSummaryItemWiseForMgrModel.dart';
@@ -89,6 +90,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
   List<GetDashSummaryAllCountForMgrModel> getManagerDashboarDetailAllCount = [];
   List<GetDashSummarySettAllCountForMgrModel> getManagerDashboarDetailSettCount = [];
   List<GetCurrentStockDetailManagerModel> getCurrentStockDetailManager = [];
+  List<GetDashPunchSummaryCntModel> getDashPunchSummaryCntModel = [];
   List<String> getTransMode = ["Today's", "This Month","Financial Year"];
   String? selectedTransMode = "This Month";
   String? dayFlag = "THISMONTH";
@@ -149,6 +151,8 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
   double? totalGrossProfit = 0;
   double? totalExpenseForProfit = 0;
   double? incomeProfit = 0;
+  bool isOn = true;
+  bool isOnBook = true;
 
   String formatIndianCurrency(num value) {
     if (value >= 10000000) {
@@ -193,6 +197,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
     fetchCurrentStock();
     fetchSavedData();
     fetchSVARBFilterCountList("THISMONTH");
+    getDashPunchSummaryCntModeldata();
   }
 
   Future<void> _onRefresh() async {
@@ -1743,11 +1748,247 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                     ),
                                   ],
                                 ),
+                                SizedBox(height: 5),
+                                // ================= Booking/Punching Row =================
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.bolt_outlined,
+                                          size: 26,
+                                          color: Colors.black54,
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Text(
+                                          "Refill Booking & Punching Status",
+                                          style: Styling.bodyTitleBigBoldDashGrey,
+                                          textScaler: TextScaler.noScaling,
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 6),
+                                    Row(
+                                      children: [
+                                        // Booking Card
+                                        Expanded(
+                                          child: Card(
+                                            //color: Colors.white,
+                                            color: Color(0xFFfcf2f1),
+                                            child: InkWell(
+                                              onTap: () {
+                                                // showModalBottomSheet(
+                                                //   context: context,
+                                                //   isScrollControlled: true,
+                                                //   backgroundColor: Colors.transparent,
+                                                //   builder: (context) {
+                                                //     // Wrap bottom sheet in StatefulBuilder
+                                                //     return StatefulBuilder(
+                                                //       builder: (context, setModalState) {
+                                                //         // Pass setModalState to your sheet
+                                                //         return showCardWithBooking(context, setModalState);
+                                                //       },
+                                                //     );
+                                                //   },
+                                                // );
+                                                showModalBottomSheet(
+                                                  context: context,
+                                                  useRootNavigator: true, // 👈 VERY IMPORTANT
+                                                  isScrollControlled: true,
+                                                  backgroundColor: Colors.transparent,
+                                                  barrierColor: Colors.black54, // blocks background taps
+                                                  builder: (context) {
+                                                    return StatefulBuilder(
+                                                      builder: (context, setModalState) {
+                                                        return GestureDetector(
+                                                          onTap: () {}, // 👈 absorbs taps
+                                                          child: showCardWithBooking(context, setModalState),
+                                                        );
+                                                      },
+                                                    );
+                                                  },
+                                                );
+
+                                              },
+                                              child: Padding(
+                                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      "Refill \nBooking",
+                                                      style: Styling.bodyTitleBigBoldDashQuick,
+                                                    ),
+                                                    Icon(
+                                                      Icons.keyboard_arrow_down_sharp,
+                                                      size: 24,
+                                                      color: Colors.black54,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+
+
+                                        const SizedBox(width: 10),
+
+                                        // Punching Card
+                                        // Expanded(
+                                        //   child: Card(
+                                        //     color: Colors.white,
+                                        //     child: InkWell(
+                                        //       // onTap: () => showCardWithPunching(context),
+                                        //       onTap: () {
+                                        //         showModalBottomSheet(
+                                        //           context: context,
+                                        //           isScrollControlled: true,
+                                        //           backgroundColor: Colors.transparent,
+                                        //           builder: (context) {
+                                        //             return showCardWithPunching1(context);
+                                        //           },
+                                        //         );
+                                        //       },
+                                        //       child: Padding(
+                                        //         padding:
+                                        //         const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                                        //         child: Row(
+                                        //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        //           children: [
+                                        //             Text(
+                                        //               "Punching",
+                                        //               style: Styling.bodyTitleBigBoldDashQuick,
+                                        //             ),
+                                        //             Icon(
+                                        //               Icons.keyboard_arrow_down_sharp,
+                                        //               size: 24,
+                                        //               color: Colors.black54,
+                                        //             ),
+                                        //           ],
+                                        //         ),
+                                        //       ),
+                                        //     ),
+                                        //   ),
+                                        // ),
+                                        Expanded(
+                                          child:
+                                          // Container(
+                                          //   height: 100,
+                                          //   child:
+                                          Card(
+                                            //color: Colors.white,
+                                            color: Color(0xFFfcf2f1),
+                                            child: InkWell(
+                                              onTap: () {
+                                                // showModalBottomSheet(
+                                                //   context: context,
+                                                //   isScrollControlled: true,
+                                                //   backgroundColor: Colors.transparent,
+                                                //   builder: (context) {
+                                                //     // Wrap bottom sheet in StatefulBuilder
+                                                //     return StatefulBuilder(
+                                                //       builder: (context, setModalState) {
+                                                //         // Pass setModalState to your sheet
+                                                //         return showCardWithPunching(context, setModalState);
+                                                //       },
+                                                //     );
+                                                //   },
+                                                // );
+                                                showModalBottomSheet(
+                                                  context: context,
+                                                  useRootNavigator: true, // 👈 VERY IMPORTANT
+                                                  isScrollControlled: true,
+                                                  backgroundColor: Colors.transparent,
+                                                  barrierColor: Colors.black54, // blocks background taps
+                                                  builder: (context) {
+                                                    return StatefulBuilder(
+                                                      builder: (context, setModalState) {
+                                                        return GestureDetector(
+                                                          onTap: () {}, // 👈 absorbs taps
+                                                          child: showCardWithPunching(context, setModalState),
+                                                        );
+                                                      },
+                                                    );
+                                                  },
+                                                );
+
+                                              },
+                                              // child: Padding(
+                                              //   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                                              //   child: Row(
+                                              //     children: [
+                                              //       Expanded(
+                                              //         child: Text(
+                                              //           "Cashmemo \n Punching",
+                                              //           style: Styling.bodyTitleBigBoldDashQuick,
+                                              //           maxLines: 1,
+                                              //           overflow: TextOverflow.ellipsis,
+                                              //         ),
+                                              //       ),
+                                              //
+                                              //       // Expanded(
+                                              //       //   child: Column(
+                                              //       //     crossAxisAlignment: CrossAxisAlignment.start,
+                                              //       //     mainAxisAlignment: MainAxisAlignment.center,
+                                              //       //     children: [
+                                              //       //       Text(
+                                              //       //         "Cashmemo",
+                                              //       //         style: Styling.bodyTitleBigBoldDashQuick,
+                                              //       //         maxLines: 1,
+                                              //       //         overflow: TextOverflow.ellipsis,
+                                              //       //       ),
+                                              //       //       Text(
+                                              //       //         "Punching",
+                                              //       //         style: Styling.bodyTitleBigBoldDashQuick,
+                                              //       //         maxLines: 1,
+                                              //       //         overflow: TextOverflow.ellipsis,
+                                              //       //       ),
+                                              //       //     ],
+                                              //       //   ),
+                                              //       // ),
+                                              //
+                                              //       const SizedBox(width: 6),
+                                              //       const Icon(
+                                              //         Icons.keyboard_arrow_down_sharp,
+                                              //         size: 24,
+                                              //         color: Colors.black54,
+                                              //       ),
+                                              //     ],
+                                              //   ),
+                                              // ),
+                                              child: Padding(
+                                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                                                child: Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      "Cashmemo \nPunching",
+                                                      style: Styling.bodyTitleBigBoldDashQuick,
+                                                    ),
+                                                    Icon(
+                                                      Icons.keyboard_arrow_down_sharp,
+                                                      size: 24,
+                                                      color: Colors.black54,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          //   ),
+                                        ),
+
+
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
                           ),
                         ),
-
                         SizedBox(height:roleId == Constants.roleIdOwner ? 15:0),
                         Visibility(
                         visible:roleId == Constants.roleIdOwner,
@@ -4059,6 +4300,640 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
     );
   }
 
+  // void showCardWithBooking(BuildContext context) {
+  //   showGeneralDialog(
+  //     context: context,
+  //     barrierDismissible: true,
+  //     barrierLabel: '',
+  //     transitionDuration: const Duration(milliseconds: 400),
+  //     pageBuilder: (context, animation1, animation2) {
+  //       return Align(
+  //         alignment: Alignment.bottomCenter,
+  //         child: GestureDetector(
+  //           onHorizontalDragEnd: (details) {
+  //             if (details.primaryVelocity != null &&
+  //                 details.primaryVelocity!.abs() > 300) {
+  //               Navigator.pop(context); // Close if swipe velocity is high
+  //             }
+  //           },
+  //           child: Container(
+  //             height: MediaQuery.of(context).size.height *
+  //                 0.7, // 70% of screen height
+  //             width: double.infinity,
+  //             color: Colors.white,
+  //             child: Padding(
+  //               padding: const EdgeInsets.all(8.0),
+  //               child: Column(
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: [
+  //                   // Title with larger font and subtle shadow
+  //                   Padding(
+  //                     padding: const EdgeInsets.symmetric(vertical: 10.0),
+  //                     child: Row(
+  //                       mainAxisAlignment: MainAxisAlignment.start,
+  //                       children: [
+  //                         Text(
+  //                           'Booking',
+  //                           style: TextStyle(
+  //                             fontSize: 19,
+  //                             fontWeight: FontWeight.bold,
+  //                             color: Colors.black,
+  //                           ),
+  //                           textScaler: TextScaler.noScaling,
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                   SizedBox(
+  //                     height: 5,
+  //                   ),
+  //                   // Display dynamic data or No Data Available message
+  //                   getManagerDashboarDetailItemWise.isNotEmpty
+  //                       ? Column(
+  //                     children: [
+  //                       // Table Header with gradient and modern styling
+  //                       Container(
+  //                         decoration: BoxDecoration(
+  //                           color: Color(0xFFEFF2FB),
+  //                         ),
+  //                         padding: EdgeInsets.only(top: 10, bottom: 10),
+  //                         child: Row(
+  //                           mainAxisAlignment:
+  //                           MainAxisAlignment.spaceAround,
+  //                           children: [
+  //                             buildTableHeader(' '),
+  //                             buildTableHeader('Today'),
+  //                             buildTableHeader('As Of Date'),
+  //                           ],
+  //                         ),
+  //                       ),
+  //
+  //                       // Use ListView to make the content scrollable
+  //                       ListView.builder(
+  //                         shrinkWrap: true,
+  //                         padding: EdgeInsets.zero,
+  //                         physics: NeverScrollableScrollPhysics(),
+  //                         itemCount: getManagerDashboarDetailItemWise
+  //                             .where((item) =>
+  //                         item.todayImbQty! > 0 ||
+  //                             item.asOfDateImbQty! > 0)
+  //                             .toList()
+  //                             .length,
+  //                         itemBuilder: (context, index) {
+  //                           var item = getManagerDashboarDetailItemWise
+  //                               .where((item) =>
+  //                           item.todayImbQty! > 0 ||
+  //                               item.asOfDateImbQty! > 0)
+  //                               .toList()[index];
+  //
+  //                           // Alternate row color logic
+  //                           Color backgroundColor = index % 2 == 1
+  //                               ? Color(0xFFEFF2FB)
+  //                               : Colors.white;
+  //
+  //                           return Padding(
+  //                             padding: const EdgeInsets.symmetric(
+  //                                 vertical: 5.0),
+  //                             child: Container(
+  //                               color: backgroundColor,
+  //                               padding: EdgeInsets.all(12),
+  //                               child: Row(
+  //                                 mainAxisAlignment:
+  //                                 MainAxisAlignment.spaceAround,
+  //                                 children: [
+  //                                   // Non-clickable itemName
+  //                                   Expanded(
+  //                                     child: Text(
+  //                                       item.itemName ?? '',
+  //                                       style: Styling.textFormText,
+  //                                     ),
+  //                                   ),
+  //                                   // Today Imbalance Quantity - styled with blue color and underline
+  //                                   Expanded(
+  //                                     child: GestureDetector(
+  //                                       onTap: () {
+  //                                         print(
+  //                                             'Tapped on today imbalance qty: ${item.todayImbQty}');
+  //                                         // Navigate to ImbalanceCountClickUI, passing ItemId and imbQtyType
+  //                                         Navigator.pushNamed(
+  //                                           context,
+  //                                           ImbalanceCountClickUI
+  //                                               .screenName,
+  //                                           arguments: {
+  //                                             "ItemId": item.itemId,
+  //                                             "imbQtyType": 'today'
+  //                                           },
+  //                                         );
+  //                                       },
+  //                                       child: Text(
+  //                                         item.todayImbQty.toString(),
+  //                                         style: Styling
+  //                                             .textFormTextWithUnderline,
+  //                                         textAlign: TextAlign.center,
+  //                                         textScaler:
+  //                                         TextScaler.noScaling,
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //
+  //                                   // As of Date Imbalance Quantity - styled with blue color and underline
+  //                                   Expanded(
+  //                                     child: GestureDetector(
+  //                                       onTap: () {
+  //                                         print(
+  //                                             'Tapped on as of date imbalance qty: ${item.asOfDateImbQty}');
+  //                                         // Navigate to ImbalanceCountClickUI, passing ItemId and imbQtyType
+  //                                         Navigator.pushNamed(
+  //                                           context,
+  //                                           ImbalanceCountClickUI
+  //                                               .screenName,
+  //                                           arguments: {
+  //                                             "ItemId": item.itemId,
+  //                                             "imbQtyType": 'asOfDate'
+  //                                           },
+  //                                         );
+  //                                       },
+  //                                       child: Text(
+  //                                         item.asOfDateImbQty.toString(),
+  //                                         style: Styling
+  //                                             .textFormTextWithUnderline,
+  //                                         textAlign: TextAlign.center,
+  //                                         textScaler:
+  //                                         TextScaler.noScaling,
+  //                                       ),
+  //                                     ),
+  //                                   ),
+  //                                 ],
+  //                               ),
+  //                             ),
+  //                           );
+  //                         },
+  //                       ),
+  //                     ],
+  //                   )
+  //                       : Center(
+  //                     child: Container(
+  //                       padding: EdgeInsets.all(20),
+  //                       decoration: BoxDecoration(
+  //                         color: Colors.blueGrey[50],
+  //                         borderRadius: BorderRadius.circular(10),
+  //                       ),
+  //                       child: Row(
+  //                         mainAxisSize: MainAxisSize.min,
+  //                         children: [
+  //                           Icon(Icons.warning, color: Colors.orange),
+  //                           SizedBox(width: 10),
+  //                           Text(
+  //                             'No Data Available',
+  //                             style: TextStyle(
+  //                               fontSize: 16,
+  //                               fontWeight: FontWeight.w500,
+  //                               color: Colors.blueGrey,
+  //                             ),
+  //                             textScaler: TextScaler.noScaling,
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //     transitionBuilder: (context, animation1, animation2, child) {
+  //       final offsetAnimation = Tween<Offset>(
+  //         begin: const Offset(0, 1), // Start from the bottom of the screen
+  //         end: Offset.zero, // Move to original position
+  //       ).animate(CurvedAnimation(parent: animation1, curve: Curves.easeInOut));
+  //
+  //       return SlideTransition(
+  //         position: offsetAnimation,
+  //         child: child,
+  //       );
+  //     },
+  //   );
+  // }
+  //
+  // void showCardWithBooking1(BuildContext context) {
+  //   showGeneralDialog(
+  //     context: context,
+  //     barrierDismissible: true,
+  //     barrierLabel: '',
+  //     transitionDuration: const Duration(milliseconds: 400),
+  //     pageBuilder: (context, animation1, animation2) {
+  //       return Align(
+  //         alignment: Alignment.bottomCenter,
+  //         child: GestureDetector(
+  //           onHorizontalDragEnd: (details) {
+  //             if (details.primaryVelocity != null &&
+  //                 details.primaryVelocity!.abs() > 300) {
+  //               Navigator.pop(context);
+  //             }
+  //           },
+  //           child: Container(
+  //             height: MediaQuery.of(context).size.height * 0.7,
+  //             width: double.infinity,
+  //             color: Colors.white,
+  //             child: Padding(
+  //               padding: const EdgeInsets.all(8.0),
+  //               child: Column(
+  //                 crossAxisAlignment: CrossAxisAlignment.start,
+  //                 children: [
+  //                   // Title
+  //                   Padding(
+  //                     padding: const EdgeInsets.symmetric(vertical: 10.0),
+  //                     child: Text(
+  //                       'Booking',
+  //                       style: TextStyle(
+  //                         fontSize: 19,
+  //                         fontWeight: FontWeight.bold,
+  //                         color: Colors.black,
+  //                       ),
+  //                       textScaler: TextScaler.noScaling,
+  //                     ),
+  //                   ),
+  //
+  //                   const SizedBox(height: 5),
+  //
+  //                   getManagerDashboarDetailItemWise.isNotEmpty
+  //                       ? Column(
+  //                     children: [
+  //                       // TABLE HEADER
+  //                       Container(
+  //                         decoration: const BoxDecoration(
+  //                           color: Color(0xFFEFF2FB),
+  //                         ),
+  //                         padding: const EdgeInsets.symmetric(vertical: 10),
+  //                         child: Row(
+  //                           children: [
+  //                             Expanded(
+  //                               flex: 2,
+  //                               child: buildTableHeader(' '),
+  //                             ),
+  //                             Expanded(
+  //                               child: buildTableHeader('Today'),
+  //                             ),
+  //                             Expanded(
+  //                               child: buildTableHeader('As Of Date'),
+  //                             ),
+  //                           ],
+  //                         ),
+  //                       ),
+  //                       // TABLE BODY
+  //                       Container(
+  //                         padding: const EdgeInsets.all(12),
+  //                         child: Column(
+  //                           children: [
+  //                             // MANUAL ROW
+  //                             Row(
+  //                               children: [
+  //                                 Expanded(
+  //                                   flex: 2,
+  //                                   child: Text(
+  //                                     'Manual',
+  //                                     style: Styling.textFormText,
+  //                                   ),
+  //                                 ),
+  //                                 Expanded(
+  //                                   child: Text(
+  //                                     '0',
+  //                                     textAlign: TextAlign.center,
+  //                                     style: Styling.textFormText,
+  //                                     textScaler: TextScaler.noScaling,
+  //                                   ),
+  //                                 ),
+  //                                 Expanded(
+  //                                   child: Text(
+  //                                     '0',
+  //                                     textAlign: TextAlign.center,
+  //                                     style: Styling.textFormText,
+  //                                     textScaler: TextScaler.noScaling,
+  //                                   ),
+  //                                 ),
+  //                               ],
+  //                             ),
+  //
+  //                             const SizedBox(height: 10),
+  //
+  //                             // ONLINE ROW
+  //                             Row(
+  //                               children: [
+  //                                 Expanded(
+  //                                   flex: 2,
+  //                                   child: Text(
+  //                                     'Online',
+  //                                     style: Styling.textFormText,
+  //                                   ),
+  //                                 ),
+  //                                 Expanded(
+  //                                   child: Text(
+  //                                     '0',
+  //                                     textAlign: TextAlign.center,
+  //                                     style: Styling.textFormText,
+  //                                     textScaler: TextScaler.noScaling,
+  //                                   ),
+  //                                 ),
+  //                                 Expanded(
+  //                                   child: Text(
+  //                                     '165',
+  //                                     textAlign: TextAlign.center,
+  //                                     style: Styling.textFormText,
+  //                                     textScaler: TextScaler.noScaling,
+  //                                   ),
+  //                                 ),
+  //                               ],
+  //                             ),
+  //                           ],
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   )
+  //                       : Center(
+  //                     child: Container(
+  //                       padding: const EdgeInsets.all(20),
+  //                       decoration: BoxDecoration(
+  //                         color: Colors.blueGrey[50],
+  //                         borderRadius: BorderRadius.circular(10),
+  //                       ),
+  //                       child: Row(
+  //                         mainAxisSize: MainAxisSize.min,
+  //                         children: const [
+  //                           Icon(Icons.warning,
+  //                               color: Colors.orange),
+  //                           SizedBox(width: 10),
+  //                           Text(
+  //                             'No Data Available',
+  //                             style: TextStyle(
+  //                               fontSize: 16,
+  //                               fontWeight: FontWeight.w500,
+  //                               color: Colors.blueGrey,
+  //                             ),
+  //                             textScaler: TextScaler.noScaling,
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //     transitionBuilder: (context, animation1, animation2, child) {
+  //       final offsetAnimation = Tween<Offset>(
+  //         begin: const Offset(0, 1),
+  //         end: Offset.zero,
+  //       ).animate(
+  //         CurvedAnimation(parent: animation1, curve: Curves.easeInOut),
+  //       );
+  //
+  //       return SlideTransition(
+  //         position: offsetAnimation,
+  //         child: child,
+  //       );
+  //     },
+  //   );
+  // }
+  //
+  //
+  // Widget profitCard(BuildContext context) {
+  //   return Card(
+  //     margin: EdgeInsets.zero,
+  //     color: Colors.white,
+  //     shape: const RoundedRectangleBorder(
+  //       borderRadius: BorderRadius.only(
+  //         topLeft: Radius.circular(20),
+  //         topRight: Radius.circular(20),
+  //       ),
+  //     ),
+  //     child: Padding(
+  //       padding: const EdgeInsets.all(8.0),
+  //       child: Column(
+  //         crossAxisAlignment: CrossAxisAlignment.start,
+  //         children: [
+  //
+  //           /// TITLE
+  //           Padding(
+  //             padding: const EdgeInsets.symmetric(vertical: 10),
+  //             child: Text(
+  //               'Booking',
+  //               style: const TextStyle(
+  //                 fontSize: 19,
+  //                 fontWeight: FontWeight.bold,
+  //                 color: Colors.black,
+  //               ),
+  //               textScaler: TextScaler.noScaling,
+  //             ),
+  //           ),
+  //
+  //           const SizedBox(height: 5),
+  //
+  //           /// DATA / EMPTY STATE
+  //           getManagerDashboarDetailItemWise.isNotEmpty
+  //               ? Column(
+  //             children: [
+  //
+  //               /// TABLE HEADER
+  //               Container(
+  //                 color: const Color(0xFFEFF2FB),
+  //                 padding:
+  //                 const EdgeInsets.symmetric(vertical: 10),
+  //                 child: Row(
+  //                   mainAxisAlignment:
+  //                   MainAxisAlignment.spaceAround,
+  //                   children: [
+  //                     buildTableHeader(' '),
+  //                     buildTableHeader('Today'),
+  //                     buildTableHeader('As Of Date'),
+  //                   ],
+  //                 ),
+  //               ),
+  //
+  //               /// LIST
+  //               ListView.builder(
+  //                 shrinkWrap: true,
+  //                 physics:
+  //                 const NeverScrollableScrollPhysics(),
+  //                 itemCount:
+  //                 getManagerDashboarDetailItemWise
+  //                     .where((item) =>
+  //                 item.todayImbQty! > 0 ||
+  //                     item.asOfDateImbQty! > 0)
+  //                     .length,
+  //                 itemBuilder: (context, index) {
+  //                   final filteredList =
+  //                   getManagerDashboarDetailItemWise
+  //                       .where((item) =>
+  //                   item.todayImbQty! > 0 ||
+  //                       item.asOfDateImbQty! > 0)
+  //                       .toList();
+  //
+  //                   final item = filteredList[index];
+  //
+  //                   final backgroundColor =
+  //                   index.isOdd
+  //                       ? const Color(0xFFEFF2FB)
+  //                       : Colors.white;
+  //
+  //                   return Container(
+  //                     color: backgroundColor,
+  //                     padding: const EdgeInsets.all(12),
+  //                     child: Row(
+  //                       children: [
+  //
+  //                         /// ITEM NAME
+  //                         Expanded(
+  //                           child: Text(
+  //                             item.itemName ?? '',
+  //                             style:
+  //                             Styling.textFormText,
+  //                           ),
+  //                         ),
+  //
+  //                         /// TODAY
+  //                         Expanded(
+  //                           child: GestureDetector(
+  //                             onTap: () {
+  //                               Navigator.pushNamed(
+  //                                 context,
+  //                                 ImbalanceCountClickUI
+  //                                     .screenName,
+  //                                 arguments: {
+  //                                   "ItemId":
+  //                                   item.itemId,
+  //                                   "imbQtyType":
+  //                                   'today',
+  //                                 },
+  //                               );
+  //                             },
+  //                             child: Text(
+  //                               item.todayImbQty
+  //                                   .toString(),
+  //                               style: Styling
+  //                                   .textFormTextWithUnderline,
+  //                               textAlign:
+  //                               TextAlign.center,
+  //                               textScaler:
+  //                               TextScaler
+  //                                   .noScaling,
+  //                             ),
+  //                           ),
+  //                         ),
+  //
+  //                         /// AS OF DATE
+  //                         Expanded(
+  //                           child: GestureDetector(
+  //                             onTap: () {
+  //                               Navigator.pushNamed(
+  //                                 context,
+  //                                 ImbalanceCountClickUI
+  //                                     .screenName,
+  //                                 arguments: {
+  //                                   "ItemId":
+  //                                   item.itemId,
+  //                                   "imbQtyType":
+  //                                   'asOfDate',
+  //                                 },
+  //                               );
+  //                             },
+  //                             child: Text(
+  //                               item.asOfDateImbQty
+  //                                   .toString(),
+  //                               style: Styling
+  //                                   .textFormTextWithUnderline,
+  //                               textAlign:
+  //                               TextAlign.center,
+  //                               textScaler:
+  //                               TextScaler
+  //                                   .noScaling,
+  //                             ),
+  //                           ),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   );
+  //                 },
+  //               ),
+  //             ],
+  //           )
+  //               : Center(
+  //             child: Container(
+  //               padding: const EdgeInsets.all(20),
+  //               decoration: BoxDecoration(
+  //                 color: Colors.blueGrey[50],
+  //                 borderRadius:
+  //                 BorderRadius.circular(10),
+  //               ),
+  //               child: Row(
+  //                 mainAxisSize: MainAxisSize.min,
+  //                 children: const [
+  //                   Icon(Icons.warning,
+  //                       color: Colors.orange),
+  //                   SizedBox(width: 10),
+  //                   Text(
+  //                     'No Data Available',
+  //                     style: TextStyle(
+  //                       fontSize: 16,
+  //                       fontWeight:
+  //                       FontWeight.w500,
+  //                       color:
+  //                       Colors.blueGrey,
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
+  Widget _dashboardCard({
+    required String title,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(14),
+      onTap: onTap,
+      child: Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Container(
+          height: 100,
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                icon,
+                size: 28,
+                color: const Color(0xff1280b3),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                title,
+                style: Styling.bodyTitleBigBoldDashQuick,
+                textScaler: TextScaler.noScaling,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+
   void showStockStatus(BuildContext context) {
     showGeneralDialog(
       context: context,
@@ -5736,16 +6611,6 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
     // Send token to backend API
   }
 
-  // void listenForegroundMessages() {
-  //   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-  //     if (message.notification != null) {
-  //       showNotification(
-  //         message.notification!.title!,
-  //         message.notification!.body!,
-  //       );
-  //     }
-  //   });
-  // }
   void listenForegroundMessages() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       // Check if the message contains a notification
@@ -5762,59 +6627,6 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
       }
     });
   }
-
-  // Future<void> _setupNotifications() async {
-  //   await requestNotificationPermission();
-  //
-  //   // iOS ONLY: wait for APNS token
-  //   String? apnsToken =
-  //   await FirebaseMessaging.instance.getAPNSToken();
-  //
-  //   if (apnsToken == null) {
-  //     // Wait a bit and retry (iOS needs time)
-  //     await Future.delayed(const Duration(seconds: 2));
-  //     apnsToken =
-  //     await FirebaseMessaging.instance.getAPNSToken();
-  //   }
-  //
-  //   // if (apnsToken == null) {
-  //   //   debugPrint('APNS token still not available');
-  //   //   return;
-  //   // }
-  //
-  //   // Now it's safe
-  //   await getFcmToken();
-  //
-  //   // Send token AFTER it exists
-  //   NotificationApiHelper.sendTokenToBackend();
-  // }
-  // Future<void> setupNotifications() async {
-  //   FirebaseMessaging messaging = FirebaseMessaging.instance;
-  //
-  //   // Request permission
-  //   NotificationSettings settings = await messaging.requestPermission(
-  //     alert: true,
-  //     badge: true,
-  //     sound: true,
-  //   );
-  //
-  //   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-  //     print('User granted permission');
-  //
-  //     // Wait a moment for APNs token to be registered
-  //     await Future.delayed(Duration(seconds: 1));
-  //
-  //     String? token = await messaging.getToken();
-  //     if (token != null) {
-  //       print('FCM Token: $token');
-  //       // send token to your backend
-  //     } else {
-  //       print('APNs token not ready yet.');
-  //     }
-  //   } else {
-  //     print('User denied notification permission');
-  //   }
-  // }
 
   Future<void> setupNotifications() async {
     final messaging = FirebaseMessaging.instance;
@@ -5858,6 +6670,436 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
       NotificationApiHelper.sendTokenToBackend();
     });
   }
+
+  Widget showCardWithPunching(
+      BuildContext context,
+      void Function(void Function()) setModalState,
+      ) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.6,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Drag handle
+              Center(
+                child: Container(
+                  width: 50,
+                  height: 5,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Cashmemo Punching',
+                    style: TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Transform.scale(
+                    scale: 0.8, // Adjust the scale value as needed
+                    child: Row(
+                      children: [
+                        Switch(
+                          value: isOn,
+                          onChanged: (value) {
+                            setModalState(() {
+                              isOn = value; // Updates immediately in bottom sheet
+                            });
+                          },
+                        ),
+                        const SizedBox(width: 4), // Small spacing between switch and text
+                        const Text(
+                          '%',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+
+              _punchTableHeader(),
+
+              const SizedBox(height: 8),
+
+              getDashPunchSummaryCntModel.isNotEmpty
+                  ? Column(
+                children: getDashPunchSummaryCntModel.map((item) {
+                  return Column(
+                    children: [
+                      _buildPunchRow1(
+                        title: 'Manual',
+                        today: !isOn
+                            ? item.punchManToday
+                            : item.punchManTodayPct,
+                        month: !isOn
+                            ? item.punchManAsOf
+                            : item.punchManAsOfPct,
+                        isPercentage: isOn,
+                      ),
+                      Divider(color: Colors.grey.shade300),
+                      _buildPunchRow1(
+                        title: 'OTP / DAC',
+                        today: !isOn
+                            ? item.punchDACToday
+                            : item.punchDACTodayPct,
+                        month: !isOn
+                            ? item.punchDACAsOf
+                            : item.punchDACAsOfPct,
+                        isPercentage: isOn,
+                      ),
+                      Divider(color: const Color(0xFFfcf2f1)),
+                    ],
+                  );
+                }).toList(),
+              )
+                  : _noDataWidget(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget showCardWithBooking(
+      BuildContext context,
+      void Function(void Function()) setModalState,
+      ) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.6,
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Drag handle
+              Center(
+                child: Container(
+                  width: 50,
+                  height: 5,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+
+              // Header Row with Switch
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     const Text(
+              //       'Refill Booking',
+              //       style: TextStyle(
+              //         fontSize: 19,
+              //         fontWeight: FontWeight.bold,
+              //       ),
+              //     ),
+              //     // Switch(
+              //     //   value: isOn,
+              //     //   onChanged: (value) {
+              //     //     setModalState(() {
+              //     //       isOn = value; // Use setModalState instead of setState
+              //     //     });
+              //     //   },
+              //     // ),
+              //     Transform.scale(
+              //       scale: 0.8, // Adjust the scale value as needed
+              //       child: Column(
+              //         children: [
+              //           Switch(
+              //             value: isOn,
+              //             onChanged: (value) {
+              //               setModalState(() {
+              //                 isOn = value; // Use setModalState instead of setState
+              //               });
+              //             },
+              //           ),
+              //          // const SizedBox(width: 2), // Small spacing between switch and text
+              //           const Text(
+              //             '%',
+              //             style: TextStyle(
+              //               fontSize: 18,
+              //               fontWeight: FontWeight.bold,
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //   ],
+              // ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Refill Booking',
+                    style: TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Transform.scale(
+                    scale: 0.8, // Adjust the scale value as needed
+                    child: Row(
+                      children: [
+                        Switch(
+                          value: isOnBook,
+                          onChanged: (value) {
+                            setModalState(() {
+                              isOnBook = value; // Updates immediately in bottom sheet
+                            });
+                          },
+                        ),
+                        const SizedBox(width: 4), // Small spacing between switch and text
+                        const Text(
+                          '%',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 12),
+
+              _punchTableHeader(),
+
+              const SizedBox(height: 8),
+
+              getDashPunchSummaryCntModel.isNotEmpty
+                  ? Column(
+                children: getDashPunchSummaryCntModel.map((item) {
+                  return Column(
+                    children: [
+                      _buildPunchRow1(
+                        title: 'Manual',
+                        today: !isOnBook
+                            ? item.bkgManToday
+                            : item.bkgManTodayPct,
+                        month: !isOnBook
+                            ? item.bkgManAsOf
+                            : item.bkgManAsOfPct,
+                        isPercentage: isOnBook,
+                      ),
+                      Divider(color: Colors.grey.shade300),
+                      _buildPunchRow1(
+                        title: 'Online',
+                        today: !isOnBook
+                            ? item.bkgOnlineToday
+                            : item.bkgOnlineTodayPct,
+                        month: !isOnBook
+                            ? item.bkgOnlineAsOf
+                            : item.bkgOnlineAsOfPct,
+                        isPercentage: isOnBook,
+                      ),
+                      Divider(color: const Color(0xFFfcf2f1)),
+                    ],
+                  );
+                }).toList(),
+              )
+                  : _noDataWidget(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _punchTableHeader() {
+    return Container(
+      color: const Color(0xFFEFF2FB),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 4,
+            child: Text(
+              '',
+              style: Styling.bodyTitleWithBlueHightDashboard,
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Text(
+              'Today',
+              textAlign: TextAlign.center,
+              style: Styling.bodyTitleWithBlueHightDashboard,
+            ),
+          ),
+          Expanded(
+            flex: 3,
+            child: Text(
+              'This Month',
+              textAlign: TextAlign.center,
+              style: Styling.bodyTitleWithBlueHightDashboard,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPunchRow1({
+    required String title,
+    required dynamic today,
+    required dynamic month,
+    required bool isPercentage,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        children: [
+          /// Title
+          Expanded(
+            flex: 4,
+            child: Text(
+              title,
+              style: Styling.bodyTitleWithBlueHightDashboard,
+              textScaler: TextScaler.noScaling,
+            ),
+          ),
+
+          /// Today
+          Expanded(
+            flex: 3,
+            child: Text(
+              _formatValue(today, isPercentage),
+              textAlign: TextAlign.center,
+              style: Styling.blueClrText,
+              textScaler: TextScaler.noScaling,
+            ),
+          ),
+
+          /// This Month
+          Expanded(
+            flex: 3,
+            child: Text(
+              _formatValue(month, isPercentage),
+              textAlign: TextAlign.center,
+              style: Styling.blueClrText,
+              textScaler: TextScaler.noScaling,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _noDataWidget() {
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.blueGrey[50],
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            Icon(Icons.warning, color: Colors.orange),
+            SizedBox(width: 10),
+            Text(
+              'No Data Available',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: Colors.blueGrey,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _formatValue(dynamic value, bool isPercentage) {
+    if (value == null) return '0';
+
+    if (isPercentage && value is num) {
+      if (value % 1 == 0) {
+        return value.toInt().toString(); // remove .0
+      }
+      return value.toString(); // keep decimal as-is
+    }
+
+    return value.toString();
+  }
+
+  Future<void> getDashPunchSummaryCntModeldata() async {
+    EasyLoading.show();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? distributorId = prefs.getString('DistributorId');
+    String? bearerToken = prefs.getString('token'); // Assuming the token is stored here
+
+    if (bearerToken == null) {
+      throw Exception('Bearer token is missing');
+    }
+
+    Map<String, dynamic> requestBody = {
+      "DistributorId": distributorId,
+    };
+
+    final response = await http.get(
+      Uri.parse('${AppUrl.GetDashPunchSummaryCnt}/$distributorId'),
+      headers: {
+        'Authorization': 'Bearer $bearerToken', // Add Bearer token here
+      },
+    );
+    debugPrint("GetDashPunchSummaryCnt : " +
+        '${AppUrl.GetDashPunchSummaryCnt}/$distributorId');
+    debugPrint("GetDashPunchSummaryCnt : " + '${response.body}');
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+      setState(() {
+        getDashPunchSummaryCntModel = data.map((json) {
+          return GetDashPunchSummaryCntModel.fromJson(json);
+        }).toList();
+
+        // totalExpenseForProfit = expenseReportModel.fold(0.0, (sum, item) {
+        //   return sum! + (item.totExpAmt ?? 0.0);
+        // });
+        // incomeProfit = totalGrossProfit! - totalExpenseForProfit!;
+        // debugPrint("totalGrossProfit $totalGrossProfit");
+        // debugPrint("totalExpenseForProfit $totalExpenseForProfit");
+        // debugPrint("incomeProfit $incomeProfit");
+        // debugPrint("Total Expense: $totalExpenseForProfit");
+        EasyLoading.dismiss();
+      });
+    } else {
+      EasyLoading.dismiss();
+      throw Exception('Failed to load items');
+    }
+  }
+
 
 }
 

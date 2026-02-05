@@ -196,6 +196,19 @@ class AppUrl {
   static const String GetDashSummaryItemWiseForMgr = '$baseUrl/Dashboard/GetDashSummaryItemWiseForMgr';
   static const String GetDashSummaryAllCountForMgr = '$baseUrl/Dashboard/GetDashSummaryAllCountForMgr';
   static const String GetDashSummarySettAllCountForMgr = '$baseUrl/Dashboard/GetDashSummarySettAllCountForMgr';
+
+ ///Versioning API
+ static const String MobileStaffwiseVersionAdd = '$baseUrl/Masters/MobileStaffwiseVersionAdd';
+
+  ///Push Notification
+  static const String SaveDistribuotrDeviceId = '$baseUrl/Login/SaveDistribuotrDeviceId';
+
+  ///DeactiveUserForNotiMob
+  static const String DeactiveUserForNotiMob = '$baseUrl/Login/DeactiveUserForNotiMob';
+
+ ///Dashboard Booking punching count
+ static const String GetDashPunchSummaryCnt = '$baseUrl/Dashboard/GetDashPunchSummaryCnt';
+
 }
 
 

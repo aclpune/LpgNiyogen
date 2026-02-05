@@ -1,6 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:lpgsalesandinventory/Screen/Utils/Styling.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -9,6 +15,7 @@ import '../../../GodownKeeper/BottomNavigationForGodownKeeper.dart';
 import '../../../GodownKeeper/DashboardScreen.dart';
 import '../../../ManagerScreen/BootomNavigatinBarManager.dart';
 import '../../../ManagerScreen/ManagerDashboard.dart';
+import '../../../Utils/app_url.dart';
 import '../../../Utils/constants.dart';
 import '../../../Utils/shared_preference.dart';
 import 'MyLogin.dart';
@@ -97,6 +104,8 @@ class _VerifyOtpState extends State<VerifyOtp> {
                          // );
                          await getUserData();
 
+                         sendPostRequest(1);
+
                          // Navigator.pushReplacementNamed(context, '/godownDashboard');
                        }else{
                          ScaffoldMessenger.of(context).showSnackBar(
@@ -173,6 +182,84 @@ class _VerifyOtpState extends State<VerifyOtp> {
     } else {
       debugPrint("Deactivated User");
       Navigator.pushReplacementNamed(context, MyLogin.screenName);
+    }
+  }
+
+  Future<void> sendPostRequest(int flag) async {
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? distributorId = prefs.getString('DistributorId');
+    String? bearerToken = prefs.getString('token');
+    String? staffId = prefs.getString('StaffId');
+    String? userId = prefs.getString("UserId");
+    String? activatedOn = prefs.getString('activatedOn');
+    String? roleId = prefs.getString('roleId');
+    String? mobileNoStr = prefs.getString('MobileNo');
+    final DateTime now = DateTime.now();
+    String formattedDate = DateFormat('yyyy-MM-dd').format(now);
+
+
+    // Fetch app version
+    PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    String versionNo = packageInfo.version; // Get app version number
+
+
+    // Debug output
+    debugPrint('versionNo: $versionNo');
+    debugPrint('distributorId: $distributorId');
+    debugPrint('staffId: $staffId');
+    debugPrint('activatedOn: $formattedDate');
+    debugPrint('mobileNo: $mobileNoStr');
+
+    int distributorIdd = int.tryParse(distributorId ?? '') ?? 0;
+    int staffIdd = int.tryParse(staffId ?? '') ?? 0;
+    int mobileNo = int.tryParse(mobileNoStr ?? '') ?? 0;
+
+
+    final Map<String, dynamic> requestBody =
+    {
+      "VersionNo":versionNo,
+      "DistributorId":distributorIdd,
+      "StaffId":staffIdd,
+      "ActivatedOn":formattedDate,
+      "IsActive":flag,
+      "RoleId":roleId,
+      "MobileNo":mobileNo
+
+    };
+    print("MobileStaffwiseVersionAdd: ${requestBody}");
+    requestBody.forEach((key, value) {
+      print('$key: $value');
+    });
+    // try {
+    final response = await http.post(
+      Uri.parse('${AppUrl.MobileStaffwiseVersionAdd}'),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $bearerToken",
+      },
+      body: json.encode(requestBody),
+    );
+    print(
+        "requestBody MobileStaffwiseVersionAdd: ${response.statusCode} - ${response.request}${requestBody}");
+
+    print("Response Status Code: ${response.statusCode}");
+    if (response.statusCode == 200) {
+      if (response.body == '0') {
+        // Show a user-friendly error if the response body is 0
+        EasyLoading.showToast("Something went wrong. Please try again.", duration: const Duration(milliseconds: 3000));
+        print("Error: Response returned 0");
+      } else {
+
+        print("Response MobileStaffwiseVersionAdd: ${response.body}");
+
+        // setState(() {
+        // });
+        EasyLoading.dismiss();
+      }
+    } else {
+      print("Error PaymentDetailAddEdit: ${response.statusCode} - ${response.body}");
+      EasyLoading.showToast("Request failed. Please try again.", duration: const Duration(milliseconds: 3000));
     }
   }
 }
