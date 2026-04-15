@@ -35,12 +35,11 @@ class _DashboardPunchDetailUIState extends State<DashbobardPunchDetailUI> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Expanded(
-                  flex: 3,
+                  flex: 2,
                   child: Text(
                     punchSale.todayDate ?? '',
                     style: Styling.itemBlackTestVerySmall,
                     textAlign: TextAlign.start,
-                   // maxLines: 1,
                   ),
                 ),
                 verticalDividerVerySmallWidth(),

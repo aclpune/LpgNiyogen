@@ -1,99 +1,106 @@
-/// PSVId : 905
+/// PSVId : 1123
 /// DistributorId : 8118
-/// SVDate : "2025-05-26T14:17:43"
-/// ReferredById : 48
-/// ReferredByName : "Anopa"
-/// OtherName : ""
-/// ProductId : 5
-/// ProductName : "2 KG FTL"
+/// SVDate : "2026-02-06T00:00:00"
+/// ReferredById : 27
+/// ReferredByName : "Bharti Naiknaware"
+/// OtherName : "Bharti Naiknaware"
+/// ProductId : 1
+/// ProductName : "14.2 KG"
 /// IsUndocument : true
 /// SVType : "NC"
-/// CylQty : 2
-/// SCRegulator : 0
-/// DepositCyl : 1300.00
-/// CylRefillRSP : 500.00
+/// CylQty : 1
+/// SCRegulator : 1
+/// DepositCyl : 2200.00
+/// CylRefillRSP : 855.50
 /// RegulatorDeposit : 250.00
 /// StampDuty : 100.0
-/// FTLRegulator : 1
-/// BasicAmt : 2140.00
-/// ConsuDCNo : "876522"
-/// ConsumerName : ""
-/// ConsuContactNo : ""
-/// TotalAmount : 2140.00
-/// ReceiptAmt : 2140.00
-/// PaymentMode : "Bank"
-/// TransactionCode : "4"
+/// FTLRegulator : 0
+/// BasicAmt : 3405.50
+/// ConsuDCNo : ""
+/// ConsumerName : "ram"
+/// ConsuContactNo : "9985758586"
+/// TotalAmount : 3464.50
+/// ReceiptAmt : 3464.50
+/// QRReceiptAmt : 0.00
+/// PaymentMode : "Cash"
+/// TransactionCode : ""
 /// TransactionTime : ""
 /// TransactionRemark : ""
 /// AddedBy : 0
 /// Action : null
-/// ItemId : 0
-/// ItemName : null
-/// Rate : 0.00
-/// ItemQty : 0
+/// ItemId : 14
+/// ItemName : "DGCC Book"
+/// Rate : 59.00
+/// ItemQty : 1
 /// DiscountAmt : 0.00
-/// ARBAmount : 0.00
+/// ARBAmount : 59.00
 /// ItemDataList : null
 /// DenomDtList : null
-/// ItemDetails : [{"PSVId":0,"DistributorId":0,"SVDate":null,"ReferredById":0,"ReferredByName":null,"OtherName":null,"ProductId":0,"ProductName":null,"IsUndocument":false,"SVType":null,"CylQty":0,"SCRegulator":0,"DepositCyl":0.0,"CylRefillRSP":0.0,"RegulatorDeposit":0.0,"StampDuty":0.0,"FTLRegulator":0,"BasicAmt":0.0,"ConsuDCNo":null,"ConsumerName":null,"ConsuContactNo":null,"TotalAmount":0.0,"ReceiptAmt":0.0,"PaymentMode":null,"TransactionCode":null,"TransactionTime":null,"TransactionRemark":null,"AddedBy":0,"Action":null,"ItemId":0,"ItemName":null,"Rate":0.00,"ItemQty":0,"DiscountAmt":0.00,"ARBAmount":0.00,"ItemDataList":null,"DenomDtList":null,"ItemDetails":null,"AmtCharges":0.0,"CategoryName":"","BankId":0,"BankMappingId":0,"AccountNo":null,"BankName":null,"IsExemptReti":0,"SVDiscountAmt":0.0}]
+/// ItemDetails : [{"PSVId":0,"DistributorId":0,"SVDate":null,"ReferredById":0,"ReferredByName":null,"OtherName":null,"ProductId":0,"ProductName":null,"IsUndocument":false,"SVType":null,"CylQty":0,"SCRegulator":0,"DepositCyl":0.0,"CylRefillRSP":0.0,"RegulatorDeposit":0.0,"StampDuty":0.0,"FTLRegulator":0,"BasicAmt":0.0,"ConsuDCNo":null,"ConsumerName":null,"ConsuContactNo":null,"TotalAmount":0.0,"ReceiptAmt":0.0,"QRReceiptAmt":0.0,"PaymentMode":null,"TransactionCode":null,"TransactionTime":null,"TransactionRemark":null,"AddedBy":0,"Action":null,"ItemId":14,"ItemName":"DGCC Book","Rate":59.00,"ItemQty":1,"DiscountAmt":0.00,"ARBAmount":59.00,"ItemDataList":null,"DenomDtList":null,"ItemDetails":null,"AmtCharges":0.0,"CategoryName":"Other","BankId":0,"BankMappingId":0,"AccountNo":null,"BankName":null,"IsExemptReti":0,"SVDiscountAmt":0.0,"ConsuAddress":null,"InvoiceType":null,"InvoiceNo":null}]
 /// AmtCharges : 0.00
-/// CategoryName : ""
-/// BankId : 14
-/// BankMappingId : 19
-/// AccountNo : "7777005279799"
-/// BankName : "ICICI"
+/// CategoryName : "Other"
+/// BankId : 0
+/// BankMappingId : 0
+/// AccountNo : null
+/// BankName : null
 /// IsExemptReti : 0
-/// SVDiscountAmt : 10.00
+/// SVDiscountAmt : 0.00
+/// ConsuAddress : "pune"
+/// InvoiceType : "Manual"
+/// InvoiceNo : "56785"
 
 class GetAddEditDataSvSaleItemModel {
   GetAddEditDataSvSaleItemModel({
-      num? pSVId, 
-      num? distributorId, 
-      String? sVDate, 
-      num? referredById, 
-      String? referredByName, 
-      String? otherName, 
-      num? productId, 
-      String? productName, 
-      bool? isUndocument, 
-      String? sVType, 
-      num? cylQty, 
-      num? sCRegulator, 
-      num? depositCyl, 
-      num? cylRefillRSP, 
-      num? regulatorDeposit, 
-      num? stampDuty, 
-      num? fTLRegulator, 
-      num? basicAmt, 
-      String? consuDCNo, 
-      String? consumerName, 
-      String? consuContactNo, 
-      num? totalAmount, 
-      num? receiptAmt, 
-      num? qrReceiptAmt,
-      String? paymentMode,
-      String? transactionCode, 
-      String? transactionTime, 
-      String? transactionRemark, 
-      num? addedBy, 
-      dynamic action, 
-      num? itemId, 
-      dynamic itemName, 
-      num? rate, 
-      num? itemQty, 
-      num? discountAmt, 
-      num? aRBAmount, 
-      dynamic itemDataList, 
-      dynamic denomDtList, 
-      List<ItemDetails>? itemDetails, 
-      num? amtCharges, 
-      String? categoryName, 
-      num? bankId, 
-      num? bankMappingId, 
-      String? accountNo, 
-      String? bankName, 
-      num? isExemptReti, 
-      num? sVDiscountAmt,}){
+    num? pSVId,
+    num? distributorId,
+    String? sVDate,
+    num? referredById,
+    String? referredByName,
+    String? otherName,
+    num? productId,
+    String? productName,
+    bool? isUndocument,
+    String? sVType,
+    num? cylQty,
+    num? sCRegulator,
+    num? depositCyl,
+    num? cylRefillRSP,
+    num? regulatorDeposit,
+    num? stampDuty,
+    num? fTLRegulator,
+    num? basicAmt,
+    String? consuDCNo,
+    String? consumerName,
+    String? consuContactNo,
+    num? totalAmount,
+    num? receiptAmt,
+    num? qRReceiptAmt,
+    String? paymentMode,
+    String? transactionCode,
+    String? transactionTime,
+    String? transactionRemark,
+    num? addedBy,
+    dynamic action,
+    num? itemId,
+    String? itemName,
+    num? rate,
+    num? itemQty,
+    num? discountAmt,
+    num? aRBAmount,
+    dynamic itemDataList,
+    dynamic denomDtList,
+    List<ItemDetails>? itemDetails,
+    num? amtCharges,
+    String? categoryName,
+    num? bankId,
+    num? bankMappingId,
+    dynamic accountNo,
+    dynamic bankName,
+    num? isExemptReti,
+    num? sVDiscountAmt,
+    String? consuAddress,
+    String? invoiceType,
+    String? invoiceNo,}){
     _pSVId = pSVId;
     _distributorId = distributorId;
     _sVDate = sVDate;
@@ -117,7 +124,7 @@ class GetAddEditDataSvSaleItemModel {
     _consuContactNo = consuContactNo;
     _totalAmount = totalAmount;
     _receiptAmt = receiptAmt;
-    _qrReceiptAmt = qrReceiptAmt;
+    _qRReceiptAmt = qRReceiptAmt;
     _paymentMode = paymentMode;
     _transactionCode = transactionCode;
     _transactionTime = transactionTime;
@@ -141,7 +148,10 @@ class GetAddEditDataSvSaleItemModel {
     _bankName = bankName;
     _isExemptReti = isExemptReti;
     _sVDiscountAmt = sVDiscountAmt;
-}
+    _consuAddress = consuAddress;
+    _invoiceType = invoiceType;
+    _invoiceNo = invoiceNo;
+  }
 
   GetAddEditDataSvSaleItemModel.fromJson(dynamic json) {
     _pSVId = json['PSVId'];
@@ -167,7 +177,7 @@ class GetAddEditDataSvSaleItemModel {
     _consuContactNo = json['ConsuContactNo'];
     _totalAmount = json['TotalAmount'];
     _receiptAmt = json['ReceiptAmt'];
-    _qrReceiptAmt = json['QRReceiptAmt'];
+    _qRReceiptAmt = json['QRReceiptAmt'];
     _paymentMode = json['PaymentMode'];
     _transactionCode = json['TransactionCode'];
     _transactionTime = json['TransactionTime'];
@@ -196,6 +206,9 @@ class GetAddEditDataSvSaleItemModel {
     _bankName = json['BankName'];
     _isExemptReti = json['IsExemptReti'];
     _sVDiscountAmt = json['SVDiscountAmt'];
+    _consuAddress = json['ConsuAddress'];
+    _invoiceType = json['InvoiceType'];
+    _invoiceNo = json['InvoiceNo'];
   }
   num? _pSVId;
   num? _distributorId;
@@ -220,7 +233,7 @@ class GetAddEditDataSvSaleItemModel {
   String? _consuContactNo;
   num? _totalAmount;
   num? _receiptAmt;
-  num? _qrReceiptAmt;
+  num? _qRReceiptAmt;
   String? _paymentMode;
   String? _transactionCode;
   String? _transactionTime;
@@ -228,7 +241,7 @@ class GetAddEditDataSvSaleItemModel {
   num? _addedBy;
   dynamic _action;
   num? _itemId;
-  dynamic _itemName;
+  String? _itemName;
   num? _rate;
   num? _itemQty;
   num? _discountAmt;
@@ -240,105 +253,114 @@ class GetAddEditDataSvSaleItemModel {
   String? _categoryName;
   num? _bankId;
   num? _bankMappingId;
-  String? _accountNo;
-  String? _bankName;
+  dynamic _accountNo;
+  dynamic _bankName;
   num? _isExemptReti;
   num? _sVDiscountAmt;
-GetAddEditDataSvSaleItemModel copyWith({  num? pSVId,
-  num? distributorId,
-  String? sVDate,
-  num? referredById,
-  String? referredByName,
-  String? otherName,
-  num? productId,
-  String? productName,
-  bool? isUndocument,
-  String? sVType,
-  num? cylQty,
-  num? sCRegulator,
-  num? depositCyl,
-  num? cylRefillRSP,
-  num? regulatorDeposit,
-  num? stampDuty,
-  num? fTLRegulator,
-  num? basicAmt,
-  String? consuDCNo,
-  String? consumerName,
-  String? consuContactNo,
-  num? totalAmount,
-  num? receiptAmt,
-  num? qrReceiptAmt,
-  String? paymentMode,
-  String? transactionCode,
-  String? transactionTime,
-  String? transactionRemark,
-  num? addedBy,
-  dynamic action,
-  num? itemId,
-  dynamic itemName,
-  num? rate,
-  num? itemQty,
-  num? discountAmt,
-  num? aRBAmount,
-  dynamic itemDataList,
-  dynamic denomDtList,
-  List<ItemDetails>? itemDetails,
-  num? amtCharges,
-  String? categoryName,
-  num? bankId,
-  num? bankMappingId,
-  String? accountNo,
-  String? bankName,
-  num? isExemptReti,
-  num? sVDiscountAmt,
-}) => GetAddEditDataSvSaleItemModel(  pSVId: pSVId ?? _pSVId,
-  distributorId: distributorId ?? _distributorId,
-  sVDate: sVDate ?? _sVDate,
-  referredById: referredById ?? _referredById,
-  referredByName: referredByName ?? _referredByName,
-  otherName: otherName ?? _otherName,
-  productId: productId ?? _productId,
-  productName: productName ?? _productName,
-  isUndocument: isUndocument ?? _isUndocument,
-  sVType: sVType ?? _sVType,
-  cylQty: cylQty ?? _cylQty,
-  sCRegulator: sCRegulator ?? _sCRegulator,
-  depositCyl: depositCyl ?? _depositCyl,
-  cylRefillRSP: cylRefillRSP ?? _cylRefillRSP,
-  regulatorDeposit: regulatorDeposit ?? _regulatorDeposit,
-  stampDuty: stampDuty ?? _stampDuty,
-  fTLRegulator: fTLRegulator ?? _fTLRegulator,
-  basicAmt: basicAmt ?? _basicAmt,
-  consuDCNo: consuDCNo ?? _consuDCNo,
-  consumerName: consumerName ?? _consumerName,
-  consuContactNo: consuContactNo ?? _consuContactNo,
-  totalAmount: totalAmount ?? _totalAmount,
-  receiptAmt: receiptAmt ?? _receiptAmt,
-  qrReceiptAmt: qrReceiptAmt ?? _qrReceiptAmt,
-  paymentMode: paymentMode ?? _paymentMode,
-  transactionCode: transactionCode ?? _transactionCode,
-  transactionTime: transactionTime ?? _transactionTime,
-  transactionRemark: transactionRemark ?? _transactionRemark,
-  addedBy: addedBy ?? _addedBy,
-  action: action ?? _action,
-  itemId: itemId ?? _itemId,
-  itemName: itemName ?? _itemName,
-  rate: rate ?? _rate,
-  itemQty: itemQty ?? _itemQty,
-  discountAmt: discountAmt ?? _discountAmt,
-  aRBAmount: aRBAmount ?? _aRBAmount,
-  itemDataList: itemDataList ?? _itemDataList,
-  denomDtList: denomDtList ?? _denomDtList,
-  itemDetails: itemDetails ?? _itemDetails,
-  amtCharges: amtCharges ?? _amtCharges,
-  categoryName: categoryName ?? _categoryName,
-  bankId: bankId ?? _bankId,
-  bankMappingId: bankMappingId ?? _bankMappingId,
-  accountNo: accountNo ?? _accountNo,
-  bankName: bankName ?? _bankName,
-  isExemptReti: isExemptReti ?? _isExemptReti,
-  sVDiscountAmt: sVDiscountAmt ?? _sVDiscountAmt,
-);
+  String? _consuAddress;
+  String? _invoiceType;
+  String? _invoiceNo;
+  GetAddEditDataSvSaleItemModel copyWith({  num? pSVId,
+    num? distributorId,
+    String? sVDate,
+    num? referredById,
+    String? referredByName,
+    String? otherName,
+    num? productId,
+    String? productName,
+    bool? isUndocument,
+    String? sVType,
+    num? cylQty,
+    num? sCRegulator,
+    num? depositCyl,
+    num? cylRefillRSP,
+    num? regulatorDeposit,
+    num? stampDuty,
+    num? fTLRegulator,
+    num? basicAmt,
+    String? consuDCNo,
+    String? consumerName,
+    String? consuContactNo,
+    num? totalAmount,
+    num? receiptAmt,
+    num? qRReceiptAmt,
+    String? paymentMode,
+    String? transactionCode,
+    String? transactionTime,
+    String? transactionRemark,
+    num? addedBy,
+    dynamic action,
+    num? itemId,
+    String? itemName,
+    num? rate,
+    num? itemQty,
+    num? discountAmt,
+    num? aRBAmount,
+    dynamic itemDataList,
+    dynamic denomDtList,
+    List<ItemDetails>? itemDetails,
+    num? amtCharges,
+    String? categoryName,
+    num? bankId,
+    num? bankMappingId,
+    dynamic accountNo,
+    dynamic bankName,
+    num? isExemptReti,
+    num? sVDiscountAmt,
+    String? consuAddress,
+    String? invoiceType,
+    String? invoiceNo,
+  }) => GetAddEditDataSvSaleItemModel(  pSVId: pSVId ?? _pSVId,
+    distributorId: distributorId ?? _distributorId,
+    sVDate: sVDate ?? _sVDate,
+    referredById: referredById ?? _referredById,
+    referredByName: referredByName ?? _referredByName,
+    otherName: otherName ?? _otherName,
+    productId: productId ?? _productId,
+    productName: productName ?? _productName,
+    isUndocument: isUndocument ?? _isUndocument,
+    sVType: sVType ?? _sVType,
+    cylQty: cylQty ?? _cylQty,
+    sCRegulator: sCRegulator ?? _sCRegulator,
+    depositCyl: depositCyl ?? _depositCyl,
+    cylRefillRSP: cylRefillRSP ?? _cylRefillRSP,
+    regulatorDeposit: regulatorDeposit ?? _regulatorDeposit,
+    stampDuty: stampDuty ?? _stampDuty,
+    fTLRegulator: fTLRegulator ?? _fTLRegulator,
+    basicAmt: basicAmt ?? _basicAmt,
+    consuDCNo: consuDCNo ?? _consuDCNo,
+    consumerName: consumerName ?? _consumerName,
+    consuContactNo: consuContactNo ?? _consuContactNo,
+    totalAmount: totalAmount ?? _totalAmount,
+    receiptAmt: receiptAmt ?? _receiptAmt,
+    qRReceiptAmt: qRReceiptAmt ?? _qRReceiptAmt,
+    paymentMode: paymentMode ?? _paymentMode,
+    transactionCode: transactionCode ?? _transactionCode,
+    transactionTime: transactionTime ?? _transactionTime,
+    transactionRemark: transactionRemark ?? _transactionRemark,
+    addedBy: addedBy ?? _addedBy,
+    action: action ?? _action,
+    itemId: itemId ?? _itemId,
+    itemName: itemName ?? _itemName,
+    rate: rate ?? _rate,
+    itemQty: itemQty ?? _itemQty,
+    discountAmt: discountAmt ?? _discountAmt,
+    aRBAmount: aRBAmount ?? _aRBAmount,
+    itemDataList: itemDataList ?? _itemDataList,
+    denomDtList: denomDtList ?? _denomDtList,
+    itemDetails: itemDetails ?? _itemDetails,
+    amtCharges: amtCharges ?? _amtCharges,
+    categoryName: categoryName ?? _categoryName,
+    bankId: bankId ?? _bankId,
+    bankMappingId: bankMappingId ?? _bankMappingId,
+    accountNo: accountNo ?? _accountNo,
+    bankName: bankName ?? _bankName,
+    isExemptReti: isExemptReti ?? _isExemptReti,
+    sVDiscountAmt: sVDiscountAmt ?? _sVDiscountAmt,
+    consuAddress: consuAddress ?? _consuAddress,
+    invoiceType: invoiceType ?? _invoiceType,
+    invoiceNo: invoiceNo ?? _invoiceNo,
+  );
   num? get pSVId => _pSVId;
   num? get distributorId => _distributorId;
   String? get sVDate => _sVDate;
@@ -362,7 +384,7 @@ GetAddEditDataSvSaleItemModel copyWith({  num? pSVId,
   String? get consuContactNo => _consuContactNo;
   num? get totalAmount => _totalAmount;
   num? get receiptAmt => _receiptAmt;
-  num? get qrReceiptAmt => _qrReceiptAmt;
+  num? get qRReceiptAmt => _qRReceiptAmt;
   String? get paymentMode => _paymentMode;
   String? get transactionCode => _transactionCode;
   String? get transactionTime => _transactionTime;
@@ -370,7 +392,7 @@ GetAddEditDataSvSaleItemModel copyWith({  num? pSVId,
   num? get addedBy => _addedBy;
   dynamic get action => _action;
   num? get itemId => _itemId;
-  dynamic get itemName => _itemName;
+  String? get itemName => _itemName;
   num? get rate => _rate;
   num? get itemQty => _itemQty;
   num? get discountAmt => _discountAmt;
@@ -382,10 +404,13 @@ GetAddEditDataSvSaleItemModel copyWith({  num? pSVId,
   String? get categoryName => _categoryName;
   num? get bankId => _bankId;
   num? get bankMappingId => _bankMappingId;
-  String? get accountNo => _accountNo;
-  String? get bankName => _bankName;
+  dynamic get accountNo => _accountNo;
+  dynamic get bankName => _bankName;
   num? get isExemptReti => _isExemptReti;
   num? get sVDiscountAmt => _sVDiscountAmt;
+  String? get consuAddress => _consuAddress;
+  String? get invoiceType => _invoiceType;
+  String? get invoiceNo => _invoiceNo;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -412,7 +437,7 @@ GetAddEditDataSvSaleItemModel copyWith({  num? pSVId,
     map['ConsuContactNo'] = _consuContactNo;
     map['TotalAmount'] = _totalAmount;
     map['ReceiptAmt'] = _receiptAmt;
-    map['QRReceiptAmt'] = _qrReceiptAmt;
+    map['QRReceiptAmt'] = _qRReceiptAmt;
     map['PaymentMode'] = _paymentMode;
     map['TransactionCode'] = _transactionCode;
     map['TransactionTime'] = _transactionTime;
@@ -438,6 +463,9 @@ GetAddEditDataSvSaleItemModel copyWith({  num? pSVId,
     map['BankName'] = _bankName;
     map['IsExemptReti'] = _isExemptReti;
     map['SVDiscountAmt'] = _sVDiscountAmt;
+    map['ConsuAddress'] = _consuAddress;
+    map['InvoiceType'] = _invoiceType;
+    map['InvoiceNo'] = _invoiceNo;
     return map;
   }
 
@@ -466,79 +494,86 @@ GetAddEditDataSvSaleItemModel copyWith({  num? pSVId,
 /// ConsuContactNo : null
 /// TotalAmount : 0.0
 /// ReceiptAmt : 0.0
+/// QRReceiptAmt : 0.0
 /// PaymentMode : null
 /// TransactionCode : null
 /// TransactionTime : null
 /// TransactionRemark : null
 /// AddedBy : 0
 /// Action : null
-/// ItemId : 0
-/// ItemName : null
-/// Rate : 0.00
-/// ItemQty : 0
+/// ItemId : 14
+/// ItemName : "DGCC Book"
+/// Rate : 59.00
+/// ItemQty : 1
 /// DiscountAmt : 0.00
-/// ARBAmount : 0.00
+/// ARBAmount : 59.00
 /// ItemDataList : null
 /// DenomDtList : null
 /// ItemDetails : null
 /// AmtCharges : 0.0
-/// CategoryName : ""
+/// CategoryName : "Other"
 /// BankId : 0
 /// BankMappingId : 0
 /// AccountNo : null
 /// BankName : null
 /// IsExemptReti : 0
 /// SVDiscountAmt : 0.0
+/// ConsuAddress : null
+/// InvoiceType : null
+/// InvoiceNo : null
 
 class ItemDetails {
   ItemDetails({
-      num? pSVId, 
-      num? distributorId, 
-      dynamic sVDate, 
-      num? referredById, 
-      dynamic referredByName, 
-      dynamic otherName, 
-      num? productId, 
-      dynamic productName, 
-      bool? isUndocument, 
-      dynamic sVType, 
-      num? cylQty, 
-      num? sCRegulator, 
-      num? depositCyl, 
-      num? cylRefillRSP, 
-      num? regulatorDeposit, 
-      num? stampDuty, 
-      num? fTLRegulator, 
-      num? basicAmt, 
-      dynamic consuDCNo, 
-      dynamic consumerName, 
-      dynamic consuContactNo, 
-      num? totalAmount, 
-      num? receiptAmt, 
-      num? qrReceiptAmt,
-      dynamic paymentMode,
-      dynamic transactionCode, 
-      dynamic transactionTime, 
-      dynamic transactionRemark, 
-      num? addedBy, 
-      dynamic action, 
-      num? itemId, 
-      dynamic itemName, 
-      num? rate, 
-      num? itemQty, 
-      num? discountAmt, 
-      num? aRBAmount, 
-      dynamic itemDataList, 
-      dynamic denomDtList, 
-      dynamic itemDetails, 
-      num? amtCharges, 
-      String? categoryName, 
-      num? bankId, 
-      num? bankMappingId, 
-      dynamic accountNo, 
-      dynamic bankName, 
-      num? isExemptReti, 
-      num? sVDiscountAmt,}){
+    num? pSVId,
+    num? distributorId,
+    dynamic sVDate,
+    num? referredById,
+    dynamic referredByName,
+    dynamic otherName,
+    num? productId,
+    dynamic productName,
+    bool? isUndocument,
+    dynamic sVType,
+    num? cylQty,
+    num? sCRegulator,
+    num? depositCyl,
+    num? cylRefillRSP,
+    num? regulatorDeposit,
+    num? stampDuty,
+    num? fTLRegulator,
+    num? basicAmt,
+    dynamic consuDCNo,
+    dynamic consumerName,
+    dynamic consuContactNo,
+    num? totalAmount,
+    num? receiptAmt,
+    num? qRReceiptAmt,
+    dynamic paymentMode,
+    dynamic transactionCode,
+    dynamic transactionTime,
+    dynamic transactionRemark,
+    num? addedBy,
+    dynamic action,
+    num? itemId,
+    String? itemName,
+    num? rate,
+    num? itemQty,
+    num? discountAmt,
+    num? aRBAmount,
+    dynamic itemDataList,
+    dynamic denomDtList,
+    dynamic itemDetails,
+    num? amtCharges,
+    String? categoryName,
+    num? bankId,
+    num? bankMappingId,
+    dynamic accountNo,
+    dynamic bankName,
+    num? isExemptReti,
+    num? sVDiscountAmt,
+    dynamic consuAddress,
+    dynamic invoiceType,
+    dynamic invoiceNo,}){
     _pSVId = pSVId;
     _distributorId = distributorId;
     _sVDate = sVDate;
@@ -562,7 +597,7 @@ class ItemDetails {
     _consuContactNo = consuContactNo;
     _totalAmount = totalAmount;
     _receiptAmt = receiptAmt;
-    _qrReceiptAmt = qrReceiptAmt;
+    _qRReceiptAmt = qRReceiptAmt;
     _paymentMode = paymentMode;
     _transactionCode = transactionCode;
     _transactionTime = transactionTime;
@@ -586,7 +621,10 @@ class ItemDetails {
     _bankName = bankName;
     _isExemptReti = isExemptReti;
     _sVDiscountAmt = sVDiscountAmt;
-}
+    _consuAddress = consuAddress;
+    _invoiceType = invoiceType;
+    _invoiceNo = invoiceNo;
+  }
 
   ItemDetails.fromJson(dynamic json) {
     _pSVId = json['PSVId'];
@@ -612,7 +650,7 @@ class ItemDetails {
     _consuContactNo = json['ConsuContactNo'];
     _totalAmount = json['TotalAmount'];
     _receiptAmt = json['ReceiptAmt'];
-    _qrReceiptAmt = json['QRReceiptAmt'];
+    _qRReceiptAmt = json['QRReceiptAmt'];
     _paymentMode = json['PaymentMode'];
     _transactionCode = json['TransactionCode'];
     _transactionTime = json['TransactionTime'];
@@ -636,6 +674,9 @@ class ItemDetails {
     _bankName = json['BankName'];
     _isExemptReti = json['IsExemptReti'];
     _sVDiscountAmt = json['SVDiscountAmt'];
+    _consuAddress = json['ConsuAddress'];
+    _invoiceType = json['InvoiceType'];
+    _invoiceNo = json['InvoiceNo'];
   }
   num? _pSVId;
   num? _distributorId;
@@ -660,7 +701,7 @@ class ItemDetails {
   dynamic _consuContactNo;
   num? _totalAmount;
   num? _receiptAmt;
-  num? _qrReceiptAmt;
+  num? _qRReceiptAmt;
   dynamic _paymentMode;
   dynamic _transactionCode;
   dynamic _transactionTime;
@@ -668,7 +709,7 @@ class ItemDetails {
   num? _addedBy;
   dynamic _action;
   num? _itemId;
-  dynamic _itemName;
+  String? _itemName;
   num? _rate;
   num? _itemQty;
   num? _discountAmt;
@@ -684,101 +725,110 @@ class ItemDetails {
   dynamic _bankName;
   num? _isExemptReti;
   num? _sVDiscountAmt;
-ItemDetails copyWith({  num? pSVId,
-  num? distributorId,
-  dynamic sVDate,
-  num? referredById,
-  dynamic referredByName,
-  dynamic otherName,
-  num? productId,
-  dynamic productName,
-  bool? isUndocument,
-  dynamic sVType,
-  num? cylQty,
-  num? sCRegulator,
-  num? depositCyl,
-  num? cylRefillRSP,
-  num? regulatorDeposit,
-  num? stampDuty,
-  num? fTLRegulator,
-  num? basicAmt,
-  dynamic consuDCNo,
-  dynamic consumerName,
-  dynamic consuContactNo,
-  num? totalAmount,
-  num? receiptAmt,
-  num? qrReceiptAmt,
-  dynamic paymentMode,
-  dynamic transactionCode,
-  dynamic transactionTime,
-  dynamic transactionRemark,
-  num? addedBy,
-  dynamic action,
-  num? itemId,
-  dynamic itemName,
-  num? rate,
-  num? itemQty,
-  num? discountAmt,
-  num? aRBAmount,
-  dynamic itemDataList,
-  dynamic denomDtList,
-  dynamic itemDetails,
-  num? amtCharges,
-  String? categoryName,
-  num? bankId,
-  num? bankMappingId,
-  dynamic accountNo,
-  dynamic bankName,
-  num? isExemptReti,
-  num? sVDiscountAmt,
-}) => ItemDetails(  pSVId: pSVId ?? _pSVId,
-  distributorId: distributorId ?? _distributorId,
-  sVDate: sVDate ?? _sVDate,
-  referredById: referredById ?? _referredById,
-  referredByName: referredByName ?? _referredByName,
-  otherName: otherName ?? _otherName,
-  productId: productId ?? _productId,
-  productName: productName ?? _productName,
-  isUndocument: isUndocument ?? _isUndocument,
-  sVType: sVType ?? _sVType,
-  cylQty: cylQty ?? _cylQty,
-  sCRegulator: sCRegulator ?? _sCRegulator,
-  depositCyl: depositCyl ?? _depositCyl,
-  cylRefillRSP: cylRefillRSP ?? _cylRefillRSP,
-  regulatorDeposit: regulatorDeposit ?? _regulatorDeposit,
-  stampDuty: stampDuty ?? _stampDuty,
-  fTLRegulator: fTLRegulator ?? _fTLRegulator,
-  basicAmt: basicAmt ?? _basicAmt,
-  consuDCNo: consuDCNo ?? _consuDCNo,
-  consumerName: consumerName ?? _consumerName,
-  consuContactNo: consuContactNo ?? _consuContactNo,
-  totalAmount: totalAmount ?? _totalAmount,
-  receiptAmt: receiptAmt ?? _receiptAmt,
-  qrReceiptAmt: qrReceiptAmt ?? _qrReceiptAmt,
-  paymentMode: paymentMode ?? _paymentMode,
-  transactionCode: transactionCode ?? _transactionCode,
-  transactionTime: transactionTime ?? _transactionTime,
-  transactionRemark: transactionRemark ?? _transactionRemark,
-  addedBy: addedBy ?? _addedBy,
-  action: action ?? _action,
-  itemId: itemId ?? _itemId,
-  itemName: itemName ?? _itemName,
-  rate: rate ?? _rate,
-  itemQty: itemQty ?? _itemQty,
-  discountAmt: discountAmt ?? _discountAmt,
-  aRBAmount: aRBAmount ?? _aRBAmount,
-  itemDataList: itemDataList ?? _itemDataList,
-  denomDtList: denomDtList ?? _denomDtList,
-  itemDetails: itemDetails ?? _itemDetails,
-  amtCharges: amtCharges ?? _amtCharges,
-  categoryName: categoryName ?? _categoryName,
-  bankId: bankId ?? _bankId,
-  bankMappingId: bankMappingId ?? _bankMappingId,
-  accountNo: accountNo ?? _accountNo,
-  bankName: bankName ?? _bankName,
-  isExemptReti: isExemptReti ?? _isExemptReti,
-  sVDiscountAmt: sVDiscountAmt ?? _sVDiscountAmt,
-);
+  dynamic _consuAddress;
+  dynamic _invoiceType;
+  dynamic _invoiceNo;
+  ItemDetails copyWith({  num? pSVId,
+    num? distributorId,
+    dynamic sVDate,
+    num? referredById,
+    dynamic referredByName,
+    dynamic otherName,
+    num? productId,
+    dynamic productName,
+    bool? isUndocument,
+    dynamic sVType,
+    num? cylQty,
+    num? sCRegulator,
+    num? depositCyl,
+    num? cylRefillRSP,
+    num? regulatorDeposit,
+    num? stampDuty,
+    num? fTLRegulator,
+    num? basicAmt,
+    dynamic consuDCNo,
+    dynamic consumerName,
+    dynamic consuContactNo,
+    num? totalAmount,
+    num? receiptAmt,
+    num? qRReceiptAmt,
+    dynamic paymentMode,
+    dynamic transactionCode,
+    dynamic transactionTime,
+    dynamic transactionRemark,
+    num? addedBy,
+    dynamic action,
+    num? itemId,
+    String? itemName,
+    num? rate,
+    num? itemQty,
+    num? discountAmt,
+    num? aRBAmount,
+    dynamic itemDataList,
+    dynamic denomDtList,
+    dynamic itemDetails,
+    num? amtCharges,
+    String? categoryName,
+    num? bankId,
+    num? bankMappingId,
+    dynamic accountNo,
+    dynamic bankName,
+    num? isExemptReti,
+    num? sVDiscountAmt,
+    dynamic consuAddress,
+    dynamic invoiceType,
+    dynamic invoiceNo,
+  }) => ItemDetails(  pSVId: pSVId ?? _pSVId,
+    distributorId: distributorId ?? _distributorId,
+    sVDate: sVDate ?? _sVDate,
+    referredById: referredById ?? _referredById,
+    referredByName: referredByName ?? _referredByName,
+    otherName: otherName ?? _otherName,
+    productId: productId ?? _productId,
+    productName: productName ?? _productName,
+    isUndocument: isUndocument ?? _isUndocument,
+    sVType: sVType ?? _sVType,
+    cylQty: cylQty ?? _cylQty,
+    sCRegulator: sCRegulator ?? _sCRegulator,
+    depositCyl: depositCyl ?? _depositCyl,
+    cylRefillRSP: cylRefillRSP ?? _cylRefillRSP,
+    regulatorDeposit: regulatorDeposit ?? _regulatorDeposit,
+    stampDuty: stampDuty ?? _stampDuty,
+    fTLRegulator: fTLRegulator ?? _fTLRegulator,
+    basicAmt: basicAmt ?? _basicAmt,
+    consuDCNo: consuDCNo ?? _consuDCNo,
+    consumerName: consumerName ?? _consumerName,
+    consuContactNo: consuContactNo ?? _consuContactNo,
+    totalAmount: totalAmount ?? _totalAmount,
+    receiptAmt: receiptAmt ?? _receiptAmt,
+    qRReceiptAmt: qRReceiptAmt ?? _qRReceiptAmt,
+    paymentMode: paymentMode ?? _paymentMode,
+    transactionCode: transactionCode ?? _transactionCode,
+    transactionTime: transactionTime ?? _transactionTime,
+    transactionRemark: transactionRemark ?? _transactionRemark,
+    addedBy: addedBy ?? _addedBy,
+    action: action ?? _action,
+    itemId: itemId ?? _itemId,
+    itemName: itemName ?? _itemName,
+    rate: rate ?? _rate,
+    itemQty: itemQty ?? _itemQty,
+    discountAmt: discountAmt ?? _discountAmt,
+    aRBAmount: aRBAmount ?? _aRBAmount,
+    itemDataList: itemDataList ?? _itemDataList,
+    denomDtList: denomDtList ?? _denomDtList,
+    itemDetails: itemDetails ?? _itemDetails,
+    amtCharges: amtCharges ?? _amtCharges,
+    categoryName: categoryName ?? _categoryName,
+    bankId: bankId ?? _bankId,
+    bankMappingId: bankMappingId ?? _bankMappingId,
+    accountNo: accountNo ?? _accountNo,
+    bankName: bankName ?? _bankName,
+    isExemptReti: isExemptReti ?? _isExemptReti,
+    sVDiscountAmt: sVDiscountAmt ?? _sVDiscountAmt,
+    consuAddress: consuAddress ?? _consuAddress,
+    invoiceType: invoiceType ?? _invoiceType,
+    invoiceNo: invoiceNo ?? _invoiceNo,
+  );
   num? get pSVId => _pSVId;
   num? get distributorId => _distributorId;
   dynamic get sVDate => _sVDate;
@@ -802,7 +852,7 @@ ItemDetails copyWith({  num? pSVId,
   dynamic get consuContactNo => _consuContactNo;
   num? get totalAmount => _totalAmount;
   num? get receiptAmt => _receiptAmt;
-  num? get qrReceiptAmt => _qrReceiptAmt;
+  num? get qRReceiptAmt => _qRReceiptAmt;
   dynamic get paymentMode => _paymentMode;
   dynamic get transactionCode => _transactionCode;
   dynamic get transactionTime => _transactionTime;
@@ -810,7 +860,7 @@ ItemDetails copyWith({  num? pSVId,
   num? get addedBy => _addedBy;
   dynamic get action => _action;
   num? get itemId => _itemId;
-  dynamic get itemName => _itemName;
+  String? get itemName => _itemName;
   num? get rate => _rate;
   num? get itemQty => _itemQty;
   num? get discountAmt => _discountAmt;
@@ -826,6 +876,9 @@ ItemDetails copyWith({  num? pSVId,
   dynamic get bankName => _bankName;
   num? get isExemptReti => _isExemptReti;
   num? get sVDiscountAmt => _sVDiscountAmt;
+  dynamic get consuAddress => _consuAddress;
+  dynamic get invoiceType => _invoiceType;
+  dynamic get invoiceNo => _invoiceNo;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -852,7 +905,7 @@ ItemDetails copyWith({  num? pSVId,
     map['ConsuContactNo'] = _consuContactNo;
     map['TotalAmount'] = _totalAmount;
     map['ReceiptAmt'] = _receiptAmt;
-    map['QRReceiptAmt'] = _qrReceiptAmt;
+    map['QRReceiptAmt'] = _qRReceiptAmt;
     map['PaymentMode'] = _paymentMode;
     map['TransactionCode'] = _transactionCode;
     map['TransactionTime'] = _transactionTime;
@@ -876,7 +929,23 @@ ItemDetails copyWith({  num? pSVId,
     map['BankName'] = _bankName;
     map['IsExemptReti'] = _isExemptReti;
     map['SVDiscountAmt'] = _sVDiscountAmt;
+    map['ConsuAddress'] = _consuAddress;
+    map['InvoiceType'] = _invoiceType;
+    map['InvoiceNo'] = _invoiceNo;
     return map;
   }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

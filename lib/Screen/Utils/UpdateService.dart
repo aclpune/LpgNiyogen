@@ -42,7 +42,7 @@ class UpdateService {
     }
   }
 
-  // // Check for update and show dialog if an update is available
+  // Check for update and show dialog if an update is available
   // static void checkForUpdate(BuildContext context) async {
   //   String currentVersion = '';
   //   String latestVersion = await fetchLatestAppVersion();
@@ -136,7 +136,6 @@ class UpdateService {
     //     }
     //
     //     prefs.setString('lastAppVersion', currentVersion);
-
     //   }
     // } else {
     //   debugPrint("User not logged in. Skipping version update API.");
@@ -166,6 +165,7 @@ class UpdateService {
     if (currentVer < latestVer) {
       showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('Update Available'),
@@ -184,18 +184,17 @@ class UpdateService {
                   }
                 },
               ),
-              TextButton(
-                child: Text('Later'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
+              // TextButton(
+              //   child: Text('Later'),
+              //   onPressed: () {
+              //     Navigator.of(context).pop();
+              //   },
+              // ),
             ],
           );
         },
       );
     }
-
   }
 
   static Future<void> sendPostRequest(String latestVersion, int flag) async {
@@ -269,4 +268,3 @@ class UpdateService {
     }
   }
 }
-

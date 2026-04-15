@@ -211,155 +211,292 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                 ),
               ),
             ),
+            // Padding(
+            //   padding: const EdgeInsets.only(left: 8.0,right: 8,bottom: 5),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //     children: [
+            //       Row(
+            //         children: [
+            //           Text(isListViewVisible ? "View Less" :"View More",style: Styling.actionsShowMoreText),
+            //           IconButton(
+            //             icon: Icon(
+            //               isListViewVisible ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+            //               size: 24,
+            //               color:Colors.blue,
+            //             ),
+            //             onPressed: () {
+            //               setState(() {
+            //                 isListViewVisible = !isListViewVisible; // Toggle ListView visibility
+            //               });
+            //             },
+            //           ),
+            //         ],
+            //       ),
+            //       Row(
+            //         children: [
+            //           value.returnOn =="0001-01-01T00:00:00"?
+            //           ElevatedButton(
+            //             style: ElevatedButton.styleFrom(
+            //               backgroundColor: saveFlag ? Colors.grey:stockTransferFlag?Colors.blue:Colors.grey,
+            //               padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+            //               foregroundColor: Colors.white,
+            //               textStyle: const TextStyle(
+            //                 fontSize: 15,
+            //                 fontWeight: FontWeight.bold,
+            //               ),
+            //             ),
+            //             onPressed: () {
+            //               if(saveFlag){
+            //                 showFlushBar(context,
+            //                     Constants.dayEndCompleted);
+            //               }
+            //               else{
+            //                 if(stockTransferFlag){
+            //                   var itemsToShow = value.itemDetails?.where(
+            //                         (item) => item.filledQty != 0,
+            //                   ).toList();
+            //                   var receiptId = value.receiptId;
+            //                   showDetailsDialog(context, itemsToShow!, receiptId);
+            //                   // if (itemsToShow != null && itemsToShow.isNotEmpty) {
+            //                   //   // List to store names of items where filledQty > current stock
+            //                   //   List<String> invalidItems = [];
+            //                   //   // Loop through items and check if filledQty is greater than stock
+            //                   //   for (var item in itemsToShow) {
+            //                   //     final stockInfo = getCurrentStcOfGodownKeeper.firstWhere(
+            //                   //           (stock) => stock.itemId == item.itemId,
+            //                   //       orElse: () => GetCurrentStcOfGodownKeeperModel(), // Default if not found
+            //                   //     );
+            //                   //     if (item.filledQty! > (stockInfo.currentStkEmpty ?? 0)) {
+            //                   //       invalidItems.add(item.itemName ?? "Unknown Item");
+            //                   //     }
+            //                   //   }
+            //                   //   if (invalidItems.isNotEmpty) {
+            //                   //     // Show AlertDialog if there are items with invalid quantity
+            //                   //     showDialog(
+            //                   //       context: context,
+            //                   //       builder: (BuildContext context) {
+            //                   //         return
+            //                   //           AlertDialog(
+            //                   //           title: Text(""),
+            //                   //           content: Text(
+            //                   //             "The following items have a quantity greater than the available stock:\n\n" +
+            //                   //                 invalidItems.join("\n"),
+            //                   //           ),
+            //                   //           actions: [
+            //                   //             TextButton(
+            //                   //               onPressed: () {
+            //                   //                 Navigator.pop(context); // Close the dialog
+            //                   //               },
+            //                   //               child: Text("OK"),
+            //                   //             ),
+            //                   //           ],
+            //                   //         );
+            //                   //       },
+            //                   //     );
+            //                   //   } else {
+            //                   //     // Proceed with showing details dialog if no invalid qty
+            //                   //     var receiptId = value.receiptId;
+            //                   //     showDetailsDialog(context, itemsToShow, receiptId);
+            //                   //   }
+            //                   // } else {
+            //                   //   showFlushBar(context, Constants.nodataFound);
+            //                   // }
+            //                 }else{
+            //                   CustomAlertDialog.showCustomAlert(context, Constants.stockNotAccepted);
+            //                 }
+            //               }
+            //             },
+            //             child: Text("Out"),
+            //           ) :
+            //           Text(""),
+            //           SizedBox(width: 10,),
+            //           value.returnOn =="0001-01-01T00:00:00"?
+            //           ElevatedButton(
+            //             style: ElevatedButton.styleFrom(
+            //               backgroundColor: saveFlag ? Colors.grey:stockTransferFlag?Colors.blue:Colors.grey,
+            //               padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+            //               foregroundColor: Colors.white,
+            //               textStyle: const TextStyle(
+            //                 fontSize: 15,
+            //                 fontWeight: FontWeight.bold,
+            //               ),
+            //             ),
+            //             onPressed: () {
+            //               if(saveFlag){
+            //                 showFlushBar(context,
+            //                     Constants.dayEndCompleted);
+            //               }else {
+            //                 if (stockTransferFlag) {
+            //                   var itemsToShow = value.itemDetails?.toList();
+            //                   var receiptId = value.receiptId;
+            //                   var vehicleNo = value.vehicleNo.toString();
+            //                   var receiptDate = value.receiptDate.toString();
+            //                   if (itemsToShow != null && itemsToShow.isNotEmpty) {
+            //                     // Navigate to the target screen and pass the data
+            //                     Navigator.pushNamed(
+            //                       context,
+            //                       ItemReceiptScreen.screenName,
+            //                       arguments: {
+            //                         'vehicleNo': vehicleNo,
+            //                         'receiptDate': receiptDate,
+            //                         'itemsToShow': itemsToShow,
+            //                         'modeChange': "Edit",
+            //                         'receiptID': receiptId
+            //                       },
+            //                     );
+            //                   } else {
+            //                     showFlushBar(context,Constants.nodataFound);
+            //                   }
+            //                 } else {
+            //                   CustomAlertDialog.showCustomAlert(context,
+            //                       Constants.stockNotAccepted);
+            //                 }
+            //               }
+            //
+            //             },
+            //             child: Text("Edit"),
+            //           ):
+            //           Text(""),
+            //         ],
+            //       )
+            //     ],
+            //   ),
+            // ),
             Padding(
-              padding: const EdgeInsets.only(left: 8.0,right: 8,bottom: 5),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              padding: const EdgeInsets.only(left: 8.0, right: 8, bottom: 5),
+              child:
+              Row(
+                // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
+                  // Left side: View More / View Less
                   Row(
                     children: [
-                      Text(isListViewVisible ? "View Less" :"View More",style: Styling.actionsShowMoreText),
+                      Text(
+                        isListViewVisible ? "View Less" : "View More",
+                        style: Styling.actionsShowMoreText,
+                      ),
                       IconButton(
                         icon: Icon(
                           isListViewVisible ? Icons.arrow_drop_up : Icons.arrow_drop_down,
                           size: 24,
-                          color:Colors.blue,
+                          color: Colors.blue,
                         ),
                         onPressed: () {
                           setState(() {
-                            isListViewVisible = !isListViewVisible; // Toggle ListView visibility
+                            isListViewVisible = !isListViewVisible;
                           });
                         },
                       ),
                     ],
                   ),
-                  Row(
-                    children: [
-                      value.returnOn =="0001-01-01T00:00:00"?
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: saveFlag ? Colors.grey:stockTransferFlag?Colors.blue:Colors.grey,
-                          padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
-                          foregroundColor: Colors.white,
-                          textStyle: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        onPressed: () {
-                          if(saveFlag){
-                            showFlushBar(context,
-                                Constants.dayEndCompleted);
-                          }
-                          else{
-                            if(stockTransferFlag){
-                              var itemsToShow = value.itemDetails?.where(
-                                    (item) => item.filledQty != 0,
-                              ).toList();
-                              var receiptId = value.receiptId;
-                              showDetailsDialog(context, itemsToShow!, receiptId);
-                              // if (itemsToShow != null && itemsToShow.isNotEmpty) {
-                              //   // List to store names of items where filledQty > current stock
-                              //   List<String> invalidItems = [];
-                              //   // Loop through items and check if filledQty is greater than stock
-                              //   for (var item in itemsToShow) {
-                              //     final stockInfo = getCurrentStcOfGodownKeeper.firstWhere(
-                              //           (stock) => stock.itemId == item.itemId,
-                              //       orElse: () => GetCurrentStcOfGodownKeeperModel(), // Default if not found
-                              //     );
-                              //     if (item.filledQty! > (stockInfo.currentStkEmpty ?? 0)) {
-                              //       invalidItems.add(item.itemName ?? "Unknown Item");
-                              //     }
-                              //   }
-                              //   if (invalidItems.isNotEmpty) {
-                              //     // Show AlertDialog if there are items with invalid quantity
-                              //     showDialog(
-                              //       context: context,
-                              //       builder: (BuildContext context) {
-                              //         return
-                              //           AlertDialog(
-                              //           title: Text(""),
-                              //           content: Text(
-                              //             "The following items have a quantity greater than the available stock:\n\n" +
-                              //                 invalidItems.join("\n"),
-                              //           ),
-                              //           actions: [
-                              //             TextButton(
-                              //               onPressed: () {
-                              //                 Navigator.pop(context); // Close the dialog
-                              //               },
-                              //               child: Text("OK"),
-                              //             ),
-                              //           ],
-                              //         );
-                              //       },
-                              //     );
-                              //   } else {
-                              //     // Proceed with showing details dialog if no invalid qty
-                              //     var receiptId = value.receiptId;
-                              //     showDetailsDialog(context, itemsToShow, receiptId);
-                              //   }
-                              // } else {
-                              //   showFlushBar(context, Constants.nodataFound);
-                              // }
-                            }else{
-                              CustomAlertDialog.showCustomAlert(context, Constants.stockNotAccepted);
-                            }
-                          }
-                        },
-                        child: Text("Out"),
-                      ) :
-                      Text(""),
-                      SizedBox(width: 10,),
-                      value.returnOn =="0001-01-01T00:00:00"?
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: saveFlag ? Colors.grey:stockTransferFlag?Colors.blue:Colors.grey,
-                          padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
-                          foregroundColor: Colors.white,
-                          textStyle: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        onPressed: () {
-                          if(saveFlag){
-                            showFlushBar(context,
-                                Constants.dayEndCompleted);
-                          }else {
-                            if (stockTransferFlag) {
-                              var itemsToShow = value.itemDetails?.toList();
-                              var receiptId = value.receiptId;
-                              var vehicleNo = value.vehicleNo.toString();
-                              var receiptDate = value.receiptDate.toString();
-                              if (itemsToShow != null && itemsToShow.isNotEmpty) {
-                                // Navigate to the target screen and pass the data
-                                Navigator.pushNamed(
-                                  context,
-                                  ItemReceiptScreen.screenName,
-                                  arguments: {
-                                    'vehicleNo': vehicleNo,
-                                    'receiptDate': receiptDate,
-                                    'itemsToShow': itemsToShow,
-                                    'modeChange': "Edit",
-                                    'receiptID': receiptId
-                                  },
-                                );
-                              } else {
-                                showFlushBar(context,Constants.nodataFound);
-                              }
-                            } else {
-                              CustomAlertDialog.showCustomAlert(context,
-                                  Constants.stockNotAccepted);
-                            }
-                          }
 
-                        },
-                        child: Text("Edit"),
-                      ):
-                      Text(""),
-                    ],
+                  Spacer(),
+
+                  // Right side: Out button
+                  (isListViewVisible && value.returnOn == "0001-01-01T00:00:00")
+                      ? ElevatedButton(
+                    // style: ElevatedButton.styleFrom(
+                    //   backgroundColor: saveFlag
+                    //       ? Colors.transparent
+                    //       : stockTransferFlag
+                    //       ? Colors.transparent
+                    //       // ? Color(0xFFF8C8C8)
+                    //       : Colors.transparent,
+                    //   padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+                    //   foregroundColor: Colors.white,
+                    //   textStyle: const TextStyle(
+                    //     fontSize: 15,
+                    //     fontWeight: FontWeight.bold,
+                    //   ),
+                    // ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: saveFlag
+                          ? Colors.transparent
+                          : stockTransferFlag
+                          ? Colors.transparent
+                          : Colors.transparent,
+                      elevation: 0,
+                      shadowColor: Colors.transparent,
+                      surfaceTintColor: Colors.transparent,
+                      padding: EdgeInsets.symmetric(horizontal: 25, vertical: 5),
+                      foregroundColor: Colors.white,
+                      textStyle: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    onPressed: () {
+                      if (saveFlag) {
+                        showFlushBar(context, Constants.dayEndCompleted);
+                      } else {
+                        if (stockTransferFlag) {
+                          var itemsToShow = value.itemDetails
+                              ?.where((item) => item.filledQty != 0)
+                              .toList();
+                          var receiptId = value.receiptId;
+                          showDetailsDialog(context, itemsToShow!, receiptId);
+                        } else {
+                          CustomAlertDialog.showCustomAlert(
+                              context, Constants.stockNotAccepted);
+                        }
+                      }
+                    },
+                    child:  Icon(
+                      Icons.local_shipping,
+                      color: Colors.blue,
+                      size: 20,
+                    ),
+                    // Text("Out"),
                   )
+                      : SizedBox.shrink(),
+                  SizedBox(width: 2),
+                  // Edit Button (conditionally displayed)
+                  if (isListViewVisible && value.returnOn == "0001-01-01T00:00:00")
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        elevation: 0,
+                        shadowColor: Colors.transparent,
+                        surfaceTintColor: Colors.transparent,
+                        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                        textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                      ),
+                      onPressed: () {
+                        if (saveFlag) {
+                          showFlushBar(context, Constants.dayEndCompleted);
+                        } else {
+                          if (stockTransferFlag) {
+                            var itemsToShow = value.itemDetails?.toList();
+                            var receiptId = value.receiptId;
+                            var vehicleNo = value.vehicleNo.toString();
+                            var receiptDate = value.receiptDate.toString();
+                            if (itemsToShow != null && itemsToShow.isNotEmpty) {
+                              Navigator.pushNamed(
+                                context,
+                                ItemReceiptScreen.screenName,
+                                arguments: {
+                                  'vehicleNo': vehicleNo,
+                                  'receiptDate': receiptDate,
+                                  'itemsToShow': itemsToShow,
+                                  'modeChange': "Edit",
+                                  'receiptID': receiptId
+                                },
+                              );
+                            } else {
+                              showFlushBar(context, Constants.nodataFound);
+                            }
+                          } else {
+                            CustomAlertDialog.showCustomAlert(context, Constants.stockNotAccepted);
+                          }
+                        }
+                      },
+                      child: Icon(
+                        Icons.edit,
+                        color: Colors.blue,
+                        size: 20,
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -1039,7 +1176,9 @@ class _ItemReturnScreenListItemState extends State<ItemReturnScreenListItem> {
                   btnLabel,
                   style: Styling.blueClrText,
                 ),
-                onPressed: () {},
+                // onPressed: () {},
+                onPressed: () => logoutUser(context),
+
               ),
             ],
           ),

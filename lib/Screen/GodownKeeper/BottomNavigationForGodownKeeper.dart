@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lpgsalesandinventory/Screen/GodownKeeper/DashboardScreen.dart';
 
+import '../Utils/CustomeAppBarManagerDashboard.dart';
 import '../Utils/CutomeAppBarManagerBottomNavigationBar.dart';
 import 'DelBoyStockReturn/DeliveryMenListShowScreen.dart';
 import 'DelBoyStockSubmitToManager/StockSubmitToManager.dart';
@@ -46,11 +47,13 @@ class _BottomNavigationForGodownKeeperState extends State<BottomNavigationForGod
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:AppBarCustom(),
+      appBar:CustomeAppBarmanagerDashboard(),
       body: _pages[_selectedIndex], // Display the selected page
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
+        backgroundColor: Colors.white,
+
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.dashboard,size: 16,),
@@ -76,3 +79,5 @@ class _BottomNavigationForGodownKeeperState extends State<BottomNavigationForGod
     );
   }
 }
+
+

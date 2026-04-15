@@ -18,22 +18,22 @@
 
 class StockSubmitToManagerListModel {
   StockSubmitToManagerListModel({
-      num? saleGKId,
-      num? distributorId,
-      String? deliveryDate,
-      num? dMId,
-      num? vehicleId,
-      num? dailySaleStatus,
-      String? staffNo,
-      String? staffName,
-      String? vehicleNo,
-      String? statusStr,
-      String? addedOn,
-       String? addedByNo,
-      String? addedByName,
-      List<ItemList>? itemList,
-      num? addedBy,
-     String? action,}){
+    num? saleGKId,
+    num? distributorId,
+    String? deliveryDate,
+    num? dMId,
+    num? vehicleId,
+    num? dailySaleStatus,
+    String? staffNo,
+    String? staffName,
+    String? vehicleNo,
+    String? statusStr,
+    String? addedOn,
+    String? addedByNo,
+    String? addedByName,
+    List<ItemList>? itemList,
+    num? addedBy,
+    String? action,}){
     _saleGKId = saleGKId;
     _distributorId = distributorId;
     _deliveryDate = deliveryDate;
@@ -51,7 +51,7 @@ class StockSubmitToManagerListModel {
     _addedBy = addedBy;
     _action = action;
 
-}
+  }
 
   StockSubmitToManagerListModel.fromJson(dynamic json) {
     _saleGKId = json['SaleGKId'];
@@ -92,39 +92,39 @@ class StockSubmitToManagerListModel {
   List<ItemList>? _itemList;
   num? _addedBy;
   String? _action;
-StockSubmitToManagerListModel copyWith({  num? saleGKId,
-  num? distributorId,
-  String? deliveryDate,
-  num? dMId,
-  num? vehicleId,
-  num? dailySaleStatus,
-  String? staffNo,
-  String? staffName,
-  String? vehicleNo,
-  String? statusStr,
-  String? addedOn,
-  String? addedByNo,
-  String? addedByName,
-  List<ItemList>? itemList,
-  num? addedBy,
-  String? action,
-}) => StockSubmitToManagerListModel(  saleGKId: saleGKId ?? _saleGKId,
-  distributorId: distributorId ?? _distributorId,
-  deliveryDate: deliveryDate ?? _deliveryDate,
-  dMId: dMId ?? _dMId,
-  vehicleId: vehicleId ?? _vehicleId,
-  dailySaleStatus: dailySaleStatus ?? _dailySaleStatus,
-  staffNo: staffNo ?? _staffNo,
-  staffName: staffName ?? _staffName,
-  vehicleNo: vehicleNo ?? _vehicleNo,
-  statusStr: statusStr ?? _statusStr,
-  addedOn: addedOn ?? _addedOn,
-  addedByNo: addedByNo ?? _addedByNo,
-  addedByName: addedByName ?? _addedByName,
-  itemList: itemList ?? _itemList,
-  addedBy: addedBy ?? _addedBy,
-  action: action ?? _action,
-);
+  StockSubmitToManagerListModel copyWith({  num? saleGKId,
+    num? distributorId,
+    String? deliveryDate,
+    num? dMId,
+    num? vehicleId,
+    num? dailySaleStatus,
+    String? staffNo,
+    String? staffName,
+    String? vehicleNo,
+    String? statusStr,
+    String? addedOn,
+    String? addedByNo,
+    String? addedByName,
+    List<ItemList>? itemList,
+    num? addedBy,
+    String? action,
+  }) => StockSubmitToManagerListModel(  saleGKId: saleGKId ?? _saleGKId,
+    distributorId: distributorId ?? _distributorId,
+    deliveryDate: deliveryDate ?? _deliveryDate,
+    dMId: dMId ?? _dMId,
+    vehicleId: vehicleId ?? _vehicleId,
+    dailySaleStatus: dailySaleStatus ?? _dailySaleStatus,
+    staffNo: staffNo ?? _staffNo,
+    staffName: staffName ?? _staffName,
+    vehicleNo: vehicleNo ?? _vehicleNo,
+    statusStr: statusStr ?? _statusStr,
+    addedOn: addedOn ?? _addedOn,
+    addedByNo: addedByNo ?? _addedByNo,
+    addedByName: addedByName ?? _addedByName,
+    itemList: itemList ?? _itemList,
+    addedBy: addedBy ?? _addedBy,
+    action: action ?? _action,
+  );
   num? get saleGKId => _saleGKId;
   num? get distributorId => _distributorId;
   String? get deliveryDate => _deliveryDate;
@@ -183,25 +183,28 @@ StockSubmitToManagerListModel copyWith({  num? saleGKId,
 
 class ItemList {
   ItemList({
-      num? SaleGKItemId,
-      num? itemId,
-      String? itemName,
-      num? filledSaleQty,
-      num? sVQty,
-      num? tVQty,
-      num? emptyRetQty,
-      num? deffQty,
-      num? lessEmptyQty,
-      String? remark,
-      num? closingFilled,
-      num? closingEmpty,
-      num? closingDef,
+    num? SaleGKItemId,
+    num? itemId,
+    String? itemName,
+    num? filledSaleQty,
+    num? sVQty,
+    num? tVQty,
+    num? emptyRetQty,
+    num? deffQty,
+    num? lessEmptyQty,
+    String? remark,
+    num? closingFilled,
+    num? closingEmpty,
+    num? closingDef,
     String? sVConsStr,
     String? PSVIdStr,
     String? TVConsStr,
     String? SVQtyStr,
     String? TVQtyStr,
-  String? FlagColumnUpdate,}){
+    String? ImbForIdStr,
+    String? ImbQtyStr,
+    num? DMImbQty,
+    String? FlagColumnUpdate,}){
     _SaleGKItemId = SaleGKItemId;
     _itemId = itemId;
     _itemName = itemName;
@@ -220,30 +223,64 @@ class ItemList {
     _TVConsStr = TVConsStr;
     _SVQtyStr = SVQtyStr;
     _TVQtyStr = TVQtyStr;
+    _ImbForIdStr = ImbForIdStr;
+    _ImbQtyStr = ImbQtyStr;
+    _DMImbQty = DMImbQty;
     _FlagColumnUpdate = FlagColumnUpdate;
-}
-
+  }
   ItemList.fromJson(dynamic json) {
-    _SaleGKItemId = json['SaleGKItemId'];
-    _itemId = json['ItemId'];
+    _SaleGKItemId = parseNum(json['SaleGKItemId']);
+    _itemId = parseNum(json['ItemId']);
     _itemName = json['ItemName'];
-    _filledSaleQty = json['FilledSaleQty'];
-    _sVQty = json['SVQty'];
-    _tVQty = json['TVQty'];
-    _emptyRetQty = json['EmptyRetQty'];
-    _deffQty = json['DeffQty'];
-    _lessEmptyQty = json['LessEmptyQty'];
+
+    _filledSaleQty = parseNum(json['FilledSaleQty']);
+    _sVQty = parseNum(json['SVQty']);
+    _tVQty = parseNum(json['TVQty']);
+    _emptyRetQty = parseNum(json['EmptyRetQty']);
+    _deffQty = parseNum(json['DeffQty']);
+    _lessEmptyQty = parseNum(json['LessEmptyQty']);
+
     _remark = json['Remark'];
-    _closingFilled = json['ClosingFilled'];
-    _closingEmpty = json['ClosingEmpty'];
-    _closingDef = json['ClosingDef'];
+
+    _closingFilled = parseNum(json['ClosingFilled']);
+    _closingEmpty = parseNum(json['ClosingEmpty']);
+    _closingDef = parseNum(json['ClosingDef']);
+
     _sVConsStr = json['SVConsStr'];
     _PSVIdStr = json['PSVIdStr'];
     _TVConsStr = json['TVConsStr'];
     _SVQtyStr = json['SVQtyStr'];
     _TVQtyStr = json['TVQtyStr'];
+    _ImbForIdStr = json['ImbForIdStr'];
+    _ImbQtyStr = json['ImbQtyStr'];
+
+    _DMImbQty = parseNum(json['DMImbQty']);
     _FlagColumnUpdate = json['FlagColumnUpdate'];
   }
+  // ItemList.fromJson(dynamic json) {
+  //   _SaleGKItemId = json['SaleGKItemId'];
+  //   _itemId = json['ItemId'];
+  //   _itemName = json['ItemName'];
+  //   _filledSaleQty = json['FilledSaleQty'];
+  //   _sVQty = json['SVQty'];
+  //   _tVQty = json['TVQty'];
+  //   _emptyRetQty = json['EmptyRetQty'];
+  //   _deffQty = json['DeffQty'];
+  //   _lessEmptyQty = json['LessEmptyQty'];
+  //   _remark = json['Remark'];
+  //   _closingFilled = json['ClosingFilled'];
+  //   _closingEmpty = json['ClosingEmpty'];
+  //   _closingDef = json['ClosingDef'];
+  //   _sVConsStr = json['SVConsStr'];
+  //   _PSVIdStr = json['PSVIdStr'];
+  //   _TVConsStr = json['TVConsStr'];
+  //   _SVQtyStr = json['SVQtyStr'];
+  //   _TVQtyStr = json['TVQtyStr'];
+  //   _ImbForIdStr = json['ImbForIdStr'];
+  //   _ImbQtyStr = json['ImbQtyStr'];
+  //   _DMImbQty = json['DMImbQty'];
+  //   _FlagColumnUpdate = json['FlagColumnUpdate'];
+  // }
   num? _itemId;
   num? _SaleGKItemId;
   String? _itemName;
@@ -262,48 +299,57 @@ class ItemList {
   String? _TVConsStr;
   String? _SVQtyStr;
   String? _TVQtyStr;
+  String? _ImbForIdStr;
+  String? _ImbQtyStr;
+  num? _DMImbQty;
   String? _FlagColumnUpdate;
-ItemList copyWith({
-  num? SaleGKItemId,
-  num? itemId,
-  String? itemName,
-  num? filledSaleQty,
-  num? sVQty,
-  num? tVQty,
-  num? emptyRetQty,
-  num? deffQty,
-  num? lessEmptyQty,
-  String? remark,
-  num? closingFilled,
-  num? closingEmpty,
-  num? closingDef,
-  String? sVConsStr,
-  String? PSVIdStr,
-  String? TVConsStr,
-  String? SVQtyStr,
-  String? TVQtyStr,
-  String? FlagColumnUpdate,
-}) => ItemList(
-  SaleGKItemId: SaleGKItemId ?? _SaleGKItemId,
-  itemId: itemId ?? _itemId,
-  itemName: itemName ?? _itemName,
-  filledSaleQty: filledSaleQty ?? _filledSaleQty,
-  sVQty: sVQty ?? _sVQty,
-  tVQty: tVQty ?? _tVQty,
-  emptyRetQty: emptyRetQty ?? _emptyRetQty,
-  deffQty: deffQty ?? _deffQty,
-  lessEmptyQty: lessEmptyQty ?? _lessEmptyQty,
-  remark: remark ?? _remark,
-  closingFilled: closingFilled ?? _closingFilled,
-  closingEmpty: closingEmpty ?? _closingEmpty,
-  closingDef: closingDef ?? _closingDef,
-  sVConsStr: sVConsStr ?? _sVConsStr,
-  PSVIdStr: PSVIdStr ?? _PSVIdStr,
-  TVConsStr: TVConsStr ?? _TVConsStr,
-  SVQtyStr: SVQtyStr ?? _SVQtyStr,
-  TVQtyStr: TVQtyStr ?? _TVQtyStr,
-  FlagColumnUpdate: FlagColumnUpdate ?? _FlagColumnUpdate,
-);
+  ItemList copyWith({
+    num? SaleGKItemId,
+    num? itemId,
+    String? itemName,
+    num? filledSaleQty,
+    num? sVQty,
+    num? tVQty,
+    num? emptyRetQty,
+    num? deffQty,
+    num? lessEmptyQty,
+    String? remark,
+    num? closingFilled,
+    num? closingEmpty,
+    num? closingDef,
+    String? sVConsStr,
+    String? PSVIdStr,
+    String? TVConsStr,
+    String? SVQtyStr,
+    String? TVQtyStr,
+    String? ImbForIdStr,
+    String? ImbQtyStr,
+    num? DMImbQty,
+    String? FlagColumnUpdate,
+  }) => ItemList(
+    SaleGKItemId: SaleGKItemId ?? _SaleGKItemId,
+    itemId: itemId ?? _itemId,
+    itemName: itemName ?? _itemName,
+    filledSaleQty: filledSaleQty ?? _filledSaleQty,
+    sVQty: sVQty ?? _sVQty,
+    tVQty: tVQty ?? _tVQty,
+    emptyRetQty: emptyRetQty ?? _emptyRetQty,
+    deffQty: deffQty ?? _deffQty,
+    lessEmptyQty: lessEmptyQty ?? _lessEmptyQty,
+    remark: remark ?? _remark,
+    closingFilled: closingFilled ?? _closingFilled,
+    closingEmpty: closingEmpty ?? _closingEmpty,
+    closingDef: closingDef ?? _closingDef,
+    sVConsStr: sVConsStr ?? _sVConsStr,
+    PSVIdStr: PSVIdStr ?? _PSVIdStr,
+    TVConsStr: TVConsStr ?? _TVConsStr,
+    SVQtyStr: SVQtyStr ?? _SVQtyStr,
+    TVQtyStr: TVQtyStr ?? _TVQtyStr,
+    ImbForIdStr: ImbForIdStr ?? ImbForIdStr,
+    ImbQtyStr: ImbQtyStr ?? ImbQtyStr,
+    DMImbQty: DMImbQty ?? DMImbQty,
+    FlagColumnUpdate: FlagColumnUpdate ?? _FlagColumnUpdate,
+  );
   num? get SaleGKItemId => _SaleGKItemId;
   num? get itemId => _itemId;
   String? get itemName => _itemName;
@@ -322,6 +368,9 @@ ItemList copyWith({
   String? get TVConsStr => _TVConsStr;
   String? get SVQtyStr => _SVQtyStr;
   String? get TVQtyStr => _TVQtyStr;
+  String? get ImbForIdStr => _ImbForIdStr;
+  String? get ImbQtyStr => _ImbQtyStr;
+  num? get DMImbQty => _DMImbQty;
   String? get FlagColumnUpdate => _FlagColumnUpdate;
 
   Map<String, dynamic> toJson() {
@@ -344,8 +393,15 @@ ItemList copyWith({
     map['TVConsStr'] = _TVConsStr;
     map['SVQtyStr'] = _SVQtyStr;
     map['TVQtyStr'] = _TVQtyStr;
+    map['ImbForIdStr'] = _ImbForIdStr;
+    map['ImbQtyStr'] = _ImbQtyStr;
+    map['DMImbQty'] = _DMImbQty;
     map['FlagColumnUpdate'] = _FlagColumnUpdate;
     return map;
   }
-
+  num? parseNum(dynamic value) {
+    if (value == null) return null;
+    if (value is num) return value;
+    return num.tryParse(value.toString());
+  }
 }

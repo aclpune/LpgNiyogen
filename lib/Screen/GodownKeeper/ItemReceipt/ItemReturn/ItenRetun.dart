@@ -13,6 +13,7 @@ import 'package:http/http.dart' as http;
 import '../../../Utils/constants.dart';
 import '../../BottomNavigationForGodownKeeper.dart';
 import '../../DashboardScreen.dart';
+import '../../SQCRegister/SQCRegisterScreen.dart';
 import '../EditItem/Model/GetItemReceiptListModel.dart';
 import 'ItenReturnItemUi.dart';
 class ItemReturnScreen extends StatefulWidget {
@@ -57,6 +58,17 @@ class _ItemReturnScreenState extends State<ItemReturnScreen> {
         appBar: CustomAppBar(
           title: 'Item Return', // Title or hint text for the text field
         ),
+          floatingActionButton: FloatingActionButton.extended(
+            backgroundColor: Colors.blue,
+            onPressed: () {
+              _showSQCBottomSheet(context);
+            },
+            icon: Icon(Icons.list),
+            label: Text(
+              "SQC",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
         body: RefreshIndicator(
           onRefresh: _refresh,
           child: isLoading?
@@ -89,6 +101,139 @@ class _ItemReturnScreenState extends State<ItemReturnScreen> {
               ),
         )
       ),
+    );
+  }
+  void _showSQCBottomSheet(BuildContext context) {
+
+    var vehiclesNotOut = receiptList
+        .where((v) => v.returnOn == "0001-01-01T00:00:00")
+        .toList();
+
+    if (vehiclesNotOut.isEmpty) {
+      showFlushBar(context, "All vehicles are already out.");
+      return;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return Container(
+          padding: EdgeInsets.all(16),
+          height: 350,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "SQC Vehicles",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 10),
+              Expanded(
+                child:
+                ListView.builder(
+                  itemCount: vehiclesNotOut.length,
+                  itemBuilder: (context, index) {
+                    var vehicle = vehiclesNotOut[index];
+
+                    // var item = (vehicle.itemDetails?.isNotEmpty ?? false)
+                    //     ? vehicle.itemDetails![0]
+                    //     : null;
+
+                    return ListTile(
+                        title: RichText(
+                          text: TextSpan(
+                            text: "Vehicle No: ",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: "${vehicle.vehicleNo}",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // Text("Vehicle No: ${vehicle.vehicleNo}"),
+                        trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                        // onTap: () {
+                        //   Navigator.pop(context);
+                        //   Navigator.pushNamed(
+                        //     context,
+                        //     SQCRegisterScreen.screenName,
+                        //     arguments: {
+                        //       'vehicleNo': vehicle.vehicleNo.toString(),
+                        //       'godownId': vehicle.godownId.toString(),
+                        //       // 'itemId': item != null ? item.itemId.toString() : "",
+                        //       // 'itemName': item != null ? item.itemName.toString() : "",
+                        //     },
+                        //   );
+                        // },
+
+                        onTap: () {
+                          Navigator.pop(context);
+
+                          // Prepare lists
+                          var itemIds = <String>[];
+                          var itemNames = <String>[];
+
+                          if (vehicle.itemDetails != null && vehicle.itemDetails!.isNotEmpty) {
+                            for (var item in vehicle.itemDetails!) {
+                              itemIds.add(item.itemId.toString());
+                              itemNames.add(item.itemName.toString());
+                            }
+                          }
+                          Navigator.pushNamed(
+                            context,
+                            SQCRegisterScreen.screenName,
+                            arguments: {
+                              'vehicleNo': vehicle.vehicleNo.toString(),
+                              'godownId': vehicle.godownId.toString(),
+                              'itemIds': itemIds,
+                              'itemNames': itemNames,
+                            },
+                          );
+                        }
+                      // onTap: () {
+                      //   Navigator.pop(context);
+                      //
+                      //   // Prepare lists of item IDs and names
+                      //   var itemIds = <String>[];
+                      //   var itemNames = <String>[];
+                      //
+                      //   if (vehicle.itemDetails != null && vehicle.itemDetails!.isNotEmpty) {
+                      //     for (var i in vehicle.itemDetails!) {
+                      //       itemIds.add(i.itemId.toString());
+                      //       itemNames.add(i.itemName.toString());
+                      //     }
+                      //   }
+                      //
+                      //   Navigator.pushNamed(
+                      //     context,
+                      //     SQCRegisterScreen.screenName,
+                      //     arguments: {
+                      //       'vehicleNo': vehicle.vehicleNo.toString(),
+                      //       'godownId': vehicle.godownId.toString(),
+                      //       'itemIds': itemIds,       // list of IDs
+                      //       'itemNames': itemNames,   // list of names
+                      //     },
+                      //   );
+                      // },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 

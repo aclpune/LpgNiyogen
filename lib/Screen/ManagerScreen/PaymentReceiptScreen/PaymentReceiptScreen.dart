@@ -117,8 +117,9 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
   List<CahsDenominationMandatoryFlagModel> cashDenoMandatoryList = [];
   bool cashDenominationMandatory = false;
   List<GetBalanceByStaffIdModel> balancemodel = [];
-
   double balanceAmount = 0.0;
+  bool isCashDenominationChecked = false;
+
   @override
   void initState() {
     super.initState();
@@ -354,6 +355,23 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
                   ],
                 ),
                 if (selectedTransMode == 'Cash')
+                  CheckboxListTile(
+                    title: const Text(
+                      "Cash Denomination",
+                      style: TextStyle(
+                        fontSize: 16,
+                        //fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    value: isCashDenominationChecked,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        isCashDenominationChecked = value ?? false;
+                      });
+                    },
+                    controlAffinity: ListTileControlAffinity.leading,
+                  ),
+                if (selectedTransMode == 'Cash' && isCashDenominationChecked)
                   Container(
                     height: 30,
                     decoration: BoxDecoration(
@@ -426,7 +444,7 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
                       ],
                     ),
                   ),
-                if (selectedTransMode == 'Cash')
+                if (selectedTransMode == 'Cash' && isCashDenominationChecked)
                   Visibility(
                     visible: _selectedIndex == 0,
                     child: Column(
@@ -1183,9 +1201,11 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
                           setState(() {
                             _isDepositEmpty = value.isEmpty;
                             double val = double.tryParse(value.replaceAll(',', '')) ?? 0;
-                            if(selectedTransMode == "Cash") {
-                              if (val > totalAmount) {
-                                amountController.clear();
+                            if(selectedStaffMode != 'Reticulated Or ND' && selectedStaffMode != 'Other') {
+                              if (selectedTransMode == "Cash") {
+                                if (val > balanceAmount) {
+                                  amountController.clear();
+                                }
                               }
                             }
                           });
@@ -2244,6 +2264,29 @@ class _PaymentReceiptScreen extends State<PaymentReceiptScreen>{
           }
         }
       }
+
+
+      // if (selectedTransMode == 'Cash') {
+      //   if (cashDenominationMandatory) {
+      //
+      //     double amount = amtController;
+      //
+      //     if (amount > 0) {
+      //
+      //       if (finalAmountCashDeno == null || finalAmountCashDeno <= 0) {
+      //         showFlushBar(context, Constants.cashDenominationIsMandatory);
+      //         return;
+      //       }
+      //
+      //       if (amount != finalAmountCashDeno) {
+      //         showFlushBar(context, Constants.denominationAmount);
+      //         return;
+      //       }
+      //
+      //     }
+      //
+      //   }
+      // }
 
       if(selectedStaffMode == "Staff"){
         receiptFrom = 1;

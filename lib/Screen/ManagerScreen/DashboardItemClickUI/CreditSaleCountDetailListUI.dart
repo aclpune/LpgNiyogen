@@ -135,8 +135,8 @@ class _CreditSaleCountDetailListUI extends State<CreditSaleCountDetailListUI>{
                       IconButton(
                         icon: const Icon(Icons.arrow_back, color: Colors.black),
                         onPressed: () {
-                         // Navigator.pushNamed(context, BottomNavBarExample.screenName);
-                          Navigator.pop(context);
+                         Navigator.pushNamed(context, BottomNavBarExample.screenName);
+                          // Navigator.pop(context);
 
                         },
                       ),

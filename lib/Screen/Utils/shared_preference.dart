@@ -115,7 +115,6 @@ class SharedPref {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(Constants.fcmToken, fcmToken.toString());
   }
-
    Future<Future<bool>> setUserName(String value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.setString('userActive', value);
@@ -139,5 +138,7 @@ class SharedPref {
       refreshToken: refreshToken,
     );
   }
+
+
 
 }

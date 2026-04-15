@@ -48,30 +48,33 @@ class _MoreOptionScreenGodownKeeperState
       },
       child: Scaffold(
         key: _scaffoldKey,
-        body: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                // Ensures the content is scrollable
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 5.0, right: 5.0, bottom: 5.0, top: 10.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10.0),
-                        child: Text(
-                          "Item Receipt/Return",
-                          style: Styling.itemGreyTextBigMore,
+        body: Container(
+          color: Colors.white,
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  // Ensures the content is scrollable
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 5.0, right: 5.0, bottom: 5.0, top: 10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: Text(
+                            "Item Receipt/Return",
+                            style: Styling.itemGreyTextBigMore,
+                          ),
                         ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pushReplacementNamed(
-                              context, ItemReceiptScreen.screenName);
-                        },
-                        child: Card(
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     Navigator.pushReplacementNamed(
+                        //         context, ItemReceiptScreen.screenName);
+                        //   },
+                        //   child:
+                        Card(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5),
                           ),
@@ -81,42 +84,137 @@ class _MoreOptionScreenGodownKeeperState
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // Title for Cylinder Categories Table
-                              Padding(
-                                  padding: const EdgeInsets.all(15.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(
-                                              Icons.receipt),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text(
-                                            "Item Receipt",
-                                            style: Styling.itemBlackTestMore,
-                                          ),
-                                        ],
-                                      ),
-                                      Icon(
-                                        Icons.arrow_forward_ios_sharp,
-                                        color: Colors.grey,
-                                        size: 20,
-                                      ),
-                                    ],
-                                  )),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pushReplacementNamed(
+                                      context, ItemReceiptScreen.screenName);
+                                },
+                                child: Padding(
+                                    padding: const EdgeInsets.all(15.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(
+                                                Icons.receipt),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Text(
+                                              "Item Receipt",
+                                              style: Styling.itemBlackTestMore,
+                                            ),
+                                          ],
+                                        ),
+                                        Icon(
+                                          Icons.arrow_forward_ios_sharp,
+                                          color: Colors.grey,
+                                          size: 20,
+                                        ),
+                                      ],
+                                    )),
+                              ),
+                              Container(height: 1,color: Colors.grey[300],),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pushReplacementNamed(
+                                      context, ItemReturnScreen.screenName);
+                                },
+                                child: Padding(
+                                    padding: const EdgeInsets.all(15.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(
+                                                Icons.assignment_return_outlined),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Text(
+                                              "Item Return",
+                                              style: Styling.itemBlackTestMore,
+                                            ),
+                                          ],
+                                        ),
+                                        Icon(
+                                          Icons.arrow_forward_ios_sharp,
+                                          color: Colors.grey,
+                                          size: 20,
+                                        ),
+                                      ],
+                                    )),
+                              ),
                             ],
                           ),
                         ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pushReplacementNamed(
-                              context, ItemReturnScreen.screenName);
-                        },
-                        child: Card(
+                        // ),
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     Navigator.pushReplacementNamed(
+                        //         context, ItemReturnScreen.screenName);
+                        //   },
+                        //   child: Card(
+                        //     shape: RoundedRectangleBorder(
+                        //       borderRadius: BorderRadius.circular(5),
+                        //     ),
+                        //     elevation: 1,
+                        //     color: Colors.white,
+                        //     child: Column(
+                        //       crossAxisAlignment: CrossAxisAlignment.start,
+                        //       children: [
+                        //         // Title for Cylinder Categories Table
+                        //         Padding(
+                        //             padding: const EdgeInsets.all(15.0),
+                        //             child: Row(
+                        //               mainAxisAlignment:
+                        //                   MainAxisAlignment.spaceBetween,
+                        //               children: [
+                        //                 Row(
+                        //                   children: [
+                        //                     Icon(
+                        //                         Icons.assignment_return_outlined),
+                        //                     SizedBox(
+                        //                       width: 10,
+                        //                     ),
+                        //                     Text(
+                        //                       "Item Return",
+                        //                       style: Styling.itemBlackTestMore,
+                        //                     ),
+                        //                   ],
+                        //                 ),
+                        //                 Icon(
+                        //                   Icons.arrow_forward_ios_sharp,
+                        //                   color: Colors.grey,
+                        //                   size: 20,
+                        //                 ),
+                        //               ],
+                        //             )),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: Text(
+                            "EXMI/Rev-EMR",
+                            style: Styling.itemGreyTextBigMore,
+                          ),
+                        ),
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     Navigator.pushReplacementNamed(
+                        //         context, AddReturnItemXMIScreen.screenName);
+                        //   },
+                        //   child:
+                        Card(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(5),
                           ),
@@ -126,248 +224,232 @@ class _MoreOptionScreenGodownKeeperState
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // Title for Cylinder Categories Table
-                              Padding(
-                                  padding: const EdgeInsets.all(15.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(
-                                              Icons.assignment_return_outlined),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text(
-                                            "Item Return",
-                                            style: Styling.itemBlackTestMore,
-                                          ),
-                                        ],
-                                      ),
-                                      Icon(
-                                        Icons.arrow_forward_ios_sharp,
-                                        color: Colors.grey,
-                                        size: 20,
-                                      ),
-                                    ],
-                                  )),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pushReplacementNamed(
+                                      context, AddReturnItemXMIScreen.screenName);
+                                },
+                                child: Padding(
+                                    padding: const EdgeInsets.all(15.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(
+                                                Icons.assignment_return_outlined),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Text(
+                                              "Return EXMI/Rev-EMR",
+                                              style: Styling.itemBlackTestMore,
+                                            ),
+                                          ],
+                                        ),
+                                        Icon(
+                                          Icons.arrow_forward_ios_sharp,
+                                          color: Colors.grey,
+                                          size: 20,
+                                        ),
+                                      ],
+                                    )),
+                              ),
+                              Container(height: 1,color: Colors.grey[300],),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pushReplacementNamed(
+                                      context, ItemReturnXMIListScreen.screenName);
+                                },
+                                child: Padding(
+                                    padding: const EdgeInsets.all(15.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(Icons.receipt),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Text(
+                                              "Receipt EXMI",
+                                              style: Styling.itemBlackTestMore,
+                                            ),
+                                          ],
+                                        ),
+                                        Icon(
+                                          Icons.arrow_forward_ios_sharp,
+                                          color: Colors.grey,
+                                          size: 20,
+                                        ),
+                                      ],
+                                    )),
+                              ),
                             ],
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10.0),
-                        child: Text(
-                          "EXMI/Rev-EMR",
-                          style: Styling.itemGreyTextBigMore,
+                        // ),
+                        // GestureDetector(
+                        //   onTap: () {
+                        //     Navigator.pushReplacementNamed(
+                        //         context, ItemReturnXMIListScreen.screenName);
+                        //   },
+                        //   child: Card(
+                        //     shape: RoundedRectangleBorder(
+                        //       borderRadius: BorderRadius.circular(5),
+                        //     ),
+                        //     elevation: 1,
+                        //     color: Colors.white,
+                        //     child: Column(
+                        //       crossAxisAlignment: CrossAxisAlignment.start,
+                        //       children: [
+                        //         // Title for Cylinder Categories Table
+                        //         Padding(
+                        //             padding: const EdgeInsets.all(15.0),
+                        //             child: Row(
+                        //               mainAxisAlignment:
+                        //                   MainAxisAlignment.spaceBetween,
+                        //               children: [
+                        //                 Row(
+                        //                   children: [
+                        //                     Icon(Icons.receipt),
+                        //                     SizedBox(
+                        //                       width: 10,
+                        //                     ),
+                        //                     Text(
+                        //                       "Receipt EXMI",
+                        //                       style: Styling.itemBlackTestMore,
+                        //                     ),
+                        //                   ],
+                        //                 ),
+                        //                 Icon(
+                        //                   Icons.arrow_forward_ios_sharp,
+                        //                   color: Colors.grey,
+                        //                   size: 20,
+                        //                 ),
+                        //               ],
+                        //             )),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
+                        SizedBox(
+                          height: 10,
                         ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pushReplacementNamed(
-                              context, AddReturnItemXMIScreen.screenName);
-                        },
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          elevation: 1,
-                          color: Colors.white,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Title for Cylinder Categories Table
-                              Padding(
-                                  padding: const EdgeInsets.all(15.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(
-                                              Icons.assignment_return_outlined),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text(
-                                            "Return EXMI/Rev-EMR",
-                                            style: Styling.itemBlackTestMore,
-                                          ),
-                                        ],
-                                      ),
-                                      Icon(
-                                        Icons.arrow_forward_ios_sharp,
-                                        color: Colors.grey,
-                                        size: 20,
-                                      ),
-                                    ],
-                                  )),
-                            ],
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pushReplacementNamed(
-                              context, ItemReturnXMIListScreen.screenName);
-                        },
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          elevation: 1,
-                          color: Colors.white,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Title for Cylinder Categories Table
-                              Padding(
-                                  padding: const EdgeInsets.all(15.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(Icons.receipt),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text(
-                                            "Receipt EXMI",
-                                            style: Styling.itemBlackTestMore,
-                                          ),
-                                        ],
-                                      ),
-                                      Icon(
-                                        Icons.arrow_forward_ios_sharp,
-                                        color: Colors.grey,
-                                        size: 20,
-                                      ),
-                                    ],
-                                  )),
-                            ],
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: Text(
+                            "Mark Defective",
+                            style: Styling.itemGreyTextBigMore,
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10.0),
-                        child: Text(
-                          "Mark Defective",
-                          style: Styling.itemGreyTextBigMore,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pushReplacementNamed(
-                              context, MarkDefectiveItemScreen.screenName);
-                        },
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          elevation: 1,
-                          color: Colors.white,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Title for Cylinder Categories Table
-                              Padding(
-                                  padding: const EdgeInsets.all(15.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(Icons.edit),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text(
-                                            "Mark Defective",
-                                            style: Styling.itemBlackTestMore,
-                                          ),
-                                        ],
-                                      ),
-                                      Icon(
-                                        Icons.arrow_forward_ios_sharp,
-                                        color: Colors.grey,
-                                        size: 20,
-                                      ),
-                                    ],
-                                  )),
-                            ],
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushReplacementNamed(
+                                context, MarkDefectiveItemScreen.screenName);
+                          },
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            elevation: 1,
+                            color: Colors.white,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Title for Cylinder Categories Table
+                                Padding(
+                                    padding: const EdgeInsets.all(15.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(Icons.edit),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Text(
+                                              "Mark Defective",
+                                              style: Styling.itemBlackTestMore,
+                                            ),
+                                          ],
+                                        ),
+                                        Icon(
+                                          Icons.arrow_forward_ios_sharp,
+                                          color: Colors.grey,
+                                          size: 20,
+                                        ),
+                                      ],
+                                    )),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 10.0),
-                        child: Text(
-                          "LOGOUT",
-                          style: Styling.itemGreyTextBigMore,
+                        SizedBox(
+                          height: 10,
                         ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          _showLogoutDialog(context);
-                        },
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          elevation: 1,
-                          color: Colors.white,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Title for Cylinder Categories Table
-                              Padding(
-                                  padding: const EdgeInsets.all(15.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(Icons.logout_outlined),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text(
-                                            "Logout",
-                                            style: Styling.itemBlackTestMore,
-                                          ),
-                                        ],
-                                      ),
-                                      Icon(
-                                        Icons.arrow_forward_ios_sharp,
-                                        color: Colors.grey,
-                                        size: 20,
-                                      ),
-                                    ],
-                                  )),
-                            ],
+                        Padding(
+                          padding: const EdgeInsets.only(left: 10.0),
+                          child: Text(
+                            "LOGOUT",
+                            style: Styling.itemGreyTextBigMore,
                           ),
                         ),
-                      ),
-                    ],
+                        GestureDetector(
+                          onTap: () {
+                            _showLogoutDialog(context);
+                          },
+                          child: Card(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            elevation: 1,
+                            color: Colors.white,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Title for Cylinder Categories Table
+                                Padding(
+                                    padding: const EdgeInsets.all(15.0),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Icon(Icons.logout_outlined),
+                                            SizedBox(
+                                              width: 10,
+                                            ),
+                                            Text(
+                                              "Logout",
+                                              style: Styling.itemBlackTestMore,
+                                            ),
+                                          ],
+                                        ),
+                                        Icon(
+                                          Icons.arrow_forward_ios_sharp,
+                                          color: Colors.grey,
+                                          size: 20,
+                                        ),
+                                      ],
+                                    )),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

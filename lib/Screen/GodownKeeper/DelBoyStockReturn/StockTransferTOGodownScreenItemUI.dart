@@ -426,7 +426,9 @@ class _StockTransferTOGodownScreenItemUIState extends State<StockTransferTOGodow
                   btnLabel,
                   style: Styling.blueClrText,
                 ),
-                onPressed: () {},
+                // onPressed: () {},
+                onPressed: () => logoutUser(context),
+
               ),
             ],
           ),

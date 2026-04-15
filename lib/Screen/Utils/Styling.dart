@@ -462,7 +462,17 @@ class Styling {
       2.2 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
       fontWeight: FontWeight.bold,
       color: Colors.black);
-
+  static final TextStyle bodyTitleWithBlueNew = TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize:
+      2.07 * SizeConfig.textMultiplier!, // Size = 18-- [18/8.66] = 2.07
+      fontFamily: 'OpenSans',
+      color: Color(0xFFfbe9e9));
+  static final TextStyle itemBlackTestVerySmallBoldPink = TextStyle(
+    fontSize: 1.8 * SizeConfig.textMultiplier!, // Size = 16-- [16/8.66] = 1.8
+    fontFamily: 'OpenSans',
+    fontWeight: FontWeight.bold,
+    color: Color(0xff1280b3),);
   /* static final TextStyle selectedTabLight = TextStyle(
     color: Colors.black,
     fontWeight: FontWeight.bold,

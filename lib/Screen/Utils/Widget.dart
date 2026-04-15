@@ -178,7 +178,8 @@ Widget itemSubLineLeftBig(String greyText, String blackText) {
     padding: EdgeInsets.only(
         left: 2.8 * SizeConfig.widthMultiplier!,
         right: 2.4 * SizeConfig.widthMultiplier!),
-    child: Row(
+    child:
+    Row(
       children: <Widget>[
         Flexible(
           flex: 3,
@@ -284,6 +285,52 @@ InputDecoration buildInputBorderUpdateStatus(
           borderSide: BorderSide(color: Colors.grey.shade100, width: 0.0)),
       contentPadding: EdgeInsets.all(1.2 * SizeConfig.heightMultiplier!),
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(5.0)));
+}
+
+InputDecoration buildInputBorderUpdateStatus1(
+    String hintText,
+    BuildContext context, {
+      String? errorText, // ✅ add this
+    }) {
+  return InputDecoration(
+    hintText: hintText,
+    hintStyle: Styling.hintTextSmall,
+    errorText: errorText, // ✅ use here
+
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(5.0),
+      borderSide: BorderSide(
+        color: Colors.grey.shade300,
+        width: 1.0,
+      ),
+    ),
+
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(5.0),
+      borderSide: BorderSide(
+        color: Colors.blue,
+        width: 1.5,
+      ),
+    ),
+
+    errorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(5.0),
+      borderSide: BorderSide(
+        color: Colors.red,
+        width: 1.2,
+      ),
+    ),
+
+    focusedErrorBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(5.0),
+      borderSide: BorderSide(
+        color: Colors.red,
+        width: 1.5,
+      ),
+    ),
+
+    contentPadding: EdgeInsets.all(1.2 * SizeConfig.heightMultiplier!),
+  );
 }
 
 InputDecoration buildInputBorderUpdateStatusMgr(
@@ -438,6 +485,45 @@ Widget itemSubLineSubMenu(String greyText, bool isImbalanceStockListViewVisible)
 
 }
 
+Widget itemSubLineVehicle({
+  required String greyText,
+  String? blackText,
+  Widget? valueWidget,
+}) {
+  return Container(
+    padding: EdgeInsets.only(
+      left: 2.4 * SizeConfig.widthMultiplier!,
+      right: 2.4 * SizeConfig.widthMultiplier!,
+    ),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: <Widget>[
+        Flexible(
+          flex: 2,
+          fit: FlexFit.tight,
+          child: Text(
+            greyText,
+            style: Styling.itemGreyText,
+          ),
+        ),
+        Text(
+          " :  ",
+          style: Styling.itemGreyText,
+        ),
+        Flexible(
+          flex: 3,
+          fit: FlexFit.tight,
+          child: valueWidget ??
+              Text(
+                blackText ?? '',
+                style: Styling.itemBlackTest,
+              ),
+        ),
+      ],
+    ),
+  );
+}
+
 Widget countTextWidgetTextStarverysmall(BuildContext context, String label, {bool showAsterisk = false}) {
 
   return RichText(
@@ -457,5 +543,19 @@ Widget countTextWidgetTextStarverysmall(BuildContext context, String label, {boo
           ),
       ],
     ),
+  );
+}
+Widget verticalDividerVerySmallBlue() {
+  return  Container(
+    width: 1.0, // Width of the vertical line
+    height: 40.0, // Height of the vertical line
+    color: Color(0xFFfbe9e9), // Color of the line
+  );
+}
+Widget verticalDividerVerySmallBluePink() {
+  return  Container(
+    width: 1.0, // Width of the vertical line
+    height: 40.0, // Height of the vertical line
+    color: Color(0xFFEFF2FB), // Color of the line
   );
 }

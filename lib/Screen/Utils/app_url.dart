@@ -3,8 +3,8 @@ class AppUrl {
    // static const String baseUrl = 'https://192.168.2.64:502'; // Local new
   // static const String baseUrl = 'https://20.193.149.194/lpgniyojanapi'; // UAT Client
   //  static const String baseUrl = 'https://20.193.149.194/lpgniyojanuatapi'; // UAT New Development
-  //  static const String baseUrl = 'https://aadyaminfotech.com/lpgniyojanuatapi'; // UAT New Development working
- static const String baseUrl = 'https://lpgniyojan.aadyaminfotech.com/lpgniyojanapi'; // Production New
+   static const String baseUrl = 'https://aadyaminfotech.com/lpgniyojanuatapi'; // UAT New Development working
+ // static const String baseUrl = 'https://lpgniyojan.aadyaminfotech.com/lpgniyojanapi'; // Production New
 
   ///Log in
   // static const String login = '$baseUrl/Login/LoginUser';
@@ -24,6 +24,7 @@ class AppUrl {
   static const String DailySaleByGK_StatusUpdate = '$baseUrl/GodownKeeper/DailySaleByGK_StatusUpdate';
   static const String ItemImbalanceList = '$baseUrl/GodownKeeper/ItemImbalanceList';
   static const String ItemImbalanceQtyAddEdit = '$baseUrl/GodownKeeper/ItemImbalanceQtyAddEdit';
+  static const String DailySaleByGKImbSettleList = '$baseUrl/GodownKeeper/DailySaleByGKImbSettleList';
   static const String TodaysOpeningStkForGK = '$baseUrl/GodownKeeper/TodaysOpeningStkForGK';
   static const String ImbalanceAsOfDateStkForGK = '$baseUrl/GodownKeeper/ImbalanceAsOfDateStkForGK';
   static const String ItemCurrentStkList = '$baseUrl/GodownKeeper/ItemCurrentStkList';
@@ -38,6 +39,7 @@ class AppUrl {
   static const String GetDefectiveList_Mob = '$baseUrl/GodownKeeper/GetDefectiveList_Mob';
   static const String GetDailySaleSVTVConsumerDtls_Mob = '$baseUrl/DailyStockCash/GetDailySaleSVTVConsumerDtls_Mob';
   static const String GetDailySaleSVTVConsumerDtls = '$baseUrl/DailyStockCash/GetDailySaleSVTVConsumerDtls';
+  static const String DailySaleByGKImbSettleAdd = '$baseUrl/GodownKeeper/DailySaleByGKImbSettleAdd';
 
   ///manager
   static const String GetDailySaleSummaryListDMWiseForMob = '$baseUrl/DailyStockCash/GetDailySaleSummaryListDMWiseForMob';
@@ -98,11 +100,13 @@ class AppUrl {
     //static const String GetCashDenominationItemList = '$baseUrl/Masters/GetCashDenominationItemList';
 
 //sv
-  static const String PendingSVAddEdit_Mob = '$baseUrl/DailyStockCash/PendingSVAddEdit_Mob';
+  //   static const String PendingSVAddEdit_Mob = '$baseUrl/DailyStockCash/PendingSVAddEdit_Mob';
+  static const String PendingSVAddEdit_Mob = '$baseUrl/DailyStockCash/PendingSVAddEdit_Mob_V2';//new SV by anil sir
   static const String GetDistStampDuty = '$baseUrl/DailyStockCash/GetDistStampDuty';
   static const String GetArbCurrentStockList = '$baseUrl/Reports/GetArbCurrentStockList';
   static const String GetARBItemMasterList = '$baseUrl/Masters/GetARBItemMasterList';
-  static const String GetPendingSVList_Mob = '$baseUrl/DailyStockCash/GetPendingSVList_Mob';
+  // static const String GetPendingSVList_Mob = '$baseUrl/DailyStockCash/GetPendingSVList_Mob';
+  static const String GetPendingSVList_Mob = '$baseUrl/DailyStockCash/GetPendingSVList_Mob_V2';//new SV by anil sir
   static const String GetPendingSVCashDenoDtlsById_Mob = '$baseUrl/DailyStockCash/GetPendingSVCashDenoDtlsById_Mob';
 
   ///update Payments
@@ -156,8 +160,10 @@ class AppUrl {
 
  ///ARB Sale
  ///InventoryStock/ARBSalesAddEdit
- static const String ARBSalesAddEdit = '$baseUrl/InventoryStock/ARBSalesAddEdit_V2';
- static const String GetARBSalesList = '$baseUrl/InventoryStock/GetARBSalesList_V2';
+  // static const String ARBSalesAddEdit = '$baseUrl/InventoryStock/ARBSalesAddEdit_V2';//old
+  static const String ARBSalesAddEdit = '$baseUrl/InventoryStock/ARBSalesAddEdit_Mob_V3';//new by anil sir
+  // static const String GetARBSalesList = '$baseUrl/InventoryStock/GetARBSalesList_V2';//old
+  static const String GetARBSalesList = '$baseUrl/InventoryStock/GetARBSalesList_Mob_V3';//new by anil sir
  static const String GetARBSalesCashDenoDtlsById = '$baseUrl/InventoryStock/GetARBSalesCashDenoDtlsById_V2';
 
  ///Undocumented SV
@@ -197,10 +203,10 @@ class AppUrl {
   static const String GetDashSummaryAllCountForMgr = '$baseUrl/Dashboard/GetDashSummaryAllCountForMgr';
   static const String GetDashSummarySettAllCountForMgr = '$baseUrl/Dashboard/GetDashSummarySettAllCountForMgr';
 
- ///Versioning API
- static const String MobileStaffwiseVersionAdd = '$baseUrl/Masters/MobileStaffwiseVersionAdd';
+  ///Versioning API
+  static const String MobileStaffwiseVersionAdd = '$baseUrl/Masters/MobileStaffwiseVersionAdd';
 
-  ///Push Notification
+  ///push notification
   static const String SaveDistribuotrDeviceId = '$baseUrl/Login/SaveDistribuotrDeviceId';
 
   ///DeactiveUserForNotiMob
@@ -208,6 +214,21 @@ class AppUrl {
 
  ///Dashboard Booking punching count
  static const String GetDashPunchSummaryCnt = '$baseUrl/Dashboard/GetDashPunchSummaryCnt';
+
+  ///SV Sale Report auto invoice No
+  static const String InvoiceGenerateNewNoForSVSale = '$baseUrl/DailyStockCash/InvoiceGenerateNewNoForSVSale';
+
+  ///ARB Sale Report auto invoice No
+  static const String InvoiceGenerateNewNoForARBSale = '$baseUrl/InventoryStock/InvoiceGenerateNewNoForARBSale';
+
+ ///Permission
+ static const String PageActionPermissionAdd = '$baseUrl/Masters/PageActionPermissionAdd';
+ static const String GetDesignationList = '$baseUrl/Masters/GetDesignationList';
+
+  ///SQC Register
+  static const String SQCFilledCylAddEdit = '$baseUrl/InventoryStock/SQCFilledCylAddEdit';
+  static const String GetSQCFilledCylList = '$baseUrl/InventoryStock/GetSQCFilledCylList';
+  static const String GetSQCCardCntList = '$baseUrl/InventoryStock/GetSQCCardCntList';
 
 }
 

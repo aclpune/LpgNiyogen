@@ -185,16 +185,14 @@ class IosVersionUpdateCheck {
               }
             },
           ),
-          TextButton(
-            child: Text('Later'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
+          // TextButton(
+          //   child: Text('Later'),
+          //   onPressed: () {
+          //     Navigator.of(context).pop();
+          //   },
+          // ),
         ],
       ),
     );
   }
 }
-
-

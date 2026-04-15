@@ -284,12 +284,11 @@ class _DashboardPrepaidDetailsState extends State<DashboardPrepaidDetails> {
                     Visibility(
                       visible: (flag == "Punching" || flag == "Incorrect" || flag == "NiyoJanPunDelPend"),
                       child: Expanded(
-                        flex: 3,
+                        flex: 2,
                         child: Text(
                           'Date',
                             style: Styling.buttonTextBlack,
                           textAlign: TextAlign.center,
-
                         ),
                       ),
                     ),

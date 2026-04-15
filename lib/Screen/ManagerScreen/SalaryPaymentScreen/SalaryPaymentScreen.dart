@@ -108,6 +108,7 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
   bool saveFlag = false;
   List<CahsDenominationMandatoryFlagModel> cashDenoMandatoryList = [];
   bool cashDenominationMandatory = false;
+  bool isCashDenominationChecked = false;
   @override
   void initState() {
     super.initState();
@@ -582,7 +583,24 @@ class _SalaryPaymentScreenState extends State<SalaryPaymentScreen>{
                     ),
                   ],
                 ),
-                if(selectedTransMode == "Cash")
+                if (selectedTransMode == 'Cash')
+                  CheckboxListTile(
+                    title: const Text(
+                      "Cash Denomination",
+                      style: TextStyle(
+                        fontSize: 16,
+                        //fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    value: isCashDenominationChecked,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        isCashDenominationChecked = value ?? false;
+                      });
+                    },
+                    controlAffinity: ListTileControlAffinity.leading,
+                  ),
+                if(selectedTransMode == "Cash" && isCashDenominationChecked)
                   Column(
                     children: [
                       GestureDetector(

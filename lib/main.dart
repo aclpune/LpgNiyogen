@@ -13,11 +13,13 @@ import 'Screen/GodownKeeper/DelBoyStockReturn/StockReturnFromDelBoy.dart';
 import 'Screen/GodownKeeper/DelBoyStockReturn/StockTransferToGodownScreen.dart';
 import 'Screen/GodownKeeper/DelBoyStockSubmitToManager/StockSubmitToManager.dart';
 import 'Screen/GodownKeeper/DeliveryBoyModel/StockSubmitToManagerListModel.dart';
+import 'Screen/GodownKeeper/ImbalanceEmpty/ImbalnceTransactionHistory.dart';
 import 'Screen/GodownKeeper/ItemReceipt/AddItem/ItemReceiptScreen.dart';
 import 'Screen/GodownKeeper/ItemReceipt/ItemReturn/ItenRetun.dart';
 import 'Screen/GodownKeeper/ItemReceipt/ItemReturnXMI/screen/AddReturnItemXMIScreen.dart';
 import 'Screen/GodownKeeper/ItemReceipt/ItemReturnXMI/screen/ItemReturnXMIListScreen.dart';
 import 'Screen/GodownKeeper/MoreOptionScreenGodownKeeper.dart';
+import 'Screen/GodownKeeper/SQCRegister/SQCRegisterScreen.dart';
 import 'Screen/ManagerScreen/ARBReturnScreen/ArbReturnScreen.dart';
 import 'Screen/ManagerScreen/ARBSaleScreen/ArbSaleScreen.dart';
 import 'Screen/ManagerScreen/ARBScreen/AddPaymentPopupScreen.dart';
@@ -26,6 +28,7 @@ import 'Screen/ManagerScreen/BootomNavigatinBarManager.dart';
 import 'Screen/GodownKeeper/MarkDefective/MarkDefectiveItemScreen.dart';
 import 'Screen/ManagerScreen/CashDepositToBankScreen.dart';
 import 'Screen/ManagerScreen/CashHandoverScreen.dart';
+import 'Screen/ManagerScreen/ConfigurationScreen.dart';
 import 'Screen/ManagerScreen/DSRItemClickUI/ManagerCashInHandScreenDetails.dart';
 import 'Screen/ManagerScreen/DSRItemClickUI/ManagerDSRReportScreenDetails.dart';
 import 'Screen/ManagerScreen/DSRItemClickUI/ManagerExpenseTabScreenDetails.dart';
@@ -71,6 +74,8 @@ import 'Screen/User/Login/provider/LoginProvider.dart';
 import 'Screen/User/splashscreen/page/splash_screen.dart';
 import 'Screen/Utils/size_config.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 class MyHttpOverrides extends HttpOverrides {
   @override
   HttpClient createHttpClient(SecurityContext? context) {
@@ -80,52 +85,41 @@ class MyHttpOverrides extends HttpOverrides {
     //todo check proper solution for ssl certificate for production mode
   }
 }
-// @pragma('vm:entry-point')
-// Future<void> firebaseMessagingBackgroundHandler(
-//     RemoteMessage message) async {
-//   await Firebase.initializeApp();
-//   if (message.notification != null) {
-//     await NotificationService.showNotification(
-//       message.notification!.title ?? 'Notification',
-//       message.notification!.body ?? '',
-//     );
-//   }
-//   print('Background message received: ${message.messageId}');
-// }
-
 @pragma('vm:entry-point')
-Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // Initialize Firebase (required in background isolate)
+Future<void> firebaseMessagingBackgroundHandler(
+    RemoteMessage message,
+    ) async {
+  // Initialize Flutter bindings and Firebase for background isolate
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
-  // Only show notification for data-only messages
-  // if (message.data.isNotEmpty) {
-  //   await NotificationService.showNotification(
-  //     message.data['title'] ?? 'Notification',
-  //     message.data['body'] ?? '',
-  //   );
-  // }
+  // Show notification if it exists
+  if (message.notification != null) {
+    await NotificationService.showNotification(
+      message.notification!.title ?? 'Notification',
+      message.notification!.body ?? '',
+      message.messageId ?? DateTime.now().millisecondsSinceEpoch.toString(),
+    );
+  }
 
-  print('Background message received: ${message.messageId}');
+  debugPrint('Background message received: ${message.messageId}');
 }
-//
+
+
 // @pragma('vm:entry-point')
-// Future<void> firebaseMessagingBackgroundHandler(
-//     RemoteMessage message,
-//     ) async {
-//   // Initialize Flutter bindings and Firebase for background isolate
-//   WidgetsFlutterBinding.ensureInitialized();
+// Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+//   // Initialize Firebase (required in background isolate)
 //   await Firebase.initializeApp();
 //
-//   // Show notification if it exists
-//   if (message.notification != null) {
-//     await NotificationService.showNotification(
-//       message.notification!.title ?? 'Notification',
-//       message.notification!.body ?? '',
-//     );
-//   }
+//   // Only show notification for data-only messages
+//   // if (message.data.isNotEmpty) {
+//   //   await NotificationService.showNotification(
+//   //     message.data['title'] ?? 'Notification',
+//   //     message.data['body'] ?? '',
+//   //   );
+//   // }
 //
-//   debugPrint('Background message received: ${message.messageId}');
+//   print('Background message received: ${message.messageId}');
 // }
 
 void main() async{
@@ -147,6 +141,9 @@ void main() async{
   }catch(e){
     debugPrint("Firebase not initialize${e.toString()}");
   }
+
+  NotificationService.navigatorKey = navigatorKey;
+
   runApp(
       const MyApp()
   );
@@ -168,6 +165,7 @@ class MyApp extends StatelessWidget {
         ],
         child:
         MaterialApp(
+          navigatorKey: navigatorKey,
           debugShowCheckedModeBanner: false,
           title: 'Login Registration',
           builder: EasyLoading.init(),
@@ -241,6 +239,8 @@ class MyApp extends StatelessWidget {
             MarkDefectiveItemScreen.screenName: (context) => MarkDefectiveItemScreen(),
             BottomNavigationForGodownKeeper.screenName: (context) => BottomNavigationForGodownKeeper(),
             MoreOptionScreenGodownKeeper.screenName: (context) => MoreOptionScreenGodownKeeper(),
+            SQCRegisterScreen.screenName: (context) => SQCRegisterScreen(),
+            ImbalnceTransactionHistory.screenName: (context) => ImbalnceTransactionHistory(),
 
             ///Manager
             CashHandoverScreen.screenName: (context) => CashHandoverScreen(),
@@ -291,6 +291,7 @@ class MyApp extends StatelessWidget {
             SalesComparisonScreen.screenName: (context) => SalesComparisonScreen(),
             ExpensesScreenUI.screenName: (context) => ExpensesScreenUI(),
             VendorPaymentDetailListUI.screenName: (context) => VendorPaymentDetailListUI(),
+            Configurationscreen.screenName: (context) => Configurationscreen(),
 
             //ManagerCashInHandScreenDetails.screenName: (context) => ManagerCashInHandScreenDetails(),
 

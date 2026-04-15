@@ -93,6 +93,7 @@ class _AddPaymentPopupScreenState extends State<AddPaymentPopupScreen> {
   bool saveFlag = false;
   List<CahsDenominationMandatoryFlagModel> cashDenoMandatoryList = [];
   bool cashDenominationMandatory = false;
+  bool isCashDenominationChecked = false;
   @override
   void initState() {
     super.initState();
@@ -374,6 +375,23 @@ class _AddPaymentPopupScreenState extends State<AddPaymentPopupScreen> {
           ),
         ],
       ),
+      if (selectedTransMode == 'Cash')
+        CheckboxListTile(
+          title: const Text(
+            "Cash Denomination",
+            style: TextStyle(
+              fontSize: 16,
+              //fontWeight: FontWeight.w600,
+            ),
+          ),
+          value: isCashDenominationChecked,
+          onChanged: (bool? value) {
+            setState(() {
+              isCashDenominationChecked = value ?? false;
+            });
+          },
+          controlAffinity: ListTileControlAffinity.leading,
+        ),
       if (selectedTransMode == 'Online')
         Column(
           children: [
@@ -500,7 +518,7 @@ class _AddPaymentPopupScreenState extends State<AddPaymentPopupScreen> {
           ],
         ),
       SizedBox(height: 5),
-      if(selectedTransMode == "Cash")
+      if(selectedTransMode == "Cash" && isCashDenominationChecked)
         Column(
           children: [
             GestureDetector(

@@ -122,6 +122,8 @@ class LoginProvider extends ChangeNotifier {
         debugPrint('RefreshTokenResCode: ${response.statusCode}');
         debugPrint('RefreshTokenParams: $refreshTokenData');
         debugPrint('RefreshTokenParams body: ${response.request}');
+        debugPrint('RefreshTokenParams response: ${response.body}');
+        debugPrint('RefreshTokenParams response1: ${response.toString()}');
 
         // Handle successful response
         if (response.statusCode == Constants.success) {

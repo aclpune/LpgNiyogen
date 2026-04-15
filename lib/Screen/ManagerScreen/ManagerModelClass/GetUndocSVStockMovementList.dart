@@ -1,48 +1,50 @@
-/// PSVId : 13
+/// PSVId : 515
 /// DistributorId : 8118
-/// SVDate : "2025-02-14T17:44:25"
+/// SVDate : "2025-04-04T15:51:34"
 /// SVType : "NC"
 /// ProductId : 1
 /// ItemName : "14.2 KG"
 /// ItemId : 0
 /// IsUndocument : true
-/// ConsuDCNo : "666"
-/// ConsumerName : "Gurav"
-/// CylQty : 1
+/// ConsuDCNo : "648"
+/// ConsumerName : "Pete Shrikant"
+/// CylQty : 2
 /// SCRegulator : 1
-/// TotalAmount : 4312.50
-/// AmtCharges : 0.0
-/// AddedOn : "2025-02-14T17:46:21.46"
+/// TotalAmount : 7040.00
+/// AmtCharges : 0.00
+/// AddedOn : "2025-04-04T16:06:51.557"
 /// DMId : 0
 /// StockStatus : null
 /// GodownId : 0
 /// GodownNo : null
 /// ReceiptDate : null
 /// UndocSVDetails : null
+/// InvoiceNo : null
 
 class GetUndocSvStockMovementList {
   GetUndocSvStockMovementList({
-      num? pSVId, 
-      num? distributorId, 
-      String? sVDate, 
-      String? sVType, 
-      num? productId, 
-      String? itemName, 
-      num? itemId, 
-      bool? isUndocument, 
-      String? consuDCNo, 
-      String? consumerName, 
-      num? cylQty, 
-      num? sCRegulator, 
-      num? totalAmount, 
-      num? amtCharges, 
-      String? addedOn, 
-      num? dMId, 
-      dynamic stockStatus, 
-      num? godownId, 
-      dynamic godownNo, 
-      dynamic receiptDate, 
-      dynamic undocSVDetails,}){
+    num? pSVId,
+    num? distributorId,
+    String? sVDate,
+    String? sVType,
+    num? productId,
+    String? itemName,
+    num? itemId,
+    bool? isUndocument,
+    String? consuDCNo,
+    String? consumerName,
+    num? cylQty,
+    num? sCRegulator,
+    num? totalAmount,
+    num? amtCharges,
+    String? addedOn,
+    num? dMId,
+    dynamic stockStatus,
+    num? godownId,
+    dynamic godownNo,
+    dynamic receiptDate,
+    dynamic undocSVDetails,
+    dynamic invoiceNo,}){
     _pSVId = pSVId;
     _distributorId = distributorId;
     _sVDate = sVDate;
@@ -64,7 +66,8 @@ class GetUndocSvStockMovementList {
     _godownNo = godownNo;
     _receiptDate = receiptDate;
     _undocSVDetails = undocSVDetails;
-}
+    _invoiceNo = invoiceNo;
+  }
 
   GetUndocSvStockMovementList.fromJson(dynamic json) {
     _pSVId = json['PSVId'];
@@ -88,6 +91,7 @@ class GetUndocSvStockMovementList {
     _godownNo = json['GodownNo'];
     _receiptDate = json['ReceiptDate'];
     _undocSVDetails = json['UndocSVDetails'];
+    _invoiceNo = json['InvoiceNo'];
   }
   num? _pSVId;
   num? _distributorId;
@@ -110,49 +114,52 @@ class GetUndocSvStockMovementList {
   dynamic _godownNo;
   dynamic _receiptDate;
   dynamic _undocSVDetails;
-GetUndocSvStockMovementList copyWith({  num? pSVId,
-  num? distributorId,
-  String? sVDate,
-  String? sVType,
-  num? productId,
-  String? itemName,
-  num? itemId,
-  bool? isUndocument,
-  String? consuDCNo,
-  String? consumerName,
-  num? cylQty,
-  num? sCRegulator,
-  num? totalAmount,
-  num? amtCharges,
-  String? addedOn,
-  num? dMId,
-  dynamic stockStatus,
-  num? godownId,
-  dynamic godownNo,
-  dynamic receiptDate,
-  dynamic undocSVDetails,
-}) => GetUndocSvStockMovementList(  pSVId: pSVId ?? _pSVId,
-  distributorId: distributorId ?? _distributorId,
-  sVDate: sVDate ?? _sVDate,
-  sVType: sVType ?? _sVType,
-  productId: productId ?? _productId,
-  itemName: itemName ?? _itemName,
-  itemId: itemId ?? _itemId,
-  isUndocument: isUndocument ?? _isUndocument,
-  consuDCNo: consuDCNo ?? _consuDCNo,
-  consumerName: consumerName ?? _consumerName,
-  cylQty: cylQty ?? _cylQty,
-  sCRegulator: sCRegulator ?? _sCRegulator,
-  totalAmount: totalAmount ?? _totalAmount,
-  amtCharges: amtCharges ?? _amtCharges,
-  addedOn: addedOn ?? _addedOn,
-  dMId: dMId ?? _dMId,
-  stockStatus: stockStatus ?? _stockStatus,
-  godownId: godownId ?? _godownId,
-  godownNo: godownNo ?? _godownNo,
-  receiptDate: receiptDate ?? _receiptDate,
-  undocSVDetails: undocSVDetails ?? _undocSVDetails,
-);
+  dynamic _invoiceNo;
+  GetUndocSvStockMovementList copyWith({  num? pSVId,
+    num? distributorId,
+    String? sVDate,
+    String? sVType,
+    num? productId,
+    String? itemName,
+    num? itemId,
+    bool? isUndocument,
+    String? consuDCNo,
+    String? consumerName,
+    num? cylQty,
+    num? sCRegulator,
+    num? totalAmount,
+    num? amtCharges,
+    String? addedOn,
+    num? dMId,
+    dynamic stockStatus,
+    num? godownId,
+    dynamic godownNo,
+    dynamic receiptDate,
+    dynamic undocSVDetails,
+    dynamic invoiceNo,
+  }) => GetUndocSvStockMovementList(  pSVId: pSVId ?? _pSVId,
+    distributorId: distributorId ?? _distributorId,
+    sVDate: sVDate ?? _sVDate,
+    sVType: sVType ?? _sVType,
+    productId: productId ?? _productId,
+    itemName: itemName ?? _itemName,
+    itemId: itemId ?? _itemId,
+    isUndocument: isUndocument ?? _isUndocument,
+    consuDCNo: consuDCNo ?? _consuDCNo,
+    consumerName: consumerName ?? _consumerName,
+    cylQty: cylQty ?? _cylQty,
+    sCRegulator: sCRegulator ?? _sCRegulator,
+    totalAmount: totalAmount ?? _totalAmount,
+    amtCharges: amtCharges ?? _amtCharges,
+    addedOn: addedOn ?? _addedOn,
+    dMId: dMId ?? _dMId,
+    stockStatus: stockStatus ?? _stockStatus,
+    godownId: godownId ?? _godownId,
+    godownNo: godownNo ?? _godownNo,
+    receiptDate: receiptDate ?? _receiptDate,
+    undocSVDetails: undocSVDetails ?? _undocSVDetails,
+    invoiceNo: invoiceNo ?? _invoiceNo,
+  );
   num? get pSVId => _pSVId;
   num? get distributorId => _distributorId;
   String? get sVDate => _sVDate;
@@ -174,6 +181,7 @@ GetUndocSvStockMovementList copyWith({  num? pSVId,
   dynamic get godownNo => _godownNo;
   dynamic get receiptDate => _receiptDate;
   dynamic get undocSVDetails => _undocSVDetails;
+  dynamic get invoiceNo => _invoiceNo;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -198,6 +206,7 @@ GetUndocSvStockMovementList copyWith({  num? pSVId,
     map['GodownNo'] = _godownNo;
     map['ReceiptDate'] = _receiptDate;
     map['UndocSVDetails'] = _undocSVDetails;
+    map['InvoiceNo'] = _invoiceNo;
     return map;
   }
 

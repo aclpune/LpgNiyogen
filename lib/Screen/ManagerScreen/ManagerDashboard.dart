@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -18,6 +19,7 @@ import '../PushNotification/NotificationService.dart';
 import '../UndocumentedSVDash/DashboardUndocumentedDetails.dart';
 import '../User/Login/provider/LoginProvider.dart';
 import '../User/splashscreen/page/splash_screen.dart';
+import '../Utils/BlinkingText.dart';
 import '../Utils/CustomeDrawer.dart';
 import '../Utils/Styling.dart';
 import '../Utils/UpdateService.dart';
@@ -46,7 +48,7 @@ import 'DashboardItemClickUI/UnsettledSaleDetailList.dart';
 import 'DashboardItemClickUI/VendorPaymentDetailListUI.dart';
 import 'ExpensesScreen/ExpensesScreenUI.dart';
 import 'ExpensesScreen/SalesComparisonScreen.dart';
-import 'GetDashPunchSummaryCntModel.dart';
+import 'GetDashPuchSummaryCntModel.dart';
 import 'ManagerModelClass/GetCurrentStockDetailManagerModel.dart';
 import 'ManagerModelClass/GetDashSummaryAllCountForMgrModel.dart';
 import 'ManagerModelClass/GetDashSummaryItemWiseForMgrModel.dart';
@@ -58,6 +60,8 @@ import 'ManagerSingleItemUI/ImbalanceStockItemUI.dart';
 import 'PaymentReceiptScreen/PaymentReceiptScreen.dart';
 import 'SVSaleReportScreen.dart';
 import 'TVSaleScreen/TVSalesScreen.dart';
+
+// final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class ManagerDashboardScreen extends StatefulWidget {
   static const screenName = '/managerDashboardScreen';
@@ -153,6 +157,28 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
   double? incomeProfit = 0;
   bool isOn = true;
   bool isOnBook = true;
+  bool _bottomSheetOpened = false;
+  bool _sheetOpened = false;
+  bool _cashmemoSheetOpened = false;
+  bool _refillBookingSheetOpened = false;
+  bool _prepaidSheetOpened = false;
+  bool _SettlementSheetOpened = false;
+  int? punchManAsOf;
+  int? punchManToday;
+  double? punchManTodayPct;
+  double? punchManAsOfPct;
+  int? punchDACToday;
+  int? punchDACAsOf;
+  double? punchDACTodayPct;
+  double? punchDACAsOfPct;
+  int? bkgManToday;
+  int? bkgManAsOf;
+  double? bkgManTodayPct;
+  double? bkgManAsOfPct;
+  int? bkgOnlineToday;
+  int? bkgOnlineAsOf;
+  double? bkgOnlineTodayPct;
+  double? bkgOnlineAsOfPct;
 
   String formatIndianCurrency(num value) {
     if (value >= 10000000) {
@@ -206,6 +232,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
     fetchDashboarDetailItemWise();
     fetchDashboarDetailForAllCount();
     fetchDashboarDetailForSettItem();
+    getDashPunchSummaryCntModeldata();
     if(selectedTransMode == "Today's"){
       dayFlag = "TODAYS";
       debugPrint("dayFlag $dayFlag");
@@ -1754,17 +1781,41 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Icon(
                                           Icons.bolt_outlined,
                                           size: 26,
                                           color: Colors.black54,
                                         ),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          "Refill Booking & Punching Status",
-                                          style: Styling.bodyTitleBigBoldDashGrey,
-                                          textScaler: TextScaler.noScaling,
+                                        const SizedBox(width: 4),
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              "Refill Booking & Cashmemo",
+                                              style: Styling.bodyTitleBigBoldDashGrey,
+                                              textScaler: TextScaler.noScaling,
+                                            ),
+                                            const SizedBox(height: 2),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  "Punching - ",
+                                                  style: Styling.bodyTitleBigBoldDashGrey,
+                                                  textScaler: TextScaler.noScaling,
+                                                ),
+                                                const SizedBox(width: 5),
+                                                BlinkingText(
+                                                  text: "New",
+                                                  style: TextStyle(
+                                                    color: Colors.red,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
@@ -1913,7 +1964,6 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                                                     );
                                                   },
                                                 );
-
                                               },
                                               // child: Padding(
                                               //   padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
@@ -1989,6 +2039,7 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                             ),
                           ),
                         ),
+
                         SizedBox(height:roleId == Constants.roleIdOwner ? 15:0),
                         Visibility(
                         visible:roleId == Constants.roleIdOwner,
@@ -3451,7 +3502,8 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                   style: Styling.blueClrText,
                   textScaler: TextScaler.noScaling,
                 ),
-                onPressed: () {},
+                // onPressed: () {},
+                onPressed: () => logoutUser(context),
               ),
             ],
           ),
@@ -4299,640 +4351,6 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
       },
     );
   }
-
-  // void showCardWithBooking(BuildContext context) {
-  //   showGeneralDialog(
-  //     context: context,
-  //     barrierDismissible: true,
-  //     barrierLabel: '',
-  //     transitionDuration: const Duration(milliseconds: 400),
-  //     pageBuilder: (context, animation1, animation2) {
-  //       return Align(
-  //         alignment: Alignment.bottomCenter,
-  //         child: GestureDetector(
-  //           onHorizontalDragEnd: (details) {
-  //             if (details.primaryVelocity != null &&
-  //                 details.primaryVelocity!.abs() > 300) {
-  //               Navigator.pop(context); // Close if swipe velocity is high
-  //             }
-  //           },
-  //           child: Container(
-  //             height: MediaQuery.of(context).size.height *
-  //                 0.7, // 70% of screen height
-  //             width: double.infinity,
-  //             color: Colors.white,
-  //             child: Padding(
-  //               padding: const EdgeInsets.all(8.0),
-  //               child: Column(
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: [
-  //                   // Title with larger font and subtle shadow
-  //                   Padding(
-  //                     padding: const EdgeInsets.symmetric(vertical: 10.0),
-  //                     child: Row(
-  //                       mainAxisAlignment: MainAxisAlignment.start,
-  //                       children: [
-  //                         Text(
-  //                           'Booking',
-  //                           style: TextStyle(
-  //                             fontSize: 19,
-  //                             fontWeight: FontWeight.bold,
-  //                             color: Colors.black,
-  //                           ),
-  //                           textScaler: TextScaler.noScaling,
-  //                         ),
-  //                       ],
-  //                     ),
-  //                   ),
-  //                   SizedBox(
-  //                     height: 5,
-  //                   ),
-  //                   // Display dynamic data or No Data Available message
-  //                   getManagerDashboarDetailItemWise.isNotEmpty
-  //                       ? Column(
-  //                     children: [
-  //                       // Table Header with gradient and modern styling
-  //                       Container(
-  //                         decoration: BoxDecoration(
-  //                           color: Color(0xFFEFF2FB),
-  //                         ),
-  //                         padding: EdgeInsets.only(top: 10, bottom: 10),
-  //                         child: Row(
-  //                           mainAxisAlignment:
-  //                           MainAxisAlignment.spaceAround,
-  //                           children: [
-  //                             buildTableHeader(' '),
-  //                             buildTableHeader('Today'),
-  //                             buildTableHeader('As Of Date'),
-  //                           ],
-  //                         ),
-  //                       ),
-  //
-  //                       // Use ListView to make the content scrollable
-  //                       ListView.builder(
-  //                         shrinkWrap: true,
-  //                         padding: EdgeInsets.zero,
-  //                         physics: NeverScrollableScrollPhysics(),
-  //                         itemCount: getManagerDashboarDetailItemWise
-  //                             .where((item) =>
-  //                         item.todayImbQty! > 0 ||
-  //                             item.asOfDateImbQty! > 0)
-  //                             .toList()
-  //                             .length,
-  //                         itemBuilder: (context, index) {
-  //                           var item = getManagerDashboarDetailItemWise
-  //                               .where((item) =>
-  //                           item.todayImbQty! > 0 ||
-  //                               item.asOfDateImbQty! > 0)
-  //                               .toList()[index];
-  //
-  //                           // Alternate row color logic
-  //                           Color backgroundColor = index % 2 == 1
-  //                               ? Color(0xFFEFF2FB)
-  //                               : Colors.white;
-  //
-  //                           return Padding(
-  //                             padding: const EdgeInsets.symmetric(
-  //                                 vertical: 5.0),
-  //                             child: Container(
-  //                               color: backgroundColor,
-  //                               padding: EdgeInsets.all(12),
-  //                               child: Row(
-  //                                 mainAxisAlignment:
-  //                                 MainAxisAlignment.spaceAround,
-  //                                 children: [
-  //                                   // Non-clickable itemName
-  //                                   Expanded(
-  //                                     child: Text(
-  //                                       item.itemName ?? '',
-  //                                       style: Styling.textFormText,
-  //                                     ),
-  //                                   ),
-  //                                   // Today Imbalance Quantity - styled with blue color and underline
-  //                                   Expanded(
-  //                                     child: GestureDetector(
-  //                                       onTap: () {
-  //                                         print(
-  //                                             'Tapped on today imbalance qty: ${item.todayImbQty}');
-  //                                         // Navigate to ImbalanceCountClickUI, passing ItemId and imbQtyType
-  //                                         Navigator.pushNamed(
-  //                                           context,
-  //                                           ImbalanceCountClickUI
-  //                                               .screenName,
-  //                                           arguments: {
-  //                                             "ItemId": item.itemId,
-  //                                             "imbQtyType": 'today'
-  //                                           },
-  //                                         );
-  //                                       },
-  //                                       child: Text(
-  //                                         item.todayImbQty.toString(),
-  //                                         style: Styling
-  //                                             .textFormTextWithUnderline,
-  //                                         textAlign: TextAlign.center,
-  //                                         textScaler:
-  //                                         TextScaler.noScaling,
-  //                                       ),
-  //                                     ),
-  //                                   ),
-  //
-  //                                   // As of Date Imbalance Quantity - styled with blue color and underline
-  //                                   Expanded(
-  //                                     child: GestureDetector(
-  //                                       onTap: () {
-  //                                         print(
-  //                                             'Tapped on as of date imbalance qty: ${item.asOfDateImbQty}');
-  //                                         // Navigate to ImbalanceCountClickUI, passing ItemId and imbQtyType
-  //                                         Navigator.pushNamed(
-  //                                           context,
-  //                                           ImbalanceCountClickUI
-  //                                               .screenName,
-  //                                           arguments: {
-  //                                             "ItemId": item.itemId,
-  //                                             "imbQtyType": 'asOfDate'
-  //                                           },
-  //                                         );
-  //                                       },
-  //                                       child: Text(
-  //                                         item.asOfDateImbQty.toString(),
-  //                                         style: Styling
-  //                                             .textFormTextWithUnderline,
-  //                                         textAlign: TextAlign.center,
-  //                                         textScaler:
-  //                                         TextScaler.noScaling,
-  //                                       ),
-  //                                     ),
-  //                                   ),
-  //                                 ],
-  //                               ),
-  //                             ),
-  //                           );
-  //                         },
-  //                       ),
-  //                     ],
-  //                   )
-  //                       : Center(
-  //                     child: Container(
-  //                       padding: EdgeInsets.all(20),
-  //                       decoration: BoxDecoration(
-  //                         color: Colors.blueGrey[50],
-  //                         borderRadius: BorderRadius.circular(10),
-  //                       ),
-  //                       child: Row(
-  //                         mainAxisSize: MainAxisSize.min,
-  //                         children: [
-  //                           Icon(Icons.warning, color: Colors.orange),
-  //                           SizedBox(width: 10),
-  //                           Text(
-  //                             'No Data Available',
-  //                             style: TextStyle(
-  //                               fontSize: 16,
-  //                               fontWeight: FontWeight.w500,
-  //                               color: Colors.blueGrey,
-  //                             ),
-  //                             textScaler: TextScaler.noScaling,
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //     transitionBuilder: (context, animation1, animation2, child) {
-  //       final offsetAnimation = Tween<Offset>(
-  //         begin: const Offset(0, 1), // Start from the bottom of the screen
-  //         end: Offset.zero, // Move to original position
-  //       ).animate(CurvedAnimation(parent: animation1, curve: Curves.easeInOut));
-  //
-  //       return SlideTransition(
-  //         position: offsetAnimation,
-  //         child: child,
-  //       );
-  //     },
-  //   );
-  // }
-  //
-  // void showCardWithBooking1(BuildContext context) {
-  //   showGeneralDialog(
-  //     context: context,
-  //     barrierDismissible: true,
-  //     barrierLabel: '',
-  //     transitionDuration: const Duration(milliseconds: 400),
-  //     pageBuilder: (context, animation1, animation2) {
-  //       return Align(
-  //         alignment: Alignment.bottomCenter,
-  //         child: GestureDetector(
-  //           onHorizontalDragEnd: (details) {
-  //             if (details.primaryVelocity != null &&
-  //                 details.primaryVelocity!.abs() > 300) {
-  //               Navigator.pop(context);
-  //             }
-  //           },
-  //           child: Container(
-  //             height: MediaQuery.of(context).size.height * 0.7,
-  //             width: double.infinity,
-  //             color: Colors.white,
-  //             child: Padding(
-  //               padding: const EdgeInsets.all(8.0),
-  //               child: Column(
-  //                 crossAxisAlignment: CrossAxisAlignment.start,
-  //                 children: [
-  //                   // Title
-  //                   Padding(
-  //                     padding: const EdgeInsets.symmetric(vertical: 10.0),
-  //                     child: Text(
-  //                       'Booking',
-  //                       style: TextStyle(
-  //                         fontSize: 19,
-  //                         fontWeight: FontWeight.bold,
-  //                         color: Colors.black,
-  //                       ),
-  //                       textScaler: TextScaler.noScaling,
-  //                     ),
-  //                   ),
-  //
-  //                   const SizedBox(height: 5),
-  //
-  //                   getManagerDashboarDetailItemWise.isNotEmpty
-  //                       ? Column(
-  //                     children: [
-  //                       // TABLE HEADER
-  //                       Container(
-  //                         decoration: const BoxDecoration(
-  //                           color: Color(0xFFEFF2FB),
-  //                         ),
-  //                         padding: const EdgeInsets.symmetric(vertical: 10),
-  //                         child: Row(
-  //                           children: [
-  //                             Expanded(
-  //                               flex: 2,
-  //                               child: buildTableHeader(' '),
-  //                             ),
-  //                             Expanded(
-  //                               child: buildTableHeader('Today'),
-  //                             ),
-  //                             Expanded(
-  //                               child: buildTableHeader('As Of Date'),
-  //                             ),
-  //                           ],
-  //                         ),
-  //                       ),
-  //                       // TABLE BODY
-  //                       Container(
-  //                         padding: const EdgeInsets.all(12),
-  //                         child: Column(
-  //                           children: [
-  //                             // MANUAL ROW
-  //                             Row(
-  //                               children: [
-  //                                 Expanded(
-  //                                   flex: 2,
-  //                                   child: Text(
-  //                                     'Manual',
-  //                                     style: Styling.textFormText,
-  //                                   ),
-  //                                 ),
-  //                                 Expanded(
-  //                                   child: Text(
-  //                                     '0',
-  //                                     textAlign: TextAlign.center,
-  //                                     style: Styling.textFormText,
-  //                                     textScaler: TextScaler.noScaling,
-  //                                   ),
-  //                                 ),
-  //                                 Expanded(
-  //                                   child: Text(
-  //                                     '0',
-  //                                     textAlign: TextAlign.center,
-  //                                     style: Styling.textFormText,
-  //                                     textScaler: TextScaler.noScaling,
-  //                                   ),
-  //                                 ),
-  //                               ],
-  //                             ),
-  //
-  //                             const SizedBox(height: 10),
-  //
-  //                             // ONLINE ROW
-  //                             Row(
-  //                               children: [
-  //                                 Expanded(
-  //                                   flex: 2,
-  //                                   child: Text(
-  //                                     'Online',
-  //                                     style: Styling.textFormText,
-  //                                   ),
-  //                                 ),
-  //                                 Expanded(
-  //                                   child: Text(
-  //                                     '0',
-  //                                     textAlign: TextAlign.center,
-  //                                     style: Styling.textFormText,
-  //                                     textScaler: TextScaler.noScaling,
-  //                                   ),
-  //                                 ),
-  //                                 Expanded(
-  //                                   child: Text(
-  //                                     '165',
-  //                                     textAlign: TextAlign.center,
-  //                                     style: Styling.textFormText,
-  //                                     textScaler: TextScaler.noScaling,
-  //                                   ),
-  //                                 ),
-  //                               ],
-  //                             ),
-  //                           ],
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   )
-  //                       : Center(
-  //                     child: Container(
-  //                       padding: const EdgeInsets.all(20),
-  //                       decoration: BoxDecoration(
-  //                         color: Colors.blueGrey[50],
-  //                         borderRadius: BorderRadius.circular(10),
-  //                       ),
-  //                       child: Row(
-  //                         mainAxisSize: MainAxisSize.min,
-  //                         children: const [
-  //                           Icon(Icons.warning,
-  //                               color: Colors.orange),
-  //                           SizedBox(width: 10),
-  //                           Text(
-  //                             'No Data Available',
-  //                             style: TextStyle(
-  //                               fontSize: 16,
-  //                               fontWeight: FontWeight.w500,
-  //                               color: Colors.blueGrey,
-  //                             ),
-  //                             textScaler: TextScaler.noScaling,
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ),
-  //         ),
-  //       );
-  //     },
-  //     transitionBuilder: (context, animation1, animation2, child) {
-  //       final offsetAnimation = Tween<Offset>(
-  //         begin: const Offset(0, 1),
-  //         end: Offset.zero,
-  //       ).animate(
-  //         CurvedAnimation(parent: animation1, curve: Curves.easeInOut),
-  //       );
-  //
-  //       return SlideTransition(
-  //         position: offsetAnimation,
-  //         child: child,
-  //       );
-  //     },
-  //   );
-  // }
-  //
-  //
-  // Widget profitCard(BuildContext context) {
-  //   return Card(
-  //     margin: EdgeInsets.zero,
-  //     color: Colors.white,
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.only(
-  //         topLeft: Radius.circular(20),
-  //         topRight: Radius.circular(20),
-  //       ),
-  //     ),
-  //     child: Padding(
-  //       padding: const EdgeInsets.all(8.0),
-  //       child: Column(
-  //         crossAxisAlignment: CrossAxisAlignment.start,
-  //         children: [
-  //
-  //           /// TITLE
-  //           Padding(
-  //             padding: const EdgeInsets.symmetric(vertical: 10),
-  //             child: Text(
-  //               'Booking',
-  //               style: const TextStyle(
-  //                 fontSize: 19,
-  //                 fontWeight: FontWeight.bold,
-  //                 color: Colors.black,
-  //               ),
-  //               textScaler: TextScaler.noScaling,
-  //             ),
-  //           ),
-  //
-  //           const SizedBox(height: 5),
-  //
-  //           /// DATA / EMPTY STATE
-  //           getManagerDashboarDetailItemWise.isNotEmpty
-  //               ? Column(
-  //             children: [
-  //
-  //               /// TABLE HEADER
-  //               Container(
-  //                 color: const Color(0xFFEFF2FB),
-  //                 padding:
-  //                 const EdgeInsets.symmetric(vertical: 10),
-  //                 child: Row(
-  //                   mainAxisAlignment:
-  //                   MainAxisAlignment.spaceAround,
-  //                   children: [
-  //                     buildTableHeader(' '),
-  //                     buildTableHeader('Today'),
-  //                     buildTableHeader('As Of Date'),
-  //                   ],
-  //                 ),
-  //               ),
-  //
-  //               /// LIST
-  //               ListView.builder(
-  //                 shrinkWrap: true,
-  //                 physics:
-  //                 const NeverScrollableScrollPhysics(),
-  //                 itemCount:
-  //                 getManagerDashboarDetailItemWise
-  //                     .where((item) =>
-  //                 item.todayImbQty! > 0 ||
-  //                     item.asOfDateImbQty! > 0)
-  //                     .length,
-  //                 itemBuilder: (context, index) {
-  //                   final filteredList =
-  //                   getManagerDashboarDetailItemWise
-  //                       .where((item) =>
-  //                   item.todayImbQty! > 0 ||
-  //                       item.asOfDateImbQty! > 0)
-  //                       .toList();
-  //
-  //                   final item = filteredList[index];
-  //
-  //                   final backgroundColor =
-  //                   index.isOdd
-  //                       ? const Color(0xFFEFF2FB)
-  //                       : Colors.white;
-  //
-  //                   return Container(
-  //                     color: backgroundColor,
-  //                     padding: const EdgeInsets.all(12),
-  //                     child: Row(
-  //                       children: [
-  //
-  //                         /// ITEM NAME
-  //                         Expanded(
-  //                           child: Text(
-  //                             item.itemName ?? '',
-  //                             style:
-  //                             Styling.textFormText,
-  //                           ),
-  //                         ),
-  //
-  //                         /// TODAY
-  //                         Expanded(
-  //                           child: GestureDetector(
-  //                             onTap: () {
-  //                               Navigator.pushNamed(
-  //                                 context,
-  //                                 ImbalanceCountClickUI
-  //                                     .screenName,
-  //                                 arguments: {
-  //                                   "ItemId":
-  //                                   item.itemId,
-  //                                   "imbQtyType":
-  //                                   'today',
-  //                                 },
-  //                               );
-  //                             },
-  //                             child: Text(
-  //                               item.todayImbQty
-  //                                   .toString(),
-  //                               style: Styling
-  //                                   .textFormTextWithUnderline,
-  //                               textAlign:
-  //                               TextAlign.center,
-  //                               textScaler:
-  //                               TextScaler
-  //                                   .noScaling,
-  //                             ),
-  //                           ),
-  //                         ),
-  //
-  //                         /// AS OF DATE
-  //                         Expanded(
-  //                           child: GestureDetector(
-  //                             onTap: () {
-  //                               Navigator.pushNamed(
-  //                                 context,
-  //                                 ImbalanceCountClickUI
-  //                                     .screenName,
-  //                                 arguments: {
-  //                                   "ItemId":
-  //                                   item.itemId,
-  //                                   "imbQtyType":
-  //                                   'asOfDate',
-  //                                 },
-  //                               );
-  //                             },
-  //                             child: Text(
-  //                               item.asOfDateImbQty
-  //                                   .toString(),
-  //                               style: Styling
-  //                                   .textFormTextWithUnderline,
-  //                               textAlign:
-  //                               TextAlign.center,
-  //                               textScaler:
-  //                               TextScaler
-  //                                   .noScaling,
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                   );
-  //                 },
-  //               ),
-  //             ],
-  //           )
-  //               : Center(
-  //             child: Container(
-  //               padding: const EdgeInsets.all(20),
-  //               decoration: BoxDecoration(
-  //                 color: Colors.blueGrey[50],
-  //                 borderRadius:
-  //                 BorderRadius.circular(10),
-  //               ),
-  //               child: Row(
-  //                 mainAxisSize: MainAxisSize.min,
-  //                 children: const [
-  //                   Icon(Icons.warning,
-  //                       color: Colors.orange),
-  //                   SizedBox(width: 10),
-  //                   Text(
-  //                     'No Data Available',
-  //                     style: TextStyle(
-  //                       fontSize: 16,
-  //                       fontWeight:
-  //                       FontWeight.w500,
-  //                       color:
-  //                       Colors.blueGrey,
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  Widget _dashboardCard({
-    required String title,
-    required IconData icon,
-    required VoidCallback onTap,
-  }) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(14),
-      onTap: onTap,
-      child: Card(
-        elevation: 4,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
-        ),
-        child: Container(
-          height: 100,
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Icon(
-                icon,
-                size: 28,
-                color: const Color(0xff1280b3),
-              ),
-              const SizedBox(height: 10),
-              Text(
-                title,
-                style: Styling.bodyTitleBigBoldDashQuick,
-                textScaler: TextScaler.noScaling,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
 
   void showStockStatus(BuildContext context) {
     showGeneralDialog(
@@ -6611,22 +6029,59 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
     // Send token to backend API
   }
 
+
+
+  // void listenForegroundMessages() {
+  //   FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+  //     // Check if the message contains a notification
+  //     if (message.notification != null) {
+  //       NotificationService.showNotification(
+  //         message.notification!.title ?? 'Notification',
+  //         message.notification!.body ?? '',
+  //       );
+  //     }
+  //
+  //     // Optional: handle data messages as well
+  //     if (message.data.isNotEmpty) {
+  //       debugPrint('Foreground data message: ${message.data}');
+  //     }
+  //   });
+  // }
   void listenForegroundMessages() {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      // Check if the message contains a notification
-      if (message.notification != null) {
-        NotificationService.showNotification(
-          message.notification!.title ?? 'Notification',
-          message.notification!.body ?? '',
-        );
-      }
+      String title = message.notification?.title ?? 'Notification';
+      String body = message.notification?.body ?? '';
 
-      // Optional: handle data messages as well
+      // Always use title
+      NotificationService.showNotification(title, body, title);
+
       if (message.data.isNotEmpty) {
         debugPrint('Foreground data message: ${message.data}');
       }
     });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      String title = message.notification?.title ?? 'Unknown';
+      debugPrint('Notification clicked: $title');
+      // NotificationService.onSelectNotification(
+      //   // NotificationResponse(payload: title),
+      //     NotificationResponse({
+      //       required this.notificationResponseType,
+      //       this.payload,
+      //
+      //     })
+      //
+      // );
+      NotificationService.onSelectNotification(
+        NotificationResponse(
+          notificationResponseType: NotificationResponseType.selectedNotification,
+          payload: title,
+        ),
+      );
+
+    });
   }
+
 
   Future<void> setupNotifications() async {
     final messaging = FirebaseMessaging.instance;
@@ -6741,38 +6196,36 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
 
               const SizedBox(height: 8),
 
-              getDashPunchSummaryCntModel.isNotEmpty
-                  ? Column(
+              Column(
                 children: getDashPunchSummaryCntModel.map((item) {
                   return Column(
                     children: [
                       _buildPunchRow1(
                         title: 'Manual',
                         today: !isOn
-                            ? item.punchManToday
-                            : item.punchManTodayPct,
+                            ? punchManToday ?? 0
+                            : punchManTodayPct ?? 0,
                         month: !isOn
-                            ? item.punchManAsOf
-                            : item.punchManAsOfPct,
+                            ? punchManAsOf ?? 0
+                            : punchManAsOfPct ?? 0,
                         isPercentage: isOn,
                       ),
                       Divider(color: Colors.grey.shade300),
                       _buildPunchRow1(
                         title: 'OTP / DAC',
                         today: !isOn
-                            ? item.punchDACToday
-                            : item.punchDACTodayPct,
+                            ? punchDACToday ?? 0
+                            : punchDACTodayPct ?? 0,
                         month: !isOn
-                            ? item.punchDACAsOf
-                            : item.punchDACAsOfPct,
+                            ? punchDACAsOf ?? 0
+                            : punchDACAsOfPct ?? 0,
                         isPercentage: isOn,
                       ),
                       Divider(color: const Color(0xFFfcf2f1)),
                     ],
                   );
                 }).toList(),
-              )
-                  : _noDataWidget(),
+              ),
             ],
           ),
         ),
@@ -6809,50 +6262,6 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
                 ),
               ),
 
-              // Header Row with Switch
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //   children: [
-              //     const Text(
-              //       'Refill Booking',
-              //       style: TextStyle(
-              //         fontSize: 19,
-              //         fontWeight: FontWeight.bold,
-              //       ),
-              //     ),
-              //     // Switch(
-              //     //   value: isOn,
-              //     //   onChanged: (value) {
-              //     //     setModalState(() {
-              //     //       isOn = value; // Use setModalState instead of setState
-              //     //     });
-              //     //   },
-              //     // ),
-              //     Transform.scale(
-              //       scale: 0.8, // Adjust the scale value as needed
-              //       child: Column(
-              //         children: [
-              //           Switch(
-              //             value: isOn,
-              //             onChanged: (value) {
-              //               setModalState(() {
-              //                 isOn = value; // Use setModalState instead of setState
-              //               });
-              //             },
-              //           ),
-              //          // const SizedBox(width: 2), // Small spacing between switch and text
-              //           const Text(
-              //             '%',
-              //             style: TextStyle(
-              //               fontSize: 18,
-              //               fontWeight: FontWeight.bold,
-              //             ),
-              //           ),
-              //         ],
-              //       ),
-              //     ),
-              //   ],
-              // ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -6895,38 +6304,36 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
 
               const SizedBox(height: 8),
 
-              getDashPunchSummaryCntModel.isNotEmpty
-                  ? Column(
+              Column(
                 children: getDashPunchSummaryCntModel.map((item) {
                   return Column(
                     children: [
                       _buildPunchRow1(
                         title: 'Manual',
                         today: !isOnBook
-                            ? item.bkgManToday
-                            : item.bkgManTodayPct,
+                            ? bkgManToday ?? 0
+                            : bkgManTodayPct ?? 0,
                         month: !isOnBook
-                            ? item.bkgManAsOf
-                            : item.bkgManAsOfPct,
+                            ? bkgManAsOf ?? 0
+                            : bkgManAsOfPct ?? 0,
                         isPercentage: isOnBook,
                       ),
                       Divider(color: Colors.grey.shade300),
                       _buildPunchRow1(
                         title: 'Online',
                         today: !isOnBook
-                            ? item.bkgOnlineToday
-                            : item.bkgOnlineTodayPct,
+                            ? bkgOnlineToday ?? 0
+                            : bkgOnlineTodayPct ?? 0,
                         month: !isOnBook
-                            ? item.bkgOnlineAsOf
-                            : item.bkgOnlineAsOfPct,
+                            ? bkgOnlineAsOf ?? 0
+                            : bkgOnlineAsOfPct ?? 0,
                         isPercentage: isOnBook,
                       ),
                       Divider(color: const Color(0xFFfcf2f1)),
                     ],
                   );
                 }).toList(),
-              )
-                  : _noDataWidget(),
+              ),
             ],
           ),
         ),
@@ -7077,29 +6484,211 @@ class _ManagerDashboardScreenState extends State<ManagerDashboardScreen> {
     debugPrint("GetDashPunchSummaryCnt : " +
         '${AppUrl.GetDashPunchSummaryCnt}/$distributorId');
     debugPrint("GetDashPunchSummaryCnt : " + '${response.body}');
+    // if (response.statusCode == 200) {
+    //   final List<dynamic> data = json.decode(response.body);
+    //   setState(() {
+    //
+    //       getDashPunchSummaryCntModel = data.map((json) {
+    //         return GetDashPunchSummaryCntModel.fromJson(json);
+    //       }).toList();
+    //
+    //       // --- Punch summary ---
+    //       punchManToday = data['punchManToday'] ?? 0;
+    //       punchManAsOf = data['punchManAsOf'] ?? 0;
+    //       punchManTodayPct = data['punchManTodayPct'] ?? 0;
+    //       punchManAsOfPct = data['punchManAsOfPct'] ?? 0;
+    //
+    //       punchDACToday = data['punchDACToday'] ?? 0;
+    //       punchDACAsOf = data['punchDACAsOf'] ?? 0;
+    //       punchDACTodayPct = data['punchDACTodayPct'] ?? 0;
+    //       punchDACAsOfPct = data['punchDACAsOfPct'] ?? 0;
+    //
+    //       // --- Booking summary ---
+    //       bkgManToday = data['bkgManToday'] ?? 0;
+    //       bkgManAsOf = data['bkgManAsOf'] ?? 0;
+    //       bkgManTodayPct = data['bkgManTodayPct'] ?? 0;
+    //       bkgManAsOfPct = data['bkgManAsOfPct'] ?? 0;
+    //
+    //       bkgOnlineToday = data['bkgOnlineToday'] ?? 0;
+    //       bkgOnlineAsOf = data['bkgOnlineAsOf'] ?? 0;
+    //       bkgOnlineTodayPct = data['bkgOnlineTodayPct'] ?? 0;
+    //       bkgOnlineAsOfPct = data['bkgOnlineAsOfPct'] ?? 0;
+    //
+    //       isLoading = false;
+    //       EasyLoading.dismiss();
+    //     });
+    //
+    // }
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body);
+
       setState(() {
         getDashPunchSummaryCntModel = data.map((json) {
           return GetDashPunchSummaryCntModel.fromJson(json);
         }).toList();
 
-        // totalExpenseForProfit = expenseReportModel.fold(0.0, (sum, item) {
-        //   return sum! + (item.totExpAmt ?? 0.0);
-        // });
-        // incomeProfit = totalGrossProfit! - totalExpenseForProfit!;
-        // debugPrint("totalGrossProfit $totalGrossProfit");
-        // debugPrint("totalExpenseForProfit $totalExpenseForProfit");
-        // debugPrint("incomeProfit $incomeProfit");
-        // debugPrint("Total Expense: $totalExpenseForProfit");
+        if (getDashPunchSummaryCntModel.isNotEmpty) {
+          print(
+              'Total Amount of the first item: ${getDashPunchSummaryCntModel[0]
+                  .bkgOnlineAsOf}');
+          punchManToday =
+              getDashPunchSummaryCntModel[0].punchManToday!.toInt();
+          punchManAsOf =
+              getDashPunchSummaryCntModel[0].punchManAsOf?.toInt();
+          punchManTodayPct =
+              getDashPunchSummaryCntModel[0].punchManTodayPct?.toDouble();
+          punchManAsOfPct =
+              getDashPunchSummaryCntModel[0].punchManAsOfPct?.toDouble();
+          punchDACToday =
+              getDashPunchSummaryCntModel[0].punchDACToday?.toInt();
+          punchDACAsOf =
+              getDashPunchSummaryCntModel[0].punchDACAsOf?.toInt();
+          punchDACTodayPct =
+              getDashPunchSummaryCntModel[0].punchDACTodayPct?.toDouble() ?? 0;
+          punchDACAsOfPct =
+              getDashPunchSummaryCntModel[0].punchDACAsOfPct?.toDouble() ?? 0;
+
+          bkgManToday =
+              getDashPunchSummaryCntModel[0].bkgManToday?.toInt();
+          bkgManAsOf =
+              getDashPunchSummaryCntModel[0].bkgManAsOf?.toInt();
+          bkgManTodayPct =
+              getDashPunchSummaryCntModel[0].bkgManTodayPct?.toDouble();
+          bkgManAsOfPct =
+              getDashPunchSummaryCntModel[0].bkgManAsOfPct?.toDouble();
+          bkgOnlineToday =
+              getDashPunchSummaryCntModel[0].bkgOnlineToday?.toInt();
+          bkgOnlineAsOf =
+              getDashPunchSummaryCntModel[0].bkgOnlineAsOf?.toInt();
+          bkgOnlineTodayPct =
+              getDashPunchSummaryCntModel[0].bkgOnlineTodayPct?.toDouble() ?? 0;
+          bkgOnlineAsOfPct =
+              getDashPunchSummaryCntModel[0].bkgOnlineAsOfPct?.toDouble() ?? 0;
+
+        }
+
+        isLoading = false;
         EasyLoading.dismiss();
       });
-    } else {
+    }
+    else {
       EasyLoading.dismiss();
       throw Exception('Failed to load items');
     }
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    final routeArgs = ModalRoute.of(context)?.settings.arguments;
+
+    if (routeArgs is Map<String, dynamic>) {
+
+      if (routeArgs["openCashmemoSheet"] == true && !_cashmemoSheetOpened) {
+        _cashmemoSheetOpened = true;
+        _waitForPunchDataAndOpen();
+      }
+
+      if (routeArgs["refillBooking"] == true && !_refillBookingSheetOpened) {
+        _refillBookingSheetOpened = true;
+        _waitForBooingDataAndOpen();
+      }
+
+      if (routeArgs["openPrepaidSheet"] == true && !_prepaidSheetOpened) {
+        _prepaidSheetOpened = true;
+        _waitForPrepaidDataAndOpen();
+      }
+      // if (routeArgs["Total Outstanding Pending"] == true && !_SettlementSheetOpened) {
+      //   _SettlementSheetOpened = true;
+      //   _waitForSettlementDataAndOpen();
+      // }
+
+    }
+  }
+
+  void _waitForPunchDataAndOpen() async {
+    int attempts = 0;
+
+    while (getDashPunchSummaryCntModel.isEmpty && attempts < 20) {
+      await Future.delayed(const Duration(milliseconds: 300));
+      attempts++;
+    }
+
+    if (mounted) {
+      _openCashmemoSheet();
+    }
+  }
+
+  void _waitForBooingDataAndOpen() async {
+    int attempts = 0;
+
+    while (getDashPunchSummaryCntModel.isEmpty && attempts < 20) {
+      await Future.delayed(const Duration(milliseconds: 300));
+      attempts++;
+    }
+
+    if (mounted) {
+      _openRefillBookinfSheet();
+    }
+  }
+
+  void _openCashmemoSheet() {
+    showModalBottomSheet(
+      context: context,
+      useRootNavigator: true,
+      isScrollControlled: true,
+      isDismissible: true,
+      enableDrag: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black54,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return GestureDetector(
+              onTap: () {},
+              child: showCardWithPunching(context, setModalState),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _openRefillBookinfSheet() {
+    showModalBottomSheet(
+      context: context,
+      useRootNavigator: true,
+      isScrollControlled: true,
+      isDismissible: true,
+      enableDrag: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black54,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return GestureDetector(
+              onTap: () {},
+              child: showCardWithBooking(context, setModalState),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _waitForPrepaidDataAndOpen() async {
+    int attempts = 0;
+
+    while ((todaysPunchingInNiyojanC == null) && attempts < 20) {
+      await Future.delayed(const Duration(milliseconds: 300));
+      attempts++;
+    }
+
+    if (mounted) {
+      showBottomSheet(context);
+    }
+  }
 
 }
 

@@ -149,480 +149,502 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
                   filteredData = stockSubmitData!;
                 }
                 return
-                  Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SizedBox(height: 40,
-                        child: TextField(
-                          controller: searchController,
-                          decoration: InputDecoration(
-                            labelText: 'Search',
-                            border: OutlineInputBorder(),
-                            prefixIcon: Icon(Icons.search),
+                  Container(
+                    color: Colors.white,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: SizedBox(height: 40,
+                            child: TextField(
+                              controller: searchController,
+                              decoration: InputDecoration(
+                                labelText: 'Search',
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                                prefixIcon: Icon(Icons.search),
+                              ),
+                              onChanged: (value) => filterSearchResults(value),
+                            ),
                           ),
-                          onChanged: (value) => filterSearchResults(value),
                         ),
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.centerLeft,  // Ensures left alignment
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 5.0),
-                        child: Text(
-                          "Total Sale",
-                          style: Styling.bodyTitleWithBlue,
+                        Align(
+                          alignment: Alignment.centerLeft,  // Ensures left alignment
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 10.0),
+                            child: Text(
+                              "Total Sale",
+                              style: Styling.bodyTitle,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child:
-                      Card(
-                        color: Colors.white,
-                        shape: BeveledRectangleBorder(),
-                        child:
-                        Container(
-                          decoration: BoxDecoration(border: Border.all(width: 0.5)),
+                        Padding(
+                          padding: const EdgeInsets.all(5.0),
                           child:
-                          Column(
-                            children: [
-                              // Header row with column titles
-                              Row(
+                          Card(
+                            color: Colors.white,
+                            shape: BeveledRectangleBorder(),
+                            child:
+                            Container(
+                              // decoration: BoxDecoration(border: Border.all(width: 0.5)),
+                              child:
+                              Column(
                                 children: [
-                                  Expanded(flex: 2, child: Center(child: Text("Item", style: TextStyle(fontWeight: FontWeight.bold)))),
-                                  verticalDividerVerySmall(),
-                                  Expanded(flex: 2, child: Center(child: Text("Sale", style: TextStyle(fontWeight: FontWeight.bold)))),
-                                  verticalDividerVerySmall(),
-                                  Expanded(flex: 2, child: Center(child: Text("SV", style: TextStyle(fontWeight: FontWeight.bold)))),
-                                  verticalDividerVerySmall(),
-                                  Expanded(flex: 2, child: Center(child: Text("TV", style: TextStyle(fontWeight: FontWeight.bold)))),
-                                  verticalDividerVerySmall(),
-                                  Expanded(flex: 3, child: Center(child: Text("Empty", style: TextStyle(fontWeight: FontWeight.bold)))),
-                                  verticalDividerVerySmall(),
-                                  Expanded(flex: 2, child: Center(child: Text("Def.", style: TextStyle(fontWeight: FontWeight.bold)))),
-                                  verticalDividerVerySmall(),
-                                  Expanded(flex: 3, child: Center(child: Text("Less\nEmpty", style: TextStyle(fontWeight: FontWeight.bold)))),
-                                ],
-                              ),
-                              // Divider below header row
-                              Container(
-                                color: const Color(0xff1280B3),
-                                height: 1,
-                                width: MediaQuery.of(context).size.width,
-                              ),
-                              // ListView.builder with shrinkWrap
-                              ListView.builder(
-                                shrinkWrap: true, // This ensures the ListView takes only as much space as it needs
-                                physics: NeverScrollableScrollPhysics(), // Disable internal scrolling if you want to scroll the parent instead
-                                itemCount: groupedData.length ?? 0, // Number of items in your data list
-                                itemBuilder: (context, index) {
-                                  StockSubmitToManagerListModel? stock = groupedData[index]; // Get stock item at index
-
-                                  // If the stock data is null, skip to the next item
-                                  if (stock == null) {
-                                    return SizedBox.shrink(); // Return an empty widget if stock is null
-                                  }
-
-                                  return
-                                    Container(
-                                    padding: EdgeInsets.symmetric(vertical: 0.0), // Remove unnecessary vertical padding
-                                    child: Column(
+                                  // Header row with column titles
+                                  Container(
+                                    color: Color(0xFFfcf2f1),
+                                    child: Row(
                                       children: [
+                                        Expanded(flex: 2, child: Center(child: Text("Item", style: TextStyle(fontWeight: FontWeight.bold)))),
+                                        verticalDividerVerySmallBlue(),
+                                        Expanded(flex: 2, child: Center(child: Text("Sale", style: TextStyle(fontWeight: FontWeight.bold)))),
+                                        verticalDividerVerySmallBlue(),
+                                        Expanded(flex: 2, child: Center(child: Text("SV", style: TextStyle(fontWeight: FontWeight.bold)))),
+                                        verticalDividerVerySmallBlue(),
+                                        Expanded(flex: 2, child: Center(child: Text("TV", style: TextStyle(fontWeight: FontWeight.bold)))),
+                                        verticalDividerVerySmallBlue(),
+                                        Expanded(flex: 3, child: Center(child: Text("Empty", style: TextStyle(fontWeight: FontWeight.bold)))),
+                                        verticalDividerVerySmallBlue(),
+                                        Expanded(flex: 2, child: Center(child: Text("Def.", style: TextStyle(fontWeight: FontWeight.bold)))),
+                                        verticalDividerVerySmallBlue(),
+                                        Expanded(flex: 3, child: Center(child: Text("Less\nEmpty", style: TextStyle(fontWeight: FontWeight.bold)))),
+                                      ],
+                                    ),
+                                  ),
+                                  // Divider below header row
+                                  // Container(
+                                  //   color: const Color(0xff1280B3),
+                                  //   height: 1,
+                                  //   width: MediaQuery.of(context).size.width,
+                                  // ),
+                                  // ListView.builder with shrinkWrap
+
+                                  ListView.builder(
+                                    shrinkWrap: true, // This ensures the ListView takes only as much space as it needs
+                                    physics: NeverScrollableScrollPhysics(), // Disable internal scrolling if you want to scroll the parent instead
+                                    itemCount: groupedData.length ?? 0, // Number of items in your data list
+                                    itemBuilder: (context, index) {
+                                      StockSubmitToManagerListModel? stock = groupedData[index]; // Get stock item at index
+
+                                      // If the stock data is null, skip to the next item
+                                      if (stock == null) {
+                                        return SizedBox.shrink(); // Return an empty widget if stock is null
+                                      }
+                                      Color backgroundColor = index % 2 == 0
+                                          ? Color(0xFFfffffff)
+                                          : Color(0xFFfffffff);
+                                      return
                                         Container(
-                                          padding: EdgeInsets.symmetric(horizontal: 0.0), // Remove horizontal padding
-                                          child:
-                                          Row(
+                                          color: backgroundColor,
+                                          padding: EdgeInsets.symmetric(vertical: 0.0), // Remove unnecessary vertical padding
+                                          child: Column(
                                             children: [
-                                              // Column 1: Item Name
-                                              Expanded(
-                                                flex: 2,
-                                                child: Padding(
-                                                  padding: const EdgeInsets.only(left: 5.0),
-                                                  child: Text(
-                                                    stock.itemList![0].itemName ?? 'N/A',
-                                                    style: TextStyle(fontSize: 14, color: Colors.black54),
-                                                  ),
+                                              Container(
+                                                padding: EdgeInsets.symmetric(horizontal: 0.0), // Remove horizontal padding
+                                                child:
+                                                Row(
+                                                  children: [
+                                                    // Column 1: Item Name
+                                                    Expanded(
+                                                      flex: 2,
+                                                      child: Padding(
+                                                        padding: const EdgeInsets.only(left: 5.0),
+                                                        child: Text(
+                                                          stock.itemList![0].itemName ?? 'N/A',
+                                                          style: TextStyle(fontSize: 14, color: Colors.black54),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    verticalDividerVerySmallBlue(),
+                                                    // Column 2: Filled
+                                                    Expanded(
+                                                      flex: 2,
+                                                      child: Text(
+                                                        stock.itemList![0].filledSaleQty.toString(),
+                                                        style: TextStyle(fontSize: 14, color: Colors.black54),
+                                                        textAlign: TextAlign.center,
+                                                      ),
+                                                    ),
+                                                    verticalDividerVerySmallBlue(),
+                                                    // Column 3: SV
+                                                    Expanded(
+                                                      flex: 2,
+                                                      child: Text(
+                                                        stock.itemList![0].sVQty.toString(),
+                                                        style: TextStyle(fontSize: 14, color: Colors.black54),
+                                                        textAlign: TextAlign.center,
+                                                      ),
+                                                    ),
+                                                    verticalDividerVerySmallBlue(),
+                                                    // Column 4: TV
+                                                    Expanded(
+                                                      flex: 2,
+                                                      child: Text(
+                                                        stock.itemList![0].tVQty.toString(),
+                                                        style: TextStyle(fontSize: 14, color: Colors.black54),
+                                                        textAlign: TextAlign.center,
+                                                      ),
+                                                    ),
+                                                    verticalDividerVerySmallBlue(),
+                                                    // Column 5: Empty
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Text(
+                                                        stock.itemList![0].emptyRetQty.toString(),
+                                                        style: TextStyle(fontSize: 14, color: Colors.black54),
+                                                        textAlign: TextAlign.center,
+                                                      ),
+                                                    ),
+                                                    verticalDividerVerySmallBlue(),
+                                                    // Column 6: Def
+                                                    Expanded(
+                                                      flex: 2,
+                                                      child: Text(
+                                                        stock.itemList![0].deffQty.toString(),
+                                                        style: TextStyle(fontSize: 14, color: Colors.black54),
+                                                        textAlign: TextAlign.center,
+                                                      ),
+                                                    ),
+                                                    verticalDividerVerySmallBlue(),
+                                                    // Column 7: Less Empty
+                                                    Expanded(
+                                                      flex: 3,
+                                                      child: Text(
+                                                        stock.itemList![0].lessEmptyQty.toString(),
+                                                        style: TextStyle(fontSize: 14, color: Colors.black54),
+                                                        textAlign: TextAlign.center,
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
-                                              verticalDividerVerySmall(),
-                                              // Column 2: Filled
-                                              Expanded(
-                                                flex: 2,
-                                                child: Text(
-                                                  stock.itemList![0].filledSaleQty.toString(),
-                                                  style: TextStyle(fontSize: 14, color: Colors.black54),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ),
-                                              verticalDividerVerySmall(),
-                                              // Column 3: SV
-                                              Expanded(
-                                                flex: 2,
-                                                child: Text(
-                                                  stock.itemList![0].sVQty.toString(),
-                                                  style: TextStyle(fontSize: 14, color: Colors.black54),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ),
-                                              verticalDividerVerySmall(),
-                                              // Column 4: TV
-                                              Expanded(
-                                                flex: 2,
-                                                child: Text(
-                                                  stock.itemList![0].tVQty.toString(),
-                                                  style: TextStyle(fontSize: 14, color: Colors.black54),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ),
-                                              verticalDividerVerySmall(),
-                                              // Column 5: Empty
-                                              Expanded(
-                                                flex: 3,
-                                                child: Text(
-                                                  stock.itemList![0].emptyRetQty.toString(),
-                                                  style: TextStyle(fontSize: 14, color: Colors.black54),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ),
-                                              verticalDividerVerySmall(),
-                                              // Column 6: Def
-                                              Expanded(
-                                                flex: 2,
-                                                child: Text(
-                                                  stock.itemList![0].deffQty.toString(),
-                                                  style: TextStyle(fontSize: 14, color: Colors.black54),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ),
-                                              verticalDividerVerySmall(),
-                                              // Column 7: Less Empty
-                                              Expanded(
-                                                flex: 3,
-                                                child: Text(
-                                                  stock.itemList![0].lessEmptyQty.toString(),
-                                                  style: TextStyle(fontSize: 14, color: Colors.black54),
-                                                  textAlign: TextAlign.center,
-                                                ),
+                                              // Divider between items
+                                              Container(
+                                                color: Color(0xFFfcf2f1),
+                                                height: 1,
+                                                width: MediaQuery.of(context).size.width,
                                               ),
                                             ],
                                           ),
-                                        ),
-                                        // Divider between items
-                                        Container(
-                                          color: Colors.black12,
-                                          height: 1,
-                                          width: MediaQuery.of(context).size.width,
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
+                                        );
+                                    },
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.centerLeft,  // Ensures left alignment
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: Text(
-                          "Delivery Men Wise Sale",
-                          style: Styling.bodyTitleWithBlue,
+                        SizedBox(height: 5,),
+                        Align(
+                          alignment: Alignment.centerLeft,  // Ensures left alignment
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 10.0),
+                            child: Text(
+                              "Delivery Men Wise Sale",
+                              style: Styling.bodyTitle,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    Expanded(
-                      child:
-                    filteredData.isNotEmpty?
-                        ListView.builder(
-                          itemCount: filteredData.length,
-                          itemBuilder: (context, index) {
-                            final sale = filteredData[index];
-                            return
-                              Padding(
-                              padding: const EdgeInsets.all(5.0),
-                              child:
-                              Card(
-                                color:sale.dailySaleStatus == 3 || sale.dailySaleStatus == 1? Colors.white:Colors.white70,
-                                shape: BeveledRectangleBorder(),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(0.0),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      ListTile(
-                                        title: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        SizedBox(height: 5,),
+                        Expanded(
+                            child:
+                            filteredData.isNotEmpty?
+                            ListView.builder(
+                              itemCount: filteredData.length,
+                              itemBuilder: (context, index) {
+                                final sale = filteredData[index];
+                                Color backgroundColor = index % 2 == 1
+                                    ? Color(0xFFfcf2f1)
+                                    : Color(0xFFEFF2FB);
+                                Color backgroundColorText = index % 2 == 1
+                                    ? Color(0xFF000000)
+                                    : Color(0xff1280b3);
+                                return
+                                  Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child:
+                                    Card(
+                                      color:sale.dailySaleStatus == 3 || sale.dailySaleStatus == 1? Colors.white:Colors.white70,
+                                      shape: BeveledRectangleBorder(),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(0.0),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            Row(
-                                              children: [
-                                                Text('Delivery Men : ', style: Styling.itemGreyTextSmall),
-                                                Text(
-                                                  '${capitalizeFirstLetter(sale.staffName.toString())}',
-                                                  style: Styling.itemBlackTestSmall,
-                                                ),
-                                              ],
-                                            ),
-                                            !stockTransferFlag?Container():saveFlag ? Container():
-                                            sale.dailySaleStatus == 3 || sale.dailySaleStatus == 1?
-                                            !isSearchActive?
-                                            PopupMenuButton<String>(
-                                              onSelected: (String value) {
-                                                if (value == 'edit') {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      // builder: (context) => EditSaleScreen(sale: sale, saleGKId: sale.saleGKId.toString(),),
-                                                      // builder: (context) => EditSaleScreenNew(sale: sale, saleGKId:sale.saleGKId,dMId:sale.dMId),
-                                                      builder: (context) => DailyRefillSalePage(sale : sale , saleGKId:sale.saleGKId,dMId:sale.dMId,flagAdd:"editMode"),
-                                                    ),
-                                                  );
-                                                } else if (value == 'delete') {
-                                                  showDialog(
-                                                    context: context,
-                                                    builder: (BuildContext context) {
-                                                      return AlertDialog(
-                                                        title: Text("Confirm Deletion"),
-                                                          content: Text("Are you sure you want to delete this record?"),
-                                                        actions: [
-                                                          TextButton(
-                                                            onPressed: () {
-                                                              Navigator.of(context).pop(); // Close dialog without action
-                                                            },
-                                                            child: Text("No"),
-                                                          ),
-                                                          TextButton(
-                                                            onPressed: () async {
-                                                              Navigator.of(context).pop(); // Close dialog
-                                                              // Simulate API call and remove item from list
-                                                              await deleteDataToApi(sale.saleGKId!.toInt());
-                                                              // Update filteredData by removing the deleted item
-
-                                                            },
-                                                            child: Text("Yes"),
-                                                          ),
-                                                        ],
-                                                      );
-                                                    },
-                                                  );
-                                                }
-                                              },
-                                              itemBuilder: (BuildContext context) {
-                                                return [
-                                                  PopupMenuItem<String>(
-                                                    value: 'edit',
-                                                    child: Text('Edit',style: Styling.textFormText,),
-                                                  ),
-                                                  PopupMenuItem<String>(
-                                                    value: 'delete',
-                                                    child: Text('Delete',style: Styling.textFormText),
-                                                  ),
-                                                ];
-                                              },
-                                              icon: Icon(
-                                                Icons.more_vert,
-                                                color: Colors.blue,
-                                              ),
-                                            ):
-                                                Container():
-                                            Container()
-                                          ],
-                                        ),
-                                      ),
-
-                                      Container(
-                                        decoration: BoxDecoration(border: Border.all(width: 0.5)),
-                                        child:
-                                        Column(
-                                          children: [
-                                            // Header Row with equal width for all columns using Expanded
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                    flex:2,child: Center(child: Text("Item",style: TextStyle(fontWeight: FontWeight.bold)))),
-                                                verticalDividerVerySmall(),
-                                                Expanded(flex:2,child: Center(child: Text("Sale",style: TextStyle(fontWeight: FontWeight.bold)))),
-                                                verticalDividerVerySmall(),
-                                                Expanded(flex:2,child: Center(child: Text("SV",style: TextStyle(fontWeight: FontWeight.bold)))),
-                                                verticalDividerVerySmall(),
-                                                Expanded(flex:2,child: Center(child: Text("TV",style: TextStyle(fontWeight: FontWeight.bold)))),
-                                                verticalDividerVerySmall(),
-                                                Expanded(flex:3,child: Center(child: Text("Empty",style: TextStyle(fontWeight: FontWeight.bold)))),
-                                                verticalDividerVerySmall(),
-                                                Expanded(flex:2,child: Center(child: Text("Def.",style: TextStyle(fontWeight: FontWeight.bold)))),
-                                                verticalDividerVerySmall(),
-                                                Expanded(flex:3,child: Center(child: Text("Less\nEmpty",style: TextStyle(fontWeight: FontWeight.bold)))),
-                                              ],
-                                            ),
-                                            // Divider between header and data rows
-                                            Container(
-                                              color: const Color(0xff1280B3),
-                                              height: 1,
-                                              width: MediaQuery.of(context).size.width,
-                                            ),
-                                            // ListView to display the data
-                                            sale.itemList!.isNotEmpty
-                                                ?
-                                            ListView.builder(
-                                              physics: const BouncingScrollPhysics(),
-                                              itemCount: sale.itemList!.length,
-                                              shrinkWrap: true,
-                                              itemBuilder: (BuildContext context, int index) {
-                                                ItemList item = sale.itemList![index];
-                                                bool isFlagPending = item.FlagColumnUpdate == 'Pending';
-                                                debugPrint("flagUpdate${isFlagPending}");
-                                                debugPrint("flagUpdate${item.FlagColumnUpdate}");
-                                                // Get the item at the current index
-                                                return
-                                                  Column(
-                                                  children: [
-                                                    Container(
-                                                      child: Row(
-                                                        children: [
-                                                          // Column 1: Item Name
-                                                          Expanded(flex:2,
-                                                            child: Padding(
-                                                              padding: const EdgeInsets.only(left: 5.0),
-
-                                                              child: Text(item.itemName ?? 'N/A', style: TextStyle(fontSize: 14, color: Colors.black54)),
-                                                            ),
-                                                          ),
-                                                          verticalDividerVerySmall(),
-                                                          // Column 2: Filled
-                                                          Expanded(flex:2,
-                                                            child: Text(item.filledSaleQty.toString(), style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center),
-                                                          ),
-                                                          verticalDividerVerySmall(),
-                                                          // Column 3: SV
-                                                          Expanded(flex:2,
-                                                            child: Text(item.sVQty.toString(), style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center),
-                                                          ),
-                                                          verticalDividerVerySmall(),
-                                                          // Column 4: TV
-                                                          Expanded(flex:2,
-                                                            child: Text(item.tVQty.toString(), style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center),
-                                                          ),
-                                                          verticalDividerVerySmall(),
-                                                          // Column 5: Empty
-                                                          Expanded(flex:3,
-                                                            child: Text(item.emptyRetQty.toString(), style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center),
-                                                          ),
-                                                          verticalDividerVerySmall(),
-                                                          // Column 6: Def
-                                                          Expanded(flex:2,
-                                                            child: Text(item.deffQty.toString(), style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center),
-                                                          ),
-                                                          verticalDividerVerySmall(),
-                                                          // Column 7: Less Empty
-                                                          Expanded(flex:3,
-                                                            child: Text(item.lessEmptyQty.toString(), style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center),
-                                                          ),
-                                                        ],
+                                            ListTile(
+                                              title: Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      // Text('Delivery Men : ', style: Styling.itemGreyTextSmall),
+                                                      Text(
+                                                        '${capitalizeFirstLetter(sale.staffName.toString())}',
+                                                        style: Styling.itemBlackTestVerySmallBoldPink,
                                                       ),
+                                                    ],
+                                                  ),
+                                                  !stockTransferFlag?Container():saveFlag ? Container():
+                                                  sale.dailySaleStatus == 3 || sale.dailySaleStatus == 1?
+                                                  !isSearchActive?
+                                                  PopupMenuButton<String>(
+                                                    onSelected: (String value) {
+                                                      if (value == 'edit') {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            // builder: (context) => EditSaleScreen(sale: sale, saleGKId: sale.saleGKId.toString(),),
+                                                            // builder: (context) => EditSaleScreenNew(sale: sale, saleGKId:sale.saleGKId,dMId:sale.dMId),
+                                                            builder: (context) => DailyRefillSalePage(sale : sale , saleGKId:sale.saleGKId,dMId:sale.dMId,flagAdd:"editMode"),
+                                                          ),
+                                                        );
+                                                      } else if (value == 'delete') {
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext context) {
+                                                            return AlertDialog(
+                                                              title: Text("Confirm Deletion"),
+                                                              content: Text("Are you sure you want to delete this record?"),
+                                                              actions: [
+                                                                TextButton(
+                                                                  onPressed: () {
+                                                                    Navigator.of(context).pop(); // Close dialog without action
+                                                                  },
+                                                                  child: Text("No"),
+                                                                ),
+                                                                TextButton(
+                                                                  onPressed: () async {
+                                                                    Navigator.of(context).pop(); // Close dialog
+                                                                    // Simulate API call and remove item from list
+                                                                    await deleteDataToApi(sale.saleGKId!.toInt());
+                                                                    // Update filteredData by removing the deleted item
+
+                                                                  },
+                                                                  child: Text("Yes"),
+                                                                ),
+                                                              ],
+                                                            );
+                                                          },
+                                                        );
+                                                      }
+                                                    },
+                                                    itemBuilder: (BuildContext context) {
+                                                      return [
+                                                        PopupMenuItem<String>(
+                                                          value: 'edit',
+                                                          child: Text('Edit',style: Styling.textFormText,),
+                                                        ),
+                                                        PopupMenuItem<String>(
+                                                          value: 'delete',
+                                                          child: Text('Delete',style: Styling.textFormText),
+                                                        ),
+                                                      ];
+                                                    },
+                                                    icon: Icon(
+                                                      Icons.more_vert,
+                                                      color: Color(0xff1280b3),
                                                     ),
-                                                    Container(
-                                                      color:Colors.black12,
-                                                      height: 1,
-                                                      width: MediaQuery.of(context).size.width,
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            )
-                                                : Container(
-                                              padding: EdgeInsets.all(5),
-                                              child: const Center(child: Text("No pending data..!")),
+                                                  ):
+                                                  Container():
+                                                  Container()
+                                                ],
+                                              ),
                                             ),
+
+                                            Container(
+
+                                              // decoration: BoxDecoration(border: Border.all(width: 0.5)),
+                                              child:
+                                              Column(
+                                                children: [
+                                                  // Header Row with equal width for all columns using Expanded
+                                                  Container(
+                                                    color:backgroundColor,
+                                                    child: Row(
+                                                      children: [
+                                                        Expanded(
+                                                            flex:2,child: Center(child: Text("Item",style: TextStyle(fontWeight: FontWeight.bold,color: backgroundColorText)))),
+                                                        verticalDividerVerySmallBlue(),
+                                                        Expanded(flex:2,child: Center(child: Text("Sale",style: TextStyle(fontWeight: FontWeight.bold,color: backgroundColorText)))),
+                                                        verticalDividerVerySmallBlue(),
+                                                        Expanded(flex:2,child: Center(child: Text("SV",style: TextStyle(fontWeight: FontWeight.bold,color: backgroundColorText)))),
+                                                        verticalDividerVerySmallBlue(),
+                                                        Expanded(flex:2,child: Center(child: Text("TV",style: TextStyle(fontWeight: FontWeight.bold,color: backgroundColorText)))),
+                                                        verticalDividerVerySmallBlue(),
+                                                        Expanded(flex:3,child: Center(child: Text("Empty",style: TextStyle(fontWeight: FontWeight.bold,color:backgroundColorText)))),
+                                                        verticalDividerVerySmallBlue(),
+                                                        Expanded(flex:2,child: Center(child: Text("Def.",style: TextStyle(fontWeight: FontWeight.bold,color: backgroundColorText)))),
+                                                        verticalDividerVerySmallBlue(),
+                                                        Expanded(flex:3,child: Center(child: Text("Less\nEmpty",style: TextStyle(fontWeight: FontWeight.bold,color: backgroundColorText)))),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  // Divider between header and data rows
+                                                  // Container(
+                                                  //   color: const Color(0xff1280B3),
+                                                  //   height: 1,
+                                                  //   width: MediaQuery.of(context).size.width,
+                                                  // ),
+                                                  // ListView to display the data
+                                                  sale.itemList!.isNotEmpty
+                                                      ?
+                                                  ListView.builder(
+                                                    physics: const BouncingScrollPhysics(),
+                                                    itemCount: sale.itemList!.length,
+                                                    shrinkWrap: true,
+                                                    itemBuilder: (BuildContext context, int index) {
+                                                      ItemList item = sale.itemList![index];
+                                                      bool isFlagPending = item.FlagColumnUpdate == 'Pending';
+                                                      debugPrint("flagUpdate${isFlagPending}");
+                                                      debugPrint("flagUpdate${item.FlagColumnUpdate}");
+                                                      // Get the item at the current index
+                                                      return
+                                                        Column(
+                                                          children: [
+                                                            Container(
+                                                              child: Row(
+                                                                children: [
+                                                                  // Column 1: Item Name
+                                                                  Expanded(flex:2,
+                                                                    child: Padding(
+                                                                      padding: const EdgeInsets.only(left: 5.0),
+
+                                                                      child: Text(item.itemName ?? 'N/A', style: TextStyle(fontSize: 14, color: Colors.black54)),
+                                                                    ),
+                                                                  ),
+                                                                  verticalDividerVerySmallBluePink(),
+                                                                  // Column 2: Filled
+                                                                  Expanded(flex:2,
+                                                                    child: Text(item.filledSaleQty.toString(), style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center),
+                                                                  ),
+                                                                  verticalDividerVerySmallBluePink(),
+                                                                  // Column 3: SV
+                                                                  Expanded(flex:2,
+                                                                    child: Text(item.sVQty.toString(), style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center),
+                                                                  ),
+                                                                  verticalDividerVerySmallBluePink(),
+                                                                  // Column 4: TV
+                                                                  Expanded(flex:2,
+                                                                    child: Text(item.tVQty.toString(), style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center),
+                                                                  ),
+                                                                  verticalDividerVerySmallBluePink(),
+                                                                  // Column 5: Empty
+                                                                  Expanded(flex:3,
+                                                                    child: Text(item.emptyRetQty.toString(), style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center),
+                                                                  ),
+                                                                  verticalDividerVerySmallBluePink(),
+                                                                  // Column 6: Def
+                                                                  Expanded(flex:2,
+                                                                    child: Text(item.deffQty.toString(), style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center),
+                                                                  ),
+                                                                  verticalDividerVerySmallBluePink(),
+                                                                  // Column 7: Less Empty
+                                                                  Expanded(flex:3,
+                                                                    child: Text(item.lessEmptyQty.toString(), style: TextStyle(fontSize: 14, color: Colors.black54), textAlign: TextAlign.center),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            Container(
+                                                              color: Color(0xFFEFF2FB),
+                                                              height: 1,
+                                                              width: MediaQuery.of(context).size.width,
+                                                            ),
+                                                          ],
+                                                        );
+                                                    },
+                                                  )
+                                                      : Container(
+                                                    padding: EdgeInsets.all(5),
+                                                    child: const Center(child: Text("No pending data..!")),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            // sale.dailySaleStatus == 3 || sale.dailySaleStatus == 1?
+                                            // !isSearchActive?
+                                            // Row(
+                                            //   mainAxisAlignment: MainAxisAlignment.end,
+                                            //   children: [
+                                            //     ElevatedButton(
+                                            //       onPressed: () {
+                                            //         Navigator.push(
+                                            //           context,
+                                            //           MaterialPageRoute(
+                                            //             // builder: (context) => EditSaleScreen(sale: sale, saleGKId: sale.saleGKId.toString(),),
+                                            //             // builder: (context) => EditSaleScreenNew(sale: sale, saleGKId:sale.saleGKId,dMId:sale.dMId),
+                                            //             builder: (context) => DailyRefillSalePage(sale : sale , saleGKId:sale.saleGKId,dMId:sale.dMId,flagAdd:"editMode"),
+                                            //           ),
+                                            //         );
+                                            //       },
+                                            //       style: ElevatedButton.styleFrom(
+                                            //         backgroundColor: Colors.blue,
+                                            //         shape: RoundedRectangleBorder(
+                                            //           borderRadius: BorderRadius.circular(50),
+                                            //         ),
+                                            //       ),
+                                            //       child: const Text(
+                                            //         "Edit",
+                                            //         style: TextStyle(color: Colors.white),
+                                            //       ),
+                                            //     ),
+                                            //     SizedBox(width: 10),
+                                            //     ElevatedButton(
+                                            //       onPressed: () {
+                                            //         showDialog(
+                                            //           context: context,
+                                            //           builder: (BuildContext context) {
+                                            //             return AlertDialog(
+                                            //               title: Text("Confirm Deletion"),
+                                            //               content: Text("Are you sure you want to delete this record?"),
+                                            //               actions: [
+                                            //                 TextButton(
+                                            //                   onPressed: () {
+                                            //                     Navigator.of(context).pop(); // Close dialog without action
+                                            //                   },
+                                            //                   child: Text("No"),
+                                            //                 ),
+                                            //                 TextButton(
+                                            //                   onPressed: () async {
+                                            //                     Navigator.of(context).pop(); // Close dialog
+                                            //                     // Simulate API call and remove item from list
+                                            //                     await deleteDataToApi(sale.saleGKId!.toInt());
+                                            //                     // Update filteredData by removing the deleted item
+                                            //
+                                            //                   },
+                                            //                   child: Text("Yes"),
+                                            //                 ),
+                                            //               ],
+                                            //             );
+                                            //           },
+                                            //         );
+                                            //       },
+                                            //       style: ElevatedButton.styleFrom(
+                                            //         backgroundColor: Colors.blue,
+                                            //         shape: RoundedRectangleBorder(
+                                            //           borderRadius: BorderRadius.circular(50),
+                                            //         ),
+                                            //       ),
+                                            //       child: const Text(
+                                            //         "Delete",
+                                            //         style: TextStyle(color: Colors.white),
+                                            //       ),
+                                            //     ),
+                                            //   ],
+                                            // ):
+                                            // Container():
+                                            //     Container(),
                                           ],
                                         ),
                                       ),
-                                      // sale.dailySaleStatus == 3 || sale.dailySaleStatus == 1?
-                                      // !isSearchActive?
-                                      // Row(
-                                      //   mainAxisAlignment: MainAxisAlignment.end,
-                                      //   children: [
-                                      //     ElevatedButton(
-                                      //       onPressed: () {
-                                      //         Navigator.push(
-                                      //           context,
-                                      //           MaterialPageRoute(
-                                      //             // builder: (context) => EditSaleScreen(sale: sale, saleGKId: sale.saleGKId.toString(),),
-                                      //             // builder: (context) => EditSaleScreenNew(sale: sale, saleGKId:sale.saleGKId,dMId:sale.dMId),
-                                      //             builder: (context) => DailyRefillSalePage(sale : sale , saleGKId:sale.saleGKId,dMId:sale.dMId,flagAdd:"editMode"),
-                                      //           ),
-                                      //         );
-                                      //       },
-                                      //       style: ElevatedButton.styleFrom(
-                                      //         backgroundColor: Colors.blue,
-                                      //         shape: RoundedRectangleBorder(
-                                      //           borderRadius: BorderRadius.circular(50),
-                                      //         ),
-                                      //       ),
-                                      //       child: const Text(
-                                      //         "Edit",
-                                      //         style: TextStyle(color: Colors.white),
-                                      //       ),
-                                      //     ),
-                                      //     SizedBox(width: 10),
-                                      //     ElevatedButton(
-                                      //       onPressed: () {
-                                      //         showDialog(
-                                      //           context: context,
-                                      //           builder: (BuildContext context) {
-                                      //             return AlertDialog(
-                                      //               title: Text("Confirm Deletion"),
-                                      //               content: Text("Are you sure you want to delete this record?"),
-                                      //               actions: [
-                                      //                 TextButton(
-                                      //                   onPressed: () {
-                                      //                     Navigator.of(context).pop(); // Close dialog without action
-                                      //                   },
-                                      //                   child: Text("No"),
-                                      //                 ),
-                                      //                 TextButton(
-                                      //                   onPressed: () async {
-                                      //                     Navigator.of(context).pop(); // Close dialog
-                                      //                     // Simulate API call and remove item from list
-                                      //                     await deleteDataToApi(sale.saleGKId!.toInt());
-                                      //                     // Update filteredData by removing the deleted item
-                                      //
-                                      //                   },
-                                      //                   child: Text("Yes"),
-                                      //                 ),
-                                      //               ],
-                                      //             );
-                                      //           },
-                                      //         );
-                                      //       },
-                                      //       style: ElevatedButton.styleFrom(
-                                      //         backgroundColor: Colors.blue,
-                                      //         shape: RoundedRectangleBorder(
-                                      //           borderRadius: BorderRadius.circular(50),
-                                      //         ),
-                                      //       ),
-                                      //       child: const Text(
-                                      //         "Delete",
-                                      //         style: TextStyle(color: Colors.white),
-                                      //       ),
-                                      //     ),
-                                      //   ],
-                                      // ):
-                                      // Container():
-                                      //     Container(),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ):
-                    Center(child: Text('No Data Found.'))
+                                    ),
+                                  );
+                              },
+                            ):
+                            Center(child: Text('No Data Found.'))
+                        ),
+                      ],
                     ),
-                  ],
-                );
+                  );
               }
             },
           ),
@@ -666,7 +688,7 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
 
           // Fetch data from the database
           stockDataFuture = updateRefillSale!.getDataFromDatabase();
-           groupedData = _groupAndSumItems(result);
+          groupedData = _groupAndSumItems(result);
           // Update the UI
           stockDataFuture.then((data) {
             setState(() {
@@ -818,7 +840,7 @@ class _StockSubmitToManagerState extends State<StockSubmitToManager> {
                   btnLabel,
                   style: Styling.blueClrText,
                 ),
-                onPressed: () {},
+                onPressed: () => logoutUser(context),
               ),
             ],
           ),

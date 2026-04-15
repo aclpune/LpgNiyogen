@@ -303,7 +303,17 @@ class _DashboardUndocumentedDetails extends State<DashboardUndocumentedDetails>{
                     SizedBox(height: 2),
                     Row(
                       children: [
-                        Expanded( child: countTextWidgetTextOnAccount(context, "DC.No/Challan No.", nullToDash(sale.consuDCNo))),
+                        // Expanded( child: countTextWidgetTextOnAccount(context, "DC.No/Challan No.", nullToDash(sale.consuDCNo))),
+                        Expanded(
+                          child: countTextWidgetTextOnAccount(
+                            context,
+                            "DC.No/Invoice No",
+                            // Show ConsuDCNo if not empty, else show InvoiceNo, else "-"
+                            (sale.consuDCNo?.isNotEmpty == true)
+                                ? sale.consuDCNo
+                                : (sale.invoiceNo?.isNotEmpty == true ? sale.invoiceNo : "-"),
+                          ),
+                        ),
                       ],
                     ),
                     SizedBox(height: 2),

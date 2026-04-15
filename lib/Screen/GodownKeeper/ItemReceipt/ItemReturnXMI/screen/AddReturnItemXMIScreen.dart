@@ -1333,7 +1333,9 @@ class _AddReturnItemXMIScreenState extends State<AddReturnItemXMIScreen> {
                   btnLabel,
                   style: Styling.blueClrText,
                 ),
-                onPressed: () {},
+                // onPressed: () {},
+                onPressed: () => logoutUser(context),
+
               ),
             ],
           ),

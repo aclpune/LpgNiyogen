@@ -83,6 +83,7 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
   bool _isDepositEmpty = false;
   double remainingAmount = 0.0;
   bool saveFlag = false;
+  bool isCashDenominationChecked = false;
   @override
   void initState() {
 
@@ -435,21 +436,231 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
                     ],
                   ),
                 ),
-                SizedBox(height: 20),
-                Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          isCashDenominationListViewVisible =
-                          !isCashDenominationListViewVisible; // Toggle ListView visibility
-                        });
-                      },
-                      child: Card(
+                // SizedBox(height: 20),
+                // Column(
+                //   children: [
+                //     GestureDetector(
+                //       onTap: () {
+                //         setState(() {
+                //           isCashDenominationListViewVisible =
+                //           !isCashDenominationListViewVisible; // Toggle ListView visibility
+                //         });
+                //       },
+                //       child: Card(
+                //         child: Padding(
+                //           padding: const EdgeInsets.all(5.0),
+                //           child:
+                //           Column(
+                //             children: [
+                //               Padding(
+                //                 padding: const EdgeInsets.only(bottom: 8.0),
+                //                 child: Row(
+                //                   mainAxisAlignment:
+                //                   MainAxisAlignment.spaceBetween,
+                //                   children: [
+                //                     Text(
+                //                       cashDenominationMandatory?"Cash Denomination Is Mandatory":
+                //                       "Cash denomination",
+                //                       style: TextStyle(
+                //                         fontSize: 16,
+                //                         color: Colors.blue,
+                //                         fontWeight: FontWeight.bold,),
+                //                     ),
+                //                     Icon(
+                //                       isCashDenominationListViewVisible
+                //                           ? Icons.arrow_drop_up
+                //                           : Icons.arrow_drop_down,
+                //                     ),
+                //                   ],
+                //                 ),
+                //               ),
+                //               Visibility(
+                //                 visible:
+                //                 isCashDenominationListViewVisible,
+                //                 child:
+                //                 Container(
+                //                   decoration: BoxDecoration(
+                //                     // Background color of the box
+                //                     borderRadius:
+                //                     BorderRadius.circular(8),
+                //                     border: Border.all(
+                //                         width:
+                //                         1), // Optional: Add rounded corners
+                //                   ),
+                //                   child: Column(
+                //                     children: [
+                //                       // First Row with Vertical Divider
+                //                       SizedBox(
+                //                         height:50,
+                //                         child: Row(
+                //                           mainAxisAlignment:
+                //                           MainAxisAlignment.center,
+                //                           // Center the row content
+                //                           children: [
+                //                             // First Text and Divider inside Expanded to ensure equal size
+                //                             Expanded(
+                //                               flex: 2,
+                //                               child: Center(
+                //                                   child: Text(
+                //                                     "Note Type", style: TextStyle(
+                //                                       fontWeight:
+                //                                       FontWeight.bold,
+                //                                       fontSize: 14),)), // Centering the text
+                //                             ),
+                //                             Expanded(
+                //                               flex: 3,
+                //                               child: Center(
+                //                                   child: Text(
+                //                                     "Qty", style: TextStyle(
+                //                                       fontWeight:
+                //                                       FontWeight.bold,
+                //                                       fontSize: 14),)), // Centering the text
+                //                             ),
+                //                             Expanded(
+                //                               flex: 3,
+                //                               child: Center(
+                //                                   child: Text(
+                //                                     "Amount", style: TextStyle(
+                //                                       fontWeight:
+                //                                       FontWeight.bold,
+                //                                       fontSize: 14),)), // Centering the text
+                //                             ),
+                //                           ],
+                //                         ),
+                //                       ),
+                //                       SizedBox(height: 10,),
+                //                       ListView.builder(
+                //                         shrinkWrap: true,
+                //                         physics: BouncingScrollPhysics(),
+                //                         itemCount: getNoteTypeAndIdFroDenominationListModel.length,
+                //                         itemBuilder: (context, index) {
+                //                           final data = getNoteTypeAndIdFroDenominationListModel[index];
+                //                           return
+                //                             Column(
+                //                               children: [
+                //                                 Row(
+                //                                   mainAxisAlignment: MainAxisAlignment.center,
+                //                                   children: [
+                //                                     Expanded(
+                //                                       flex: 2,
+                //                                       child: Center(
+                //                                         child: Text(
+                //                                           "${data.noteType}",
+                //                                           style: TextStyle(fontSize: 12),
+                //                                           textAlign: TextAlign.left,
+                //                                         ),
+                //                                       ),
+                //                                     ),
+                //                                     Expanded(
+                //                                       flex: 1,
+                //                                       child: Center(
+                //                                         child: Text(
+                //                                           "X",
+                //                                           style: TextStyle(fontSize: 12),
+                //                                         ),
+                //                                       ),
+                //                                     ),
+                //                                     Expanded(
+                //                                       flex: 3,
+                //                                       child: Center(
+                //                                         child: TextField(
+                //                                           controller: qtyController[index],
+                //                                           keyboardType: TextInputType.number,
+                //                                           inputFormatters: <TextInputFormatter>[
+                //                                             FilteringTextInputFormatter.digitsOnly,
+                //                                           ],
+                //
+                //                                           onChanged: (value) {
+                //                                             setState(() {
+                //                                               amounts[index] = (double.tryParse(value) ?? 0.0) * data.noteType!;
+                //                                               totalAmount = amounts.fold(0.0, (sum, amount) => sum + amount);
+                //                                               debugPrint("totalAmount$totalAmount");
+                //                                             });
+                //                                           },
+                //                                           textAlign: TextAlign.center,
+                //                                         ),
+                //                                       ),
+                //                                     ),
+                //                                     Expanded(
+                //                                       flex: 1,
+                //                                       child: Center(
+                //                                         child: Text(
+                //                                           "=",
+                //                                           style: TextStyle(fontSize: 12),
+                //                                         ),
+                //                                       ),
+                //                                     ),
+                //                                     Expanded(
+                //                                       flex:3,
+                //                                       child: Center(
+                //                                         child: Text(
+                //                                           "${amounts[index].toStringAsFixed(2)}",
+                //                                           style: TextStyle(fontSize: 12),
+                //                                         ),
+                //                                       ),
+                //                                     ),
+                //                                   ],
+                //                                 ),
+                //                               ],
+                //                             );
+                //                         },
+                //                       ),
+                //                       SizedBox(height: 10,),
+                //                       Padding(
+                //                         padding: const EdgeInsets.only(right: 8.0),
+                //                         child: Row(
+                //                           mainAxisAlignment: MainAxisAlignment.end,
+                //                           children: [
+                //                             Expanded(
+                //                                 flex: 0,
+                //                                 child: Text("Total Amount : ",
+                //                                     style: Styling.itemBlackTestBold,
+                //                                     textAlign: TextAlign.left)),
+                //                             Expanded(
+                //                                 flex: 0,
+                //                                 child: Text(
+                //                                   totalAmount.toStringAsFixed(2),
+                //                                   style: Styling.itemBlackTestBold,
+                //                                 )),
+                //                           ],
+                //                         ),
+                //                       ),
+                //                     ],
+                //                   ),
+                //                 ),
+                //               ),
+                //
+                //             ],
+                //           ),
+                //         ),
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                CheckboxListTile(
+                  title: const Text(
+                    "Cash Denomination",
+                    style: TextStyle(
+                      fontSize: 16,
+                      //fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  value: isCashDenominationChecked,
+                  onChanged: (bool? value) {
+                    setState(() {
+                      isCashDenominationChecked = value ?? false;
+                    });
+                  },
+                  controlAffinity: ListTileControlAffinity.leading,
+                ),
+                // SizedBox(height: 20),
+                if (isCashDenominationChecked)
+                  Column(
+                    children: [
+                      Card(
                         child: Padding(
                           padding: const EdgeInsets.all(5.0),
-                          child:
-                          Column(
+                          child: Column(
                             children: [
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 8.0),
@@ -458,185 +669,175 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
                                   MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      cashDenominationMandatory?"Cash Denomination Is Mandatory":
-                                      "Cash denomination",
+                                      cashDenominationMandatory
+                                          ? "Cash Denomination Is Mandatory"
+                                          : "Cash denomination",
                                       style: TextStyle(
                                         fontSize: 16,
                                         color: Colors.blue,
-                                        fontWeight: FontWeight.bold,),
-                                    ),
-                                    Icon(
-                                      isCashDenominationListViewVisible
-                                          ? Icons.arrow_drop_up
-                                          : Icons.arrow_drop_down,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
-                              Visibility(
-                                visible:
-                                isCashDenominationListViewVisible,
-                                child:
-                                Container(
-                                  decoration: BoxDecoration(
-                                    // Background color of the box
-                                    borderRadius:
-                                    BorderRadius.circular(8),
-                                    border: Border.all(
-                                        width:
-                                        1), // Optional: Add rounded corners
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      // First Row with Vertical Divider
-                                      SizedBox(
-                                        height:50,
-                                        child: Row(
+
+                              /// 👇 Container is now ALWAYS visible
+                              Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(width: 1),
+                                ),
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      height: 50,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.center,
+                                        children: [
+                                          Expanded(
+                                            flex: 2,
+                                            child: Center(
+                                              child: Text(
+                                                "Note Type",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 14),
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 3,
+                                            child: Center(
+                                              child: Text(
+                                                "Qty",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 14),
+                                              ),
+                                            ),
+                                          ),
+                                          Expanded(
+                                            flex: 3,
+                                            child: Center(
+                                              child: Text(
+                                                "Amount",
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 14),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(height: 10),
+                                    ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemCount:
+                                      getNoteTypeAndIdFroDenominationListModel
+                                          .length,
+                                      itemBuilder: (context, index) {
+                                        final data =
+                                        getNoteTypeAndIdFroDenominationListModel[
+                                        index];
+
+                                        return Row(
                                           mainAxisAlignment:
                                           MainAxisAlignment.center,
-                                          // Center the row content
                                           children: [
-                                            // First Text and Divider inside Expanded to ensure equal size
                                             Expanded(
                                               flex: 2,
                                               child: Center(
-                                                  child: Text(
-                                                    "Note Type", style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      fontSize: 14),)), // Centering the text
-                                            ),
-                                            Expanded(
-                                              flex: 3,
-                                              child: Center(
-                                                  child: Text(
-                                                    "Qty", style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      fontSize: 14),)), // Centering the text
-                                            ),
-                                            Expanded(
-                                              flex: 3,
-                                              child: Center(
-                                                  child: Text(
-                                                    "Amount", style: TextStyle(
-                                                      fontWeight:
-                                                      FontWeight.bold,
-                                                      fontSize: 14),)), // Centering the text
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(height: 10,),
-                                      ListView.builder(
-                                        shrinkWrap: true,
-                                        physics: BouncingScrollPhysics(),
-                                        itemCount: getNoteTypeAndIdFroDenominationListModel.length,
-                                        itemBuilder: (context, index) {
-                                          final data = getNoteTypeAndIdFroDenominationListModel[index];
-                                          return
-                                            Column(
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-                                                    Expanded(
-                                                      flex: 2,
-                                                      child: Center(
-                                                        child: Text(
-                                                          "${data.noteType}",
-                                                          style: TextStyle(fontSize: 12),
-                                                          textAlign: TextAlign.left,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: Center(
-                                                        child: Text(
-                                                          "X",
-                                                          style: TextStyle(fontSize: 12),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex: 3,
-                                                      child: Center(
-                                                        child: TextField(
-                                                          controller: qtyController[index],
-                                                          keyboardType: TextInputType.number,
-                                                          inputFormatters: <TextInputFormatter>[
-                                                            FilteringTextInputFormatter.digitsOnly,
-                                                          ],
-
-                                                          onChanged: (value) {
-                                                            setState(() {
-                                                              amounts[index] = (double.tryParse(value) ?? 0.0) * data.noteType!;
-                                                              totalAmount = amounts.fold(0.0, (sum, amount) => sum + amount);
-                                                              debugPrint("totalAmount$totalAmount");
-                                                            });
-                                                          },
-                                                          textAlign: TextAlign.center,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: Center(
-                                                        child: Text(
-                                                          "=",
-                                                          style: TextStyle(fontSize: 12),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      flex:3,
-                                                      child: Center(
-                                                        child: Text(
-                                                          "${amounts[index].toStringAsFixed(2)}",
-                                                          style: TextStyle(fontSize: 12),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            );
-                                        },
-                                      ),
-                                      SizedBox(height: 10,),
-                                      Padding(
-                                        padding: const EdgeInsets.only(right: 8.0),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.end,
-                                          children: [
-                                            Expanded(
-                                                flex: 0,
-                                                child: Text("Total Amount : ",
-                                                    style: Styling.itemBlackTestBold,
-                                                    textAlign: TextAlign.left)),
-                                            Expanded(
-                                                flex: 0,
                                                 child: Text(
-                                                  totalAmount.toStringAsFixed(2),
-                                                  style: Styling.itemBlackTestBold,
-                                                )),
+                                                  "${data.noteType}",
+                                                  style:
+                                                  TextStyle(fontSize: 12),
+                                                ),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 1,
+                                              child: Center(child: Text("X")),
+                                            ),
+                                            Expanded(
+                                              flex: 3,
+                                              child: Center(
+                                                child: TextField(
+                                                  controller:
+                                                  qtyController[index],
+                                                  keyboardType:
+                                                  TextInputType.number,
+                                                  inputFormatters: [
+                                                    FilteringTextInputFormatter
+                                                        .digitsOnly,
+                                                  ],
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      amounts[index] =
+                                                          (double.tryParse(
+                                                              value) ??
+                                                              0.0) *
+                                                              data.noteType!;
+                                                      totalAmount =
+                                                          amounts.fold(
+                                                              0.0,
+                                                                  (sum, amount) =>
+                                                              sum + amount);
+                                                    });
+                                                  },
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              flex: 1,
+                                              child: Center(child: Text("=")),
+                                            ),
+                                            Expanded(
+                                              flex: 3,
+                                              child: Center(
+                                                child: Text(
+                                                  amounts[index]
+                                                      .toStringAsFixed(2),
+                                                  style:
+                                                  TextStyle(fontSize: 12),
+                                                ),
+                                              ),
+                                            ),
                                           ],
-                                        ),
+                                        );
+                                      },
+                                    ),
+                                    SizedBox(height: 10),
+                                    Padding(
+                                      padding:
+                                      const EdgeInsets.only(right: 8.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.end,
+                                        children: [
+                                          Text("Total Amount : ",
+                                              style: Styling.itemBlackTestBold),
+                                          SizedBox(width: 5),
+                                          Text(
+                                            totalAmount.toStringAsFixed(2),
+                                            style: Styling.itemBlackTestBold,
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
                               ),
-
                             ],
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-
+                    ],
+                  ),
                 SizedBox(height: 20),
                 // Save Button
                 Row(
@@ -1024,8 +1225,6 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
     //   showFlushBar(context, Constants.cashAmount);
     // }
 
-
-
     if((_selectedItem == null || selectedItemId == null) && (selectedBankName == null || selectedBankId == null)){
       showFlushBar(context, Constants.selectValidItemReceipt);
       return;
@@ -1092,9 +1291,6 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
         return;
       }
     }
-
-
-
 
     int? bankId;
     int? accMappingIds;
@@ -1163,151 +1359,6 @@ class _CashHandoverScreenState extends State<CashHandoverScreen> {
     //   print("Exception UpdateSaleAddEditForMob: $e");
     // }
   }
-
-  // Future<void> updateCashAddEditForMob() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //
-  //   String? distributorId = prefs.getString('DistributorId');
-  //   String? bearerToken = prefs.getString('token');
-  //   String? addedBy = prefs.getString('StaffId');
-  //   String? userId = prefs.getString("UserId");
-  //
-  //   int distributorIds = int.parse(distributorId!);
-  //   int addedBys = int.parse(addedBy!);
-  //
-  //   final DateTime now = DateTime.now();
-  //   String formattedDate = DateFormat('yyyy-MM-dd').format(now);
-  //
-  //   double hvrBnkDepAmt = 0.0;
-  //
-  //   // ===================== BASIC SELECTION VALIDATION =====================
-  //
-  //   if ((_selectedItem == null || selectedItemId == null) &&
-  //       (selectedBankName == null || selectedBankId == null)) {
-  //     showFlushBar(context, Constants.selectValidItemReceipt);
-  //     return;
-  //   }
-  //
-  //   if (selectedBankName != null || selectedBankId != null) {
-  //     if (selectedTransMode == null) {
-  //       showFlushBar(context, Constants.selectValidItemReceipt);
-  //       return;
-  //     }
-  //   }
-  //
-  //   // ===================== DENOMINATION VALIDATION =====================
-  //
-  //   if (cashDenominationMandatory) {
-  //     if (depositController.text.isEmpty) {
-  //       showFlushBar(context, Constants.cashAmount);
-  //       return;
-  //     }
-  //
-  //     hvrBnkDepAmt = double.parse(depositController.text);
-  //
-  //     if (totalAmount == null || totalAmount <= 0) {
-  //       showFlushBar(context, Constants.cashDenominationIsMandatory);
-  //       return;
-  //     }
-  //
-  //     if (totalAmount != hvrBnkDepAmt) {
-  //       showFlushBar(context, Constants.cashHandOverDeno);
-  //       return;
-  //     }
-  //   } else {
-  //     // Bank / BRANCH → denomination NOT mandatory
-  //     if (depositController.text.isEmpty) {
-  //       showFlushBar(context, Constants.cashAmount);
-  //       return;
-  //     }
-  //     hvrBnkDepAmt = double.parse(depositController.text);
-  //   }
-  //
-  //   // ===================== DENOMINATION DATA =====================
-  //
-  //   final List<Map<String, dynamic>> dataCashDenomination =
-  //   getNoteTypeAndIdFroDenominationListModel
-  //       .asMap()
-  //       .entries
-  //       .map((entry) {
-  //     int index = entry.key;
-  //     var data = entry.value;
-  //
-  //     return {
-  //       "NoteId": data.id ?? 0,
-  //       "NoteQty": qtyController[index].text.isNotEmpty
-  //           ? int.tryParse(qtyController[index].text)
-  //           : 0,
-  //       "NoteAmt": amounts[index],
-  //       "RetNoteQty": 0,
-  //       "RetNoteAmt": 0.0,
-  //     };
-  //   }).toList();
-  //
-  //   // ===================== BANK DETAILS =====================
-  //
-  //   int? bankId = selectedBankName != null ? selecteBankIDApi : 0;
-  //   int? accMappingIds = selectedBankName != null ? accMappingId : 0;
-  //
-  //   // ===================== REQUEST BODY =====================
-  //
-  //   final Map<String, dynamic> requestBody = {
-  //     "HvrBnkDepId": 0,
-  //     "DistributorId": distributorIds,
-  //     "HvrBnkDepDate": formattedDate,
-  //     "HvrBnkDepFrom": userId,
-  //     "CashInHand": totalamt,
-  //     "HandoverToId": selectedItemId,
-  //     "BankId": bankId,
-  //     "AccMappingId": accMappingIds,
-  //     "HvrBnkDepAmt": hvrBnkDepAmt,
-  //     "BalAmt": remainingAmount,
-  //     "DepositMode": selectedTransMode ?? '',
-  //     "HandoverStatus": 2,
-  //     "AddedBy": userId,
-  //     "UpdatedFrom": 'MOB',
-  //     "DenomDtList": dataCashDenomination,
-  //   };
-  //
-  //   debugPrint("DepositCashAddEdit Request: $requestBody");
-  //
-  //   // ===================== API CALL =====================
-  //
-  //   final response = await http.post(
-  //     Uri.parse(AppUrl.DepositCashAddEdit),
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       "Authorization": "Bearer $bearerToken",
-  //     },
-  //     body: json.encode(requestBody),
-  //   );
-  //
-  //   // ===================== RESPONSE HANDLING =====================
-  //
-  //   if (response.statusCode == 200) {
-  //     debugPrint("DepositCashAddEdit Success: ${response.body}");
-  //
-  //     Navigator.pushNamed(
-  //       context,
-  //       BottomNavBarExample.screenName,
-  //       arguments: 3,
-  //     );
-  //
-  //     EasyLoading.showToast(
-  //       Constants.expenseSendMgr,
-  //       duration: const Duration(milliseconds: 3000),
-  //     );
-  //
-  //     setState(() {
-  //       fetchStaffList(selectedDate);
-  //     });
-  //   } else {
-  //     debugPrint(
-  //         "DepositCashAddEdit Error: ${response.statusCode} - ${response.body}");
-  //   }
-  // }
-
-
   Future<void> checkAndSaveDayEndData() async {
     EasyLoading.instance
       ..maskType = EasyLoadingMaskType.black // This creates a modal blocking interaction

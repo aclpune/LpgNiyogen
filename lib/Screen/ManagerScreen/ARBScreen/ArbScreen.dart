@@ -1187,7 +1187,7 @@ class _ArbScreenState extends State<ArbScreen> {
 
       Navigator.pushNamed(
         context,
-        BottomNavBarExample.screenName,
+        ArbScreen.screenName,
         arguments: 3, // This opens the third tab
       );
       EasyLoading.showToast(Constants.expenseSendMgr,
@@ -1326,9 +1326,9 @@ class _ArbScreenState extends State<ArbScreen> {
       // }
       bool hasValidQty = ItemDetails.any((item) =>
       item['ItemId'] != 0 &&
-          item['ItemQty'].toString().isNotEmpty &&
-          num.tryParse(item['ItemQty'].toString()) != null &&
-          num.parse(item['ItemQty'].toString()) > 0
+          item['PurQty'].toString().isNotEmpty &&
+          num.tryParse(item['PurQty'].toString()) != null &&
+          num.parse(item['PurQty'].toString()) > 0
       );
       if (!hasValidQty) {
         showFlushBar(context, "Please Select a Valid Qty");

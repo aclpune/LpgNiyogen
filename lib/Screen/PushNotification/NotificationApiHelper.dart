@@ -1,13 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
-
-import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:lpgsalesandinventory/Screen/Utils/app_url.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../Utils/app_url.dart';
 
 class NotificationApiHelper {
   // Replace with your backend API URL
@@ -35,7 +34,9 @@ class NotificationApiHelper {
       }
 
       // Detect platform
-      String platform = Platform.isAndroid ? 'android' : 'ios';
+      String platform = Platform.isAndroid ? 'Android' : 'iOS';
+      final deviceId = await getDeviceId();
+      debugPrint("dhghkgge $deviceId");
 
       // Build payload
       Map<String, dynamic> payload = {
@@ -51,7 +52,9 @@ class NotificationApiHelper {
         'DeviceId':fcmToken,
         'ActiveStatus':'Y',
         'UninstallStatus':null,
-        'UninstalledDate':null
+        'UninstalledDate':null,
+        'Platform':platform,
+        'MobDeviceId':deviceId,
       };
 
 
@@ -76,5 +79,23 @@ class NotificationApiHelper {
     } catch (e) {
       print('Error sending token to backend: $e');
     }
+  }
+
+  static Future<String?> getDeviceId() async {
+    final deviceInfo = DeviceInfoPlugin();
+
+    try {
+      if (Platform.isAndroid) {
+        final androidInfo = await deviceInfo.androidInfo;
+        return androidInfo.id;
+      } else if (Platform.isIOS) {
+        final iosInfo = await deviceInfo.iosInfo;
+        return iosInfo.identifierForVendor;
+      }
+    } catch (e) {
+      debugPrint("Device ID error: $e");
+    }
+
+    return null;
   }
 }

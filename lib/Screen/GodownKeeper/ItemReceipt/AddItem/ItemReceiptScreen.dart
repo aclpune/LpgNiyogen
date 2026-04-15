@@ -801,7 +801,9 @@ class _ItemReceiptScreenState extends State<ItemReceiptScreen> {
                         btnLabel,
                         style: Styling.blueClrText,
                       ),
-                      onPressed: () {},
+                      // onPressed: () {},
+                      onPressed: () => logoutUser(context),
+
                     ),
                   ],
                 ),

@@ -56,116 +56,169 @@ class _DeliveryMenListShowScreenState extends State<DeliveryMenListShowScreen> {
   Widget build(BuildContext context) {
     var argLRAdd = ModalRoute.of(context)?.settings.arguments;
     return WillPopScope(
-      onWillPop: () async {
-        // Show a confirmation dialog
-        if (argLRAdd == "fromDrawer") {
-          Navigator.pushReplacementNamed(
-              context, BottomNavigationForGodownKeeper.screenName,
-              arguments: "onBack");
-          return false;
-        } else {
-          Navigator.pushReplacementNamed(
-              context, BottomNavigationForGodownKeeper.screenName);
-          return false;
-        } // In case `null` is returned, return `false`
-      },
+        onWillPop: () async {
+          // Show a confirmation dialog
+          if (argLRAdd == "fromDrawer") {
+            Navigator.pushReplacementNamed(
+                context, BottomNavigationForGodownKeeper.screenName,
+                arguments: "onBack");
+            return false;
+          } else {
+            Navigator.pushReplacementNamed(
+                context, BottomNavigationForGodownKeeper.screenName);
+            return false;
+          } // In case `null` is returned, return `false`
+        },
         child:
-      Scaffold(
-        // appBar: CustomAppBar(
-        //   title: 'Daily Sale', // Title or hint text for the text field
-        // ),
-        body:
-        isLoading
-            ? Center(child: CircularProgressIndicator())
-            : SingleChildScrollView(  // Add SingleChildScrollView to make entire body scrollable
-          child:
-          Padding(
-            padding: const EdgeInsets.only(left: 2.0,right: 2,top: 0),
+        Scaffold(
+          // appBar: CustomAppBar(
+          //   title: 'Daily Sale', // Title or hint text for the text field
+          // ),
+          body:
+          isLoading
+              ? Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(  // Add SingleChildScrollView to make entire body scrollable
             child:
-            Container(
-              decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
-              margin: const EdgeInsets.only(left: 2, right: 2),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SizedBox(height: 40,
-                      child: TextField(
-                        controller: _searchController,
-                        decoration: InputDecoration(
-                          labelText: 'Search',
-                          border: OutlineInputBorder(),
-                          prefixIcon: Icon(Icons.search),
+            Padding(
+              padding: const EdgeInsets.only(left: 2.0,right: 2,top: 0),
+              child:
+              // Container(
+              //   color: Colors.white,
+              //   // decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
+              //   margin: const EdgeInsets.only(left: 2, right: 2),
+              //   child: Column(
+              //     children: [
+              //       Padding(
+              //         padding: const EdgeInsets.all(8.0),
+              //         child: SizedBox(height: 40,
+              //           child: TextField(
+              //             controller: _searchController,
+              //             decoration: InputDecoration(
+              //               labelText: 'Search',
+              //               border: OutlineInputBorder(),
+              //               prefixIcon: Icon(Icons.search),
+              //             ),
+              //             onChanged: (value) => filterSearchResults(value),
+              //           ),
+              //         ),
+              //       ),
+              //       Container(
+              //         color: Colors.grey ,
+              //         height: 1,
+              //         width: MediaQuery.of(context).size.width,
+              //       ),
+              //       Padding(
+              //         padding: const EdgeInsets.only(top: 0.0, bottom: 0),
+              //         child: Row(
+              //           children: [
+              //             Expanded(
+              //               child: Align(  // Explicitly align to the left
+              //                 alignment: Alignment.centerLeft,  // Align to the left side
+              //                 child: Padding(
+              //                   padding: const EdgeInsets.only(left: 8.0),
+              //                   child: Text(
+              //                     'Delivery Men',
+              //                     style: Styling.itemGreyText,
+              //                     textAlign: TextAlign.start,  // Align the text to the left within the container
+              //                   ),
+              //                 ),
+              //               ),
+              //             ),
+              //             verticalDividerVerySmall(),
+              //             Container(
+              //               width: 100,
+              //               child: Column(
+              //                 children: [
+              //                   Text(
+              //                     'Total Sale',
+              //                     style: Styling.itemGreyText,
+              //                     textAlign: TextAlign.center,  // Center-align text in this container
+              //                   ),
+              //                 ],
+              //               ),
+              //             ),
+              //           ],
+              //         ),
+              //       ),
+              //       Container(
+              //         color: const Color(0xff1280B3),
+              //         height: 1.5,
+              //         width: MediaQuery.of(context).size.width,
+              //       ),
+              //       _filteredDelBoyInfo.isNotEmpty
+              //           ? ListView.builder(
+              //         physics: const BouncingScrollPhysics(),
+              //         shrinkWrap: true,
+              //         itemCount: _filteredDelBoyInfo.length,
+              //         itemBuilder: (context, index) {
+              //           return DeliveryMenListShowScreenItemUI(
+              //               _filteredDelBoyInfo[index]);
+              //         },
+              //       )
+              //           : Container(
+              //         child: Text(
+              //           "No Data Found..!",
+              //           style: TextStyle(fontSize: 16),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              Container(
+                color: Colors.white,
+                // decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
+                margin: const EdgeInsets.only(left: 2, right: 2),
+                child: Column(
+                  children: [
+
+                    Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: SizedBox(height: 40,
+                        child: TextField(
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                            labelText: 'Search',
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                            prefixIcon: Icon(Icons.search),
+                          ),
+                          onChanged: (value) => filterSearchResults(value),
                         ),
-                        onChanged: (value) => filterSearchResults(value),
                       ),
                     ),
-                  ),
-                  Container(
-                    color: Colors.grey ,
-                    height: 1,
-                    width: MediaQuery.of(context).size.width,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 0.0, bottom: 0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Align(  // Explicitly align to the left
-                            alignment: Alignment.centerLeft,  // Align to the left side
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
-                              child: Text(
-                                'Delivery Men',
-                                style: Styling.itemGreyText,
-                                textAlign: TextAlign.start,  // Align the text to the left within the container
-                              ),
-                            ),
-                          ),
+                    Align(  // Explicitly align to the left
+                      alignment: Alignment.centerLeft,  // Align to the left side
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: Text(
+                          'Delivery Men And Total Sale',
+                          style: Styling.blueClrText,
+                          textAlign: TextAlign.start,  // Align the text to the left within the container
                         ),
-                        verticalDividerVerySmall(),
-                        Container(
-                          width: 100,
-                          child: Column(
-                            children: [
-                              Text(
-                                'Total Sale',
-                                style: Styling.itemGreyText,
-                                textAlign: TextAlign.center,  // Center-align text in this container
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
-                  Container(
-                    color: const Color(0xff1280B3),
-                    height: 1.5,
-                    width: MediaQuery.of(context).size.width,
-                  ),
-                  _filteredDelBoyInfo.isNotEmpty
-                      ? ListView.builder(
-                    physics: const BouncingScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: _filteredDelBoyInfo.length,
-                    itemBuilder: (context, index) {
-                      return DeliveryMenListShowScreenItemUI(
-                          _filteredDelBoyInfo[index]);
-                    },
-                  )
-                      : Container(
-                    child: Text(
-                      "No Data Found..!",
-                      style: TextStyle(fontSize: 16),
+                    SizedBox(height: 10,),
+                    _filteredDelBoyInfo.isNotEmpty
+                        ? ListView.builder(
+                      physics: const BouncingScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: _filteredDelBoyInfo.length,
+                      itemBuilder: (context, index) {
+                        return DeliveryMenListShowScreenItemUI(
+                            _filteredDelBoyInfo[index]);
+                      },
+                    )
+                        : Container(
+                      child: Text(
+                        "No Data Found..!",
+                        style: TextStyle(fontSize: 16),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      )
+        )
     );
   }
 
@@ -177,19 +230,19 @@ class _DeliveryMenListShowScreenState extends State<DeliveryMenListShowScreen> {
     });
   }
 
-    Future<void> fetchDeliveryBoyInfo() async {
-      Constants.isNetworkAvailable =
-      await InternetConnectionChecker().hasConnection;
-      if (Constants.isNetworkAvailable) {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        String? distributorId = prefs.getString('DistributorId');
-        String? bearerToken =
-        prefs.getString('token'); // Assuming the token is stored here
+  Future<void> fetchDeliveryBoyInfo() async {
+    Constants.isNetworkAvailable =
+    await InternetConnectionChecker().hasConnection;
+    if (Constants.isNetworkAvailable) {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? distributorId = prefs.getString('DistributorId');
+      String? bearerToken =
+      prefs.getString('token'); // Assuming the token is stored here
 
-        if (bearerToken == null) {
-          throw Exception('Bearer token is missing');
-        }
-          try{
+      if (bearerToken == null) {
+        throw Exception('Bearer token is missing');
+      }
+      try{
         final response = await http.get(
           Uri.parse('${AppUrl.GetDeliveryBoyListForMob}/$distributorId/1/2'),
           headers: {
@@ -215,15 +268,15 @@ class _DeliveryMenListShowScreenState extends State<DeliveryMenListShowScreen> {
           isLoading = false;
           throw Exception(Constants.listGettingFail);
         }
-          }catch(e){
-            debugPrint("_delBoyInfo" + e.toString());
-          }
-      } else {
-        isLoading = false;
-        showFlushBar(
-            context, Constants.connectionMessage);
+      }catch(e){
+        debugPrint("_delBoyInfo" + e.toString());
       }
+    } else {
+      isLoading = false;
+      showFlushBar(
+          context, Constants.connectionMessage);
     }
+  }
 
   Future<void> refreshTokens() async {
     LoginProvider auth = Provider.of<LoginProvider>(context, listen: false);
@@ -293,7 +346,7 @@ class _DeliveryMenListShowScreenState extends State<DeliveryMenListShowScreen> {
                   btnLabel,
                   style: Styling.blueClrText,
                 ),
-                onPressed: () {},
+                onPressed: () => logoutUser(context),
               ),
             ],
           ),

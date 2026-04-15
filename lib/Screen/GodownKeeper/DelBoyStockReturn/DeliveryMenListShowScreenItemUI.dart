@@ -44,85 +44,206 @@ class _DeliveryMenListShowScreenItemUIState extends State<DeliveryMenListShowScr
     var value = widget._listModel;
     return
       value != null && value != ""?
-        SingleChildScrollView(  // Make the Column scrollable
+      SingleChildScrollView(  // Make the Column scrollable
+        child:
+        Card(
+          margin: EdgeInsets.all(5),
+          color: Color(0xFFEFFFFfff),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                  bottomRight: Radius.circular(10.0),
+                  bottomLeft: Radius.circular(10.0))),
           child:
-          Container(
-            child:
-            Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 0.0,bottom: 0),
-                  child: Column(
-                    children: [
-                      Container(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child:
-                              GestureDetector(
-                                onTap: (){
-                                  // if(stockTransferFlag){
-                                  //   if(saveFlag){
-                                  //     showFlushBar(context,
-                                  //         Constants.dayEndCompleted);
-                                  //   }else{
-                                      Navigator.pushNamed(
-                                          context,
-                                          DailyRefillSalePage
-                                              .screenName,
-                                          arguments: {
-                                            "delBoyName": value.staffName,
-                                            "delBoyID" : value.dMId,
-                                            "vehicleNo" :value.vehicleNo,
-                                          });
-                                    // }
-                                  // }else{
-                                  //   CustomAlertDialog.showCustomAlert(context,Constants.stockNotAccepted);
-                                  // }
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.only(left: 8.0),
-                                  child: Text(
-                                    value.staffName.toString(),
-                                    textAlign: TextAlign.left,
-                                    style:Styling.blueClrTextWithUnderline,
-                                    textScaler: TextScaler.noScaling,
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 0.0,bottom: 0),
+                child: Column(
+                  children: [
+                    // Container(
+                    //   child: Row(
+                    //     mainAxisSize: MainAxisSize.max,
+                    //     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    //     children: [
+                    //       Expanded(
+                    //         flex: 1,
+                    //         child:
+                    //         CircleAvatar(
+                    //           radius: 15,
+                    //           backgroundColor: const Color(0xff1280B3),
+                    //           child: Text(
+                    //             value.staffName != null && value.staffName!.isNotEmpty
+                    //                 ? value.staffName![0].toUpperCase()
+                    //                 : "",
+                    //             style: const TextStyle(
+                    //               color: Colors.white,
+                    //               fontWeight: FontWeight.bold,
+                    //               fontSize: 12,
+                    //             ),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //       Expanded(
+                    //         flex: 1,
+                    //         child:
+                    //         GestureDetector(
+                    //           onTap: (){
+                    //             // if(stockTransferFlag){
+                    //             //   if(saveFlag){
+                    //             //     showFlushBar(context,
+                    //             //         Constants.dayEndCompleted);
+                    //             //   }else{
+                    //                 Navigator.pushNamed(
+                    //                     context,
+                    //                     DailyRefillSalePage
+                    //                         .screenName,
+                    //                     arguments: {
+                    //                       "delBoyName": value.staffName,
+                    //                       "delBoyID" : value.dMId,
+                    //                       "vehicleNo" :value.vehicleNo,
+                    //                     });
+                    //               // }
+                    //             // }else{
+                    //             //   CustomAlertDialog.showCustomAlert(context,Constants.stockNotAccepted);
+                    //             // }
+                    //           },
+                    //           child: Padding(
+                    //             padding: const EdgeInsets.only(left: 8.0),
+                    //             child: Text(
+                    //               value.staffName.toString(),
+                    //               textAlign: TextAlign.left,
+                    //               style:Styling.blueClrTextWithUnderline,
+                    //               textScaler: TextScaler.noScaling,
+                    //             ),
+                    //           ),
+                    //         ),
+                    //       ),
+                    //       verticalDividerVerySmall(),
+                    //       Container(
+                    //         width: 100,
+                    //         child: Column(
+                    //           children: [
+                    //             Text(
+                    //               value.filledSaleQty.toString(),
+                    //               style:Styling.textFormText,
+                    //               textAlign: TextAlign.center,
+                    //               textScaler: TextScaler.noScaling,
+                    //             ),
+                    //           ],
+                    //         ),
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
+                    Container(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child:
+                        GestureDetector(
+                          onTap: (){
+                            Navigator.pushNamed(
+                                context,
+                                DailyRefillSalePage
+                                    .screenName,
+                                arguments: {
+                                  "delBoyName": value.staffName,
+                                  "delBoyID" : value.dMId,
+                                  "vehicleNo" :value.vehicleNo,
+                                });
+                          },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              CircleAvatar(
+                                radius: 15,
+                                backgroundColor: const Color(0xFFfbe9e9),
+                                child: Text(
+                                  value.staffName != null && value.staffName!.isNotEmpty
+                                      ? value.staffName![0].toUpperCase()
+                                      : "",
+                                  style: const TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
                                   ),
                                 ),
                               ),
-                            ),
-                            verticalDividerVerySmall(),
-                            Container(
-                              width: 100,
-                              child: Column(
-                                children: [
-                                  Text(
-                                    value.filledSaleQty.toString(),
-                                    style:Styling.textFormText,
-                                    textAlign: TextAlign.center,
-                                    textScaler: TextScaler.noScaling,
-                                  ),
-                                ],
+                              Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // GestureDetector(
+                                    //   onTap: (){
+                                    //     // if(stockTransferFlag){
+                                    //     //   if(saveFlag){
+                                    //     //     showFlushBar(context,
+                                    //     //         Constants.dayEndCompleted);
+                                    //     //   }else{
+                                    //     Navigator.pushNamed(
+                                    //         context,
+                                    //         DailyRefillSalePage
+                                    //             .screenName,
+                                    //         arguments: {
+                                    //           "delBoyName": value.staffName,
+                                    //           "delBoyID" : value.dMId,
+                                    //           "vehicleNo" :value.vehicleNo,
+                                    //         });
+                                    //     // }
+                                    //     // }else{
+                                    //     //   CustomAlertDialog.showCustomAlert(context,Constants.stockNotAccepted);
+                                    //     // }
+                                    //   },
+                                    //
+                                    //     child:
+                                    Text(
+                                      value.staffName.toString(),
+                                      textAlign: TextAlign.left,
+                                      style:Styling.itemTitle,
+                                      textScaler: TextScaler.noScaling,
+                                    ),
+
+                                    // ),
+                                    SizedBox(height: 2,),
+                                    Row(mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Total Sale : ",
+                                          style:Styling.textFormText,
+                                          textAlign: TextAlign.start,
+                                          textScaler: TextScaler.noScaling,
+                                        ),
+                                        Text(
+                                          value.filledSaleQty.toString(),
+                                          style:Styling.itemBlackTestBold,
+                                          textAlign: TextAlign.start,
+                                          textScaler: TextScaler.noScaling,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+
+                              Spacer(),
+                              Icon(Icons.arrow_forward_ios_outlined,size: 15,),
+
+                            ],
+                          ),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                Divider(  // Add a horizontal line (divider) after each item
-                  color: Colors.grey,
-                  height: 1.0,
-                ),
-              ],
-            ),
-          ),
+              ),
 
-        ):
+            ],
+          ),
+        ),
+
+      ):
       Container(
         child:  Text("No data found"),
       );

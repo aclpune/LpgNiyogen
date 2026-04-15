@@ -1,60 +1,68 @@
-/// ARBSalesId : 291
+/// ARBSalesId : 281
 /// DistributorId : 8118
-/// SaleDate : "2025-09-18T07:01:09.15"
-/// StaffId : 42
-/// StaffName : "5kg Swarup"
-/// ConsumerNo : "588588"
-/// ConsumerName : ""
-/// TotalAmount : 1140.0
+/// SaleDate : "2026-02-04T10:47:39"
+/// StaffId : 45
+/// StaffName : "19kg Gopal"
+/// ConsumerNo : "123333"
+/// ConsumerName : "ram"
+/// TotalAmount : 940.0
 /// PaymentMode : "Bank"
-/// TransactionCode : "1234"
-/// TransactionTime : ""
-/// TransactionRemark : ""
+/// TransactionCode : "TRN849329"
+/// TransactionTime : "3"
+/// TransactionRemark : "Okay"
 /// AddedBy : 0
 /// Action : null
 /// ItemId : 9
 /// ItemName : "2 Burner Ujjawala"
 /// Rate : 950.0
 /// ItemQty : 1
-/// DiscountAmt : 0.0
-/// ARBAmount : 950.0
-/// ItemDataList : [{"ARBSalesId":0,"ItemId":9,"ItemName":"2 Burner Ujjawala","Rate":950.0,"ItemQty":1,"DiscountAmt":0.0,"ARBAmount":950.0},{"ARBSalesId":0,"ItemId":10,"ItemName":"Suraksha Hose","Rate":190.0,"ItemQty":1,"DiscountAmt":0.0,"ARBAmount":190.0}]
+/// DiscountAmt : 10.0
+/// ARBAmount : 940.0
+/// ItemDataList : [{"ARBSalesId":0,"ItemId":9,"ItemName":"2 Burner Ujjawala","Rate":950.0,"ItemQty":1,"DiscountAmt":10.0,"ARBAmount":940.0}]
 /// DenomDtList : null
-/// BankId : 12
-/// BankMappingId : 38
+/// BankId : 14
+/// BankMappingId : 19
 /// UpdatedFrom : null
 /// ReceiptAmt : 0.00
-/// QRReceiptAmt : 1140.00
+/// QRReceiptAmt : 940.00
+/// ConsuContactNo : "9377484898"
+/// ConsuAddress : "A/p Pune, Pune, maharashtra"
+/// InvoiceType : "Manual"
+/// InvoiceNo : "5588494"
 
 class GetArbSalesListModel {
   GetArbSalesListModel({
-      num? aRBSalesId, 
-      num? distributorId, 
-      String? saleDate, 
-      num? staffId, 
-      String? staffName, 
-      String? consumerNo, 
-      String? consumerName, 
-      num? totalAmount, 
-      String? paymentMode, 
-      String? transactionCode, 
-      String? transactionTime, 
-      String? transactionRemark, 
-      num? addedBy, 
-      dynamic action, 
-      num? itemId, 
-      String? itemName, 
-      num? rate, 
-      num? itemQty, 
-      num? discountAmt, 
-      num? aRBAmount, 
-      List<ItemDataList>? itemDataList, 
-      dynamic denomDtList, 
-      num? bankId, 
-      num? bankMappingId, 
-      dynamic updatedFrom, 
-      num? receiptAmt, 
-      num? qRReceiptAmt,}){
+    num? aRBSalesId,
+    num? distributorId,
+    String? saleDate,
+    num? staffId,
+    String? staffName,
+    String? consumerNo,
+    String? consumerName,
+    num? totalAmount,
+    String? paymentMode,
+    String? transactionCode,
+    String? transactionTime,
+    String? transactionRemark,
+    num? addedBy,
+    dynamic action,
+    num? itemId,
+    String? itemName,
+    num? rate,
+    num? itemQty,
+    num? discountAmt,
+    num? aRBAmount,
+    List<ItemDataList>? itemDataList,
+    dynamic denomDtList,
+    num? bankId,
+    num? bankMappingId,
+    dynamic updatedFrom,
+    num? receiptAmt,
+    num? qRReceiptAmt,
+    String? consuContactNo,
+    String? consuAddress,
+    String? invoiceType,
+    String? invoiceNo,}){
     _aRBSalesId = aRBSalesId;
     _distributorId = distributorId;
     _saleDate = saleDate;
@@ -82,7 +90,11 @@ class GetArbSalesListModel {
     _updatedFrom = updatedFrom;
     _receiptAmt = receiptAmt;
     _qRReceiptAmt = qRReceiptAmt;
-}
+    _consuContactNo = consuContactNo;
+    _consuAddress = consuAddress;
+    _invoiceType = invoiceType;
+    _invoiceNo = invoiceNo;
+  }
 
   GetArbSalesListModel.fromJson(dynamic json) {
     _aRBSalesId = json['ARBSalesId'];
@@ -117,6 +129,10 @@ class GetArbSalesListModel {
     _updatedFrom = json['UpdatedFrom'];
     _receiptAmt = json['ReceiptAmt'];
     _qRReceiptAmt = json['QRReceiptAmt'];
+    _consuContactNo = json['ConsuContactNo'];
+    _consuAddress = json['ConsuAddress'];
+    _invoiceType = json['InvoiceType'];
+    _invoiceNo = json['InvoiceNo'];
   }
   num? _aRBSalesId;
   num? _distributorId;
@@ -145,61 +161,73 @@ class GetArbSalesListModel {
   dynamic _updatedFrom;
   num? _receiptAmt;
   num? _qRReceiptAmt;
-GetArbSalesListModel copyWith({  num? aRBSalesId,
-  num? distributorId,
-  String? saleDate,
-  num? staffId,
-  String? staffName,
-  String? consumerNo,
-  String? consumerName,
-  num? totalAmount,
-  String? paymentMode,
-  String? transactionCode,
-  String? transactionTime,
-  String? transactionRemark,
-  num? addedBy,
-  dynamic action,
-  num? itemId,
-  String? itemName,
-  num? rate,
-  num? itemQty,
-  num? discountAmt,
-  num? aRBAmount,
-  List<ItemDataList>? itemDataList,
-  dynamic denomDtList,
-  num? bankId,
-  num? bankMappingId,
-  dynamic updatedFrom,
-  num? receiptAmt,
-  num? qRReceiptAmt,
-}) => GetArbSalesListModel(  aRBSalesId: aRBSalesId ?? _aRBSalesId,
-  distributorId: distributorId ?? _distributorId,
-  saleDate: saleDate ?? _saleDate,
-  staffId: staffId ?? _staffId,
-  staffName: staffName ?? _staffName,
-  consumerNo: consumerNo ?? _consumerNo,
-  consumerName: consumerName ?? _consumerName,
-  totalAmount: totalAmount ?? _totalAmount,
-  paymentMode: paymentMode ?? _paymentMode,
-  transactionCode: transactionCode ?? _transactionCode,
-  transactionTime: transactionTime ?? _transactionTime,
-  transactionRemark: transactionRemark ?? _transactionRemark,
-  addedBy: addedBy ?? _addedBy,
-  action: action ?? _action,
-  itemId: itemId ?? _itemId,
-  itemName: itemName ?? _itemName,
-  rate: rate ?? _rate,
-  itemQty: itemQty ?? _itemQty,
-  discountAmt: discountAmt ?? _discountAmt,
-  aRBAmount: aRBAmount ?? _aRBAmount,
-  itemDataList: itemDataList ?? _itemDataList,
-  denomDtList: denomDtList ?? _denomDtList,
-  bankId: bankId ?? _bankId,
-  bankMappingId: bankMappingId ?? _bankMappingId,
-  updatedFrom: updatedFrom ?? _updatedFrom,
-  receiptAmt: receiptAmt ?? _receiptAmt,
-  qRReceiptAmt: qRReceiptAmt ?? _qRReceiptAmt,
-);
+  String? _consuContactNo;
+  String? _consuAddress;
+  String? _invoiceType;
+  String? _invoiceNo;
+  GetArbSalesListModel copyWith({  num? aRBSalesId,
+    num? distributorId,
+    String? saleDate,
+    num? staffId,
+    String? staffName,
+    String? consumerNo,
+    String? consumerName,
+    num? totalAmount,
+    String? paymentMode,
+    String? transactionCode,
+    String? transactionTime,
+    String? transactionRemark,
+    num? addedBy,
+    dynamic action,
+    num? itemId,
+    String? itemName,
+    num? rate,
+    num? itemQty,
+    num? discountAmt,
+    num? aRBAmount,
+    List<ItemDataList>? itemDataList,
+    dynamic denomDtList,
+    num? bankId,
+    num? bankMappingId,
+    dynamic updatedFrom,
+    num? receiptAmt,
+    num? qRReceiptAmt,
+    String? consuContactNo,
+    String? consuAddress,
+    String? invoiceType,
+    String? invoiceNo,
+  }) => GetArbSalesListModel(  aRBSalesId: aRBSalesId ?? _aRBSalesId,
+    distributorId: distributorId ?? _distributorId,
+    saleDate: saleDate ?? _saleDate,
+    staffId: staffId ?? _staffId,
+    staffName: staffName ?? _staffName,
+    consumerNo: consumerNo ?? _consumerNo,
+    consumerName: consumerName ?? _consumerName,
+    totalAmount: totalAmount ?? _totalAmount,
+    paymentMode: paymentMode ?? _paymentMode,
+    transactionCode: transactionCode ?? _transactionCode,
+    transactionTime: transactionTime ?? _transactionTime,
+    transactionRemark: transactionRemark ?? _transactionRemark,
+    addedBy: addedBy ?? _addedBy,
+    action: action ?? _action,
+    itemId: itemId ?? _itemId,
+    itemName: itemName ?? _itemName,
+    rate: rate ?? _rate,
+    itemQty: itemQty ?? _itemQty,
+    discountAmt: discountAmt ?? _discountAmt,
+    aRBAmount: aRBAmount ?? _aRBAmount,
+    itemDataList: itemDataList ?? _itemDataList,
+    denomDtList: denomDtList ?? _denomDtList,
+    bankId: bankId ?? _bankId,
+    bankMappingId: bankMappingId ?? _bankMappingId,
+    updatedFrom: updatedFrom ?? _updatedFrom,
+    receiptAmt: receiptAmt ?? _receiptAmt,
+    qRReceiptAmt: qRReceiptAmt ?? _qRReceiptAmt,
+    consuContactNo: consuContactNo ?? _consuContactNo,
+    consuAddress: consuAddress ?? _consuAddress,
+    invoiceType: invoiceType ?? _invoiceType,
+    invoiceNo: invoiceNo ?? _invoiceNo,
+  );
   num? get aRBSalesId => _aRBSalesId;
   num? get distributorId => _distributorId;
   String? get saleDate => _saleDate;
@@ -227,6 +255,10 @@ GetArbSalesListModel copyWith({  num? aRBSalesId,
   dynamic get updatedFrom => _updatedFrom;
   num? get receiptAmt => _receiptAmt;
   num? get qRReceiptAmt => _qRReceiptAmt;
+  String? get consuContactNo => _consuContactNo;
+  String? get consuAddress => _consuAddress;
+  String? get invoiceType => _invoiceType;
+  String? get invoiceNo => _invoiceNo;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -259,6 +291,10 @@ GetArbSalesListModel copyWith({  num? aRBSalesId,
     map['UpdatedFrom'] = _updatedFrom;
     map['ReceiptAmt'] = _receiptAmt;
     map['QRReceiptAmt'] = _qRReceiptAmt;
+    map['ConsuContactNo'] = _consuContactNo;
+    map['ConsuAddress'] = _consuAddress;
+    map['InvoiceType'] = _invoiceType;
+    map['InvoiceNo'] = _invoiceNo;
     return map;
   }
 
@@ -269,18 +305,18 @@ GetArbSalesListModel copyWith({  num? aRBSalesId,
 /// ItemName : "2 Burner Ujjawala"
 /// Rate : 950.0
 /// ItemQty : 1
-/// DiscountAmt : 0.0
-/// ARBAmount : 950.0
+/// DiscountAmt : 10.0
+/// ARBAmount : 940.0
 
 class ItemDataList {
   ItemDataList({
-      num? aRBSalesId, 
-      num? itemId, 
-      String? itemName, 
-      num? rate, 
-      num? itemQty, 
-      num? discountAmt, 
-      num? aRBAmount,}){
+    num? aRBSalesId,
+    num? itemId,
+    String? itemName,
+    num? rate,
+    num? itemQty,
+    num? discountAmt,
+    num? aRBAmount,}){
     _aRBSalesId = aRBSalesId;
     _itemId = itemId;
     _itemName = itemName;
@@ -288,7 +324,7 @@ class ItemDataList {
     _itemQty = itemQty;
     _discountAmt = discountAmt;
     _aRBAmount = aRBAmount;
-}
+  }
 
   ItemDataList.fromJson(dynamic json) {
     _aRBSalesId = json['ARBSalesId'];
@@ -306,21 +342,21 @@ class ItemDataList {
   num? _itemQty;
   num? _discountAmt;
   num? _aRBAmount;
-ItemDataList copyWith({  num? aRBSalesId,
-  num? itemId,
-  String? itemName,
-  num? rate,
-  num? itemQty,
-  num? discountAmt,
-  num? aRBAmount,
-}) => ItemDataList(  aRBSalesId: aRBSalesId ?? _aRBSalesId,
-  itemId: itemId ?? _itemId,
-  itemName: itemName ?? _itemName,
-  rate: rate ?? _rate,
-  itemQty: itemQty ?? _itemQty,
-  discountAmt: discountAmt ?? _discountAmt,
-  aRBAmount: aRBAmount ?? _aRBAmount,
-);
+  ItemDataList copyWith({  num? aRBSalesId,
+    num? itemId,
+    String? itemName,
+    num? rate,
+    num? itemQty,
+    num? discountAmt,
+    num? aRBAmount,
+  }) => ItemDataList(  aRBSalesId: aRBSalesId ?? _aRBSalesId,
+    itemId: itemId ?? _itemId,
+    itemName: itemName ?? _itemName,
+    rate: rate ?? _rate,
+    itemQty: itemQty ?? _itemQty,
+    discountAmt: discountAmt ?? _discountAmt,
+    aRBAmount: aRBAmount ?? _aRBAmount,
+  );
   num? get aRBSalesId => _aRBSalesId;
   num? get itemId => _itemId;
   String? get itemName => _itemName;

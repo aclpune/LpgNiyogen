@@ -19,6 +19,10 @@ class ItemData {
   final String updateFlag;
   final String itemAddedDate;
   final String sVUniqueId;
+  final String lessEmptyCustomer;
+  final String lessEmptyDMCount;
+  final String lessEmptyCustomerCount;
+  final String lessEmptyCustomerId;
 
   ItemData({
     required this.date,
@@ -41,6 +45,11 @@ class ItemData {
     required this.updateFlag,
     required this.itemAddedDate,
     required this.sVUniqueId,
+    required this.lessEmptyCustomer,
+    required this.lessEmptyDMCount,
+    required this.lessEmptyCustomerCount,
+    required this.lessEmptyCustomerId,
+
   });
 
   // Convert Map to ItemData (from the database)
@@ -66,6 +75,11 @@ class ItemData {
       updateFlag: json['updateFlag'],
       itemAddedDate: json['itemAddedDate'],
       sVUniqueId: json['SVUniqueID']?.toString() ?? '',
+      lessEmptyCustomer: json['lessEmptyCustomer']?.toString() ?? '',
+      lessEmptyDMCount: json['lessEmptyDMCount']?.toString() ?? '',
+      lessEmptyCustomerCount: json['lessEmptyCustomerCount']?.toString() ?? '',
+      lessEmptyCustomerId: json['lessEmptyCustomerId']?.toString() ?? '',
+
     );
   }
 
@@ -92,6 +106,10 @@ class ItemData {
       'updateFlag': updateFlag,
       'itemAddedDate': itemAddedDate,
       'sVUniqueId': sVUniqueId,
+      'lessEmptyCustomer': lessEmptyCustomer,
+      'lessEmptyDMCount': lessEmptyDMCount,
+      'lessEmptyCustomerCount': lessEmptyCustomerCount,
+      'lessEmptyCustomerId': lessEmptyCustomerId,
     };
   }
 }

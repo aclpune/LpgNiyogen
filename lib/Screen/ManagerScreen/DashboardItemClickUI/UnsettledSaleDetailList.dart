@@ -9,6 +9,7 @@ import '../../Utils/Widget.dart';
 import '../../Utils/app_url.dart';
 import 'package:http/http.dart' as http;
 
+import '../BootomNavigatinBarManager.dart';
 import '../ClickModelClass/UnsettledSaleListModel.dart';
 class UnsettledSaleDetailList extends StatefulWidget {
   static const screenName = '/unsettledSaleDetailList';
@@ -45,7 +46,8 @@ class _UnsettledSaleDetailListState extends State<UnsettledSaleDetailList> {
                     IconButton(
                       icon: const Icon(Icons.arrow_back, color: Colors.black),
                       onPressed: () {
-                        Navigator.pop(context);
+                        // Navigator.pop(context);
+                        Navigator.pushNamed(context, BottomNavBarExample.screenName);
                       },
                     ),
                     Text(
