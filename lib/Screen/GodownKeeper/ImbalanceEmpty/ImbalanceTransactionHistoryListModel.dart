@@ -1,15 +1,16 @@
-/// ImbId : 53
+/// ImbId : 77
 /// DistributorId : 8118
 /// GodownId : 20
-/// ImbDate : "2026-04-14T00:00:00"
+/// ImbDate : "2026-04-16T00:00:00"
 /// ItemId : 1
-/// EntryType : null
-/// ConsDMId : 44
-/// ImbRecQty : 5
+/// EntryType : "D"
+/// ConsDMId : 35
+/// ImbRecQty : 1
 /// AddedBy : 0
 /// Action : null
-/// StaffName : null
+/// StaffName : "Punam singh Rathor"
 /// CustomerName : null
+/// ItemName : null
 
 class ImbalanceTransactionHistoryListModel {
   ImbalanceTransactionHistoryListModel({
@@ -18,13 +19,14 @@ class ImbalanceTransactionHistoryListModel {
       num? godownId, 
       String? imbDate, 
       num? itemId, 
-      dynamic entryType, 
+      String? entryType, 
       num? consDMId, 
       num? imbRecQty, 
       num? addedBy, 
       dynamic action, 
-      dynamic staffName, 
-      dynamic customerName,}){
+      String? staffName, 
+      dynamic customerName, 
+      dynamic itemName,}){
     _imbId = imbId;
     _distributorId = distributorId;
     _godownId = godownId;
@@ -37,6 +39,7 @@ class ImbalanceTransactionHistoryListModel {
     _action = action;
     _staffName = staffName;
     _customerName = customerName;
+    _itemName = itemName;
 }
 
   ImbalanceTransactionHistoryListModel.fromJson(dynamic json) {
@@ -52,31 +55,34 @@ class ImbalanceTransactionHistoryListModel {
     _action = json['Action'];
     _staffName = json['StaffName'];
     _customerName = json['CustomerName'];
+    _itemName = json['ItemName'];
   }
   num? _imbId;
   num? _distributorId;
   num? _godownId;
   String? _imbDate;
   num? _itemId;
-  dynamic _entryType;
+  String? _entryType;
   num? _consDMId;
   num? _imbRecQty;
   num? _addedBy;
   dynamic _action;
-  dynamic _staffName;
+  String? _staffName;
   dynamic _customerName;
+  dynamic _itemName;
 ImbalanceTransactionHistoryListModel copyWith({  num? imbId,
   num? distributorId,
   num? godownId,
   String? imbDate,
   num? itemId,
-  dynamic entryType,
+  String? entryType,
   num? consDMId,
   num? imbRecQty,
   num? addedBy,
   dynamic action,
-  dynamic staffName,
+  String? staffName,
   dynamic customerName,
+  dynamic itemName,
 }) => ImbalanceTransactionHistoryListModel(  imbId: imbId ?? _imbId,
   distributorId: distributorId ?? _distributorId,
   godownId: godownId ?? _godownId,
@@ -89,19 +95,21 @@ ImbalanceTransactionHistoryListModel copyWith({  num? imbId,
   action: action ?? _action,
   staffName: staffName ?? _staffName,
   customerName: customerName ?? _customerName,
+  itemName: itemName ?? _itemName,
 );
   num? get imbId => _imbId;
   num? get distributorId => _distributorId;
   num? get godownId => _godownId;
   String? get imbDate => _imbDate;
   num? get itemId => _itemId;
-  dynamic get entryType => _entryType;
+  String? get entryType => _entryType;
   num? get consDMId => _consDMId;
   num? get imbRecQty => _imbRecQty;
   num? get addedBy => _addedBy;
   dynamic get action => _action;
-  dynamic get staffName => _staffName;
+  String? get staffName => _staffName;
   dynamic get customerName => _customerName;
+  dynamic get itemName => _itemName;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -117,6 +125,7 @@ ImbalanceTransactionHistoryListModel copyWith({  num? imbId,
     map['Action'] = _action;
     map['StaffName'] = _staffName;
     map['CustomerName'] = _customerName;
+    map['ItemName'] = _itemName;
     return map;
   }
 

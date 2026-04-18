@@ -78,7 +78,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       MonthNotDone,
       MonthBodyLeak,
       MonthLessQtyCyls;
-      String? VehicleNo, SQCStatus;
+  String? VehicleNo, SQCStatus;
   List<GetSqcCardCntListModel> filteredSqcList = [];
   String selectedSQCStatus = "All Vehicles";
 

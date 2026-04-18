@@ -29,6 +29,7 @@ class _ImbalnceTransactionHistoryState extends State<ImbalnceTransactionHistory>
   bool saveFlag = false;
   bool stockTransferFlag = false;
   List<GetStockTransferListModel> _stockTransferList = [];
+
   @override
   void initState() {
     // TODO: implement initState
@@ -135,9 +136,19 @@ class _ImbalnceTransactionHistoryState extends State<ImbalnceTransactionHistory>
                                 // 1. Wrap the helper in Expanded so its internal Expanded/Flexible
                                 // knows the available width.
                                 Expanded(
-                                  child: itemSubLine(
-                                    "Imbalance Qty.",
-                                    items.imbRecQty.toString(),
+                                  child: Column(
+                                    children: [
+                                       itemSubLine(
+                                          "Imbalance Qty.",
+                                          items.imbRecQty.toString(),
+                                        ),
+
+                                      itemSubLine(
+                                          "Item Name",
+                                          items.itemName?.toString() ?? ''
+                                        ),
+
+                                    ],
                                   ),
                                 ),
                                 // 2. The Icon stays on the right
@@ -193,7 +204,7 @@ class _ImbalnceTransactionHistoryState extends State<ImbalnceTransactionHistory>
                               ],
                             ),
 
-                            itemSubLine("Name",items.staffName == null ? items.customerName.toString() : items.staffName.toString()),
+                            itemSubLine(items.entryType == null?"Name":items.entryType == "D"?"Delivery Men":"Customer Name",items.staffName == null ? items.customerName.toString() : items.staffName.toString()),
                           ],
                         ),
                       ),

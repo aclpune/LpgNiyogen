@@ -913,7 +913,10 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
       }else{
         isDeliverySelected = false;
       }
-      if(lessEmptyCustomerId != null && lessEmptyCustomerId.isNotEmpty && lessEmptyCustomerCounts != null && lessEmptyCustomerCounts.isNotEmpty){
+      int ids = int.tryParse(lessEmptyCustomerId ?? "") ?? 0;
+
+      debugPrint("lessEmptyCustomerId $lessEmptyCustomerId");
+      if(lessEmptyCustomerId != null && lessEmptyCustomerId.isNotEmpty && lessEmptyCustomerCounts != null && lessEmptyCustomerCounts.isNotEmpty && ids > 0){
         // List<String> lessEmptyConsName = lessemptyCutomerNames!.split(',').map((e) => e.trim()).toList();
         List<String> lessEmptyConsId = lessEmptyCustomerId.split(',').map((e) => e.trim()).toList();
         List<String> lessEmptyConsCount = lessEmptyCustomerCounts.split(',').map((e) => e.trim()).toList();
@@ -1324,220 +1327,220 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
                 // ),
 
                 SizedBox(height: 5,),
-                Divider(),
-                /// Add New Section Imbalance
-                receiptList.isNotEmpty
-                    ?
-                Container
-                  (
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Title for Cylinder Categories Table
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  isPhysicalStockListViewVisible =
-                                  !isPhysicalStockListViewVisible; // Toggle ListView visibility
-                                });
-                              },
-                              child:
-                              Card(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: Column(
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(5.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  'Balance Empty : ',
-                                                  style:Styling.itemGreyText,
-                                                ),
-                                                Text(
-                                                  "$imbalaceSum",
-                                                  style:Styling.itemBlackTest,
-                                                ),
-                                              ],
-                                            ),
-                                            Icon(
-                                              isPhysicalStockListViewVisible
-                                                  ? Icons.arrow_drop_up
-                                                  : Icons.arrow_drop_down,
-                                              size: 24,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-
-                                      Visibility(
-                                        visible:
-                                        isPhysicalStockListViewVisible &&
-                                            receiptList.isNotEmpty,
-                                        child: Container(
-                                          margin: EdgeInsets.symmetric(
-                                              horizontal: 5),
-                                          // decoration: BoxDecoration(
-                                          //   borderRadius:
-                                          //   BorderRadius.circular(12),
-                                          //   border: Border.all(),
-                                          // ),
-                                          child: Column(
-                                            children: [
-                                              // Header Row for Cylinder Categories
-                                              Container(
-                                                padding:
-                                                const EdgeInsets.all(8),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .center,
-                                                  children: [
-                                                    Expanded(
-                                                      child: Text(
-                                                        'Cylinder',
-                                                        style:Styling.itemGreyTextSmall,
-                                                        textAlign:
-                                                        TextAlign.center,
-                                                      ),
-                                                    ),
-                                                    VerticalDivider(
-                                                        thickness: 1,
-                                                        color: Colors.grey),
-                                                    Expanded(
-                                                      child: Text(
-                                                        'Imbalance Qty',
-                                                        style:Styling.itemGreyTextSmall,
-                                                        textAlign:
-                                                        TextAlign.center,
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-
-                                              Container(
-                                                color:
-                                                const Color(0xff1280B3),
-                                                height: 1,
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                              ),
-                                              Container(
-                                                child: ListView.builder(
-                                                  shrinkWrap: true,
-                                                  itemCount:
-                                                  receiptList.length,
-                                                  // Use the length of the fetched list
-                                                  itemBuilder:
-                                                      (context, index) {
-                                                    var receipt = receiptList[
-                                                    index]; // Get the current receipt
-
-                                                    return Padding(
-                                                      padding:
-                                                      const EdgeInsets
-                                                          .all(10.0),
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                        children: [
-                                                          // Optionally display receipt info here, e.g., receipt.title or date
-                                                          Padding(
-                                                            padding: const EdgeInsets
-                                                                .symmetric(
-                                                                vertical:
-                                                                5.0),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                              children: [
-                                                                // Cylinder Category Text (Item Name)
-                                                                Expanded(
-                                                                  child:
-                                                                  Text(
-                                                                    receipt.itemName ??
-                                                                        "Unknown Item",
-                                                                    // Display Item Name
-                                                                    style:Styling.itemBlackTest,
-                                                                    textAlign:
-                                                                    TextAlign.center,
-                                                                  ),
-                                                                ),
-                                                                // Divider between Texts
-                                                                VerticalDivider(
-                                                                    thickness:
-                                                                    1,
-                                                                    color: Colors
-                                                                        .grey),
-                                                                // Imbalance Quantity with Tap Gesture
-                                                                Expanded(
-                                                                  child:
-                                                                  GestureDetector(
-                                                                    onTap:
-                                                                        () {
-                                                                      int qty =
-                                                                          receipt.balImbQty?.toInt() ?? 0;
-                                                                      int dmId =
-                                                                          receipt.dMId?.toInt() ?? 0; // Get DMId from the receipt
-                                                                      int itemId =
-                                                                          receipt.itemId?.toInt() ?? 0; // Safely access balance and convert it to int
-                                                                      _showPopup(
-                                                                          qty,
-                                                                          dmId,
-                                                                          itemId); // Call the popup with the imbalance quantity
-                                                                    },
-                                                                    child:
-                                                                    Text(
-                                                                      '${receipt.balImbQty}',
-                                                                      // Display Imbalance Quantity
-                                                                      textAlign:
-                                                                      TextAlign.center,
-                                                                      style:Styling.blueClrTextWithUnderline,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-
-                                                        ],
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-                    : Container(),
+                // Divider(),
+                // /// Add New Section Imbalance
+                // receiptList.isNotEmpty
+                //     ?
+                // Container
+                //   (
+                //   child: Row(
+                //     children: [
+                //       Expanded(
+                //         flex: 1,
+                //         child: Column(
+                //           crossAxisAlignment: CrossAxisAlignment.start,
+                //           children: [
+                //             // Title for Cylinder Categories Table
+                //             GestureDetector(
+                //               onTap: () {
+                //                 setState(() {
+                //                   isPhysicalStockListViewVisible =
+                //                   !isPhysicalStockListViewVisible; // Toggle ListView visibility
+                //                 });
+                //               },
+                //               child:
+                //               Card(
+                //                 child: Padding(
+                //                   padding: const EdgeInsets.all(5.0),
+                //                   child: Column(
+                //                     children: [
+                //                       Padding(
+                //                         padding: const EdgeInsets.all(5.0),
+                //                         child: Row(
+                //                           mainAxisAlignment:
+                //                           MainAxisAlignment.spaceBetween,
+                //                           children: [
+                //                             Row(
+                //                               mainAxisAlignment:
+                //                               MainAxisAlignment.start,
+                //                               children: [
+                //                                 Text(
+                //                                   'Balance Empty : ',
+                //                                   style:Styling.itemGreyText,
+                //                                 ),
+                //                                 Text(
+                //                                   "$imbalaceSum",
+                //                                   style:Styling.itemBlackTest,
+                //                                 ),
+                //                               ],
+                //                             ),
+                //                             Icon(
+                //                               isPhysicalStockListViewVisible
+                //                                   ? Icons.arrow_drop_up
+                //                                   : Icons.arrow_drop_down,
+                //                               size: 24,
+                //                             ),
+                //                           ],
+                //                         ),
+                //                       ),
+                //
+                //                       Visibility(
+                //                         visible:
+                //                         isPhysicalStockListViewVisible &&
+                //                             receiptList.isNotEmpty,
+                //                         child: Container(
+                //                           margin: EdgeInsets.symmetric(
+                //                               horizontal: 5),
+                //                           // decoration: BoxDecoration(
+                //                           //   borderRadius:
+                //                           //   BorderRadius.circular(12),
+                //                           //   border: Border.all(),
+                //                           // ),
+                //                           child: Column(
+                //                             children: [
+                //                               // Header Row for Cylinder Categories
+                //                               Container(
+                //                                 padding:
+                //                                 const EdgeInsets.all(8),
+                //                                 child: Row(
+                //                                   mainAxisAlignment:
+                //                                   MainAxisAlignment
+                //                                       .center,
+                //                                   children: [
+                //                                     Expanded(
+                //                                       child: Text(
+                //                                         'Cylinder',
+                //                                         style:Styling.itemGreyTextSmall,
+                //                                         textAlign:
+                //                                         TextAlign.center,
+                //                                       ),
+                //                                     ),
+                //                                     VerticalDivider(
+                //                                         thickness: 1,
+                //                                         color: Colors.grey),
+                //                                     Expanded(
+                //                                       child: Text(
+                //                                         'Imbalance Qty',
+                //                                         style:Styling.itemGreyTextSmall,
+                //                                         textAlign:
+                //                                         TextAlign.center,
+                //                                       ),
+                //                                     ),
+                //                                   ],
+                //                                 ),
+                //                               ),
+                //
+                //                               Container(
+                //                                 color:
+                //                                 const Color(0xff1280B3),
+                //                                 height: 1,
+                //                                 width: MediaQuery.of(context)
+                //                                     .size
+                //                                     .width,
+                //                               ),
+                //                               Container(
+                //                                 child: ListView.builder(
+                //                                   shrinkWrap: true,
+                //                                   itemCount:
+                //                                   receiptList.length,
+                //                                   // Use the length of the fetched list
+                //                                   itemBuilder:
+                //                                       (context, index) {
+                //                                     var receipt = receiptList[
+                //                                     index]; // Get the current receipt
+                //
+                //                                     return Padding(
+                //                                       padding:
+                //                                       const EdgeInsets
+                //                                           .all(10.0),
+                //                                       child: Column(
+                //                                         crossAxisAlignment:
+                //                                         CrossAxisAlignment
+                //                                             .start,
+                //                                         children: [
+                //                                           // Optionally display receipt info here, e.g., receipt.title or date
+                //                                           Padding(
+                //                                             padding: const EdgeInsets
+                //                                                 .symmetric(
+                //                                                 vertical:
+                //                                                 5.0),
+                //                                             child: Row(
+                //                                               mainAxisAlignment:
+                //                                               MainAxisAlignment
+                //                                                   .spaceBetween,
+                //                                               children: [
+                //                                                 // Cylinder Category Text (Item Name)
+                //                                                 Expanded(
+                //                                                   child:
+                //                                                   Text(
+                //                                                     receipt.itemName ??
+                //                                                         "Unknown Item",
+                //                                                     // Display Item Name
+                //                                                     style:Styling.itemBlackTest,
+                //                                                     textAlign:
+                //                                                     TextAlign.center,
+                //                                                   ),
+                //                                                 ),
+                //                                                 // Divider between Texts
+                //                                                 VerticalDivider(
+                //                                                     thickness:
+                //                                                     1,
+                //                                                     color: Colors
+                //                                                         .grey),
+                //                                                 // Imbalance Quantity with Tap Gesture
+                //                                                 Expanded(
+                //                                                   child:
+                //                                                   GestureDetector(
+                //                                                     onTap:
+                //                                                         () {
+                //                                                       int qty =
+                //                                                           receipt.balImbQty?.toInt() ?? 0;
+                //                                                       int dmId =
+                //                                                           receipt.dMId?.toInt() ?? 0; // Get DMId from the receipt
+                //                                                       int itemId =
+                //                                                           receipt.itemId?.toInt() ?? 0; // Safely access balance and convert it to int
+                //                                                       _showPopup(
+                //                                                           qty,
+                //                                                           dmId,
+                //                                                           itemId); // Call the popup with the imbalance quantity
+                //                                                     },
+                //                                                     child:
+                //                                                     Text(
+                //                                                       '${receipt.balImbQty}',
+                //                                                       // Display Imbalance Quantity
+                //                                                       textAlign:
+                //                                                       TextAlign.center,
+                //                                                       style:Styling.blueClrTextWithUnderline,
+                //                                                     ),
+                //                                                   ),
+                //                                                 ),
+                //                                               ],
+                //                                             ),
+                //                                           ),
+                //
+                //                                         ],
+                //                                       ),
+                //                                     );
+                //                                   },
+                //                                 ),
+                //                               ),
+                //                             ],
+                //                           ),
+                //                         ),
+                //                       ),
+                //                     ],
+                //                   ),
+                //                 ),
+                //               ),
+                //             ),
+                //             SizedBox(height: 10),
+                //           ],
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // )
+                //     : Container(),
                 Row(
                   children: [
                     Expanded(child: textWidgetBlueColorWithStar("Select Item","*")),
@@ -4300,7 +4303,8 @@ class _DailyRefillSalePageState extends State<DailyRefillSalePage> {
       }else{
         isDeliverySelected = false;
       }
-      if(lessEmptyCustomerId != null && lessEmptyCustomerId.isNotEmpty && lessEmptyCustomerCounts != null && lessEmptyCustomerCounts.isNotEmpty){
+      int ids = int.tryParse(lessEmptyCustomerId ?? "") ?? 0;
+      if(lessEmptyCustomerId != null && lessEmptyCustomerId.isNotEmpty && lessEmptyCustomerCounts != null && lessEmptyCustomerCounts.isNotEmpty && ids>0){
         isCustomerSelected = true;
         List<String> lessEmptyConsName = lessemptyCutomerNames!.split(',').map((e) => e.trim()).toList();
         List<String> lessEmptyConsId = lessEmptyCustomerId.split(',').map((e) => e.trim()).toList();
